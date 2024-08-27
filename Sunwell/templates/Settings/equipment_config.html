@@ -1,0 +1,690 @@
+{% extends "Base/base.html" %}
+{% load static %}
+
+{% block title %} equipment_configure {% endblock %}
+
+{% block styles %}
+    {{ block.super }}
+    <link rel="stylesheet" href="{% static 'css/Settings/equipment_config.css' %}">
+    <style>
+        .icon-size {
+            width: 40px; /* Adjust the width as per your icon size */
+            height: 35px; /* Ensure the image is square */
+            font-size: 16px; /* Adjust the font size if needed */
+            vertical-align: middle; /* Align icons and image */
+        }
+    </style>
+{% endblock styles %}
+
+{% block content %}
+<div class="container mt-2 table-container fade-in">
+    <div class="d-flex justify-content-end mb-2">
+        <div class="dropdown role-filter">
+            <button class="btn btn-outline-secondary dropdown-toggle" type="button" id="roleFilterDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                Select status
+            </button>
+            <ul class="dropdown-menu" aria-labelledby="roleFilterDropdown">
+                <li><a class="dropdown-item" href="#" data-value="all">All Status <span class="option-count">3</span></a></li>
+                <li><a class="dropdown-item" href="#" data-value="Active">Active <span class="option-count">1</span></a></li>
+                <li><a class="dropdown-item" href="#" data-value="InActive">InActive <span class="option-count">1</span></a></li>
+            </ul>
+        </div>
+    </div>
+    <div class="d-flex justify-content-between align-items-center custom-label mb-2" style="font-weight: bold; padding: 5px 10px; background-color: rgb(235, 235, 235);">
+        <section class="d-block custom-label mb-2" style="background-color: rgb(235, 235, 235); text-align: center; font-weight: bold; padding: 5px 0px">
+            Equipment Settings <span id="records-info">(Records Found: 0, Selected: 0)</span>
+        </section>    
+        <div class="d-flex justify-content-end align-items-center">
+            <div class="d-flex input-group me-3" style="width: 200px;">
+                <span class="input-group-text"><i class="fas fa-search"></i></span>
+                <input type="text" id="searchBar" class="form-control" placeholder="Search here..">
+            </div>
+            <div class="d-flex">
+                <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#adminUserModal"> Add </button> 
+            </div>
+        </div>
+    </div>
+    
+    <div class="table-wrapper">
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th><input type="checkbox" id="selectAll"></th>
+                    <th scope="col">Equipment Name</th>
+                    <th scope="col">IP Address</th>
+                    <th scope="col">Status</th>
+                </tr>
+            </thead>
+            <tbody id="form-data-table" class="scrollable-tbody">
+                <tr>
+                    <td><input type="checkbox" class="row-checkbox"></td>
+                    <td><a href="{% url 'equipmentsetting_Graphcolor' %}">MICRO/LEP/007</a></td>
+                    <td>192.168.1.9</td>
+                    <td>Active</td>
+                </tr>
+                <tr>
+                    <td><input type="checkbox" class="row-checkbox"></td>
+                    <td><a href="{% url 'equipmentsetting_Graphcolor' %}">MICRO/LEP/010</a></td>
+                    <td>192.168.1.9</td>
+                    <td>Active</td>
+                </tr>
+                <tr>
+                    <td><input type="checkbox" class="row-checkbox"></td>
+                    <td><a href="{% url 'equipmentsetting_Graphcolor' %}">MICRO/LEP/013</a></td>
+                    <td>192.168.1.10</td>
+                    <td>Active</td>
+                </tr>
+                <tr>
+                    <td><input type="checkbox" class="row-checkbox"></td>
+                    <td><a href="{% url 'equipmentsetting_Graphcolor' %}">MICRO/LEP/018</a></td>
+                    <td>192.168.1.11</td>
+                    <td>Active</td>
+                </tr>
+                <tr>
+                    <td><input type="checkbox" class="row-checkbox"></td>
+                    <td><a href="{% url 'equipmentsetting_Graphcolor' %}">MICRO/LEP/022</a></td>
+                    <td>192.168.1.12</td>
+                    <td>Active</td>
+                </tr>
+                <tr>
+                    <td><input type="checkbox" class="row-checkbox"></td>
+                    <td><a href="{% url 'equipmentsetting_Graphcolor' %}">MICRO/LEP/028</a></td>
+                    <td>192.168.1.13</td>
+                    <td>Active</td>
+                </tr>
+                <tr>
+                    <td><input type="checkbox" class="row-checkbox"></td>
+                    <td><a href="{% url 'equipmentsetting_Graphcolor' %}">MICRO/LEP/030</a></td>
+                    <td>192.168.1.14</td>
+                    <td>Active</td>
+                </tr>
+                <tr>
+                    <td><input type="checkbox" class="row-checkbox"></td>
+                    <td><a href="{% url 'equipmentsetting_Graphcolor' %}">MICRO/LEP/032</a></td>
+                    <td>192.168.1.15</td>
+                    <td>Active</td>
+                </tr>
+                <tr>
+                    <td><input type="checkbox" class="row-checkbox"></td>
+                    <td><a href="{% url 'equipmentsetting_Graphcolor' %}">MICRO/LEP/038</a></td>
+                    <td>192.168.1.816</td>
+                    <td>Active</td>
+                </tr>
+                <tr>
+                    <td><input type="checkbox" class="row-checkbox"></td>
+                    <td><a href="{% url 'equipmentsetting_Graphcolor' %}">MICRO/LEP/041</a></td>
+                    <td>192.168.1.17</td>
+                    <td>Active</td>
+                </tr>
+                <tr>
+                    <td><input type="checkbox" class="row-checkbox"></td>
+                    <td><a href="{% url 'equipmentsetting_Graphcolor' %}">MICRO/LEP/043</a></td>
+                    <td>192.168.1.8</td>
+                    <td>Active</td>
+                </tr>
+                <tr>
+                    <td><input type="checkbox" class="row-checkbox"></td>
+                    <td><a href="{% url 'equipmentsetting_Graphcolor' %}">MICRO/LEP/045</a></td>
+                    <td>192.168.1.9</td>
+                    <td>Active</td>
+                </tr>
+                <tr>
+                    <td><input type="checkbox" class="row-checkbox"></td>
+                    <td><a href="{% url 'equipmentsetting_Graphcolor' %}">MICRO/LEP/049</a></td>
+                    <td>192.168.1.20</td>
+                    <td>Active</td>
+                </tr>
+                <tr>
+                    <td><input type="checkbox" class="row-checkbox"></td>
+                    <td><a href="{% url 'equipmentsetting_Graphcolor' %}">MICRO/LEP/052</a></td>
+                    <td>192.168.1.21</td>
+                    <td>Active</td>
+                </tr>
+                <tr>
+                    <td><input type="checkbox" class="row-checkbox"></td>
+                    <td><a href="{% url 'equipmentsetting_Graphcolor' %}">MICRO/LEP/058</a></td>
+                    <td>192.168.1.22</td>
+                    <td>Active</td>
+                </tr>
+                <tr>
+                    <td><input type="checkbox" class="row-checkbox"></td>
+                    <td><a href="{% url 'equipmentsetting_Graphcolor' %}">MICRO/LEP/062</a></td>
+                    <td>192.168.1.23</td>
+                    <td>Active</td>
+                </tr>
+                <tr>
+                    <td><input type="checkbox" class="row-checkbox"></td>
+                    <td><a href="{% url 'equipmentsetting_Graphcolor' %}">MICRO/LEP/068</a></td>
+                    <td>192.168.1.24</td>
+                    <td>InActive</td>
+                </tr>
+                <tr>
+                    <td><input type="checkbox" class="row-checkbox"></td>
+                    <td>MICRO/LEP/070</td>
+                    <td>192.168.1.25</td>
+                    <td>Active</td>
+                </tr>
+                <tr>
+                    <td><input type="checkbox" class="row-checkbox"></td>
+                    <td>MICRO/LEP/074</td>
+                    <td>192.168.1.26</td>
+                    <td>Active</td>
+                </tr>
+                <tr>
+                    <td><input type="checkbox" class="row-checkbox"></td>
+                    <td>MICRO/LEP/076</td>
+                    <td>192.168.1.27</td>
+                    <td>InActive</td>
+                </tr>
+                <tr>
+                    <td><input type="checkbox" class="row-checkbox"></td>
+                    <td>MICRO/LEP/080</td>
+                    <td>192.168.1.28</td>
+                    <td>Active</td>
+                </tr>
+                <tr>
+                    <td><input type="checkbox" class="row-checkbox"></td>
+                    <td>MICRO/LEP/082</td>
+                    <td>192.168.1.29</td>
+                    <td>Active</td>
+                </tr>
+                <tr>
+                    <td><input type="checkbox" class="row-checkbox"></td>
+                    <td>MICRO/LEP/086</td>
+                    <td>192.168.1.30</td>
+                    <td>Active</td>
+                </tr>
+                <tr>
+                    <td><input type="checkbox" class="row-checkbox"></td>
+                    <td>MICRO/LEP/090</td>
+                    <td>192.168.1.31</td>
+                    <td>Active</td>
+                </tr>
+                <tr>
+                    <td><input type="checkbox" class="row-checkbox"></td>
+                    <td><a href="{% url 'equipmentsetting_Graphcolor' %}">MICRO/LEP/092</a></td>
+                    <td>192.168.1.32</td>
+                    <td>Active</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    
+    <div class="d-flex justify-content-between align-items-center mt-3">
+        <div class="entries-info d-flex align-items-center">
+            <span>Show</span>
+            <select id="entriesPerPage" class="form-select d-inline-block mx-2 entriesPerPage">
+                <option value="10" selected>10</option>
+                <option value="15">15</option>
+                <option value="25">25</option>
+                <option value="50">50</option>
+                <option value="100">100</option>
+            </select>
+            <span>entries per page</span>
+        </div>
+        <div>
+            <small>Showing <span id="visible-entries">0</span> of <span id="total-entries">0</span> entries</small>
+        </div>
+        <nav aria-label="Page navigation" class="d-flex justify-content-end">
+            <ul class="pagination">
+                <li class="page-item" id="prev-page"><a class="page-link" href="#">Previous</a></li>
+                <li class="page-item"><a class="page-link" href="#">1</a></li>
+                <li class="page-item"><a class="page-link" href="#">2</a></li>
+                <li class="page-item"><a class="page-link" href="#">3</a></li>
+                <li class="page-item" id="next-page"><a class="page-link" href="#">Next</a></li>
+            </ul>
+        </nav>
+    </div>
+</div>
+
+<!-- The Modal -->
+<div class="modal fade" id="adminUserModal" tabindex="-1" aria-labelledby="adminUserModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content container-custom">
+            <!-- Modal Header -->
+            <div class="modal-header">
+                <h4 class="modal-title" id="adminUserModalLabel">Equipment Settings</h4>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <!-- Modal Body -->
+            <div class="modal-body">
+                <form id="adminUserForm">
+                    <div class="row">
+                        <div class="col-md-8 form-group">
+                            <input type="text" class="form-control" id="userName" maxlength="15" placeholder=" " required>
+                            <label for="userName" class="form-label">Equipment Name</label>
+                        </div>
+                        <div class="col-md-4 form-group">
+                            <select class="form-control" id="userStatus" required>
+                                <option value="" disabled selected>Select Status</option>
+                                <option value="active">Active</option>
+                                <option value="inactive">Inactive</option>
+                            </select>
+                            <label for="userStatus" class="form-label">Status</label>
+                        </div>
+                        
+                        <div class="col-md-8 form-group">
+                            <input type="numbers" class="form-control" id="password"  placeholder=" " required>
+                            <label for="passwordDuration" class="form-label">IP Address</label>
+                        </div>
+                        <div class="col-md-4 form-group">
+                            <img src="{% static 'images/computericon.png' %}" alt="server" class="icon-size">
+                            <i class="fa-solid fa-power-off"></i>
+                            <!-- <i class="fa-solid fa-desktop icon-size"></i>
+                            <i class="fa-solid fa-rss icon-size"></i>
+                            <i class="fa-solid fa-wifi icon-size"></i>
+                            <i class="fa-solid fa-signal-stream icon-size"></i> -->
+                        </div>
+                            
+                        <div class="col-md-12 form-group">
+                            <select class="form-control" id="login-interval" required>
+                                <option value="" disabled selected>Select an interval</option>
+                                <option value="1">1</option>
+                                <option value="2">2</option>
+                                <option value="3">3</option>
+                                <option value="4">4</option>
+                                <option value="5">5</option>
+                            </select>
+                            <label for="login-interval" class="form-label">Interval</label>
+                        </div>
+                        
+                        <div class="col-md-12 form-group">
+                            <input type="text" class="form-control" id="equipment_type" maxlength="50" placeholder=" " required>
+                            <label for="equipment_type" class="form-label">Equipment Type</label>
+                        </div>
+                        <div class="container">
+                            <div class="row">
+                                <div class="col-md-12 form-group">
+                                    <select class="form-control" id="door-access-type" required>
+                                        <option value="" disabled selected>Select Door Access Type</option>
+                                        <option value="none">None</option>
+                                        <option value="plc">PLC</option>
+                                        <option value="biometric">Biometric</option>
+                                    </select>
+                                    <label for="door-access-type" class="form-label">Door Access Type</label>
+                                </div>
+                            </div>
+                            <div class="row additional-inputs" id="additional-inputs">
+                                <!-- Dynamic input fields will be inserted here -->
+                            </div>
+                        </div>
+                        
+                        <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+                        <script>
+                            $(document).ready(function() {
+                                $('#door-access-type').on('change', function() {
+                                    var selectedValue = $(this).val();
+                                    var $additionalInputs = $('#additional-inputs');
+                                    $additionalInputs.empty(); // Clear any existing inputs
+
+                                    if (selectedValue === 'plc') {
+                                        // Add 15 inputs for "Door Access User"
+                                        for (var i = 1; i <= 15; i+=2) {
+                                            $additionalInputs.append(
+                                                '<div class="row mb-3">' +
+                                                    '<div class="col-md-6 form-group">' +
+                                                        '<input type="text" class="form-control" id="door-access-user' + i + '" placeholder=" ">' +
+                                                        '<label for="door-access-user' + i + '" class="form-label">Door Access User ' + i + '</label>' +
+                                                    '</div>' +
+                                                    (i + 1 <= 15 ? // Check if there's a next user to add to the second column
+                                                    '<div class="col-md-6 form-group">' +
+                                                        '<input type="text" class="form-control" id="door-access-user' + (i + 1) + '" placeholder=" ">' +
+                                                        '<label for="door-access-user' + (i + 1) + '" class="form-label">Door Access User ' + (i + 1) + '</label>' +
+                                                    '</div>' : '') +
+                                                '</div>'
+                                            );
+                                        }
+                                        $additionalInputs.show();
+                                    } else if (selectedValue === 'biometric') {
+                                        // Add the inputs for biometric (existing code)
+                                        $additionalInputs.append(
+                                            '<div class="row">' +
+                                                '<div class="col-md-6 form-group">' +
+                                                    '<input type="text" class="form-control" id="biometric_banner_text" placeholder=" ">' +
+                                                    '<label for="biometric_banner_text" class="form-label">Biometric Banner Text</label>' +
+                                                '</div>' +
+                                                '<div class="col-md-6 form-group">' +
+                                                    '<label>Door Access User Name Display</label>' +
+                                                    '<div class="form-check">' +
+                                                        '<input type="checkbox" class="form-check-input" id="disableCheckbox">' +
+                                                        '<label>Disabled</label>' +
+                                                    '</div>' +
+                                                '</div>' +
+                                            '</div>'+
+                                            '<div class="row">' +
+                                                '<div class="col-md-12 mb-4">'+
+                                                    '<label for="ipAddress" class="form-label1">Biometric IP Address</label>'+
+                                                    '<div class="d-flex">'+
+                                                        '<input type="text" class="form-control me-2" value="192">'+
+                                                        '<span>.</span>'+
+                                                        '<input type="text" class="form-control me-2 ms-2" value="168">'+
+                                                        '<span>.</span>'+
+                                                        '<input type="text" class="form-control me-2 ms-2" value="1">'+
+                                                        '<span>.</span>'+
+                                                        '<input type="text" class="form-control ms-2" value="2">'+
+                                                    '</div>'+
+                                                '</div>'+
+                                            '</div>' +
+                                            '<div class="row">' +
+                                                '<div class="col-md-6 form-group">' +  
+                                                    '<input type="text" class="form-control" placeholder=" ">' +
+                                                    '<label for="door_access_user1" class="form-label">Door Access User 1</label>' +
+                                                '</div>' +
+                                                '<div class="col-md-6 form-group">' +
+                                                    '<input type="text" class="form-control" placeholder=" ">' +
+                                                    '<label for="access_user_cards1" class="form-label">Access User Card No. 1</label>' +
+                                                '</div>' +
+                                                '<div class="col-md-6 form-group">' +  
+                                                    '<input type="text" class="form-control" placeholder=" ">' +
+                                                    '<label for="door_access_user1" class="form-label">Door Access User 2</label>' +
+                                                '</div>' +
+                                                '<div class="col-md-6 form-group">' +
+                                                    '<input type="text" class="form-control" placeholder=" ">' +
+                                                    '<label for="access_user_cards1" class="form-label">Access User Card No. 2</label>' +
+                                                '</div>' +
+                                                '<div class="col-md-6 form-group">' +  
+                                                    '<input type="text" class="form-control" placeholder=" ">' +
+                                                    '<label for="door_access_user1" class="form-label">Door Access User 3</label>' +
+                                                '</div>' +
+                                                '<div class="col-md-6 form-group">' +
+                                                    '<input type="text" class="form-control" placeholder=" ">' +
+                                                    '<label for="access_user_cards1" class="form-label">Access User Card No. 3</label>' +
+                                                '</div>' +
+                                                '<div class="col-md-6 form-group">' +  
+                                                    '<input type="text" class="form-control" placeholder=" ">' +
+                                                    '<label for="door_access_user1" class="form-label">Door Access User 4</label>' +
+                                                '</div>' +
+                                                '<div class="col-md-6 form-group">' +
+                                                    '<input type="text" class="form-control" placeholder=" ">' +
+                                                    '<label for="access_user_cards1" class="form-label">Access User Card No. 4</label>' +
+                                                '</div>' +
+                                                '<div class="col-md-6 form-group">' +  
+                                                    '<input type="text" class="form-control" placeholder=" ">' +
+                                                    '<label for="door_access_user1" class="form-label">Door Access User 5</label>' +
+                                                '</div>' +
+                                                '<div class="col-md-6 form-group">' +
+                                                    '<input type="text" class="form-control" placeholder=" ">' +
+                                                    '<label for="access_user_cards1" class="form-label">Access User Card No. 5</label>' +
+                                                '</div>' +
+                                                '<div class="col-md-6 form-group">' +  
+                                                    '<input type="text" class="form-control" placeholder=" ">' +
+                                                    '<label for="door_access_user1" class="form-label">Door Access User 6</label>' +
+                                                '</div>' +
+                                                '<div class="col-md-6 form-group">' +
+                                                    '<input type="text" class="form-control" placeholder=" ">' +
+                                                    '<label for="access_user_cards1" class="form-label">Access User Card No. 6</label>' +
+                                                '</div>' +
+                                                '<div class="col-md-6 form-group">' +  
+                                                    '<input type="text" class="form-control" placeholder=" ">' +
+                                                    '<label for="door_access_user1" class="form-label">Door Access User 7</label>' +
+                                                '</div>' +
+                                                '<div class="col-md-6 form-group">' +
+                                                    '<input type="text" class="form-control" placeholder=" ">' +
+                                                    '<label for="access_user_cards1" class="form-label">Access User Card No. 7</label>' +
+                                                '</div>' +
+                                                '<div class="col-md-6 form-group">' +  
+                                                    '<input type="text" class="form-control" placeholder=" ">' +
+                                                    '<label for="door_access_user1" class="form-label">Door Access User 8</label>' +
+                                                '</div>' +
+                                                '<div class="col-md-6 form-group">' +
+                                                    '<input type="text" class="form-control" placeholder=" ">' +
+                                                    '<label for="access_user_cards1" class="form-label">Access User Card No. 8</label>' +
+                                                '</div>' +
+                                                '<div class="col-md-6 form-group">' +  
+                                                    '<input type="text" class="form-control" placeholder=" ">' +
+                                                    '<label for="door_access_user1" class="form-label">Door Access User 9</label>' +
+                                                '</div>' +
+                                                '<div class="col-md-6 form-group">' +
+                                                    '<input type="text" class="form-control" placeholder=" ">' +
+                                                    '<label for="access_user_cards1" class="form-label">Access User Card No. 9</label>' +
+                                                '</div>' +
+                                                '<div class="col-md-6 form-group">' +  
+                                                    '<input type="text" class="form-control" placeholder=" ">' +
+                                                    '<label for="door_access_user1" class="form-label">Door Access User 10</label>' +
+                                                '</div>' +
+                                                '<div class="col-md-6 form-group">' +
+                                                    '<input type="text" class="form-control" placeholder=" ">' +
+                                                    '<label for="access_user_cards1" class="form-label">Access User Card No. 10</label>' +
+                                                '</div>' +
+                                                '<div class="col-md-6 form-group">' +  
+                                                    '<input type="text" class="form-control" placeholder=" ">' +
+                                                    '<label for="door_access_user1" class="form-label">Door Access User 11</label>' +
+                                                '</div>' +
+                                                '<div class="col-md-6 form-group">' +
+                                                    '<input type="text" class="form-control" placeholder=" ">' +
+                                                    '<label for="access_user_cards1" class="form-label">Access User Card No. 11</label>' +
+                                                '</div>' +
+                                                '<div class="col-md-6 form-group">' +  
+                                                    '<input type="text" class="form-control" placeholder=" ">' +
+                                                    '<label for="door_access_user1" class="form-label">Door Access User 12</label>' +
+                                                '</div>' +
+                                                '<div class="col-md-6 form-group">' +
+                                                    '<input type="text" class="form-control" placeholder=" ">' +
+                                                    '<label for="access_user_cards1" class="form-label">Access User Card No. 12</label>' +
+                                                '</div>' +
+                                                '<div class="col-md-6 form-group">' +  
+                                                    '<input type="text" class="form-control" placeholder=" ">' +
+                                                    '<label for="door_access_user1" class="form-label">Door Access User 13</label>' +
+                                                '</div>' +
+                                                '<div class="col-md-6 form-group">' +
+                                                    '<input type="text" class="form-control" placeholder=" ">' +
+                                                    '<label for="access_user_cards1" class="form-label">Access User Card No. 13</label>' +
+                                                '</div>' +
+                                                '<div class="col-md-6 form-group">' +  
+                                                    '<input type="text" class="form-control" placeholder=" ">' +
+                                                    '<label for="door_access_user1" class="form-label">Door Access User 14</label>' +
+                                                '</div>' +
+                                                '<div class="col-md-6 form-group">' +
+                                                    '<input type="text" class="form-control" placeholder=" ">' +
+                                                    '<label for="access_user_cards1" class="form-label">Access User Card No. 14</label>' +
+                                                '</div>' +
+                                                '<div class="col-md-6 form-group">' +  
+                                                    '<input type="text" class="form-control" placeholder=" ">' +
+                                                    '<label for="door_access_user1" class="form-label">Door Access User 15</label>' +
+                                                '</div>' +
+                                                '<div class="col-md-6 form-group">' +
+                                                    '<input type="text" class="form-control" placeholder=" ">' +
+                                                    '<label for="access_user_cards1" class="form-label">Access User Card No. 15</label>' +
+                                                '</div>' +
+                                                // Continue adding more inputs as per existing code...
+                                            '</div>'
+                                        );
+                                        $additionalInputs.show();
+                                    } else {
+                                        $additionalInputs.hide();
+                                    }
+                                });
+                            });
+                        </script>
+                    </div>
+                </form>
+            </div>
+            
+            <!-- Modal Footer -->
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="submit" class="btn btn-primary" id="saveUserBtn">Save User</button>
+            </div>
+        </div>
+    </div>
+</div>
+    {% block scripts %}
+    {{ block.super }}
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const searchBar = document.getElementById('searchBar');
+            const roleFilterDropdown = document.getElementById('roleFilterDropdown');
+            const roleFilterItems = document.querySelectorAll('.role-filter .dropdown-item');
+            const formDataTable = document.getElementById('form-data-table');
+            const tableRows = Array.from(formDataTable.querySelectorAll('tr'));
+            const visibleEntries = document.getElementById('visible-entries');
+            const totalEntries = document.getElementById('total-entries');
+            const pagination = document.querySelector('.pagination');
+            const selectAllCheckbox = document.getElementById('selectAll');
+            const entriesPerPageSelect = document.getElementById('entriesPerPage');
+            const prevPageButton = document.getElementById('prev-page');
+            const nextPageButton = document.getElementById('next-page');
+        
+            let currentPage = 1;
+            let entriesPerPage = parseInt(entriesPerPageSelect.value, 10);
+            let filteredRows = [];
+            let totalEntriesCount = 0;
+            let totalPages = 0;
+        
+            function filterTable() {
+                const searchTerm = searchBar.value.toLowerCase().trim();
+                const selectedRole = roleFilterDropdown.getAttribute('data-selected-role') || 'all';
+        
+                filteredRows = tableRows.filter(row => {
+                    const cells = Array.from(row.cells);
+                    const matchesSearch = cells.some(cell => cell.textContent.toLowerCase().includes(searchTerm));
+                    const roleCell = cells[3]; // Status is in the 4th column (index 3)
+                    const matchesRole = selectedRole === 'all' || roleCell.textContent.toLowerCase() === selectedRole.toLowerCase();
+        
+                    return matchesSearch && matchesRole;
+                });
+        
+                totalEntriesCount = filteredRows.length;
+                totalPages = Math.ceil(totalEntriesCount / entriesPerPage);
+                currentPage = 1;
+                updateTable();
+                updateRoleCounts(); // Update role counts after filtering
+            }
+        
+            function updateTable() {
+                const startIndex = (currentPage - 1) * entriesPerPage;
+                const endIndex = startIndex + entriesPerPage;
+        
+                // Hide all rows
+                tableRows.forEach(row => row.style.display = 'none');
+        
+                // Show only the rows that are part of the current page
+                filteredRows.slice(startIndex, endIndex).forEach(row => row.style.display = '');
+        
+                visibleEntries.textContent = filteredRows.slice(startIndex, endIndex).length;
+                totalEntries.textContent = totalEntriesCount;
+        
+                updatePagination();
+            }
+        
+            function updatePagination() {
+                const pageItems = Array.from(pagination.querySelectorAll('.page-item:not(#prev-page):not(#next-page)'));
+                pageItems.forEach(item => item.remove());
+        
+                prevPageButton.classList.toggle('disabled', currentPage === 1);
+                nextPageButton.classList.toggle('disabled', currentPage === totalPages);
+        
+                for (let i = 1; i <= totalPages; i++) {
+                    const pageItem = document.createElement('li');
+                    pageItem.className = `page-item ${i === currentPage ? 'active' : ''}`;
+                    pageItem.innerHTML = `<a class="page-link" href="#">${i}</a>`;
+                    pageItem.addEventListener('click', (event) => {
+                        event.preventDefault();
+                        currentPage = i;
+                        updateTable();
+                    });
+                    pagination.insertBefore(pageItem, nextPageButton);
+                }
+            }
+        
+            function getSelectedRowsCount() {
+                return formDataTable.querySelectorAll('input[type="checkbox"]:checked:not(#selectAll)').length;
+            }
+        
+            function updateRecordsInfo() {
+                document.getElementById('records-info').textContent = `(Records Found: ${totalEntriesCount}, Selected: ${getSelectedRowsCount()})`;
+            }
+        
+            function updateRoleCounts() {
+                roleFilterItems.forEach(item => {
+                    const role = item.getAttribute('data-value').toLowerCase();
+                    let roleCount = 0;
+        
+                    // Count rows that match the role
+                    tableRows.forEach(row => {
+                        const statusCell = row.cells[3]; // Assuming status is in the 4th column (index 3)
+                        const rowStatus = statusCell.textContent.toLowerCase();
+        
+                        if (role === 'all' || rowStatus === role) {
+                            roleCount++;
+                        }
+                    });
+        
+                    // Update the count in the dropdown
+                    item.querySelector('.option-count').textContent = `${roleCount}`;
+                });
+            }
+        
+            selectAllCheckbox.addEventListener('change', function() {
+                const checkboxes = formDataTable.querySelectorAll('input[type="checkbox"]:not(#selectAll)');
+                checkboxes.forEach(checkbox => checkbox.checked = this.checked);
+                updateRecordsInfo();
+            });
+        
+            formDataTable.addEventListener('change', function(event) {
+                if (event.target.type === 'checkbox' && event.target !== selectAllCheckbox) {
+                    selectAllCheckbox.checked = Array.from(formDataTable.querySelectorAll('input[type="checkbox"]:not(#selectAll)')).every(checkbox => checkbox.checked);
+                    updateRecordsInfo();
+                }
+            });
+        
+            searchBar.addEventListener('input', function() {
+                filterTable();
+                updateRecordsInfo();
+            });
+        
+            roleFilterItems.forEach(item => {
+                item.addEventListener('click', function () {
+                    roleFilterDropdown.setAttribute('data-selected-role', item.getAttribute('data-value'));
+                    roleFilterDropdown.textContent = item.textContent;
+                    filterTable();
+                    updateRecordsInfo();
+                });
+            });
+        
+            entriesPerPageSelect.addEventListener('change', function() {
+                entriesPerPage = parseInt(this.value, 10);
+                totalPages = Math.ceil(totalEntriesCount / entriesPerPage);
+                currentPage = 1;
+                updateTable();
+            });
+        
+            prevPageButton.addEventListener('click', function(event) {
+                event.preventDefault();
+                if (currentPage > 1) {
+                    currentPage--;
+                    updateTable();
+                }
+            });
+        
+            nextPageButton.addEventListener('click', function(event) {
+                event.preventDefault();
+                if (currentPage < totalPages) {
+                    currentPage++;
+                    updateTable();
+                }
+            });
+        
+            document.querySelectorAll('.role-filter .dropdown-item').forEach(item => {
+                item.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    const selectedText = this.innerHTML;
+                    document.getElementById('roleFilterDropdown').innerHTML = selectedText;
+                });
+            });
+        
+            filterTable(); // Initial filter to set up table and counts
+            updateRecordsInfo(); // Ensure records info is updated initially
+        });
+        
+        document.getElementById('adminUserModal').addEventListener('hidden.bs.modal', function (e) {
+            var form = document.getElementById('adminUserForm');
+            form.reset(); // Reset form fields
+            document.getElementById('selectedDepartments').innerHTML = ''; 
+            const inputs = document.querySelectorAll(".form-control, .form-select");
+            inputs.forEach(input => input.classList.remove("filled"));
+        });
+    </script>
+    {% endblock %}
+{% endblock content %}

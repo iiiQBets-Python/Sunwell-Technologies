@@ -1,0 +1,9 @@
+asgiref==3.8.1
+Django==5.0.8
+django-mssql-backend==2.8.1
+mssql-django==1.5
+pillow==10.4.0
+pyodbc==5.1.0
+pytz==2024.1
+sqlparse==0.5.1
+tzdata==2024.1

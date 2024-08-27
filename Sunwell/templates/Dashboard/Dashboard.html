@@ -1,0 +1,612 @@
+{% extends "Base/base.html" %}
+{% load static %}
+
+{% block title %} Dashboard {% endblock %}
+
+{% block styles %}
+    {{ block.super }}
+    <link rel="stylesheet" href="{% static 'css/Dashboard/Dashboard.css' %}">
+{% endblock styles %}
+
+{% block content %} 
+<div class="container mt-2 table-container fade-in">
+    <div class="d-flex justify-content-between mb-2">
+        <div class="ms-auto">
+            <div class="d-flex align-items-right">
+                <div class="dropdown role-filter">
+                    <button class="btn btn-outline-secondary dropdown-toggle" type="button" id="roleFilterDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                        Select Status
+                    </button>
+                    <ul class="dropdown-menu" aria-labelledby="roleFilterDropdown">
+                        <li><a class="dropdown-item" onchange="updateTable()" href="#" data-value="all">All Status<span class="option-count">3</span></a></li>
+                        <li><a class="dropdown-item" onchange="updateTable()" href="#" data-value="offline"><i class="fa-regular fa-circle-stop" style="color: #d20f0f;"></i>  Offline <span class="option-count">1</span></a></li>
+                        <li><a class="dropdown-item" onchange="updateTable()" href="#" data-value="online"><i class="fa-regular fa-circle-stop" style="color: #369523;"></i>Online <span class="option-count">1</span></a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="d-flex justify-content-between align-items-center custom-label mb-2" style="font-weight: bold; padding: 5px 10px; background-color: rgb(235, 235, 235);">
+        <div class="alert-container">
+            Alert <span id="records-info">(Records Found: 0)</span>
+        </div>
+        <div class="d-flex justify-content-end align-items-center">
+            <div class="d-flex input-group me-3" style="width: 200px;">
+                <span class="input-group-text"><i class="fas fa-search"></i></span>
+                <input type="text" id="searchBar" class="form-control" placeholder="Search here..">
+            </div>
+            <div class="d-flex">
+                <button type="button" class="btn btn-primary me-2" id="gridViewButton"><i class="fas fa-th-large"></i> Grid</button>
+                <button type="button" class="btn btn-secondary" id="listViewButton"><i class="fa-solid fa-bars"></i> List </button>
+            </div>
+        </div>
+    </div>
+    <div class="scrollable-container">
+        <div class="row" id="gridView">
+            <div class="col-12 col-md-6 col-lg-3 card-wrapper" data-status="offline">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="card-title mb-0">RND/EPT/001</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="card-content">
+                            <div class="row">
+                                <div class="col-6"><strong>Status</strong></div>
+                                <div class="col-6"><i class="fa-regular fa-circle-stop" style="color: #d20f0f;"></i> Offline</div>
+                            </div>
+                            <div class="row">
+                                <div class="col-6"><strong>Pending Alarms</strong></div>
+                                <div class="col-6"><i class="fas fa-exclamation-triangle icon-yellow"></i> Alarms (0086)</div>
+                            </div>
+                            <div class="row">
+                                <div class="col-6"><strong>Pending Review</strong></div>
+                                <div class="col-6">ALL RECORDS</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-12 col-md-6 col-lg-3 card-wrapper" data-status="online">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="card-title mb-0">QC/API/EP/04</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="card-content">
+                            <div class="row">
+                                <div class="col-6"><strong>Status</strong></div>
+                                <div class="col-6"><i class="fa-regular fa-circle-stop" style="color: #369523;"></i> Online</div>
+                            </div>
+                            <div class="row">
+                                <div class="col-6"><strong>Pending Alarms</strong></div>
+                                <div class="col-6"><i class="fas fa-exclamation-triangle icon-yellow"></i> Alarms (0012)</div>
+                            </div>
+                            <div class="row">
+                                <div class="col-6"><strong>Pending Review</strong></div>
+                                <div class="col-6">ALL RECORDS</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+      <div class="col-12 col-md-6 col-lg-3 card-wrapper" data-status="online">
+        <div class="card">
+          <div class="card-header">
+            <h5 class="card-title mb-0">QC/API/EP/08</h5>
+          </div>
+          <div class="card-body">
+            <div class="card-content">
+              <div class="row">
+                <div class="col-6"><strong>Status</strong></div>
+                <div class="col-6"><i class="fa-regular fa-circle-stop" style="color: #369523;"></i> Online</div>
+              </div>
+              <div class="row">
+                <div class="col-6"><strong>Pending Alarms</strong></div>
+                <div class="col-6"><i class="fas fa-exclamation-triangle icon-yellow"></i> Alarms (0016)</div>
+              </div>
+              <div class="row">
+                <div class="col-6"><strong>Pending Review</strong></div>
+                <div class="col-6">ALL RECORDS</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-12 col-md-6 col-lg-3 card-wrapper" data-status="offline">
+        <div class="card">
+          <div class="card-header">
+            <h5 class="card-title mb-0">RND/EPT/005</h5>
+          </div>
+          <div class="card-body">
+            <div class="card-content">
+              <div class="row">
+                <div class="col-6"><strong>Status</strong></div>
+                <div class="col-6"><i class="fa-regular fa-circle-stop" style="color: #d20f0f;"></i> Offline</div>
+              </div>
+              <div class="row">
+                <div class="col-6"><strong>Pending Alarms</strong></div>
+                <div class="col-6"><i class="fas fa-exclamation-triangle icon-yellow"></i> Alarms (0090)</div>
+              </div>
+              <div class="row">
+                <div class="col-6"><strong>Pending Review</strong></div>
+                <div class="col-6">ALL RECORDS</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-12 col-md-6 col-lg-3 card-wrapper" data-status="online">
+        <div class="card">
+          <div class="card-header">
+            <h5 class="card-title mb-0">QC/API/EP/10</h5>
+          </div>
+          <div class="card-body">
+            <div class="card-content">
+              <div class="row">
+                <div class="col-6"><strong>Status</strong></div>
+                <div class="col-6"><i class="fa-regular fa-circle-stop" style="color: #369523;"></i> Online</div>
+              </div>
+              <div class="row">
+                <div class="col-6"><strong>Pending Alarms</strong></div>
+                <div class="col-6"><i class="fas fa-exclamation-triangle icon-yellow"></i> Alarms (0030)</div>
+              </div>
+              <div class="row">
+                <div class="col-6"><strong>Pending Review</strong></div>
+                <div class="col-6">ALL RECORDS</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-12 col-md-6 col-lg-3 card-wrapper" data-status="online">
+        <div class="card">
+          <div class="card-header">
+            <h5 class="card-title mb-0">QC/API/EP/12</h5>
+          </div>
+          <div class="card-body">
+            <div class="card-content">
+              <div class="row">
+                <div class="col-6"><strong>Status</strong></div>
+                <div class="col-6"><i class="fa-regular fa-circle-stop" style="color: #369523;"></i> Online</div>
+              </div>
+              <div class="row">
+                <div class="col-6"><strong>Pending Alarms</strong></div>
+                <div class="col-6"><i class="fas fa-exclamation-triangle icon-yellow"></i> Alarms (0105)</div>
+              </div>
+              <div class="row">
+                <div class="col-6"><strong>Pending Review</strong></div>
+                <div class="col-6">ALL RECORDS</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-12 col-md-6 col-lg-3 card-wrapper" data-status="online">
+        <div class="card">
+          <div class="card-header">
+            <h5 class="card-title mb-0">QC/API/EP/015</h5>
+          </div>
+          <div class="card-body">
+            <div class="card-content">
+              <div class="row">
+                <div class="col-6"><strong>Status</strong></div>
+                <div class="col-6"><i class="fa-regular fa-circle-stop" style="color: #369523;"></i> Online</div>
+              </div>
+              <div class="row">
+                <div class="col-6"><strong>Pending Alarms</strong></div>
+                <div class="col-6"><i class="fas fa-exclamation-triangle icon-yellow"></i> Alarms (0110)</div>
+              </div>
+              <div class="row">
+                <div class="col-6"><strong>Pending Review</strong></div>
+                <div class="col-6">ALL RECORDS</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-12 col-md-6 col-lg-3 card-wrapper" data-status="offline">
+        <div class="card">
+          <div class="card-header">
+            <h5 class="card-title mb-0">RND/EPT/010</h5>
+          </div>
+          <div class="card-body">
+            <div class="card-content">
+              <div class="row">
+                <div class="col-6"><strong>Status</strong></div>
+                <div class="col-6"><i class="fa-regular fa-circle-stop" style="color: #d20f0f;"></i> Offline</div>
+              </div>
+              <div class="row">
+                <div class="col-6"><strong>Pending Alarms</strong></div>
+                <div class="col-6"><i class="fas fa-exclamation-triangle icon-yellow"></i> Alarms (0120)</div>
+              </div>
+              <div class="row">
+                <div class="col-6"><strong>Pending Review</strong></div>
+                <div class="col-6">ALL RECORDS</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-12 col-md-6 col-lg-3 card-wrapper" data-status="offline">
+        <div class="card">
+          <div class="card-header">
+            <h5 class="card-title mb-0">RND/EPT/015</h5>
+          </div>
+          <div class="card-body">
+            <div class="card-content">
+              <div class="row">
+                <div class="col-6"><strong>Status</strong></div>
+                <div class="col-6"><i class="fa-regular fa-circle-stop" style="color: #d20f0f;"></i> Offline</div>
+              </div>
+              <div class="row">
+                <div class="col-6"><strong>Pending Alarms</strong></div>
+                <div class="col-6"><i class="fas fa-exclamation-triangle icon-yellow"></i> Alarms (0125)</div>
+              </div>
+              <div class="row">
+                <div class="col-6"><strong>Pending Review</strong></div>
+                <div class="col-6">ALL RECORDS</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-12 col-md-6 col-lg-3 card-wrapper" data-status="offline">
+        <div class="card">
+          <div class="card-header">
+            <h5 class="card-title mb-0">RND/EPT/020</h5>
+          </div>
+          <div class="card-body">
+            <div class="card-content">
+              <div class="row">
+                <div class="col-6"><strong>Status</strong></div>
+                <div class="col-6"><i class="fa-regular fa-circle-stop" style="color: #d20f0f;"></i> Offline</div>
+              </div>
+              <div class="row">
+                <div class="col-6"><strong>Pending Alarms</strong></div>
+                <div class="col-6"><i class="fas fa-exclamation-triangle icon-yellow"></i> Alarms (0130)</div>
+              </div>
+              <div class="row">
+                <div class="col-6"><strong>Pending Review</strong></div>
+                <div class="col-6">ALL RECORDS</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-12 col-md-6 col-lg-3 card-wrapper" data-status="online">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title mb-0">QC/API/EP/04</h5>
+            </div>
+            <div class="card-body">
+                <div class="card-content">
+                    <div class="row">
+                        <div class="col-6"><strong>Status</strong></div>
+                        <div class="col-6"><i class="fa-regular fa-circle-stop" style="color: #369523;"></i> Online</div>
+                    </div>
+                    <div class="row">
+                        <div class="col-6"><strong>Pending Alarms</strong></div>
+                        <div class="col-6"><i class="fas fa-exclamation-triangle icon-yellow"></i> Alarms (0012)</div>
+                    </div>
+                    <div class="row">
+                        <div class="col-6"><strong>Pending Review</strong></div>
+                        <div class="col-6">ALL RECORDS</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+      <div class="col-12 col-md-6 col-lg-3 card-wrapper" data-status="offline">
+        <div class="card">
+          <div class="card-header">
+            <h5 class="card-title mb-0">RND/EPT/025</h5>
+          </div>
+          <div class="card-body">
+            <div class="card-content">
+              <div class="row">
+                <div class="col-6"><strong>Status</strong></div>
+                <div class="col-6"><i class="fa-regular fa-circle-stop" style="color: #d20f0f;"></i> Offline</div>
+              </div>
+              <div class="row">
+                <div class="col-6"><strong>Pending Alarms</strong></div>
+                <div class="col-6"><i class="fas fa-exclamation-triangle icon-yellow"></i> Alarms (0135)</div>
+              </div>
+              <div class="row">
+                <div class="col-6"><strong>Pending Review</strong></div>
+                <div class="col-6">ALL RECORDS</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-12 col-md-6 col-lg-3 card-wrapper" data-status="offline">
+        <div class="card">
+          <div class="card-header">
+            <h5 class="card-title mb-0">RND/EPT/025</h5>
+          </div>
+          <div class="card-body">
+            <div class="card-content">
+              <div class="row">
+                <div class="col-6"><strong>Status</strong></div>
+                <div class="col-6"><i class="fa-regular fa-circle-stop" style="color: #d20f0f;"></i> Offline</div>
+              </div>
+              <div class="row">
+                <div class="col-6"><strong>Pending Alarms</strong></div>
+                <div class="col-6"><i class="fas fa-exclamation-triangle icon-yellow"></i> Alarms (0135)</div>
+              </div>
+              <div class="row">
+                <div class="col-6"><strong>Pending Review</strong></div>
+                <div class="col-6">ALL RECORDS</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-12 col-md-6 col-lg-3 card-wrapper" data-status="offline">
+        <div class="card">
+          <div class="card-header">
+            <h5 class="card-title mb-0">RND/EPT/025</h5>
+          </div>
+          <div class="card-body">
+            <div class="card-content">
+              <div class="row">
+                <div class="col-6"><strong>Status</strong></div>
+                <div class="col-6"><i class="fa-regular fa-circle-stop" style="color: #d20f0f;"></i> Offline</div>
+              </div>
+              <div class="row">
+                <div class="col-6"><strong>Pending Alarms</strong></div>
+                <div class="col-6"><i class="fas fa-exclamation-triangle icon-yellow"></i> Alarms (0135)</div>
+              </div>
+              <div class="row">
+                <div class="col-6"><strong>Pending Review</strong></div>
+                <div class="col-6">ALL RECORDS</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-12 col-md-6 col-lg-3 card-wrapper" data-status="offline">
+        <div class="card">
+          <div class="card-header">
+            <h5 class="card-title mb-0">RND/EPT/025</h5>
+          </div>
+          <div class="card-body">
+            <div class="card-content">
+              <div class="row">
+                <div class="col-6"><strong>Status</strong></div>
+                <div class="col-6"><i class="fa-regular fa-circle-stop" style="color: #d20f0f;"></i> Offline</div>
+              </div>
+              <div class="row">
+                <div class="col-6"><strong>Pending Alarms</strong></div>
+                <div class="col-6"><i class="fas fa-exclamation-triangle icon-yellow"></i> Alarms (0135)</div>
+              </div>
+              <div class="row">
+                <div class="col-6"><strong>Pending Review</strong></div>
+                <div class="col-6">ALL RECORDS</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-12 col-md-6 col-lg-3 card-wrapper" data-status="offline">
+        <div class="card">
+          <div class="card-header">
+            <h5 class="card-title mb-0">RND/EPT/025</h5>
+          </div>
+          <div class="card-body">
+            <div class="card-content">
+              <div class="row">
+                <div class="col-6"><strong>Status</strong></div>
+                <div class="col-6"><i class="fa-regular fa-circle-stop" style="color: #d20f0f;"></i> Offline</div>
+              </div>
+              <div class="row">
+                <div class="col-6"><strong>Pending Alarms</strong></div>
+                <div class="col-6"><i class="fas fa-exclamation-triangle icon-yellow"></i> Alarms (0135)</div>
+              </div>
+              <div class="row">
+                <div class="col-6"><strong>Pending Review</strong></div>
+                <div class="col-6">ALL RECORDS</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-12 col-md-6 col-lg-3 card-wrapper" data-status="offline">
+        <div class="card">
+          <div class="card-header">
+            <h5 class="card-title mb-0">RND/EPT/025</h5>
+          </div>
+          <div class="card-body">
+            <div class="card-content">
+              <div class="row">
+                <div class="col-6"><strong>Status</strong></div>
+                <div class="col-6"><i class="fa-regular fa-circle-stop" style="color: #d20f0f;"></i> Offline</div>
+              </div>
+              <div class="row">
+                <div class="col-6"><strong>Pending Alarms</strong></div>
+                <div class="col-6"><i class="fas fa-exclamation-triangle icon-yellow"></i> Alarms (0135)</div>
+              </div>
+              <div class="row">
+                <div class="col-6"><strong>Pending Review</strong></div>
+                <div class="col-6">ALL RECORDS</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- <div class="table-wrapper"> -->
+    <div class="table-wrapper" id="tableView" style="display: none;">
+      <div class="scrollable-tbody"> 
+        <table class="table table-bordered">
+          <thead>
+            <tr>
+              <th scope="col">Equipment Name</th>
+              <th scope="col">Status</th>
+              <th scope="col">Pending Alarms</th>
+              <th scope="col">Pending Review</th>
+              <th scope="col">Actions</th>
+            </tr>
+          </thead>
+          <tbody id="form-data-table">
+            <tr>
+              <td>RND/EPT/001</td>
+              <td><i class="fa-regular fa-circle-stop" style="color: #d20f0f;"></i> Offline</td>
+              <td><i class="fas fa-exclamation-triangle icon-yellow"></i> Alarms (0086)</td>
+              <td>ALL RECORDS</td>
+              <td><a class="dropdown-item btn-edit" href="#"><i class="fas fa-edit"></i></a></td>
+            </tr>
+            <tr>
+              <td>QC/API/EP/04</td>
+              <td><i class="fa-regular fa-circle-stop" style="color: #369523;"></i> Online</td>
+              <td><i class="fas fa-exclamation-triangle icon-yellow"></i> Alarms (0012)</td>
+              <td>ALL RECORDS</td>
+              <td><a class="dropdown-item btn-edit" href="#"><i class="fas fa-edit"></i></a></td>
+            </tr>
+            <tr>
+              <td>QC/API/EP/08</td>
+              <td><i class="fa-regular fa-circle-stop" style="color: #369523;"></i> Online</td>
+              <td><i class="fas fa-exclamation-triangle icon-yellow"></i> Alarms (0016)</td>
+              <td>ALL RECORDS</td>
+              <td><a class="dropdown-item btn-edit" href="#"><i class="fas fa-edit"></i></a></td>
+            </tr>
+            <tr>
+              <td>RND/EPT/005</td>
+              <td><i class="fa-regular fa-circle-stop" style="color: #d20f0f;"></i> Offline</td>
+              <td><i class="fas fa-exclamation-triangle icon-yellow"></i> Alarms (0090)</td>
+              <td>ALL RECORDS</td>
+              <td><a class="dropdown-item btn-edit" href="#"><i class="fas fa-edit"></i></a></td>
+            </tr>
+            <tr>
+              <td>QC/API/EP/10</td>
+              <td><i class="fa-regular fa-circle-stop" style="color: #369523;"></i> Online</td>
+              <td><i class="fas fa-exclamation-triangle icon-yellow"></i> Alarms (0030)</td>
+              <td>ALL RECORDS</td>
+              <td><a class="dropdown-item btn-edit" href="#"><i class="fas fa-edit"></i></a></td>
+            </tr>
+            <tr>
+              <td>QC/API/EP/12</td>
+              <td><i class="fa-regular fa-circle-stop" style="color: #369523;"></i> Online</td>
+              <td><i class="fas fa-exclamation-triangle icon-yellow"></i> Alarms (0105)</td>
+              <td>ALL RECORDS</td>
+              <td><a class="dropdown-item btn-edit" href="#"><i class="fas fa-edit"></i></a></td>
+            </tr>
+            <tr>
+              <td>QC/API/EP/015</td>
+              <td><i class="fa-regular fa-circle-stop" style="color: #369523;"></i> Online</td>
+              <td><i class="fas fa-exclamation-triangle icon-yellow"></i> Alarms (0110)</td>
+              <td>ALL RECORDS</td>
+              <td><a class="dropdown-item btn-edit" href="#"><i class="fas fa-edit"></i></a></td>
+            </tr>
+            <tr>
+              <td>RND/EPT/010</td>
+              <td><i class="fa-regular fa-circle-stop" style="color: #d20f0f;"></i> Offline</td>
+              <td><i class="fas fa-exclamation-triangle icon-yellow"></i> Alarms (0120)</td>
+              <td>ALL RECORDS</td>
+              <td><a class="dropdown-item btn-edit" href="#"><i class="fas fa-edit"></i></a></td>
+            </tr>
+            <tr>
+              <td>RND/EPT/015</td>
+              <td><i class="fa-regular fa-circle-stop" style="color: #d20f0f;"></i> Offline</td>
+              <td><i class="fas fa-exclamation-triangle icon-yellow"></i> Alarms (0125)</td>
+              <td>ALL RECORDS</td>
+              <td><a class="dropdown-item btn-edit" href="#"><i class="fas fa-edit"></i></a></td>
+            </tr>
+            <tr>
+              <td>RND/EPT/020</td>
+              <td><i class="fa-regular fa-circle-stop" style="color: #d20f0f;"></i> Offline</td>
+              <td><i class="fas fa-exclamation-triangle icon-yellow"></i> Alarms (0130)</td>
+              <td>ALL RECORDS</td>
+              <td><a class="dropdown-item btn-edit" href="#"><i class="fas fa-edit"></i></a></td>
+            </tr>
+            <tr>
+              <td>QC/API/EP/04</td>
+              <td><i class="fa-regular fa-circle-stop" style="color: #369523;"></i> Online</td>
+              <td><i class="fas fa-exclamation-triangle icon-yellow"></i> Alarms (0012)</td>
+              <td>ALL RECORDS</td>
+              <td><a class="dropdown-item btn-edit" href="#"><i class="fas fa-edit"></i></a></td>
+            </tr>
+            <tr>
+              <td>RND/EPT/025</td>
+              <td><i class="fa-regular fa-circle-stop" style="color: #d20f0f;"></i> Offline</td>
+              <td><i class="fas fa-exclamation-triangle icon-yellow"></i> Alarms (0135)</td>
+              <td>ALL RECORDS</td>
+              <td><a class="dropdown-item btn-edit" href="#"><i class="fas fa-edit"></i></a></td>
+            </tr>
+            <tr>
+              <td>RND/EPT/025</td>
+              <td><i class="fa-regular fa-circle-stop" style="color: #d20f0f;"></i> Offline</td>
+              <td><i class="fas fa-exclamation-triangle icon-yellow"></i> Alarms (0135)</td>
+              <td>ALL RECORDS</td>
+              <td><a class="dropdown-item btn-edit" href="#"><i class="fas fa-edit"></i></a></td>
+            </tr>
+            <tr>
+              <td>RND/EPT/025</td>
+              <td><i class="fa-regular fa-circle-stop" style="color: #d20f0f;"></i> Offline</td>
+              <td><i class="fas fa-exclamation-triangle icon-yellow"></i> Alarms (0135)</td>
+              <td>ALL RECORDS</td>
+              <td><a class="dropdown-item btn-edit" href="#"><i class="fas fa-edit"></i></a></td>
+            </tr>
+            <tr>
+              <td>RND/EPT/025</td>
+              <td><i class="fa-regular fa-circle-stop" style="color: #d20f0f;"></i> Offline</td>
+              <td><i class="fas fa-exclamation-triangle icon-yellow"></i> Alarms (0135)</td>
+              <td>ALL RECORDS</td>
+              <td><a class="dropdown-item btn-edit" href="#"><i class="fas fa-edit"></i></a></td>
+            </tr>
+            <tr>
+              <td>RND/EPT/025</td>
+              <td><i class="fa-regular fa-circle-stop" style="color: #d20f0f;"></i> Offline</td>
+              <td><i class="fas fa-exclamation-triangle icon-yellow"></i> Alarms (0135)</td>
+              <td>ALL RECORDS</td>
+              <td><a class="dropdown-item btn-edit" href="#"><i class="fas fa-edit"></i></a></td>
+            </tr>
+            <tr>
+              <td>RND/EPT/025</td>
+              <td><i class="fa-regular fa-circle-stop" style="color: #d20f0f;"></i> Offline</td>
+              <td><i class="fas fa-exclamation-triangle icon-yellow"></i> Alarms (0135)</td>
+              <td>ALL RECORDS</td>
+              <td><a class="dropdown-item btn-edit" href="#"><i class="fas fa-edit"></i></a></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+
+    <div class="d-flex justify-content-between align-items-center ">
+      <div class="entries-info d-flex align-items-center">
+        <span>Show</span>
+        <select id="entriesPerPage" class="form-select d-inline-block mx-2 entriesPerPage">
+          <option value="10" selected>10</option>
+          <option value="15">15</option>
+          <option value="25">25</option>
+          <option value="50">50</option>
+          <option value="100">100</option>
+        </select>
+        <span>entries per page</span>
+      </div>
+      <div class="entries-info d-flex align-items-center">
+        <small>Showing <span id="visible-entries">0</span> of <span id="total-entries">0</span> entries</small>
+      </div>
+      <nav aria-label="Page navigation" class="d-flex justify-content-end">
+        <ul class="pagination">
+          <li class="page-item" id="prev-page"><a class="page-link" href="#">Previous</a></li>
+          <li class="page-item"><a class="page-link" href="#">1</a></li>
+          <li class="page-item"><a class="page-link" href="#">2</a></li>
+          <li class="page-item"><a class="page-link" href="#">3</a></li>
+          <li class="page-item" id="next-page"><a class="page-link" href="#">Next</a></li>
+        </ul>
+      </nav>
+    </div>
+  </div>
+</div>
+{% block scripts %}
+  {{ block.super }}
+  <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.min.js"></script>
+  <script src="{% static 'js/Dashboard/Dashboard.js' %}"></script>
+  {% endblock %}
+{% endblock content %}
+
+

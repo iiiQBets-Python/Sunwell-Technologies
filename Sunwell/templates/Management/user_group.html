@@ -1,0 +1,201 @@
+{% extends "Base/base.html" %}
+{% load static %}
+
+{% block title %} Dashboard {% endblock %}
+
+{% block styles %}
+    {{ block.super }}
+    <link rel="stylesheet" href="{% static 'css/Management/user_group.css' %}">
+{% endblock styles %}
+
+{% block content %} 
+<div class="container mt-2 table-container fade-in">
+    <div class="d-flex justify-content-end mb-2">
+        <div class="ms-auto">
+            <div class="dropdown dept-filter">
+                <button class="btn btn-outline-secondary dropdown-toggle" type="button" id="deptFilterDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                    Select Departments
+                </button>
+                <ul class="dropdown-menu" aria-labelledby="deptFilterDropdown">
+                    <li><a class="dropdown-item" href="#" data-value="all">All Departments <span class="option-count">3</span></a></li>
+                    <li><a class="dropdown-item" href="#" data-value="qc">QC <span class="option-count">1</span></a></li>
+                    <li><a class="dropdown-item" href="#" data-value="it">IT <span class="option-count">1</span></a></li>
+                    <li><a class="dropdown-item" href="#" data-value="hr">HR <span class="option-count">1</span></a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <div class="d-flex justify-content-between align-items-center custom-label mb-2" style="font-weight: bold; padding: 5px 10px; background-color: rgb(235, 235, 235);">
+        <section class="d-block custom-label mb-2" style="background-color: rgb(235, 235, 235);text-align: center;font-weight: bold; padding: 5px 0px">
+            Admin Users <span id="records-info">(Records Found: 0, Selected: 0)</span>
+        </section>
+        <div class="d-flex justify-content-end align-items-center">
+            <div class="d-flex input-group me-3" style="width: 200px;">
+                <span class="input-group-text"><i class="fas fa-search"></i></span>
+                <input type="text" id="searchBar" class="form-control" placeholder="Search here..">
+            </div>
+            <div class="d-flex">
+                <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#adminUserModal">
+                    Add User
+                </button>
+            </div>
+        </div> 
+    </div>
+  <div class="table-wrapper">
+      <table class="table table-bordered">
+          <thead>
+              <tr>
+                  <th><input type="checkbox" id="selectAll"></th>
+                  <th scope="col">User Name</th>
+                  <th scope="col">Comm. Group</th>
+                  <th scope="col">Department Name</th>
+                  <th scope="col">Access Group</th>
+                  <th scope="col">Actions</th>
+              </tr>
+          </thead>
+          <tbody id="form-data-table">
+            {% for user in users %}
+            <tr>
+                <td><input type="checkbox" class="row-checkbox"></td>
+                <td>{{ user.username }}</td>
+                <td>{{ user.commGroup }}</td>
+                <td>{{ user.department }}</td>
+                <td>{{ user.role }}</td>
+                <td>
+                    <div class="dropdown">
+                        <a class="dropdown-item btn-edit" href="#"><i class="fas fa-edit"></i></a>
+                    </div>
+                </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+      </table>
+    </div>
+      <div class="d-flex justify-content-between mb-2">
+        <div class="entries-info d-flex align-items-center">
+          <span>Show</span>
+          <select id="entriesPerPage" class="form-select d-inline-block mx-2 entriesPerPage">
+              <option value="10" selected>10</option>
+              <option value="15">15</option>
+              <option value="25">25</option>
+              <option value="50">50</option>
+              <option value="100">100</option>
+          </select>
+          <span>entries per page</span>
+      </div>
+        <div class="entries-info d-flex align-items-center">
+            <small>Showing <span id="visible-entries">0</span> of <span id="total-entries">0</span> entries</small>
+        </div>
+        <nav aria-label="Page navigation" class="d-flex justify-content-end">
+            <ul class="pagination mb-0">
+                <li class="page-item" id="prev-page"><a class="page-link" href="#">Previous</a></li>
+                <li class="page-item"><a class="page-link" href="#">1</a></li>
+                <li class="page-item"><a class="page-link" href="#">2</a></li>
+                <li class="page-item" id="next-page"><a class="page-link" href="#">Next</a></li>
+            </ul>
+        </nav>
+    </div>
+  </div>
+  
+
+ <!-- The Modal -->
+ <div class="modal fade" id="adminUserModal" tabindex="-1" aria-labelledby="adminUserModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content container-custom">
+  
+      <!-- Modal Header -->
+      <div class="modal-header">
+        <h4 class="modal-title" id="adminUserModalLabel">Admin User</h4>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+  
+      <!-- Modal Body -->
+      <div class="modal-body">
+        <form id="adminUserForm" method="post" action="{% url 'user_group' %}">
+          {% csrf_token %}
+          <div class="row">
+            <div class="col-md-6 form-group">
+              <input type="text" class="form-control" id="userName" name="userName" maxlength="15" placeholder=" " required>
+              <label for="userName" class="form-label">User Name*</label>
+            </div>
+            <div class="col-md-6 form-group">
+              <input type="text" class="form-control" id="loginName" name="loginName" placeholder=" " required>
+              <label for="loginName" class="form-label">Login Name*</label>
+            </div>
+            <div class="col-md-6 form-group">
+              <input type="password" class="form-control" id="password" name="password" minlength="8" maxlength="15" placeholder=" " required>
+              <label for="password" class="form-label">Password*</label>
+            </div>
+            <div class="col-md-6 form-group">
+              <select class="form-select" id="passwordDuration" name="passwordDuration"  required>
+                <option value="30">30 Days</option>
+                <option value="60">60 Days</option>
+                <option value="90">90 Days</option>
+                <option value="120">120 Days</option>
+              </select>
+              <label for="passwordDuration" class="form-label">Set Password Duration in Days</label>
+            </div>
+            <div class="col-md-6 form-group">
+              <select class="form-select" id="role" name="role" placeholder=" " required>
+                <option value="admin">Admin</option>
+                <option value="general">General</option>
+                <option value="operator">Operator</option>
+                <!-- Options go here -->
+              </select>
+              <label for="role" class="form-label">Role*</label>
+            </div>
+            <div class="col-md-6 form-group">
+              <select class="form-select" id="commGroup" name="commGroup" placeholder=" " required>
+                {% for group in groups %}
+                    <option value="{{ group.CommGroup_code }}">{{ group.CommGroup_name }}</option>
+                  {% endfor %} 
+              </select>
+              <label for="commGroup" class="form-label">Comm. Group*</label>
+            </div>
+            <div class="col-md-6 form-group">
+              <select class="form-select mb-2" id="departmentName" name="departmentName" placeholder=" " required>
+                {% for department in departments %}
+                    <option value="{{ department.id }}">{{ department.department_name }}</option>
+                  {% endfor %} 
+              </select>
+              <label for="departmentName" class="form-label">Department Name*</label>
+              <label>Status</label>
+              <div id="status">
+                <div class="form-check form-check-inline">
+                  <input class="form-check-input" type="radio" name="status" id="statusActive" value="Active" checked required>
+                  <label class="form-check-label" for="statusActive">Active</label>
+                </div>
+                <div class="form-check form-check-inline">
+                  <input class="form-check-input" type="radio" name="status" id="statusInactive" value="Inactive">
+                  <label class="form-check-label" for="statusInactive">Inactive</label>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-6 form-group">
+              <select class="form-select" id="accessibleDepartment" name="accessibleDepartment" multiple required>
+                {% for department in departments %}
+                    <option value="{{ department.id }}">{{ department.department_name }}</option>
+                  {% endfor %} 
+              </select>
+              <label for="accessibleDepartment" class="form-label">Accessible Department</label>
+              <div id="selectedDepartments" class="mt-2"></div>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Close</button>
+            <button type="submit" class="btn btn-success">Save</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+{% block scripts %}
+{{ block.super }}
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.min.js"></script>
+<script src="{% static 'js/Management/user_group.js' %}"></script>
+{% endblock %}
+{% endblock content %}
+
+

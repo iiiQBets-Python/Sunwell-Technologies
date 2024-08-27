@@ -1,0 +1,512 @@
+{% extends "Base/base.html" %}
+{% load static %}
+
+{% block title %} Graphcolor {% endblock %}
+
+{% block styles %}
+    {{ block.super }}
+    <link rel="stylesheet" href="{% static 'css/Settings/graphcolor.css' %}">
+    <style>
+         .container {
+            margin-top: 20px;
+        }
+        .form-group {
+            margin-bottom: 10px;
+        }
+        .section-title {
+            font-weight: bold;
+            margin-top: 20px;
+        }
+        .nav-tabs .nav-item {
+            margin-bottom: -1px;
+        }
+        .tab-content {
+            border: 1px solid #dee2e6;
+            border-top: none;
+        }
+
+        /* Ensure the dropdown menu background remains default */
+        .custom-select option {
+            background-color: white;
+            color: black;
+        }
+        
+        /* Custom style for the selected item */
+        .color-select{
+            cursor: pointer;
+        }
+
+    </style>
+{% endblock styles %}
+
+{% block content %} 
+<div class="container mt-2 equipment-setting">
+    <h3 class="mb-2">Equipment Setting</h3>
+    <div class="row mb-3">
+        <div class="col-md-3">
+            <label for="equipmentName" class="form-label">Equipment Name</label>
+            <input type="text" class="form-control" id="equipmentName" value="RND/EPT/001">
+        </div>
+        <div class="col-md-4">
+            <label for="ipAddress" class="form-label">IP Address</label>
+            <div class="d-flex">
+                <input type="text" class="form-control me-2" value="192">
+                <span>.</span>
+                <input type="text" class="form-control me-2 ms-2" value="168">
+                <span>.</span>
+                <input type="text" class="form-control me-2 ms-2" value="1">
+                <span>.</span>
+                <input type="text" class="form-control ms-2" value="2">
+            </div>
+        </div>
+        <div class="col-md-3">
+            <label for="loginInterval" class="form-label">Login Interval</label>
+            <div class="d-flex align-items-center">
+                <input type="number" class="form-control me-2" id="loginInterval" value="5" min="1" max="480">
+                <span style="white-space: nowrap;">mins (Max 480)</span>
+            </div>
+        </div>
+    </div>
+
+
+    <ul class="nav nav-tabs" id="myTab" role="tablist">
+        <li class="nav-item" role="presentation">
+            <button class="nav-link active" id="parameters-tab" data-bs-toggle="tab" data-bs-target="#parameters" type="button" role="tab" aria-controls="parameters" aria-selected="true">Equipment Parameters</button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="settings-tab" data-bs-toggle="tab" data-bs-target="#settings" type="button" role="tab" aria-controls="settings" aria-selected="false">Equipment Settings</button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="write-event-tab" data-bs-toggle="tab" data-bs-target="#write-event" type="button" role="tab" aria-controls="write-event" aria-selected="false">Equipment Write Event</button>
+        </li>
+    </ul>
+
+
+    <div class="tab-content" id="myTabContent">
+        <div class="tab-pane fade show active table-container" id="parameters" role="tabpanel" aria-labelledby="parameters-tab">
+            <div class="table-wrapper">
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th><input type="checkbox" id="selectAll"></th>
+                            <th scope="col">Name (Temp in °C and RH in %)</th>
+                            <th scope="col">Graph Color</th>
+                        </tr>
+                    </thead>
+                    <tbody id="form-data-table">
+                        <tr>
+                            <td><input type="checkbox" class="row-checkbox"></td>
+                            <td>Temperature1</td>
+                            <td>
+                                <select class="form-select color-select">
+                                    <option value="color">Select Color</option>
+                                    <option value="black">Black</option>
+                                    <option value="darkred">DarkRed</option>
+                                    <option value="midnightblue">MidnightBlue</option>
+                                    <option value="darksalmon">DarkSalmon</option>
+                                    <option value="olive">Olive</option>
+                                    <option value="darkslateblue">DarkSlateBlue</option>
+                                    <option value="orange">Orange</option>
+                                    <option value="darkorange">DarkOrange</option>
+                                </select>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><input type="checkbox" class="row-checkbox"></td>
+                            <td>Humidity1</td>
+                            <td>
+                                <select class="form-select color-select">
+                                    <option value="color">Select Color</option>
+                                    <option value="black">Black</option>
+                                    <option value="darkred">DarkRed</option>
+                                    <option value="midnightblue">MidnightBlue</option>
+                                    <option value="darksalmon">DarkSalmon</option>
+                                    <option value="olive">Olive</option>
+                                    <option value="darkslateblue">DarkSlateBlue</option>
+                                    <option value="orange">Orange</option>
+                                    <option value="darkorange">DarkOrange</option>
+                                </select>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><input type="checkbox" class="row-checkbox"></td>
+                            <td>Temperature2</td>
+                            <td>
+                                <select class="form-select color-select">
+                                    <option value="color">Select Color</option>
+                                    <option value="black">Black</option>
+                                    <option value="darkred">DarkRed</option>
+                                    <option value="midnightblue">MidnightBlue</option>
+                                    <option value="darksalmon">DarkSalmon</option>
+                                    <option value="olive">Olive</option>
+                                    <option value="darkslateblue">DarkSlateBlue</option>
+                                    <option value="orange">Orange</option>
+                                    <option value="darkorange">DarkOrange</option>
+                                </select>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><input type="checkbox" class="row-checkbox"></td>
+                            <td>Humidity2</td>
+                            <td>
+                                <select class="form-select color-select">
+                                    <option value="color">Select Color</option>
+                                    <option value="black">Black</option>
+                                    <option value="darkred">DarkRed</option>
+                                    <option value="midnightblue">MidnightBlue</option>
+                                    <option value="darksalmon">DarkSalmon</option>
+                                    <option value="olive">Olive</option>
+                                    <option value="darkslateblue">DarkSlateBlue</option>
+                                    <option value="orange">Orange</option>
+                                    <option value="darkorange">DarkOrange</option>
+                                </select>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><input type="checkbox" class="row-checkbox"></td>
+                            <td>Temperature3</td>
+                            <td>
+                                <select class="form-select color-select">
+                                    <option value="color">Select Color</option>
+                                    <option value="black">Black</option>
+                                    <option value="darkred">DarkRed</option>
+                                    <option value="midnightblue">MidnightBlue</option>
+                                    <option value="darksalmon">DarkSalmon</option>
+                                    <option value="olive">Olive</option>
+                                    <option value="darkslateblue">DarkSlateBlue</option>
+                                    <option value="orange">Orange</option>
+                                    <option value="darkorange">DarkOrange</option>
+                                </select>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><input type="checkbox" class="row-checkbox"></td>
+                            <td>Humidity3</td>
+                            <td>
+                                <select class="form-select color-select">
+                                    <option value="color">Select Color</option>
+                                    <option value="black">Black</option>
+                                    <option value="darkred">DarkRed</option>
+                                    <option value="midnightblue">MidnightBlue</option>
+                                    <option value="darksalmon">DarkSalmon</option>
+                                    <option value="olive">Olive</option>
+                                    <option value="darkslateblue">DarkSlateBlue</option>
+                                    <option value="orange">Orange</option>
+                                    <option value="darkorange">DarkOrange</option>
+                                </select>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><input type="checkbox" class="row-checkbox"></td>
+                            <td>Temperature4</td>
+                            <td>
+                                <select class="form-select color-select">
+                                    <option value="color">Select Color</option>
+                                    <option value="black">Black</option>
+                                    <option value="darkred">DarkRed</option>
+                                    <option value="midnightblue">MidnightBlue</option>
+                                    <option value="darksalmon">DarkSalmon</option>
+                                    <option value="olive">Olive</option>
+                                    <option value="darkslateblue">DarkSlateBlue</option>
+                                    <option value="orange">Orange</option>
+                                    <option value="darkorange">DarkOrange</option>
+                                </select>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><input type="checkbox" class="row-checkbox"></td>
+                            <td>Humidity4</td>
+                            <td>
+                                <select class="form-select color-select">
+                                    <option value="color">Select Color</option>
+                                    <option value="black">Black</option>
+                                    <option value="darkred">DarkRed</option>
+                                    <option value="midnightblue">MidnightBlue</option>
+                                    <option value="darksalmon">DarkSalmon</option>
+                                    <option value="olive">Olive</option>
+                                    <option value="darkslateblue">DarkSlateBlue</option>
+                                    <option value="orange">Orange</option>
+                                    <option value="darkorange">DarkOrange</option>
+                                </select>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="d-flex justify-content-between mb-2">
+                <div class="entries-info d-flex align-items-center">
+                    <span>Show</span>
+                    <select id="entriesPerPage" class="form-select d-inline-block mx-2 entriesPerPage">
+                        <option value="10" selected>10</option>
+                        <option value="15">15</option>
+                        <option value="25">25</option>
+                        <option value="50">50</option>
+                        <option value="100">100</option>
+                    </select>
+                    <span>entries per page</span>
+                </div>
+                <div class="entries-info d-flex align-items-center">
+                    <small>Showing <span id="visible-entries">0</span> of <span id="total-entries">0</span> entries</small>
+                </div>
+                <nav aria-label="Page navigation" class="d-flex justify-content-end">
+                    <ul class="pagination mb-0">
+                        <li class="page-item" id="prev-page"><a class="page-link" href="#">Previous</a></li>
+                        <li class="page-item"><a class="page-link" href="#">1</a></li>
+                        <li class="page-item"><a class="page-link" href="#">2</a></li>
+                        <li class="page-item" id="next-page"><a class="page-link" href="#">Next</a></li>
+                    </ul>
+                </nav>
+            </div>
+        </div>
+
+
+        <div class="tab-pane fade" id="settings" role="tabpanel" aria-labelledby="settings-tab" style="padding:15px; background:#ffff;">
+            <div class="settings-wrapper fade show active" id="equipment-parameters" role="tabpanel" aria-labelledby="equipment-parameters-tab">
+                <h5 class="section-title">Temperature</h5>
+                <div class="row">
+                    <!-- First Column -->
+                    <div class="col-md-4">
+                        <div class="mb-3 row">
+                            <label class="col-sm-5 col-form-label">Set Value</label>
+                            <div class="col-sm-7">
+                                <input type="text" class="form-control" value="25.0">
+                            </div>
+                        </div>
+                        <div class="mb-3 row">
+                            <label class="col-sm-5 col-form-label">Low Alarm</label>
+                            <div class="col-sm-7">
+                                <input type="text" class="form-control" value="23.0">
+                            </div>
+                        </div>
+                        <div class="mb-3 row">
+                            <label class="col-sm-5 col-form-label">High Alarm</label>
+                            <div class="col-sm-7">
+                                <input type="text" class="form-control" value="27.0">
+                            </div>
+                        </div>
+                        <div class="mb-3 row">
+                            <label class="col-sm-5 col-form-label">Total Sensor</label>
+                            <div class="col-sm-7">
+                                <input type="text" class="form-control" value="4">
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Second Column -->
+                    <div class="col-md-4">
+                        <div class="mb-3 row">
+                            <label class="col-sm-5 col-form-label">High Alert</label>
+                            <div class="col-sm-7">
+                                <input type="text" class="form-control" value="300">
+                            </div>
+                        </div>
+                        <div class="mb-3 row">
+                            <label class="col-sm-5 col-form-label">Low Alert</label>
+                            <div class="col-sm-7">
+                                <input type="text" class="form-control" value="800">
+                            </div>
+                        </div>
+                        <div class="mb-3 row">
+                            <label class="col-sm-5 col-form-label">Cooling</label>
+                            <div class="col-sm-7">
+                                <select class="form-select">
+                                    <option>Yes</option>
+                                    <option>No</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+    
+                    <!-- Third Column -->
+                    <!-- <div class="col-md-4">
+                        <div class="mb-3 row">
+                            <label class="col-sm-5 col-form-label">PID TS</label>
+                            <div class="col-sm-7">
+                                <input type="text" class="form-control" value="0">
+                            </div>
+                        </div>
+                        <div class="mb-3 row">
+                            <label class="col-sm-5 col-form-label">PID Cycle Time</label>
+                            <div class="col-sm-7">
+                                <input type="text" class="form-control" value="20">
+                            </div>
+                        </div>
+                        <div class="mb-3 row">
+                            <label class="col-sm-5 col-form-label">PID Output Power</label>
+                            <div class="col-sm-7">
+                                <input type="text" class="form-control" value="0">
+                            </div>
+                        </div>
+                    </div> -->
+                </div>
+    
+    
+    
+                <h5 class="section-title">Humidity</h5>
+                <div class="row">
+                    <!-- First Column -->
+                    <div class="col-md-4">
+                        <div class="mb-3 row">
+                            <label class="col-sm-5 col-form-label">Set Value</label>
+                            <div class="col-sm-7">
+                                <input type="text" class="form-control" value="60.0">
+                            </div>
+                        </div>
+                        <div class="mb-3 row">
+                            <label class="col-sm-5 col-form-label">Low Alarm</label>
+                            <div class="col-sm-7">
+                                <input type="text" class="form-control" value="55.0">
+                            </div>
+                        </div>
+                        <div class="mb-3 row">
+                            <label class="col-sm-5 col-form-label">High Alarm</label>
+                            <div class="col-sm-7">
+                                <input type="text" class="form-control" value="65.0">
+                            </div>
+                        </div>
+                        <div class="mb-3 row">
+                            <label class="col-sm-5 col-form-label">Total Sensor</label>
+                            <div class="col-sm-7">
+                                <input type="text" class="form-control" value="4">
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Second Column -->
+                    <div class="col-md-4">
+                        <div class="mb-3 row">
+                            <label class="col-sm-5 col-form-label">High Alert</label>
+                            <div class="col-sm-7">
+                                <input type="text" class="form-control" value="20">
+                            </div>
+                        </div>
+                        <div class="mb-3 row">
+                            <label class="col-sm-5 col-form-label">Low Alert</label>
+                            <div class="col-sm-7">
+                                <input type="text" class="form-control" value="60">
+                            </div>
+                        </div>
+                        <div class="mb-3 row">
+                            <label class="col-sm-5 col-form-label">Cooling</label>
+                            <div class="col-sm-7">
+                                <select class="form-select">
+                                    <option>Yes</option>
+                                    <option>No</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+    
+                    <!-- Third Column -->
+                    <!-- <div class="col-md-4">
+                        <div class="mb-3 row">
+                            <label class="col-sm-5 col-form-label">PID TS</label>
+                            <div class="col-sm-7">
+                                <input type="text" class="form-control" value="0">
+                            </div>
+                        </div>
+                        <div class="mb-3 row">
+                            <label class="col-sm-5 col-form-label">PID Cycle Time</label>
+                            <div class="col-sm-7">
+                                <input type="text" class="form-control" value="10">
+                            </div>
+                        </div>
+                        <div class="mb-3 row">
+                            <label class="col-sm-5 col-form-label">PID Output Power</label>
+                            <div class="col-sm-7">
+                                <input type="text" class="form-control" value="0">
+                            </div>
+                        </div>
+                    </div> -->
+                </div>
+            </div>
+        </div>
+
+        <div class="tab-pane fade" id="write-event" role="tabpanel" aria-labelledby="write-event-tab">
+            <!-- Equipment Write Event content here -->
+            <p>Equipment Write Event content goes here.</p>
+        </div>
+    </div>
+</div>
+
+<script src="script.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    // Update entries info
+    const updateEntriesInfo = () => {
+        const totalEntries = document.querySelectorAll('#form-data-table tr').length;
+        const visibleEntries = document.querySelectorAll('#form-data-table tr:not(.d-none)').length;
+        document.getElementById('total-entries').textContent = totalEntries;
+        document.getElementById('visible-entries').textContent = visibleEntries;
+    };
+
+    // Initial update
+    updateEntriesInfo();
+
+    // Handle entries per page change
+    document.getElementById('entriesPerPage').addEventListener('change', function () {
+        const entriesPerPage = parseInt(this.value);
+        const rows = document.querySelectorAll('#form-data-table tr');
+        rows.forEach((row, index) => {
+            row.classList.toggle('d-none', index >= entriesPerPage);
+        });
+        updateEntriesInfo();
+    });
+
+    // Handle pagination (basic example)
+    let currentPage = 1;
+    const rowsPerPage = 10;
+    const rows = document.querySelectorAll('#form-data-table tr');
+    const totalPages = Math.ceil(rows.length / rowsPerPage);
+
+    const showPage = (pageNumber) => {
+        rows.forEach((row, index) => {
+            const start = (pageNumber - 1) * rowsPerPage;
+            const end = start + rowsPerPage;
+            row.classList.toggle('d-none', index < start || index >= end);
+        });
+        currentPage = pageNumber;
+        updateEntriesInfo();
+    };
+
+    document.getElementById('prev-page').addEventListener('click', function (e) {
+        e.preventDefault();
+        if (currentPage > 1) {
+            showPage(currentPage - 1);
+        }
+    });
+
+    document.getElementById('next-page').addEventListener('click', function (e) {
+        e.preventDefault();
+        if (currentPage < totalPages) {
+            showPage(currentPage + 1);
+        }
+    });
+
+    showPage(currentPage);
+
+    // Handle select all functionality
+    document.getElementById('selectAll').addEventListener('change', function () {
+        const checkboxes = document.querySelectorAll('.row-checkbox');
+        checkboxes.forEach(checkbox => {
+            checkbox.checked = this.checked;
+        });
+    });
+
+    document.querySelectorAll('.color-select').forEach(function(selectElement) {
+    selectElement.addEventListener('change', function() {
+        const selectedColor = this.value;
+
+        // Apply styles to the <select> element
+        this.style.backgroundColor = selectedColor;
+        this.style.color = 'white';
+        this.style.fontWeight = 'bold';
+
+        // Keep the dropdown background as default
+        this.classList.add('custom-select');
+        });
+    });
+});
+</script>
+
+{% endblock content %}

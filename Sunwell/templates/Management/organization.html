@@ -1,0 +1,78 @@
+{% extends "Base/base.html" %}
+{% load static %}
+
+{% block title %} Dashboard {% endblock %}
+
+{% block styles %}
+    {{ block.super }}
+    <style type="text/css">
+        .avatar {
+            margin-top: 10px;
+            width: 200px;  
+            height: 200px; 
+            object-fit: cover; 
+            border-radius: 50%; 
+        }
+        
+        .address-input {
+            height: 100px; 
+        }
+        .header {
+            color: #000d1d;
+        }
+        
+        .edit-button {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+        }
+    </style>
+{% endblock styles %}
+
+{% block content %}
+<div class="container mt-2 position-relative">
+    <!-- Edit Button -->
+    <a href="{% url 'edit_organization' organization.id %}" class="btn btn-primary edit-button">Edit</a>
+
+    <h1 class="text-center header">Company Profile</h1>
+    <hr>
+    <div class="row">
+        <div class="col-md-3">
+            <div class="text-center">
+                {% if organization.logo %}
+                    <img src="{{ organization.logo.url }}" class="avatar rounded-circle img-thumbnail" alt="Company Logo">
+                {% else %}
+                    <img src="{% static 'images/default_logo.png' %}" class="avatar rounded-circle img-thumbnail" alt="Default Logo">
+                {% endif %}
+            </div>
+        </div>
+        
+        <div class="col-md-9 mt-2">
+            <div class="mb-3 row">
+                <label for="name" class="col-lg-3 col-form-label"><strong>Company Name:</strong></label>
+                <div class="col-lg-9">
+                    <input type="text" class="form-control" name="name" id="name" value="{{ organization.name }}" readonly>
+                </div>
+            </div>
+            <div class="mb-3 row">
+                <label for="email" class="col-lg-3 col-form-label"><strong>Email:</strong></label>
+                <div class="col-lg-9">
+                    <input type="email" class="form-control" name="email" id="email" value="{{ organization.email }}" readonly>
+                </div>
+            </div>
+            <div class="mb-3 row">
+                <label for="phoneNo" class="col-lg-3 col-form-label"><strong>Phone Number:</strong></label>
+                <div class="col-lg-9">
+                    <input type="tel" class="form-control" name="phoneNo" id="phoneNo" value="{{ organization.phoneNo }}" readonly>
+                </div>
+            </div>
+            <div class="mb-3 row">
+                <label for="address" class="col-lg-3 col-form-label"><strong>Address</strong>:</label>
+                <div class="col-lg-9">
+                    <textarea class="form-control address-input" name="address" readonly id="address">{{ organization.address }} </textarea>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock content %}

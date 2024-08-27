@@ -1,0 +1,137 @@
+{% extends "Base/base.html" %}
+{% load static %}
+{% block title %} comm_group {% endblock %}
+{% block styles %}
+    {{ block.super }}
+    <link rel="stylesheet" href="{% static 'css/Management/comm_group.css' %}">
+{% endblock styles %}
+
+{% block content %}
+<div class="container mt-2 table-container fade-in">
+    <!-- <div class="d-flex justify-content-end mb-2">
+        <button type="button" class="btn btn-primary">
+            space for the others icons
+        </button>
+    </div> -->
+    <div class="d-flex justify-content-between align-items-center custom-label mt-5 mb-2" style="font-weight: bold; padding: 5px 10px; background-color: rgb(235, 235, 235);">
+        <section class="d-block custom-label mb-2" style="background-color: rgb(235, 235, 235); text-align: center; font-weight: bold; padding: 5px 0px">
+            Comm. Group <span id="records-info">(Records Found: 0, Selected: 0)</span>
+        </section>    
+        <div class="d-flex justify-content-end align-items-center">
+            <div class="d-flex input-group me-3" style="width: 200px;">
+                <span class="input-group-text"><i class="fas fa-search"></i></span>
+                <input type="text" id="searchBar" class="form-control" placeholder="Search here..">
+            </div>
+            <div class="d-flex">
+                <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#adminUserModal">
+                    Add Comm.group
+                </button> 
+            </div>
+        </div> 
+    </div>
+    
+    <div class="table-wrapper">
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th><input type="checkbox" id="selectAll"></th>
+                    <th scope="col">Comm. Code</th>
+                    <th scope="col">Comm. Group</th>
+                    <th scope="col">Actions</th>
+                </tr>
+            </thead>
+            <tbody id="form-data-table" class="scrollable-tbody">
+            {% for group in comm_groups %}
+            <tr>
+                <td><input type="checkbox" class="row-checkbox"></td>
+                <td>{{ group.CommGroup_code }}</td>
+                <td>{{ group.CommGroup_name }}</td>
+                <td>
+                  <div class="dropdown">
+                    <a class="dropdown-item btn-edit" href="#"><i class="fas fa-edit"></i></a>
+                  </div>
+                </td>
+            </tr>
+            {% endfor %}
+                
+            </tbody>
+        </table>
+    </div>
+    <div class="d-flex justify-content-between align-items-center">
+        <div class="entries-info d-flex align-items-center">
+            <span>Show</span>
+            <select id="entriesPerPage" class="form-select d-inline-block mx-2 entriesPerPage">
+                <option value="10" selected>10</option>
+                <option value="15">15</option>
+                <option value="25">25</option>
+                <option value="50">50</option>
+                <option value="100">100</option>
+            </select>
+            <span>entries per page</span>
+        </div>
+        <div>
+            <small>Showing <span id="visible-entries">0</span> of <span id="total-entries">0</span> entries</small>
+        </div>
+        <nav aria-label="Page navigation" class="d-flex justify-content-end">
+            <ul class="pagination">
+                <li class="page-item" id="prev-page"><a class="page-link" href="#">Previous</a></li>
+                <li class="page-item"><a class="page-link" href="#">1</a></li>
+                <li class="page-item"><a class="page-link" href="#">2</a></li>
+                <li class="page-item"><a class="page-link" href="#">3</a></li>
+                <li class="page-item" id="next-page"><a class="page-link" href="#">Next</a></li>
+            </ul>
+        </nav>
+    </div>
+</div>
+
+<!-- The Modal -->
+<div class="modal fade" id="adminUserModal" tabindex="-1" aria-labelledby="adminUserModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content container-custom">
+            <!-- Modal Header -->
+            <div class="modal-header">
+                <h4 class="modal-title" id="adminUserModalLabel">Comm.Group Form</h4>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <!-- Modal Body -->
+            <div class="modal-body">
+                <form id="adminUserForm" method="post" action="{% url 'comm_group' %}">
+                    {% csrf_token %}
+                    <div class="row">
+                        <div class="col-md-12 form-group">
+                            <input type="text" class="form-control" id="name"  name="comm_name" maxlength="50" placeholder=" " required>
+                            <label for="comm_name" class="form-label">Comm.Group Name</label>
+                        </div>
+                        <div class="col-md-12 form-group">
+                            <input type="number" class="form-control" id="code" name="comm_code" maxlength="10" placeholder=" " required>
+                            <label for="comm_code" class="form-label">Comm.Group Code</label>
+                        </div>
+                        <div class="col-md-12 form-group">
+                            <input type="text" class="form-control" id="softKey" name="softKey" maxlength="50" placeholder=" " required>
+                            <label for="softKey" class="form-label">Soft Key</label>
+                        </div>
+                        <div class="col-md-12 form-group">
+                            <input type="text" class="form-control" id="activationKey" name="activationKey" maxlength="50" placeholder=" " required>
+                            <label for="activationKey" class="form-label">Activation Key</label>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-success">Save</button>
+                    </div>
+                </form>
+            </div>
+            <!-- Modal Footer -->
+            
+        </div>
+    </div>
+</div>
+
+{% block scripts %}
+  {{ block.super }}
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="{% static 'js/Management/comm_group.js' %}"></script>
+  {% endblock %}
+{% endblock content %}
+
+

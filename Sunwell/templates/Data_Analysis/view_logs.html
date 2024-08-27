@@ -1,0 +1,227 @@
+{% extends "Base/base.html" %}
+{% load static %}
+{% block title %} Restore {% endblock %}
+{% block styles %}
+    {{ block.super }}
+    <style>
+        body{
+            background-color:#ffff;
+        }
+        .content {
+            flex-grow: 1;
+            overflow-y: auto;
+            padding: 0px;
+        }
+
+        .container {
+            max-width: 100%;  
+        }
+
+        .form-label {
+            flex: 0 0 30%; /* Adjust the width as needed */
+            color: #333;
+        }
+
+        .input-container {
+            flex: 1;
+            position: relative;
+        }
+
+        /* Floating label styles */
+        .input-container input.form-control,
+        .input-container select.form-select {
+            width: 100%;
+            padding: 10px;
+            border-radius: 4px;
+            border: 1px solid #ced4da;
+            transition: border-color 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .input-container input.form-control:focus,
+        .input-container select.form-select:focus {
+            border-color: #007bff;
+            box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+        }
+
+        .input-container .form-label {
+            position: absolute;
+            top: 50%;
+            left: 12px;
+            transform: translateY(-50%);
+            padding: 0 4px;
+            color: #6c757d;
+            transition: all 0.2s ease-in-out;
+            pointer-events: none;
+        }
+
+        .input-container input.form-control:focus ~ .form-label,
+        .input-container input.form-control:not(:placeholder-shown) ~ .form-label,
+        .input-container select.form-select:focus ~ .form-label,
+        .input-container select.form-select:not(:placeholder-shown) ~ .form-label {
+            top: 0px;
+            left: 5px;
+            font-size: 14px;
+            transition: font-weight 0.3s ease-in-out;
+        }
+
+        a {
+            text-decoration: none;
+            color: black;
+        }
+
+        a:hover {
+            text-decoration: none;
+            color: rgb(238, 238, 238);
+        }
+
+        .form-control:focus,
+        .form-select:focus,
+        .form-control.filled,
+        .form-select.filled {
+            border-color: #007bff;
+            box-shadow: none;
+        }
+
+        .form-control:focus ~ .form-label,
+        .form-select:focus ~ .form-label,
+        .form-control:not(:placeholder-shown) ~ .form-label,
+        .form-select:not(:placeholder-shown) ~ .form-label {
+            top: 0;
+            transform: translateY(-60%);
+            left: 5px;
+            font-size: 14px;
+            color: #007bff;
+        }
+
+        .form-control.filled ~ .form-label,
+        .form-select.filled ~ .form-label,
+        .form-control:not(:placeholder-shown) ~ .form-label,
+        .form-select:not(:placeholder-shown)~ .form-label {
+            color: black; /* Initially black */
+        }
+        
+        .form-control:focus ~ .form-label,
+        .form-select:focus ~ .form-label,
+        .form-control:focus.filled ~ .form-label,
+        .form-select:focus.filled ~ .form-label {
+            color: #007bff; 
+            font-weight: bold;
+        }
+
+        .form-select option.selected{
+            background-color: #0d4175;
+        }
+
+        .form-label {
+            position: absolute;
+            top: 50%;
+            left: 25px;
+            transform: translateY(-50%);
+            background: #fff;
+            padding: 0 5px;
+            color: #aaa;
+            transition: 0.2s ease all;
+            pointer-events: none;
+        }
+        .form-select.entriesPerPage {
+            width: auto;
+            display: inline-block;
+            vertical-align: middle;
+            height: 34px; /* Match height with other form elements */
+        }
+        small {
+            display: block;
+            margin-top: 5px;
+            color: #6c757d; /* Optional: match the color to your design */
+            font-size: 12px; /* Optional: adjust the font size if needed */
+        }
+    </style>
+{% endblock styles %}
+
+{% block content %}
+<div class="container mt-2 equipment-setting">
+    <h3 class="mb-3">View Data Log</h3>
+    <div class="form-container">
+        <form class="row g-4">
+            <div class="form-group col-md-4">
+                <div class="input-container">
+                    <select id="equipment" class="form-control" name="Equipment" placeholder=" " required>
+                        <option value="" disabled selected>Select Equipment</option>
+                        <option value="RND">RND/EPT/001</option>
+                        <option value="QC">QC/API/EP/04</option>
+                        <!-- Add more options as needed -->
+                    </select>
+                    <label for="equipment" class="form-label">Equipment</label>
+                </div>
+            </div>
+            <div class="form-group col-md-4">
+                <div class="input-container">
+                    <input type="date" class="form-control" id="fromDate" placeholder=" ">
+                    <label for="fromDate" class="form-label">From Date</label>
+                </div>
+            </div>
+            <div class="form-group col-md-4">
+                <div class="input-container">
+                    <input type="date" class="form-control" id="toDate" placeholder=" ">
+                    <label for="toDate" class="form-label">To Date</label>
+                </div>
+            </div>
+            <div class="form-group col-md-4">
+                <div class="input-container">
+                    <select id="plotDuration" class="form-control" name="plotDuration" placeholder="0 Minutes" required>
+                        <option value="" disabled selected>Minutes</option>
+                        <option value="1">1</option>
+                        <option value="5">5</option>
+                        <option value="15">15</option>
+                        <option value="30">30</option>
+                        <option value="60">60</option>
+                        <option value="90">90</option>
+                        <!-- Add more options as needed -->
+                    </select>
+                    <label for="plotDuration" class="form-label">Plotting Duration</label>
+                </div>
+                <small>If Date Diff. is more then, please use max. plot duration</small>
+            </div>
+            <div class="form-group col-md-4">
+                <div class="input-container">
+                    <input type="time" class="form-control" id="fromTime" value="00:00">
+                    <label for="fromTime" class="form-label">From Time</label>
+                </div>
+            </div>
+            <div class="form-group col-md-4">
+                <div class="input-container">
+                    <input type="time" class="form-control" id="toTime" value="23:59">
+                    <label for="toTime" class="form-label">To Time</label>
+                </div>
+            </div>
+            
+            <div class="form-group col-md-4">
+                <div class="input-container">
+                    <select id="parameterType" class="form-control" name="Parameter" placeholder=" " required>
+                        <option selected>Both</option>
+                        <option>Temperature</option>
+                        <option>Humidity</option>
+                        <!-- Add more options as needed -->
+                    </select>
+                    <label for="parameterType" class="form-label">Parameter Type</label>
+                </div>
+            </div>
+            <div class="form-group col-md-4">
+                <div class="input-container">
+                    <select id="reportType" class="form-control" name="Report" placeholder=" " required>
+                        <option selected>Data Log</option>
+                        <option>Type 1</option>
+                        <option>Type 2</option>
+                        <!-- Add more options as needed -->
+                    </select>
+                    <label for="reportType" class="form-label">Report Type</label>
+                </div>
+            </div>
+            <div class="form-group col-md-4 d-flex align-items-end">
+                <button type="submit" class="btn btn-primary w-50">Print</button>
+                <button type="submit" class="btn btn-primary w-50 ms-2">Graph</button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock content %}

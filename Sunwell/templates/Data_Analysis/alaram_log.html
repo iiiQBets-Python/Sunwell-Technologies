@@ -1,0 +1,292 @@
+{% extends "Base/base.html" %}
+{% load static %}
+
+{% block title %} Dashboard {% endblock %}
+
+{% block styles %}
+    {{ block.super }}
+    <style>
+        body {
+            background-color: #ffffff; 
+        }
+
+        .container {
+            padding: 5px !important;
+        }
+
+        .header-section {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 0;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .form-container {
+            padding: 20px;
+            margin-bottom: 10px;
+            border-radius: 10px;
+        }
+
+        .form-group {
+            display: flex;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .form-label {
+            flex: 0 0 30%;
+            margin-right: 10px;
+            font-weight: bold;
+            color: #333;
+        }
+
+        .input-container {
+            flex: 1;
+            position: relative;
+            margin-left: 15px;
+        }
+
+        .input-container input.form-control,
+        .input-container select.form-select {
+            width: 100%;
+            padding: 10px;
+            border-radius: 4px;
+            border: 1px solid #ced4da;
+            transition: border-color 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .left-filter .input-container {
+            margin-bottom: 8px;
+        }
+
+        .input-container input.form-control:focus,
+        .input-container select.form-select:focus {
+            border-color: #007bff;
+            box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+        }
+
+        .input-container .floating-label {
+            position: absolute;
+            top: 50%;
+            left: 12px;
+            transform: translateY(-50%);
+            background-color: #ffffff;
+            padding: 0 4px;
+            color: #6c757d;
+            transition: all 0.2s ease-in-out;
+            pointer-events: none;
+        }
+
+        .input-container input.form-control:focus ~ .floating-label,
+        .input-container input.form-control:not(:placeholder-shown) ~ .floating-label,
+        .input-container select.form-select:focus ~ .floating-label,
+        .input-container select.form-select:not(:placeholder-shown) ~ .floating-label {
+            top: -2px;
+            left: 8px;
+            font-size: 14px;
+            font-weight: bold;
+            color: #007bff;
+            background-color: #ffffff;
+        }
+
+        .filter-section {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+
+        .filter-section .left-filter, .filter-section .right-filter {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            width: 100%;
+            max-width: 48%;
+            margin-bottom: 2px;
+        }
+
+        .table-section {
+            margin-top: 10px;
+        }
+
+        .table-responsive {
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .table thead th {
+            background-color: #d3d3d3; /* Changed to grey */
+            color: #333;
+        }
+
+        .input-container #page-size {
+            max-width: 150px; /* Reduced size of Page Size input field */
+            padding: 8px;
+            display: inline-block;
+        }
+
+        .button-group {
+            display: flex;
+            justify-content: flex-start;
+            align-items: center;
+            padding: 0 5px;
+            margin-top: 10px;
+        }
+        
+
+        .button-group .btn {
+            margin-left: 10px;
+        }
+
+        .status-section {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 10px;
+    background-color: #f0f0f0;
+    padding: 10px;
+    border-radius: 5px;
+}
+
+.status-section p {
+    margin: 0;
+}
+
+#filtered-records {
+    text-align: left;
+}
+
+#record-count {
+    text-align: center;
+    flex: 1;
+}
+
+        @media (max-width: 768px) {
+            .filter-section .left-filter, .filter-section .right-filter {
+                width: 100%;
+            }
+
+            .button-group {
+                justify-content: right;
+                margin-top: 20px;
+            }
+
+            .button-group .btn {
+                margin-left: 15px;
+            }
+        }
+    </style>
+{% endblock styles %}
+
+{% block content %}
+    <div class="header-section" style="background-color: #f0f0f0;">
+        <div class="header-left">
+            <h2>Alarm Log</h2>
+        </div>
+    </div>
+
+    <div class="filter-section">
+        <div class="left-filter">
+            <div class="input-container">
+                <input type="date" id="from-date" class="form-control" placeholder=" ">
+                <label for="from-date" class="floating-label">From Date</label>
+            </div>
+            <div class="input-container">
+                <input type="time" id="from-time" class="form-control" placeholder=" ">
+                <label for="from-time" class="floating-label">From Time</label>
+            </div>
+            <div class="input-container">
+                <select id="equipment" class="form-select" placeholder=" ">
+                    <option value="" selected disabled>Select Equipment</option>
+                    <option value="Equipment 1">Equipment 1</option>
+                    <option value="Equipment 2">Equipment 2</option>
+                    <option value="Equipment 3">Equipment 3</option>
+                </select>
+                <label for="equipment" class="floating-label">Equipment</label>
+            </div>
+        </div>
+
+        <div class="right-filter">
+            <div class="input-container" style="display: flex; align-items: center;">
+                <input type="date" id="to-date" class="form-control" placeholder=" ">
+                <label for="to-date" class="floating-label">To Date</label>
+            </div>
+            <div class="input-container" style="display: flex; align-items: center;">
+                <input type="time" id="to-time" class="form-control" placeholder=" ">
+                <label for="to-time" class="floating-label">To Time</label>
+            </div>
+            <div class="input-container" style="display: flex; align-items: center;">
+                <input type="number" id="page-size" class="form-control" placeholder=" ">
+                <label for="page-size" class="floating-label">Page Size</label>
+
+                <div class="button-group">
+                    <button type="button" class="btn btn-outline-secondary mb-2" id="filter-btn">Filter</button>
+                    <button type="button" class="btn btn-outline-success mb-2">Save</button>
+                    <button type="button" class="btn btn-outline-primary mb-2">Print</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="status-section">
+        <p id="filtered-records" style="flex: -1; text-align: left;"><b>Filtered Records</b></p>
+        <p id="record-count" style="flex: 9; text-align: center;">0 Records found</p>
+    </div>
+    
+
+    <div class="table-section" id="table-section" style="display: none;">
+        <div class="table-responsive">
+            <table class="table table-bordered">
+                <thead>
+                    <tr>
+                        <th><input type="checkbox"></th>
+                        <th>Log Date</th>
+                        <th>Log Time</th>
+                        <th>Alarm Description</th>
+                    </tr>
+                </thead>
+                <tbody id="table-body">
+                    <!-- Records will be appended here -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+{% endblock content %}
+
+{% block scripts %}
+    {{ block.super }}
+    <script>
+        document.getElementById('filter-btn').addEventListener('click', function() {
+          
+            const records = [
+                { date: '2024-08-20', time: '08:00:00', description: 'Sample Alarm Description 1' },
+                { date: '2024-08-15', time: '08:30:00', description: 'Sample Alarm Description 2' },
+                { date: '2024-07-25', time: '08:00:00', description: 'Sample Alarm Description 3' },
+                { date: '2024-08-02', time: '08:30:00', description: 'Sample Alarm Description 4' }
+            ];
+
+            const tableSection = document.getElementById('table-section');
+            const tableBody = document.getElementById('table-body');
+            const recordCount = document.getElementById('record-count');
+
+            
+            tableSection.style.display = 'block';
+
+            tableBody.innerHTML = '';
+
+            records.forEach(record => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td><input type="checkbox"></td>
+                    <td>${record.date}</td>
+                    <td>${record.time}</td>
+                    <td>${record.description}</td>
+                `;
+                tableBody.appendChild(row);
+            });
+
+            recordCount.innerHTML = `${records.length} records found <br> `;
+        });
+    </script>
+{% endblock scripts %}

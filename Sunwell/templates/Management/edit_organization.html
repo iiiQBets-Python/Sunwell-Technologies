@@ -1,0 +1,83 @@
+{% extends "Base/base.html" %}
+{% load static %}
+
+{% block title %} Edit Organization {% endblock %}
+
+{% block content %}
+
+<style type="text/css">
+    .avatar {
+        margin-top: 10px;
+        width: 200px;
+        height: 200px;
+        object-fit: cover;
+    }
+    /* Custom height for the address textarea */
+    .address-input {
+        height: 100px; /* Adjust the height as needed */
+    }
+    .header {
+        color: #000d1d;
+    }
+    /* Position the edit button in the top right corner */
+    .edit-button {
+        position: absolute;
+        top: 20px;
+        right: 20px;
+    }
+</style>
+<div class="container mt-0">
+    <h1 class="text-center header">Edit Company Profile</h1>
+    <hr>
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        <div class="row">
+            <div class="col-md-3">
+                <div class="text-center">
+                    {% if organization.logo %}
+                        <img src="{{ organization.logo.url }}" class="avatar rounded-circle img-thumbnail" alt="Company Logo">
+                    {% else %}
+                        <img src="{% static 'images/default_logo.png' %}" class="avatar rounded-circle img-thumbnail" alt="Default Logo">
+                    {% endif %}
+                    <h6>Upload a different photo...</h6>
+                    <input type="file" class="form-control" name="logo" accept="image/*">
+                </div>
+            </div>
+            
+            <div class="col-md-9 mt-4">
+                <div class="mb-3 row">
+                    <label for="name" class="col-lg-3 col-form-label"><strong>Company Name:</strong></label>
+                    <div class="col-lg-9">
+                        <input type="text" class="form-control" name="name" id="name" value="{{ organization.name }}">
+                    </div>
+                </div>
+                <div class="mb-3 row">
+                    <label for="email" class="col-lg-3 col-form-label"><strong>Email:</strong></label>
+                    <div class="col-lg-9">
+                        <input type="email" class="form-control" name="email" id="email" value="{{ organization.email }}">
+                    </div>
+                </div>
+                <div class="mb-3 row">
+                    <label for="phoneNo" class="col-lg-3 col-form-label"><strong>Phone Number:</strong></label>
+                    <div class="col-lg-9">
+                        <input type="tel" class="form-control" name="phoneNo" id="phoneNo" value="{{ organization.phoneNo }}">
+                    </div>
+                </div>
+                <div class="mb-3 row">
+                    <label for="address" class="col-lg-3 col-form-label"><strong>Address</strong>:</label>
+                    <div class="col-lg-9">
+                        <textarea class="form-control address-input" name="address" id="address">{{ organization.address }}</textarea>
+                    </div>
+                </div>
+                
+                <div class="mb-3 row">
+                    <div class="col-lg-8 offset-lg-3 text-end">
+                        <button type="cancel" class="btn btn-secondary me-2">Cancel</button>
+                        <button type="submit" class="btn btn-success">Save</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+{% endblock content %}

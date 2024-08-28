@@ -34,4 +34,9 @@ urlpatterns = [
     #DATA Analysis
     path('view_log/',view_log,name='view_log'),
     path('alaram_log/',alaram_log,name='alaram_log'),
+
+    # audit_logs #
+    path('useractivity/', useractivity, name="useractivity"),
+    path('Equipment_Audit/', Equipment_Audit, name="Equipment_Audit"),
+    path('user_Audit/', user_Audit, name="user_Audit"),
 ]

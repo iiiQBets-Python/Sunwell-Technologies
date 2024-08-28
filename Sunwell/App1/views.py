@@ -202,3 +202,14 @@ def view_log(request):
 
 def alaram_log(request):
     return render(request, 'Data_Analysis/alaram_log.html')
+
+
+# audit_logs #
+def useractivity(request):
+    return render(request, 'auditlog/audit.html')
+
+def Equipment_Audit(request):
+    return render(request, 'auditlog/equipment_audit.html')
+
+def user_Audit(request):
+    return render(request, 'auditlog/user_audit.html')

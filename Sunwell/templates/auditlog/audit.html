@@ -1,0 +1,282 @@
+{% extends "Base/base.html" %}
+{% load static %}
+{% block title %} Alarm Audit Trail {% endblock %}
+{% block styles %}
+    {{ block.super }}
+    <style>
+        .container {
+            max-width: 100% !important;  
+        }
+        body {
+            background-color: #f4f6f9;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        .form-label {
+            /* font-weight: 600; */
+            flex: 0 0 30%; /* Adjust the width as needed */
+            color: #333;
+        }
+        .input-container {
+            flex: 1;
+            position: relative;
+        }
+        /* Floating label styles */
+        .input-container input.form-control,
+        .input-container select.form-select {
+            width: 100%;
+            padding: 7px;
+            border-radius: 4px;
+            border: 1px solid #ced4da;
+            transition: border-color 0.3s ease, box-shadow 0.3s ease;
+        }
+        .input-container input.form-control:focus,
+        .input-container select.form-select:focus {
+            border-color: #007bff;
+            box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+        }
+        .input-container .form-label {
+            position: absolute;
+            top: 50%;
+            left: 12px;
+            transform: translateY(-50%);
+            padding: 0 4px;
+            color: #6c757d;
+            transition: all 0.2s ease-in-out;
+            pointer-events: none;
+        }
+        .input-container input.form-control:focus ~ .form-label,
+        .input-container input.form-control:not(:placeholder-shown) ~ .form-label,
+        .input-container select.form-select:focus ~ .form-label,
+        .input-container select.form-select:not(:placeholder-shown) ~ .form-label {
+            top: 0px;
+            left: 5px;
+            font-size: 14px;
+            transition: font-weight 0.3s ease-in-out;
+        }
+        a {
+            text-decoration: none;
+            color: black;
+        }
+        a:hover {
+            text-decoration: none;
+            color: rgb(238, 238, 238);
+        }
+        .form-control:focus,
+        .form-select:focus,
+        .form-control.filled,
+        .form-select.filled {
+            border-color: #007bff;
+            box-shadow: none;
+        }
+        .form-control:focus ~ .form-label,
+        .form-select:focus ~ .form-label,
+        .form-control:not(:placeholder-shown) ~ .form-label,
+        .form-select:not(:placeholder-shown) ~ .form-label {
+            top: 0;
+            transform: translateY(-60%);
+            left: 5px;
+            font-size: 14px;
+            color: #007bff;
+        }
+        .form-control.filled ~ .form-label,
+        .form-select.filled ~ .form-label,
+        .form-control:not(:placeholder-shown) ~ .form-label,
+        .form-select:not(:placeholder-shown)~ .form-label {
+            color: black; /* Initially black */
+        }
+        .form-control:focus ~ .form-label,
+        .form-select:focus ~ .form-label,
+        .form-control:focus.filled ~ .form-label,
+        .form-select:focus.filled ~ .form-label {
+            color: #007bff; 
+            font-weight: bold;
+        }
+        .form-select option.selected{
+            background-color: #0d4175;
+        }
+        .form-label {
+            position: absolute;
+            top: 50%;
+            left: 25px;
+            transform: translateY(-50%);
+            background: #fff;
+            padding: 0 5px;
+            color: #aaa;
+            transition: 0.2s ease all;
+            pointer-events: none;
+        }
+        .form-select.entriesPerPage {
+            width: auto;
+            display: inline-block;
+            vertical-align: middle;
+            height: 34px; /* Match height with other form elements */
+        }
+
+        .header {
+            max-width: 100%;
+            background-color: #ffff;
+            /* color: white; */
+            padding: 10px;
+            display: flex;
+            /* justify-content: center; */
+            align-items:start;
+            /* border-radius: 5px 5px 0 0; */
+            /* box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); */
+        }
+
+        h4 {
+            margin: 0;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+        }
+        .filter-section {
+            max-width: 100%;
+            /* border: 1px solid #ddd; */
+            background-color: white;
+            padding: 20px;
+            /* border-radius: 0 0 5px 5px; */
+            /* box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); */
+        }
+        .select-list {
+            height: 80px;
+            overflow-y: auto;
+            border-radius: 5px;
+        }
+        .form-check-label {
+            font-weight: 500;
+            margin-right: 20px;
+        }
+        .btn-primary {
+            background-color: #00796b;
+            border-color: #00796b;
+            font-weight: 600;
+            padding: 10px 20px;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+        }
+        .btn-primary:hover {
+            background-color: #004d40;
+        }
+        .btn-container {
+            display: flex;
+            justify-content: flex-end;
+            padding-top: 20px;
+            border-top: 1px solid #ddd;
+            margin-top: 20px;
+        }
+    </style>
+{% endblock styles %}
+{% block content %}
+    <div class="container mt-2">
+        <!-- Filter Section -->
+        <form class="row g-4">  
+            <div class="filter-section shadow-sm">
+                <h4 class="text-center mb-4">Alarm Audit Trail</h4>
+                <div class="row">
+                    <div class="form-group col-md-4 mb-4">
+                        <div class="input-container">
+                            <select class="form-select" id="formats">
+                                <option value="" disabled selected>Select Formats</option>
+                                <option value="Data Wise">Data Wise</option>
+                                <option value="Equipment-wise">Equipment Wise</option>
+                                <option value="User-wise">User Wise</option>
+                            </select>
+                            <label for="formats" class="form-label">Formats</label>
+                        </div>
+                    </div>
+                    <div class="form-group col-md-4 mb-4">
+                        <div class="input-container">
+                            <input type="text" class="form-control" id="size" placeholder=" ">
+                            <label for="size" class="form-label">Size</label>
+                        </div>
+                    </div>
+                    <div class="form-group col-md-4 mb-4">
+                        <div class="input-container">
+                            <input type="text" class="form-control" id="orientation" placeholder=" ">
+                            <label for="orientation" class="form-label">Orientation</label>
+                        </div>  
+                    </div>
+                </div>
+
+                <h5 class="text-secondary mb-3">Report Filters</h5>
+
+                <div class="row mb-1">
+                    <div class="col-md-6 mb-4">
+                        <div class="input-container">
+                            <input type="date" class="form-control" id="from-date">
+                            <label for="from-date" class="form-label">From Date</label>
+                        </div>
+                    </div>
+                    <div class="col-md-6 mb-4">
+                        <div class="input-container">
+                            <input type="date" class="form-control" id="to-date">
+                            <label for="to-date" class="form-label">To Date</label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row mb-1">
+                    <div class="col-md-6 mb-4">
+                        <div class="input-container">    
+                            <input type="time" class="form-control" id="from-time">
+                            <label for="from-time" class="form-label">From Time</label>
+                        </div>   
+                    </div>
+                    <div class="col-md-6 mb-4">
+                        <div class="input-container"> 
+                            <input type="time" class="form-control" id="to-time">
+                            <label for="to-time" class="form-label">To Time</label>
+                        </div> 
+                    </div>
+                </div>
+
+                <div class="row mb-1">
+                    <div class="col-md-6 mb-4">
+                        <div class="input-container"> 
+                            <select class="form-select select-list" id="user-list" multiple>
+                                <option>admin</option>
+                                <option>abc123</option>
+                            </select>
+                            <label for="user-list" class="form-label">User List</label>
+                        </div>
+                    </div>
+                    <div class="col-md-6 mb-4">
+                        <div class="input-container"> 
+                            <select class="form-select select-list" id="equipment-list" multiple>
+                                <option>MICRO/LEP/008</option>
+                                <option>QC/API/EP/04</option>
+                                <option>RND/EPT/001</option>
+                            </select>
+                            <label for="equipment-list" class="form-label">Equipment List</label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row mb-4">
+                    <div class="col-md-6 mb-4">
+                        <div class="input-container"> 
+                            <input type="text" class="form-control" id="event-name" placeholder=" ">
+                            <label for="event-name" class="form-label">Event Name</label>
+                        </div>
+                    </div>
+                    <div class="col-md-6 d-flex align-items-center">
+                        <label class="form-check-label" for="logDate">OrderBy :</label>
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="orderBy" id="logDate" value="logDate" checked>
+                            <label class="form-check-label" for="logDate">Log Date</label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="orderBy" id="unsorted" value="unsorted">
+                            <label class="form-check-label" for="unsorted">Unsorted</label>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Print Button -->
+                <div class="btn-container">
+                    <button class="btn btn-primary">Print</button>
+                </div>
+            </div>
+        </form>
+    </div>
+{% endblock content %}

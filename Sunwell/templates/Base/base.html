@@ -369,9 +369,9 @@
                 <li>
                     <a href="#" class="submenu-toggle"><i class="fas fa-clipboard-list"></i> <b>Audit Logs</b></a>
                     <ul class="submenu">
-                        <li><a href="#"><i class="fas fa-user-secret"></i> <b>User Activity</b></a></li>
-                        <li><a href="#"><i class="fas fa-desktop"></i> <b>Equipment Activity</b></a></li>
-                        <li><a href="#"><i class="fas fa-exclamation-triangle"></i> <b>Alarm Activity</b></a></li>
+                        <li><a href="{% url 'user_Audit' %}"><i class="fas fa-user-secret"></i> <b>User Activity</b></a></li>
+                        <li><a href="{% url 'Equipment_Audit' %}"><i class="fas fa-desktop"></i> <b>Equipment Activity</b></a></li>
+                        <li><a href="{% url 'useractivity' %}"><i class="fas fa-exclamation-triangle"></i> <b>Alarm Activity</b></a></li>
                         <li><a href="#"><i class="fas fa-envelope"></i> <b>Email/SMS Activity</b></a></li>
                         <li><a href="#"><i class="fas fa-thumbs-up"></i> <b>Reviewed/Approved Activity</b></a></li>
                     </ul>

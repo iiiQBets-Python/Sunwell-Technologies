@@ -8,18 +8,19 @@
 <style type="text/css">
     .avatar {
         margin-top: 10px;
-        width: 200px;
-        height: 200px;
-        object-fit: cover;
+        width: 200px;  
+        height: 200px; 
+        object-fit: cover; 
+        border-radius: 50%; 
     }
-    /* Custom height for the address textarea */
+    
     .address-input {
-        height: 100px; /* Adjust the height as needed */
+        height: 100px; 
     }
     .header {
         color: #000d1d;
     }
-    /* Position the edit button in the top right corner */
+    
     .edit-button {
         position: absolute;
         top: 20px;
@@ -35,9 +36,9 @@
             <div class="col-md-3">
                 <div class="text-center">
                     {% if organization.logo %}
-                        <img src="{{ organization.logo.url }}" class="avatar rounded-circle img-thumbnail" alt="Company Logo">
+                        <img src="{{ organization.logo.url }}" class="img-thumbnail square-img mt-5" alt="Company Logo">
                     {% else %}
-                        <img src="{% static 'images/default_logo.png' %}" class="avatar rounded-circle img-thumbnail" alt="Default Logo">
+                        <img src="{% static 'images/default_logo.png' %}" class="img-thumbnail square-img mt-5" alt="Company Logo">
                     {% endif %}
                     <h6>Upload a different photo...</h6>
                     <input type="file" class="form-control" name="logo" accept="image/*">

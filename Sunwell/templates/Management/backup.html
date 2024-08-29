@@ -1,4 +1,3 @@
-
 {% extends "Base/base.html" %}
 {% load static %}
 {% block title %} Backup {% endblock %}
@@ -82,7 +81,6 @@
         }
 
         .btn-container {
-
             display: flex;
             flex-direction: column;
             gap: 10px;
@@ -93,8 +91,8 @@
         .left-column img {
             width: 100%;
             height: auto;
-
         }
+
         .left-column {
             margin-left: 20px;
         }
@@ -102,10 +100,29 @@
         .right-column{
             width: 40%;
             margin-left:100px;
+            margin-top:100px;
         }
 
         .heading{
             margin:0px;
+        }
+
+        .floating-alert {
+            position: fixed;
+            top: -100px; /* Start hidden above the view */
+            right: 30%;
+            z-index: 1050;
+            width: auto;
+            padding: 10px 20px;
+            border-radius: 5px;
+            background-color: #28a745; /* Green background for success */
+            color: white;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            transition: top 0.5s ease-in-out; /* Smooth transition for appearing */
+        }
+
+        .floating-alert.show {
+            top: 100px; /* Slide down to be visible */
         }
     </style>
 {% endblock styles %}
@@ -113,27 +130,37 @@
 {% block content %} 
 
 <div class="container pt-5">
+    <div id="floating-alert" class="floating-alert">
+        {% if messages %}
+            {% for message in messages %}
+                <div class="alert alert-success alert-dismissible fade show" role="alert">
+                    {{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            {% endfor %}
+        {% endif %}
+    </div>
     <div class="row">
         <!-- Left column with the image -->
         <div class="col-md-5 left-column">
-            <img src="{% static 'images/backup.png' %}" alt="Backup Image"> <!-- Replace with your image path -->
+            <img src="{% static 'images/backup.png' %}" alt="Backup Image">
 
             <!-- Buttons below the image -->
             <div class="btn-container">
-                <button type="button" id="take-backup" class="btn btn-primary" onclick="enableDownload()">Take Backup</button>
-                <button type="button" id="download-backup" class="btn btn-secondary" disabled>Download Backup</button>
+                <button type="button" id="take-backup" class="btn btn-primary" onclick="takeBackup()">Take Backup</button>
             </div>
         </div>
 
         <!-- Right column with the form -->
         <div class="col-md-7 right-column">
-            <h2 class=" heading text-dark text-center py-2">Backup Settings</h2>
+            <h2 class="heading text-dark text-center py-2">Backup Settings</h2>
             <div class="form-container">
-                <form>
+                <form action="{% url 'backup' %}" method="post">
+                    {% csrf_token %}
                     <!-- Backup Local Path (Floating Label) -->
                     <div class="form-group">
                         <div class="input-container">
-                            <input type="text" id="backup-local-path" class="form-control" placeholder=" " required>
+                            <input type="text" id="backup-local-path" name="backup-local-path" class="form-control" placeholder=" " required>
                             <label for="backup-local-path" class="floating-label">Enter Backup local path</label>
                         </div>
                     </div>
@@ -141,7 +168,7 @@
                     <!-- Backup Remote Path (Floating Label) -->
                     <div class="form-group">
                         <div class="input-container">
-                            <input type="text" id="backup-remote-path" class="form-control" placeholder=" ">
+                            <input type="text" id="backup-remote-path" name="backup-remote-path" class="form-control" placeholder=" ">
                             <label for="backup-remote-path" class="floating-label">Enter Backup remote path</label>
                         </div>
                     </div>
@@ -149,52 +176,14 @@
                     <!-- Backup Time (Standard Label) -->
                     <div class="form-group">
                         <div class="input-container d-flex align-items-center">
-                            <input type="time" id="backup-remote-path" class="form-control" placeholder=" ">
-                            <label for="backup-remote-path" class="floating-label">Enter Backup Time</label>  
-                        </div>
-                    </div>
-
-                    <!-- Report Date/Time Stamp (Standard Label) -->
-                    <div class="form-group">
-                        <div class="input-container">
-                            <select id="report-datetime-stamp" class="form-select" placeholder=" " required>
-                                <option value="">Select</option>
-                                <option value="Yes">Yes</option>
-                                <option value="No">No</option>
-                            </select>
-                            <label for="report-datetime-stamp" class="floating-label" >Report Date/Time Stamp</label>
-                        </div>
-                    </div>
-
-                    <!-- Password Change (Standard Label with Unit) -->
-                    <div class="form-group">
-                        <div class="input-container d-flex align-items-center">
-                            <input type="number" id="password-change" class="form-control me-2"  min="1" max="365" placeholder=" " required>
-                            <span>Days</span>
-                            <label for="password-change" class="floating-label" >Password Change</label>
-                        </div>
-                    </div>
-
-                    <!-- System Auto Logout Time (Standard Label with Unit) -->
-                    <div class="form-group">
-                        <div class="input-container d-flex align-items-center">
-                            <input type="number" id="system-auto-logout" class="form-control me-2 "  min="1" placeholder=" " required>
-                            <span>Minutes</span>
-                            <label for="system-auto-logout" class="floating-label" >System Auto Logout Time</label>
-                        </div>
-                    </div>
-
-                    <!-- User Access Lock Count (Standard Label with Unit) -->
-                    <div class="form-group">
-                        <div class="input-container d-flex align-items-center">
-                            <input type="number" id="user-access-lock" class="form-control me-2"  min="1" placeholder=" " required>
-                            <span>Attempts</span>
-                            <label for="user-access-lock" class="floating-label" >User Access Lock Count</label>
+                            <input type="time" id="backup-time" name="backup-time" class="form-control" placeholder=" " value="00:00">
+                            <label for="backup-time" class="floating-label">Enter Backup Time</label>  
                         </div>
                     </div>
 
                     <div class="save-btn-container">
-                        <button type="submit" class="btn btn-success">Save</button>
+                        <button type="submit" class="btn btn-outline-success">Save</button>
+                        <button type="button" class="btn btn-outline-danger">Cancel</button>
                     </div>
                 </form>
             </div>
@@ -208,10 +197,44 @@
   <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.min.js"></script>
   <script>
-      function enableDownload() {
-          document.getElementById('download-backup').disabled = false;
-      }
-  </script>
+      function takeBackup() {
+          // Use fetch API to call the backup endpoint
+          fetch("{% url 'download_backup' %}", {
+              method: 'GET',
+          })
+          .then(response => response.json())
+          .then(data => {
+              if (data.status === 'success') {
+                  alert(data.message);
+              } else {
+                  alert(data.message);
+              }
+          })
+          .catch(error => {
+              alert('An error occurred: ' + error.message);
+          });
+    }
 
-{% endblock %}
+    // Function to show the floating alert
+    function showFloatingAlert(message, isSuccess = true) {
+        const alertElement = document.getElementById('floating-alert');
+        alertElement.textContent = message;
+        alertElement.style.backgroundColor = isSuccess ? '#28a745' : '#dc3545'; // Green for success, red for error
+        alertElement.classList.add('show');
+
+        // Hide the alert after 2 seconds
+        setTimeout(() => {
+            alertElement.classList.remove('show');
+        }, 2000);
+    }
+
+    // Automatically hide the alert if present when the page loads
+    document.addEventListener("DOMContentLoaded", function () {
+        const alertElement = document.getElementById('floating-alert');
+        if (alertElement.textContent.trim()) {
+            showFloatingAlert(alertElement.textContent);
+        }
+    });
+  </script>
+{% endblock scripts %}
 {% endblock content %}

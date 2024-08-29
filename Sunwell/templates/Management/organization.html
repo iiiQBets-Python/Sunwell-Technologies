@@ -38,11 +38,11 @@
     <hr>
     <div class="row">
         <div class="col-md-3">
-            <div class="text-center">
-                {% if organization.logo %}
-                    <img src="{{ organization.logo.url }}" class="avatar rounded-circle img-thumbnail" alt="Company Logo">
+            <div class="text-center">  
+                {% if organization.logo %}                                               
+                    <img src="{{ organization.logo.url }}" class="img-thumbnail square-img mt-5" alt="Company Logo">
                 {% else %}
-                    <img src="{% static 'images/default_logo.png' %}" class="avatar rounded-circle img-thumbnail" alt="Default Logo">
+                    <img src="{% static 'images/default_logo.png' %}" class="img-thumbnail square-img mt-5" alt="Company Logo">
                 {% endif %}
             </div>
         </div>

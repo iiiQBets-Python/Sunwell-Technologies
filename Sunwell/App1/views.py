@@ -1,7 +1,12 @@
 from django.shortcuts import render, redirect,get_object_or_404
+from django.http import HttpResponse, HttpResponseRedirect
 from django.contrib.auth import login, logout
 from django.contrib import messages
 from .models import *
+from django.conf import settings
+from django.http import JsonResponse
+import os
+import subprocess
 
 def base(request):
     return render(request, 'Base/base.html')
@@ -183,18 +188,90 @@ def livedata_summary(request):
     return render (request, 'Live Data/realtime_summary.html')
 
 def backup(request):
-    return render (request, 'Management/backup.html')
+    if request.method == 'POST':
+        local_path = request.POST.get('backup-local-path')
+        remote_path = request.POST.get('backup-remote-path')
+        backup_time = request.POST.get('backup-time')
+
+        # Save backup settings to the database
+        backup_setting = BackupSettings(
+            local_path=local_path,
+            remote_path=remote_path,
+            backup_time=backup_time
+        )
+        backup_setting.save()
+
+        # Set a success message
+        messages.success(request, 'Backup settings saved successfully!')
+
+        # Redirect back to the backup page
+        return redirect('backup')
+
+    return render(request, 'Management/backup.html')
+
+def download_backup(request):
+    # Get the last backup setting
+    backup_setting = BackupSettings.objects.last()
+    local_backup_file_path = os.path.join(backup_setting.local_path, 'backup.bak')
+    remote_backup_file_path = os.path.join(backup_setting.remote_path, 'backup.bak')
+
+    # Get the database settings
+    db_settings = settings.DATABASES['default']
+    db_name = db_settings['NAME']
+    db_user = db_settings['USER']
+    db_password = db_settings['PASSWORD']
+    db_host = db_settings['HOST']
+
+    # Commands to backup MSSQL database to local and remote paths
+    local_backup_command = (
+        f"sqlcmd -S {db_host} -U {db_user} -P {db_password} "
+        f"-Q \"BACKUP DATABASE [{db_name}] TO DISK = N'{local_backup_file_path}'\""
+    )
+    remote_backup_command = (
+        f"sqlcmd -S {db_host} -U {db_user} -P {db_password} "
+        f"-Q \"BACKUP DATABASE [{db_name}] TO DISK = N'{remote_backup_file_path}'\""
+    )
+
+    try:
+        # Run backup commands
+        subprocess.run(local_backup_command, check=True, shell=True)
+        subprocess.run(remote_backup_command, check=True, shell=True)
+        return JsonResponse({"status": "success", "message": "Backup successful"})
+    except subprocess.CalledProcessError as e:
+        return JsonResponse({"status": "failure", "message": f"Backup failed: {str(e)}"}, status=500)
 
 def restore(request):
     return render (request, 'Management/restore.html')
 
 
 # Settings
-def equipmentconfigure(request):
-    return render(request, 'Settings/equipment_config.html')
+def equipment_configure_view(request):
+    if request.method == 'POST':
+        equip_name = request.POST.get('equipname')
+        status = request.POST.get('equipStatus')
+        ip_address = request.POST.get('ipaddress')  # Check the ID to ensure it matches
+        interval = request.POST.get('interval')
+        equipment_type = request.POST.get('equiptype')
+        door_access_type = request.POST.get('dooracctype')
+        
+        equipment = Equipment(
+            equip_name=equip_name,
+            status=status,
+            ip_address=ip_address,
+            interval=interval,
+            equipment_type=equipment_type,
+            door_access_type=door_access_type
+        )
+        equipment.save()
+        messages.success(request, 'Equipment added successfully!')
+        return redirect('equipment_configure')
 
-def equipmentsetting_Graphcolor(request):
-    return render(request, 'Settings/Graphcolor.html')
+    equipment_list = Equipment.objects.all()
+    return render(request, 'Equip_Settings/equip_config.html', {'equipment_list': equipment_list})
+
+
+def equipment_setting(request):
+    return render(request, 'Equip_Settings/equip_settings.html')
 
 # DATA Analysis
 def view_log(request):

@@ -24,12 +24,13 @@ urlpatterns = [
     path('app_setings/', app_settings, name='app_settings'),
     path('livedata_summary/', livedata_summary, name='livedata_summary'),
     path('backup/', backup, name='backup'),
+    path('download-backup/', download_backup, name='download_backup'),
     path('restore/', restore, name='restore'),
     
     
     # Settings
-    path('equipmentconfigure/',equipmentconfigure,name='equipmentconfigure'),
-    path('equipmentsetting_Graphcolor',equipmentsetting_Graphcolor,name='equipmentsetting_Graphcolor'),
+     path('equipment_configure/', equipment_configure_view, name='equipment_configure'),
+    path('equipment_setting',equipment_setting,name='equipment_setting'),
 
     #DATA Analysis
     path('view_log/',view_log,name='view_log'),

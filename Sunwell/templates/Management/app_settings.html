@@ -1,323 +1,163 @@
+
 {% extends "Base/base.html" %}
 {% load static %}
 {% block title %} email_sms {% endblock %}
 
 {% block styles %}
     {{ block.super }}
-    <link rel="stylesheet" href="{% static 'css/Management/email_sms.css' %}">
+    <link rel="stylesheet" href="{% static 'css/Management/app_settings.css' %}">
 {% endblock styles %}
 
 {% block content %} 
 <div class="container-custom">
-  <h5>Email, SMS, and WhatsApp Configuration</h5>
-  <div class="switch-buttons">
-    <a href="#" class="btn btn-outline-primary active" id="emailLink">Email</a>
-    <a href="#" class="btn btn-outline-primary" id="smsLink">SMS</a>
-    <a href="#" class="btn btn-outline-primary" id="whatsappLink">WhatsApp</a>
-  </div>
-
-  <!-- Tab panes -->
+  <h5 class="mb-3">Email, SMS, and WhatsApp Configuration</h5>
   <div class="tab-content" id="myTabContent">
-    <div class="tab-pane fade show active" id="email" role="tabpanel" aria-labelledby="emailLink">
-      <!-- Email Form content -->
-      <ul class="nav nav-tabs" id="emailTab" role="tablist">
-        <li class="nav-item" role="presentation">
-          <button class="nav-link active" id="email-form-tab" data-bs-toggle="tab" data-bs-target="#email-form" type="button" role="tab" aria-controls="email-form" aria-selected="true">Email Form</button>
-        </li>
-        <li class="nav-item" role="presentation">
-          <button class="nav-link" id="email-settings-tab" data-bs-toggle="tab" data-bs-target="#email-settings" type="button" role="tab" aria-controls="email-settings" aria-selected="false">Email Settings</button>
-        </li>
-      </ul>
-      <div class="tab-content" id="emailTabContent">
-        <div class="tab-pane fade show active" id="email-form" role="tabpanel" aria-labelledby="email-form-tab">
-          <!-- Email Form fields -->
-          <form>
-            <div class="container">
-              <div class="row">
-                <div class="col-md-12 form-group d-flex align-items-center ">
-                  <label style="margin-right: 10px;">Email System:</label>
-                  <div id="status">
-                    <div class="form-check form-check-inline">
-                      <input class="form-check-input" type="radio" name="email_status" id="email-enable1" value="Enable" >
-                      <label class="form-check-label" for="email-enable1">Enable</label>
-                    </div>
-                    <div class="form-check form-check-inline">
-                      <input class="form-check-input" type="radio" name="email_status" id="email-disable1" value="Disable">
-                      <label class="form-check-label" for="email-disable1">Disable</label>
-                    </div>
+    <div class="tab-pane fade show active" id="appsetting" role="tabpanel" aria-labelledby="appsetting-tab">
+        <!-- Tab Navigation -->
+        <ul class="nav nav-tabs" id="Tab" role="tablist">
+            <li class="nav-item" role="presentation">
+                <button class="nav-link active" id="appsettings-tab" data-bs-toggle="tab" data-bs-target="#app-settings" type="button" role="tab" aria-controls="app-settings" aria-selected="true">App Settings</button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="email-settings-tab" data-bs-toggle="tab" data-bs-target="#email-settings" type="button" role="tab" aria-controls="email-settings" aria-selected="false">Email Settings</button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="sms-settings-tab" data-bs-toggle="tab" data-bs-target="#sms-settings" type="button" role="tab" aria-controls="sms-settings" aria-selected="false">SMS Settings</button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="whatsapp-settings-tab" data-bs-toggle="tab" data-bs-target="#whatsapp-settings" type="button" role="tab" aria-controls="whatsapp-settings" aria-selected="false">WhatsApp Settings</button>
+            </li>
+        </ul>
+        
+        <!-- Tab Content -->
+        <div class="tab-content mt-3" id="TabContent">
+            <!-- App Settings Tab Content -->
+            <div class="tab-pane fade show active" id="app-settings" role="tabpanel" aria-labelledby="appsettings-tab">
+                <!-- Empty content for App Settings -->
+                <form>
+                  <div class="container">
+                      <div class="row">
+                        <div class="form-group col-md-8">
+                          <input type="number" class="form-control" placeholder=" " id="password_change" name="password_change">
+                          <label class="form-label" for="password_change">Password Change</label>
+                        </div>
+                        <div class="form-group col-md-2">
+                           <span  class="form-span" >Days</span>
+                        </div>
+                        <div class="form-group col-md-8">
+                          <input type="number" class="form-control" placeholder=" " id="system_auto_logout" name="system_auto_logout">
+                          <label class="form-label" for="system_auto_logout">System Auto Logout Time</label>
+                        </div>
+                        <div class="form-group col-md-2">
+                          <span  class="form-span" >Minutes</span>
+                        </div>
+                        <div class="form-group col-md-8">
+                          <input type="number" class="form-control" placeholder=" " id="user_access_lock" name="user_access_lock">
+                          <label class="form-label" for="user_access_lock">User Access Lock Count</label>
+                        </div>
+                        <div class="form-group col-md-2">
+                          <span  class="form-span" >Attempts</span>
+                        </div>
+                          <div class="form-buttons">
+                              <button class="btn btn-outline-danger" type="button">Close</button>
+                              <button class="btn btn-outline-success">Save</button>
+                          </div>
+                      </div>
                   </div>
-                </div>
-                <div class="col-md-4 form-group">
-                  <input type="text" class="form-control" name="email_alert" id="email_alert" placeholder=" " required>
-                  <label for="email_alert" class="form-label">Email Alert Delay</label>
-                </div>
-                <div class="col-md-4 form-group">
-                  <input type="time" class="form-control" name="email_time" id="email_time" placeholder=" " required>
-                  <label for="email_time" class="form-label">Email Time</label>
-                </div>
-                <div class="col-md-4 form-group">
-                  <input type="email" class="form-control" name="email_address_1" id="email_address_1" placeholder=" " required>
-                  <label for="email_address_1" class="form-label">Alert Email Address 1*</label>
-                </div>
-                <div class="col-md-4 form-group">
-                  <input type="email" class="form-control" name="email_address_2" id="email_address_2" placeholder=" " required>
-                  <label for="email_address_2" class="form-label">Alert Email Address 2*</label>
-                </div>
-                <div class="col-md-4 form-group">
-                  <input type="email" class="form-control" name="email_address_3" id="email_address_3" placeholder=" " required>
-                  <label for="email_address_3" class="form-label">Alert Email Address 3*</label>
-                </div>
-                <div class="col-md-4 form-group">
-                  <input type="email" class="form-control" name="email_address_4" id="email_address_4" placeholder=" " required>
-                  <label for="email_address_4" class="form-label">Alert Email Address 4*</label>
-                </div>
-                <div class="col-md-4 form-group">
-                  <input type="email" class="form-control" name="email_address_5" id="email_address_5" placeholder=" " required>
-                  <label for="email_address_5" class="form-label">Alert Email Address 5*</label>
-                </div>
-                <div class="col-md-4 form-group">
-                  <input type="email" class="form-control" name="email_address_6" id="email_address_6" placeholder=" " required>
-                  <label for="email_address_6" class="form-label">Alert Email Address 6*</label>
-                </div>
-                <div class="col-md-4 form-group">
-                  <input type="email" class="form-control" name="email_address_7" id="email_address_7" placeholder=" " required>
-                  <label for="email_address_7" class="form-label">Alert Email Address 7*</label>
-                </div>
-                <div class="col-md-4 form-group">
-                  <input type="email" class="form-control" name="email_address_8" id="email_address_8" placeholder=" " required>
-                  <label for="email_address_8" class="form-label">Alert Email Address 8*</label>
-                </div>
-                <div class="col-md-4 form-group">
-                  <input type="email" class="form-control" name="email_address_9" id="email_address_9" placeholder=" " required>
-                  <label for="email_address_9" class="form-label">Alert Email Address 9*</label>
-                </div>
-                <div class="col-md-4 form-group">
-                  <input type="email" class="form-control" name="email_address_10" id="email_address_10" placeholder=" " required>
-                  <label for="email_address_10-" class="form-label">Alert Email Address 10*</label>
-                </div>
-                <div class="form-buttons">
-                  <button class="btn btn-outline-danger" type="button">Close</button>
-                  <button class="btn btn-outline-success">Save</button>
-                </div>
-              </div>
+              </form>
             </div>
-          </form>
-        </div>
-        <div class="tab-pane fade" id="email-settings" role="tabpanel" aria-labelledby="email-settings-tab">
-          <!-- Email Settings fields -->
-          <form>
-            <div class="container">
-              <div class="row">
-                <div class="col-md-6 form-group d-flex align-items-center ">
-                  <label style="margin-right: 10px;">Email System:</label>
-                  <div id="status">
-                    <div class="form-check form-check-inline">
-                      <input class="form-check-input" type="radio" name="email_setting_status" id="email-enable2" value="Enable" checked>
-                      <label class="form-check-label" for="email-enable2">Enable</label>
+            
+            <!-- Email Settings Tab Content -->
+            <div class="tab-pane fade" id="email-settings" role="tabpanel" aria-labelledby="email-settings-tab">
+                <!-- Email Settings fields -->
+                <form>
+                    <div class="container">
+                        <div class="row">
+                            <div class="col-md-6 form-group d-flex align-items-center">
+                                <label style="margin-right: 10px;">Email System:</label>
+                                <div id="status">
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input" type="radio" name="email_setting_status" id="email-enable2" value="Enable" checked>
+                                        <label class="form-check-label" for="email-enable2">Enable</label>
+                                    </div>
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input" type="radio" name="email_setting_status" id="email-disable2" value="Disable">
+                                        <label class="form-check-label" for="email-disable2">Disable</label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6 form-group d-flex align-items-center">
+                                <label style="margin-right: 10px;">SMTP Authentication:</label>
+                                <div id="status">
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input" type="radio" name="smpt_authentication" id="smpt-yes" value="Yes" checked>
+                                        <label class="form-check-label" for="smpt-yes">Yes</label>
+                                    </div>
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input" type="radio" name="smpt_authentication" id="smpt-no" value="No">
+                                        <label class="form-check-label" for="smpt-no">No</label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group col-md-6">
+                                <input type="email" class="form-control" placeholder=" " id="smptemail" name="smptemail">
+                                <label class="form-label" for="smptemail">SMTP Email</label>
+                            </div>
+                            <div class="form-group col-md-6">
+                                <input type="text" class="form-control" placeholder=" " id="smptaddress" name="smptaddress">
+                                <label class="form-label" for="smptaddress">SMTP Address</label>
+                            </div>
+                            <div class="form-group col-md-6">
+                                <input type="text" class="form-control" placeholder=" " id="smptuser" name="smptuser">
+                                <label class="form-label" for="smptuser">SMTP Username</label>
+                            </div>
+                            <div class="form-group col-md-6">
+                                <input type="password" class="form-control" placeholder=" " id="smptpass" name="smptpass">
+                                <label class="form-label" for="smptpass">SMTP Password</label>
+                            </div>
+                            <div class="form-group col-md-6">
+                                <input type="number" class="form-control" placeholder=" " id="smtpPort">
+                                <label class="form-label" for="smtpPort">SMTP Port</label>
+                            </div>
+                            <div class="col-md-6 form-group d-flex align-items-center">
+                                <label style="margin-right: 10px;">SMTP Socket Layers:</label>
+                                <div id="status">
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input" type="radio" name="smpt_layer" id="smpt-enable" value="Enable" checked>
+                                        <label class="form-check-label" for="smpt-enable">Enable</label>
+                                    </div>
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input" type="radio" name="smpt_layer" id="smpt-disable" value="Disable">
+                                        <label class="form-check-label" for="smpt-disable">Disable</label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group col-md-12">
+                                <textarea class="form-control" id="emailsign" rows="3" placeholder=" " required></textarea>
+                                <label class="form-label" for="emailsign">Email Signature</label>
+                            </div>
+                            <div class="form-group col-md-6">
+                                <input type="email" class="form-control" placeholder=" " id="testemail" name="testemail">
+                                <label class="form-label" for="testemail">Test Email ID</label>
+                            </div>
+                            <div class="form-group col-md-4">
+                                <input type="text" class="form-control" placeholder=" " id="testemailtime" name="testemailtime">
+                                <label class="form-label" for="testemailtime">Test Email Time</label>
+                            </div>
+                            <div class="form-group col-md-2">
+                                <button class="btn btn-outline-primary">Email Test</button>
+                            </div>
+                            <!-- Additional email settings fields -->
+                            <div class="form-buttons">
+                                <button class="btn btn-outline-danger" type="button">Close</button>
+                                <button class="btn btn-outline-success">Save</button>
+                            </div>
+                        </div>
                     </div>
-                    <div class="form-check form-check-inline">
-                      <input class="form-check-input" type="radio" name="email_setting_status" id="eamil-disable2" value="Disable">
-                      <label class="form-check-label" for="email-disable2">Disable</label>
-                    </div>
-                  </div>
-                </div>
-                <div class="col-md-6 form-group d-flex align-items-center ">
-                  <label style="margin-right: 10px;">SMPT Authentication:</label>
-                  <div id="status">
-                    <div class="form-check form-check-inline">
-                      <input class="form-check-input" type="radio" name="smpt_authentication" id="smpt-yes" value="Yes" checked>
-                      <label class="form-check-label" for="smpt-yes">Yes</label>
-                    </div>
-                    <div class="form-check form-check-inline">
-                      <input class="form-check-input" type="radio" name="smpt_authentication" id="smpt-no" value="No">
-                      <label class="form-check-label" for="smpt-no">No</label>
-                    </div>
-                  </div>
-                </div>
-                <div class="form-group col-md-6">
-                  <input type="email" class="form-control" placeholder=" " id="smptemail" name="smptemail">
-                  <label class="form-label" for="smptemail">SMTP Email</label>
-                </div>
-                <div class="form-group col-md-6">
-                  <input type="text" class="form-control" placeholder=" " id="smptaddress" name="smptaddress">
-                  <label class="form-label" for="smptaddress">SMTP Address</label>
-                </div>
-                <div class="form-group col-md-6">
-                  <input type="text" class="form-control" placeholder=" " id="smptuser" name="smptuser">
-                  <label class="form-label" for="smptuser">SMTP Username</label>
-                </div>
-                <div class="form-group col-md-6">
-                  <input type="password" class="form-control" placeholder=" " id="smptpass" name="smptpass">
-                  <label class="form-label" for="smptpass">SMTP Address</label>
-                </div>
-                <div class="form-group col-md-6">
-                  <input type="number" class="form-control" placeholder=" " id="smtpPort">
-                  <label class="form-label" for="smtpPort">SMTP Port</label>
-                </div>
-                <div class="col-md-6 form-group d-flex align-items-center ">
-                  <label style="margin-right: 10px;">SMPT Socket Layers:</label>
-                  <div id="status">
-                    <div class="form-check form-check-inline">
-                      <input class="form-check-input" type="radio" name="smpt_layer" id="smpt-enable" value="Enable" checked>
-                      <label class="form-check-label" for="smpt-enable">Enable</label>
-                    </div>
-                    <div class="form-check form-check-inline">
-                      <input class="form-check-input" type="radio" name="smpt_layer" id="email-disable" value="Disable">
-                      <label class="form-check-label" for="email-disable">Disable</label>
-                    </div>
-                  </div>
-                </div>
-                <div class="form-group col-md-12">
-                  <textarea class="form-control" id="emailsign" rows="3" placeholder=" " required></textarea>
-                  <label class="form-label" for="emailsign">Email Signature</label>
-                </div>
-                <div class="form-group col-md-6">
-                  <input type="email" class="form-control" placeholder=" " id="testemail" name="testemail">
-                  <label class="form-label" for="testemail">Test Email ID</label>
-                </div>
-                <div class="form-group col-md-4">
-                  <input type="text" class="form-control" placeholder=" " id="testemailtime" name="testemailtime">
-                  <label class="form-label" for="testemailtime">Test Email Time</label>
-                </div>
-                <div class="form-group col-md-2">
-                  <button class="btn btn-outline-primary">Email Test</button>
-                </div>
-                <!-- Additional email settings fields -->
-                <div class="form-buttons">
-                  <button class="btn btn-outline-danger" type="button">Close</button>
-                  <button class="btn btn-outline-success">Save</button>
-                </div>
-              </div>
+                </form>
             </div>
-          </form>
-        </div>
-      </div>
-    </div>
-    <div class="tab-pane fade" id="sms" role="tabpanel" aria-labelledby="smsLink">
-      <!-- SMS Form content -->
-      <ul class="nav nav-tabs" id="smsTab" role="tablist">
-        <li class="nav-item" role="presentation">
-          <button class="nav-link active" id="sms-form-tab" data-bs-toggle="tab" data-bs-target="#sms-form" type="button" role="tab" aria-controls="sms-form" aria-selected="true">SMS Form</button>
-        </li>
-        <li class="nav-item" role="presentation">
-          <button class="nav-link" id="sms-settings-tab" data-bs-toggle="tab" data-bs-target="#sms-settings" type="button" role="tab" aria-controls="sms-settings" aria-selected="false">SMS Settings</button>
-        </li>
-      </ul>
-      <div class="tab-content" id="smsTabContent">
-        <div class="tab-pane fade show active" id="sms-form" role="tabpanel" aria-labelledby="sms-form-tab">
-          <!-- SMS Form fields -->
-          <form>
-            <div class="container">
-              <div class="row">
-                <div class="col-md-12 form-group d-flex align-items-center ">
-                  <label style="margin-right: 10px;">SMS System:</label>
-                  <div id="status">
-                    <div class="form-check form-check-inline">
-                      <input class="form-check-input" type="radio" name="sms_status" id="sms-enable1" value="Enable" checked>
-                      <label class="form-check-label" for="sms-enable1">Enable</label>
-                    </div>
-                    <div class="form-check form-check-inline">
-                      <input class="form-check-input" type="radio" name="sms_status" id="sms-disable1" value="Disable">
-                      <label class="form-check-label" for="sms-disable1">Disable</label>
-                    </div>
-                  </div>
-                </div>
-                <div class="col-md-6 form-group">
-                  <input type="text" class="form-control" name="sms_delay" id="sms_delay" placeholder=" " required>
-                  <label for="sms_delay" class="form-label">SMS Alert Delay*</label>
-                </div>
-                <div class="col-md-6 form-group">
-                  <input type="time" class="form-control" name="sms_time" id="sms_time" placeholder=" " required>
-                  <label for="sms_time" class="form-label">SMS Time</label>
-                </div>
-                <div class="col-md-3 form-group">
-                  <input type="text" class="form-control" name="mobile_user1" id="mobile_user1" placeholder=" " required>
-                  <label for="mobile_user1" class="form-label">Mobile User Name 1</label>
-                </div>
-                <div class="col-md-3 form-group">
-                  <input type="text" class="form-control" name="mobile_no1" id="mobile_no1" placeholder=" " required>
-                  <label for="mobile_no1" class="form-label">Mobile No 1</label>
-                </div>
-                <div class="col-md-3 form-group">
-                  <input type="text" class="form-control" name="mobile_user2" id="mobile_user2" placeholder=" " required>
-                  <label for="mobile_user2" class="form-label">Mobile User Name 2</label>
-                </div>
-                <div class="col-md-3 form-group">
-                  <input type="text" class="form-control" name="mobile_no2" id="mobile_no2" placeholder=" " required>
-                  <label for="mobile_no2" class="form-label">Mobile No 2</label>
-                </div>
-                <div class="col-md-3 form-group">
-                  <input type="text" class="form-control" name="mobile_user3" id="mobile_user3" placeholder=" " required>
-                  <label for="mobile_user3" class="form-label">Mobile User Name 3</label>
-                </div>
-                <div class="col-md-3 form-group">
-                  <input type="text" class="form-control" name="mobile_no3" id="mobile_no3" placeholder=" " required>
-                  <label for="mobile_no3" class="form-label">Mobile No 3</label>
-                </div>
-                <div class="col-md-3 form-group">
-                  <input type="text" class="form-control" name="mobile_user4" id="mobile_user4" placeholder=" " required>
-                  <label for="mobile_user4" class="form-label">Mobile User Name 4</label>
-                </div>
-                <div class="col-md-3 form-group">
-                  <input type="text" class="form-control" name="mobile_no4" id="mobile_no4" placeholder=" " required>
-                  <label for="mobile_no4" class="form-label">Mobile No 4</label>
-                </div>
-                <div class="col-md-3 form-group">
-                  <input type="text" class="form-control" name="mobile_user5" id="mobile_user5" placeholder=" " required>
-                  <label for="mobile_user5" class="form-label">Mobile User Name 5</label>
-                </div>
-                <div class="col-md-3 form-group">
-                  <input type="text" class="form-control" name="mobile_no5" id="mobile_no5" placeholder=" " required>
-                  <label for="mobile_no5" class="form-label">Mobile No 5</label>
-                </div>
-                <div class="col-md-3 form-group">
-                  <input type="text" class="form-control" name="mobile_user6" id="mobile_user6" placeholder=" " required>
-                  <label for="mobile_user6" class="form-label">Mobile User Name 6</label>
-                </div>
-                <div class="col-md-3 form-group">
-                  <input type="text" class="form-control" name="mobile_no6" id="mobile_no6" placeholder=" " required>
-                  <label for="mobile_no6" class="form-label">Mobile No 6</label>
-                </div>
-                <div class="col-md-3 form-group">
-                  <input type="text" class="form-control" name="mobile_user7" id="mobile_user7" placeholder=" " required>
-                  <label for="mobile_user7" class="form-label">Mobile User Name 7</label>
-                </div>
-                <div class="col-md-3 form-group">
-                  <input type="text" class="form-control" name="mobile_no7" id="mobile_no7" placeholder=" " required>
-                  <label for="mobile_no7" class="form-label">Mobile No 7</label>
-                </div>
-                <div class="col-md-3 form-group">
-                  <input type="text" class="form-control" name="mobile_user8" id="mobile_user8" placeholder=" " required>
-                  <label for="mobile_user8" class="form-label">Mobile User Name 8</label>
-                </div>
-                <div class="col-md-3 form-group">
-                  <input type="text" class="form-control" name="mobile_no8" id="mobile_no8" placeholder=" " required>
-                  <label for="mobile_no8" class="form-label">Mobile No 8</label>
-                </div>
-                <div class="col-md-3 form-group">
-                  <input type="text" class="form-control" name="mobile_user9" id="mobile_user9" placeholder=" " required>
-                  <label for="mobile_user9" class="form-label">Mobile User Name 9</label>
-                </div>
-                <div class="col-md-3 form-group">
-                  <input type="text" class="form-control" name="mobile_no9" id="mobile_no9" placeholder=" " required>
-                  <label for="mobile_no9" class="form-label">Mobile No9</label>
-                </div>
-                <div class="col-md-3 form-group">
-                  <input type="text" class="form-control" name="mobile_user10" id="mobile_user510" placeholder=" " required>
-                  <label for="mobile_user10" class="form-label">Mobile User Name 10</label>
-                </div>
-                <div class="col-md-3 form-group">
-                  <input type="text" class="form-control" name="mobile_no10" id="mobile_no10" placeholder=" " required>
-                  <label for="mobile_no10" class="form-label">Mobile No 10</label>
-                </div>
-                <div class="form-buttons">
-                  <button class="btn btn-outline-danger" type="button">Close</button>
-                  <button class="btn btn-outline-success">Save</button>
-                </div>
-              </div>
-            </div>
-          </form>
-        </div>
+            
+        <!-- SMS Settings Tab Content -->
         <div class="tab-pane fade" id="sms-settings" role="tabpanel" aria-labelledby="sms-settings-tab">
           <!-- SMS Settings fields -->
           <form>
@@ -402,133 +242,8 @@
             </div>
           </form>
         </div>
-      </div>
-    </div>
-    <div class="tab-pane fade" id="whatsapp" role="tabpanel" aria-labelledby="whatsappLink">
-      <!-- WhatsApp Form content -->
-      <ul class="nav nav-tabs" id="whatsappTab" role="tablist">
-        <li class="nav-item" role="presentation">
-          <button class="nav-link active" id="whatsapp-form-tab" data-bs-toggle="tab" data-bs-target="#whatsapp-form" type="button" role="tab" aria-controls="whatsapp-form" aria-selected="true">WhatsApp Form</button>
-        </li>
-        <li class="nav-item" role="presentation">
-          <button class="nav-link" id="whatsapp-settings-tab" data-bs-toggle="tab" data-bs-target="#whatsapp-settings" type="button" role="tab" aria-controls="whatsapp-settings" aria-selected="false">WhatsApp Settings</button>
-        </li>
-      </ul>
-      <div class="tab-content" id="whatsappTabContent">
-        <div class="tab-pane fade show active" id="whatsapp-form" role="tabpanel" aria-labelledby="whatsapp-form-tab">
-          <!-- WhatsApp Form fields -->
-          <form>
-            <div class="container">
-              <div class="row">
-                <div class="col-md-12 form-group d-flex align-items-center ">
-                  <label style="margin-right: 10px;">Whatsapp Message System:</label>
-                  <div id="status">
-                    <div class="form-check form-check-inline">
-                      <input class="form-check-input" type="radio" name="whatsapp_status" id="whatsapp-enable1" value="Enable" checked>
-                      <label class="form-check-label" for="whatsapp-enable1">Enable</label>
-                    </div>
-                    <div class="form-check form-check-inline">
-                      <input class="form-check-input" type="radio" name="whatsapp_status" id="whatsapp-disable1" value="Disable">
-                      <label class="form-check-label" for="whatsapp-disable1">Disable</label>
-                    </div>
-                  </div>
-                </div>
-                <div class="col-md-6 form-group">
-                  <input type="text" class="form-control" name="whatsapp_delay" id="whatsapp_delay" placeholder=" " required>
-                  <label for="whatsapp_delay" class="form-label">WhatsApp Message Alert Delay*</label>
-                </div>
-                <div class="col-md-6 form-group">
-                  <input type="time" class="form-control" name="whatsapp_time" id="whatsapp_time" placeholder=" " required>
-                  <label for="whatsapp_time" class="form-label">Whatsapp Message Time</label>
-                </div>
-                <div class="col-md-3 form-group">
-                  <input type="text" class="form-control" name="whatsapp_user1" id="whatsapp_user1" placeholder=" " required>
-                  <label for="whatsapp_user1" class="form-label">Whatsapp User Name 1</label>
-                </div>
-                <div class="col-md-3 form-group">
-                  <input type="text" class="form-control" name="whatsapp_no1" id="whatsapp_no1" placeholder=" " required>
-                  <label for="whatsapp_no1" class="form-label">Whatsapp No 1</label>
-                </div>
-                <div class="col-md-3 form-group">
-                  <input type="text" class="form-control" name="whatsapp_user2" id="whatsapp_user2" placeholder=" " required>
-                  <label for="whatsapp_user2" class="form-label">Whatsapp User Name 2</label>
-                </div>
-                <div class="col-md-3 form-group">
-                  <input type="text" class="form-control" name="whatsapp_no2" id="whatsapp_no2" placeholder=" " required>
-                  <label for="whatsapp_no2" class="form-label">Whatsapp No 2</label>
-                </div>
-                <div class="col-md-3 form-group">
-                  <input type="text" class="form-control" name="whatsapp_user3" id="whatsapp_user3" placeholder=" " required>
-                  <label for="whatsapp_user3" class="form-label">Whatsapp User Name 3</label>
-                </div>
-                <div class="col-md-3 form-group">
-                  <input type="text" class="form-control" name="whatsapp_no3" id="whatsapp_no3" placeholder=" " required>
-                  <label for="whatsapp_no3" class="form-label">Whatsapp No 3</label>
-                </div>
-                <div class="col-md-3 form-group">
-                  <input type="text" class="form-control" name="whatsapp_user4" id="whatsapp_user4" placeholder=" " required>
-                  <label for="whatsapp_user4" class="form-label">Whatsapp User Name 4</label>
-                </div>
-                <div class="col-md-3 form-group">
-                  <input type="text" class="form-control" name="whatsapp_no4" id="whatsapp_no4" placeholder=" " required>
-                  <label for="whatsapp_no4" class="form-label">Whatsapp No 4</label>
-                </div>
-                <div class="col-md-3 form-group">
-                  <input type="text" class="form-control" name="whatsapp_user5" id="whatsapp_user5" placeholder=" " required>
-                  <label for="whatsapp_user5" class="form-label">Whatsapp User Name 5</label>
-                </div>
-                <div class="col-md-3 form-group">
-                  <input type="text" class="form-control" name="whatsapp_no5" id="whatsapp_no5" placeholder=" " required>
-                  <label for="whatsapp_no5" class="form-label">whatsapp No 5</label>
-                </div>
-                <div class="col-md-3 form-group">
-                  <input type="text" class="form-control" name="whatsapp_user6" id="whatsapp_user6" placeholder=" " required>
-                  <label for="whatsapp_user6" class="form-label">Whatsapp User Name 6</label>
-                </div>
-                <div class="col-md-3 form-group">
-                  <input type="text" class="form-control" name="whatsapp_no6" id="whatsapp_no6" placeholder=" " required>
-                  <label for="whatsapp_no6" class="form-label">Whatsapp No 6</label>
-                </div>
-                <div class="col-md-3 form-group">
-                  <input type="text" class="form-control" name="whatsapp_user7" id="whatsapp_user7" placeholder=" " required>
-                  <label for="whatsapp_user7" class="form-label">Whatsapp User Name 7</label>
-                </div>
-                <div class="col-md-3 form-group">
-                  <input type="text" class="form-control" name="whatsapp_no7" id="whatsapp_no7" placeholder=" " required>
-                  <label for="whatsapp_no7" class="form-label">Whatsapp No 7</label>
-                </div>
-                <div class="col-md-3 form-group">
-                  <input type="text" class="form-control" name="whatsapp_user8" id="whatsapp_user8" placeholder=" " required>
-                  <label for="whatsapp_user8" class="form-label">Whatsapp User Name 8</label>
-                </div>
-                <div class="col-md-3 form-group">
-                  <input type="text" class="form-control" name="whatsapp_no8" id="whatsapp_no8" placeholder=" " required>
-                  <label for="whatsapp_no8" class="form-label">Whatsapp No 8</label>
-                </div>
-                <div class="col-md-3 form-group">
-                  <input type="text" class="form-control" name="whatsapp_user9" id="whatsapp_user9" placeholder=" " required>
-                  <label for="whatsapp_user9" class="form-label">Whatsapp User Name 9</label>
-                </div>
-                <div class="col-md-3 form-group">
-                  <input type="text" class="form-control" name="whatsapp_no9" id="whatsapp_no9" placeholder=" " required>
-                  <label for="whatsapp_no9" class="form-label">Whatsapp No 9</label>
-                </div>
-                <div class="col-md-3 form-group">
-                  <input type="text" class="form-control" name="whatsapp_user10" id="whatsapp_user510" placeholder=" " required>
-                  <label for="whatsapp_user10" class="form-label">Whatsapp User Name 10</label>
-                </div>
-                <div class="col-md-3 form-group">
-                  <input type="text" class="form-control" name="whatsapp_no10" id="whatsapp_no10" placeholder=" " required>
-                  <label for="whatsapp_no10" class="form-label">Whatsapp No 10</label>
-                </div>
-                <div class="form-buttons">
-                  <button class="btn btn-outline-danger" type="button">Close</button>
-                  <button class="btn btn-outline-success">Save</button>
-                </div>
-              </div>
-            </div>
-          </form>
-        </div>
+            
+        <!-- WhatsApp Settings Tab Content -->
         <div class="tab-pane fade" id="whatsapp-settings" role="tabpanel" aria-labelledby="whatsapp-settings-tab">
           <!-- WhatsApp Settings fields -->
           <form>
@@ -636,44 +351,6 @@
         if (input.value) {
             input.classList.add("filled");
         }
-    });
-
-    // Switch between Email, SMS, and WhatsApp forms
-    const emailLink = document.getElementById('emailLink');
-    const smsLink = document.getElementById('smsLink');
-    const whatsappLink = document.getElementById('whatsappLink');
-    const emailTab = document.getElementById('email');
-    const smsTab = document.getElementById('sms');
-    const whatsappTab = document.getElementById('whatsapp');
-
-    emailLink.addEventListener('click', function(event) {
-        event.preventDefault();
-        emailLink.classList.add('active');
-        smsLink.classList.remove('active');
-        whatsappLink.classList.remove('active');
-        emailTab.classList.add('show', 'active');
-        smsTab.classList.remove('show', 'active');
-        whatsappTab.classList.remove('show', 'active');
-    });
-
-    smsLink.addEventListener('click', function(event) {
-        event.preventDefault();
-        smsLink.classList.add('active');
-        emailLink.classList.remove('active');
-        whatsappLink.classList.remove('active');
-        smsTab.classList.add('show', 'active');
-        emailTab.classList.remove('show', 'active');
-        whatsappTab.classList.remove('show', 'active');
-    });
-
-    whatsappLink.addEventListener('click', function(event) {
-        event.preventDefault();
-        whatsappLink.classList.add('active');
-        emailLink.classList.remove('active');
-        smsLink.classList.remove('active');
-        whatsappTab.classList.add('show', 'active');
-        emailTab.classList.remove('show', 'active');
-        smsTab.classList.remove('show', 'active');
     });
 });
   </script>

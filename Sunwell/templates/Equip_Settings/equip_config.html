@@ -8,10 +8,10 @@
     <link rel="stylesheet" href="{% static 'css/Settings/equipment_config.css' %}">
     <style>
         .icon-size {
-            width: 40px; /* Adjust the width as per your icon size */
-            height: 35px; /* Ensure the image is square */
-            font-size: 16px; /* Adjust the font size if needed */
-            vertical-align: middle; /* Align icons and image */
+            width: 40px; 
+            height: 35px; 
+            font-size: 16px; 
+            vertical-align: middle; 
         }
     </style>
 {% endblock styles %}
@@ -56,156 +56,14 @@
                 </tr>
             </thead>
             <tbody id="form-data-table" class="scrollable-tbody">
+                {% for equipment in equipment_list %}
                 <tr>
                     <td><input type="checkbox" class="row-checkbox"></td>
-                    <td><a href="{% url 'equipmentsetting_Graphcolor' %}">MICRO/LEP/007</a></td>
-                    <td>192.168.1.9</td>
-                    <td>Active</td>
+                    <td><a href="{% url 'equipment_setting' %}">{{ equipment.equip_name }}</a></td>
+                    <td>{{ equipment.ip_address }} </td>
+                    <td>{{ equipment.status }}</td>
                 </tr>
-                <tr>
-                    <td><input type="checkbox" class="row-checkbox"></td>
-                    <td><a href="{% url 'equipmentsetting_Graphcolor' %}">MICRO/LEP/010</a></td>
-                    <td>192.168.1.9</td>
-                    <td>Active</td>
-                </tr>
-                <tr>
-                    <td><input type="checkbox" class="row-checkbox"></td>
-                    <td><a href="{% url 'equipmentsetting_Graphcolor' %}">MICRO/LEP/013</a></td>
-                    <td>192.168.1.10</td>
-                    <td>Active</td>
-                </tr>
-                <tr>
-                    <td><input type="checkbox" class="row-checkbox"></td>
-                    <td><a href="{% url 'equipmentsetting_Graphcolor' %}">MICRO/LEP/018</a></td>
-                    <td>192.168.1.11</td>
-                    <td>Active</td>
-                </tr>
-                <tr>
-                    <td><input type="checkbox" class="row-checkbox"></td>
-                    <td><a href="{% url 'equipmentsetting_Graphcolor' %}">MICRO/LEP/022</a></td>
-                    <td>192.168.1.12</td>
-                    <td>Active</td>
-                </tr>
-                <tr>
-                    <td><input type="checkbox" class="row-checkbox"></td>
-                    <td><a href="{% url 'equipmentsetting_Graphcolor' %}">MICRO/LEP/028</a></td>
-                    <td>192.168.1.13</td>
-                    <td>Active</td>
-                </tr>
-                <tr>
-                    <td><input type="checkbox" class="row-checkbox"></td>
-                    <td><a href="{% url 'equipmentsetting_Graphcolor' %}">MICRO/LEP/030</a></td>
-                    <td>192.168.1.14</td>
-                    <td>Active</td>
-                </tr>
-                <tr>
-                    <td><input type="checkbox" class="row-checkbox"></td>
-                    <td><a href="{% url 'equipmentsetting_Graphcolor' %}">MICRO/LEP/032</a></td>
-                    <td>192.168.1.15</td>
-                    <td>Active</td>
-                </tr>
-                <tr>
-                    <td><input type="checkbox" class="row-checkbox"></td>
-                    <td><a href="{% url 'equipmentsetting_Graphcolor' %}">MICRO/LEP/038</a></td>
-                    <td>192.168.1.816</td>
-                    <td>Active</td>
-                </tr>
-                <tr>
-                    <td><input type="checkbox" class="row-checkbox"></td>
-                    <td><a href="{% url 'equipmentsetting_Graphcolor' %}">MICRO/LEP/041</a></td>
-                    <td>192.168.1.17</td>
-                    <td>Active</td>
-                </tr>
-                <tr>
-                    <td><input type="checkbox" class="row-checkbox"></td>
-                    <td><a href="{% url 'equipmentsetting_Graphcolor' %}">MICRO/LEP/043</a></td>
-                    <td>192.168.1.8</td>
-                    <td>Active</td>
-                </tr>
-                <tr>
-                    <td><input type="checkbox" class="row-checkbox"></td>
-                    <td><a href="{% url 'equipmentsetting_Graphcolor' %}">MICRO/LEP/045</a></td>
-                    <td>192.168.1.9</td>
-                    <td>Active</td>
-                </tr>
-                <tr>
-                    <td><input type="checkbox" class="row-checkbox"></td>
-                    <td><a href="{% url 'equipmentsetting_Graphcolor' %}">MICRO/LEP/049</a></td>
-                    <td>192.168.1.20</td>
-                    <td>Active</td>
-                </tr>
-                <tr>
-                    <td><input type="checkbox" class="row-checkbox"></td>
-                    <td><a href="{% url 'equipmentsetting_Graphcolor' %}">MICRO/LEP/052</a></td>
-                    <td>192.168.1.21</td>
-                    <td>Active</td>
-                </tr>
-                <tr>
-                    <td><input type="checkbox" class="row-checkbox"></td>
-                    <td><a href="{% url 'equipmentsetting_Graphcolor' %}">MICRO/LEP/058</a></td>
-                    <td>192.168.1.22</td>
-                    <td>Active</td>
-                </tr>
-                <tr>
-                    <td><input type="checkbox" class="row-checkbox"></td>
-                    <td><a href="{% url 'equipmentsetting_Graphcolor' %}">MICRO/LEP/062</a></td>
-                    <td>192.168.1.23</td>
-                    <td>Active</td>
-                </tr>
-                <tr>
-                    <td><input type="checkbox" class="row-checkbox"></td>
-                    <td><a href="{% url 'equipmentsetting_Graphcolor' %}">MICRO/LEP/068</a></td>
-                    <td>192.168.1.24</td>
-                    <td>InActive</td>
-                </tr>
-                <tr>
-                    <td><input type="checkbox" class="row-checkbox"></td>
-                    <td>MICRO/LEP/070</td>
-                    <td>192.168.1.25</td>
-                    <td>Active</td>
-                </tr>
-                <tr>
-                    <td><input type="checkbox" class="row-checkbox"></td>
-                    <td>MICRO/LEP/074</td>
-                    <td>192.168.1.26</td>
-                    <td>Active</td>
-                </tr>
-                <tr>
-                    <td><input type="checkbox" class="row-checkbox"></td>
-                    <td>MICRO/LEP/076</td>
-                    <td>192.168.1.27</td>
-                    <td>InActive</td>
-                </tr>
-                <tr>
-                    <td><input type="checkbox" class="row-checkbox"></td>
-                    <td>MICRO/LEP/080</td>
-                    <td>192.168.1.28</td>
-                    <td>Active</td>
-                </tr>
-                <tr>
-                    <td><input type="checkbox" class="row-checkbox"></td>
-                    <td>MICRO/LEP/082</td>
-                    <td>192.168.1.29</td>
-                    <td>Active</td>
-                </tr>
-                <tr>
-                    <td><input type="checkbox" class="row-checkbox"></td>
-                    <td>MICRO/LEP/086</td>
-                    <td>192.168.1.30</td>
-                    <td>Active</td>
-                </tr>
-                <tr>
-                    <td><input type="checkbox" class="row-checkbox"></td>
-                    <td>MICRO/LEP/090</td>
-                    <td>192.168.1.31</td>
-                    <td>Active</td>
-                </tr>
-                <tr>
-                    <td><input type="checkbox" class="row-checkbox"></td>
-                    <td><a href="{% url 'equipmentsetting_Graphcolor' %}">MICRO/LEP/092</a></td>
-                    <td>192.168.1.32</td>
-                    <td>Active</td>
-                </tr>
+                {% endfor %}
             </tbody>
         </table>
     </div>
@@ -248,23 +106,24 @@
             </div>
             <!-- Modal Body -->
             <div class="modal-body">
-                <form id="adminUserForm">
+                <form method="post" action="{% url 'equipment_configure' %}">
+                    {% csrf_token %}
                     <div class="row">
                         <div class="col-md-8 form-group">
-                            <input type="text" class="form-control" id="userName" maxlength="15" placeholder=" " required>
+                            <input type="text" class="form-control" id="userName" maxlength="15" placeholder=" " name="equipname" required>
                             <label for="userName" class="form-label">Equipment Name</label>
                         </div>
                         <div class="col-md-4 form-group">
-                            <select class="form-control" id="userStatus" required>
+                            <select class="form-control" id="userStatus" name="equipStatus"required>
                                 <option value="" disabled selected>Select Status</option>
-                                <option value="active">Active</option>
-                                <option value="inactive">Inactive</option>
+                                <option value="Active">Active</option>
+                                <option value="Inactive">Inactive</option>
                             </select>
                             <label for="userStatus" class="form-label">Status</label>
                         </div>
                         
                         <div class="col-md-8 form-group">
-                            <input type="numbers" class="form-control" id="password"  placeholder=" " required>
+                            <input type="numbers" class="form-control" id="password" name="ipaddress"  placeholder=" " required>
                             <label for="passwordDuration" class="form-label">IP Address</label>
                         </div>
                         <div class="col-md-4 form-group">
@@ -277,7 +136,7 @@
                         </div>
                             
                         <div class="col-md-12 form-group">
-                            <select class="form-control" id="login-interval" required>
+                            <select class="form-control" id="login-interval" name="interval" required>
                                 <option value="" disabled selected>Select an interval</option>
                                 <option value="1">1</option>
                                 <option value="2">2</option>
@@ -289,13 +148,13 @@
                         </div>
                         
                         <div class="col-md-12 form-group">
-                            <input type="text" class="form-control" id="equipment_type" maxlength="50" placeholder=" " required>
+                            <input type="text" class="form-control" id="equipment_type" maxlength="50" name="equiptype" placeholder=" " required>
                             <label for="equipment_type" class="form-label">Equipment Type</label>
                         </div>
                         <div class="container">
                             <div class="row">
                                 <div class="col-md-12 form-group">
-                                    <select class="form-control" id="door-access-type" required>
+                                    <select class="form-control" id="door-access-type" name="dooracctype" required>
                                         <option value="" disabled selected>Select Door Access Type</option>
                                         <option value="none">None</option>
                                         <option value="plc">PLC</option>
@@ -497,13 +356,12 @@
                             });
                         </script>
                     </div>
+                    <!-- Modal Footer -->
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-outline-danger" data-bs-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-outline-success" id="saveUserBtn">Save </button>
+                    </div>
                 </form>
-            </div>
-            
-            <!-- Modal Footer -->
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                <button type="submit" class="btn btn-primary" id="saveUserBtn">Save User</button>
             </div>
         </div>
     </div>

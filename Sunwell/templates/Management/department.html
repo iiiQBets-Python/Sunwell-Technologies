@@ -1,3 +1,4 @@
+
 {% extends "Base/base.html" %}
 {% load static %}
 {% block title %} department {% endblock %}
@@ -85,40 +86,378 @@
         <div class="modal-content container-custom">
             <!-- Modal Header -->
             <div class="modal-header">
-                <h4 class="modal-title" id="adminUserModalLabel">Department Form</h4>
+                <h4 class="modal-title" id="adminUserModalLabel">Department and settings</h4>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <!-- Modal Body -->
+            <!-- Modal Body with Tabs -->
             <div class="modal-body">
-                <form  method="post" action="{% url 'department' %}">
-                    {% csrf_token %}
-                    <div class="col-md-12 form-group">
-                        <input type="text" class="form-control" id="departmentName" name="departmentName" maxlength="15" placeholder=" " required>
-                        <label for="departmentName" class="form-label">Department Name*</label>
+                <!-- Nav tabs -->
+                <ul class="nav nav-tabs" id="myTab" role="tablist">
+                    <li class="nav-item" role="presentation">
+                        <a class="nav-link active" id="department-tab" data-bs-toggle="tab" href="#department" role="tab" aria-controls="department" aria-selected="true">Department Form</a>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <a class="nav-link" id="email-tab" data-bs-toggle="tab" href="#email" role="tab" aria-controls="email" aria-selected="false">Email Form</a>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <a class="nav-link" id="sms-tab" data-bs-toggle="tab" href="#sms" role="tab" aria-controls="sms" aria-selected="false">SMS Form</a>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <a class="nav-link" id="whatsapp-tab" data-bs-toggle="tab" href="#whatsapp" role="tab" aria-controls="whatsapp" aria-selected="false">WhatsApp Form</a>
+                    </li>
+                </ul>
+                <!-- Tab content -->
+                <div class="tab-content mt-3" id="myTabContent">
+                    <!-- Department Form -->
+                    <div class="tab-pane fade show active" id="department" role="tabpanel" aria-labelledby="department-tab">
+                        <form method="post" action="{% url 'department' %}">
+                            {% csrf_token %}
+                            <div class="row">
+                              <div class="col-md-6 form-group">
+                                <input type="text" class="form-control" id="departmentName" name="departmentName" maxlength="15" placeholder=" " required>
+                                <label for="departmentName" class="form-label">Department Name*</label>
+                            </div>
+                            <div class="col-md-6 form-group">
+                                <select class="form-select" id="commGroup" name="commGroup" placeholder=" " required>
+                                    {% for group in groups %}
+                                    <option value="{{ group.CommGroup_code }}">{{ group.CommGroup_name }}</option>
+                                    {% endfor %}
+                                </select>
+                                <label for="commGroup" class="form-label">Comm. Group*</label>
+                            </div>
+                            </div>
+                            <div class="col-md-12 form-group">
+                                <input type="text" class="form-control" id="headerNote" name="headerNote" placeholder=" " required>
+                                <label for="headerNote" class="form-label">Header Note*</label>
+                            </div>
+                            <div class="col-md-12 form-group">
+                                <input type="text" class="form-control" id="footerNote" name="footerNote" placeholder=" " required>
+                                <label for="footerNote" class="form-label">Footer Note</label>
+                            </div>
+                            <div class="col-md-12 form-group d-flex align-items-center ">
+                              <label style="margin-right: 10px;">Report Date/Time Stamp:</label>
+                              <div id="status">
+                                <div class="form-check form-check-inline">
+                                  <input class="form-check-input" type="radio" name="report-datetime-stamp" id="report-datetime-stamp-yes" value="Enable" >
+                                  <label class="form-check-label" for="report-datetime-stamp-yes">Yes</label>
+                                </div>
+                                <div class="form-check form-check-inline">
+                                  <input class="form-check-input" type="radio" name="report-datetime-stamp" id="report-datetime-stamp-no" value="Disable">
+                                  <label class="form-check-label" for="report-datetime-stamp-no">No</label>
+                                </div>
+                              </div>
+                            </div>
+                            <div class="form-buttons">
+                                <button type="button" class="btn btn-danger" data-bs-dismiss="modal" aria-label="hidden">Close</button>
+                                <button type="submit" class="btn btn-success">Save</button>
+                            </div>
+                        </form>
                     </div>
-                    
-                    <div class="col-md-12 form-group">
-                        <select class="form-select" id="commGroup" name="commGroup" placeholder=" " required>
-                            {% for group in groups %}
-                            <option value="{{ group.CommGroup_code }}">{{ group.CommGroup_name }}</option>
-                            {% endfor %} 
-                        </select>
-                        <label for="commGroup" class="form-label">Comm. Group*</label>
+                    <!-- Email Form (Empty) -->
+                    <div class="tab-pane fade" id="email" role="tabpanel" aria-labelledby="email-tab">
+                         <!-- Email Form fields -->
+          <form>
+            <div class="container">
+              <div class="row">
+                <div class="col-md-12 form-group d-flex align-items-center ">
+                  <label style="margin-right: 10px;">Email System:</label>
+                  <div id="status">
+                    <div class="form-check form-check-inline">
+                      <input class="form-check-input" type="radio" name="email_status" id="email-enable1" value="Enable" >
+                      <label class="form-check-label" for="email-enable1">Enable</label>
                     </div>
-                    
-                    <div class="col-md-12 form-group">
-                        <input type="text" class="form-control" id="headerNote" name="headerNote" minlength="4" maxlength="15" placeholder=" " required>
-                        <label for="headerNote" class="form-label">Header Note*</label>
+                    <div class="form-check form-check-inline">
+                      <input class="form-check-input" type="radio" name="email_status" id="email-disable1" value="Disable">
+                      <label class="form-check-label" for="email-disable1">Disable</label>
                     </div>
-                    <div class="col-md-12 form-group">
-                        <input type="text" class="form-control" id="footerNote" name="footerNote" min="1" max="365" placeholder=" " required>
-                        <label for="footerNote" class="form-label">Footer Note</label>
+                  </div>
+                </div>
+                <div class="col-md-4 form-group">
+                  <input type="text" class="form-control" name="email_alert" id="email_alert" placeholder=" " required>
+                  <label for="email_alert" class="form-label">Email Alert Delay</label>
+                </div>
+                <div class="col-md-4 form-group">
+                  <input type="time" class="form-control" name="email_time" id="email_time" placeholder=" " required>
+                  <label for="email_time" class="form-label">Email Time</label>
+                </div>
+                <div class="col-md-4 form-group">
+                  <input type="email" class="form-control" name="email_address_1" id="email_address_1" placeholder=" " required>
+                  <label for="email_address_1" class="form-label">Alert Email Address 1*</label>
+                </div>
+                <div class="col-md-4 form-group">
+                  <input type="email" class="form-control" name="email_address_2" id="email_address_2" placeholder=" " required>
+                  <label for="email_address_2" class="form-label">Alert Email Address 2*</label>
+                </div>
+                <div class="col-md-4 form-group">
+                  <input type="email" class="form-control" name="email_address_3" id="email_address_3" placeholder=" " required>
+                  <label for="email_address_3" class="form-label">Alert Email Address 3*</label>
+                </div>
+                <div class="col-md-4 form-group">
+                  <input type="email" class="form-control" name="email_address_4" id="email_address_4" placeholder=" " required>
+                  <label for="email_address_4" class="form-label">Alert Email Address 4*</label>
+                </div>
+                <div class="col-md-4 form-group">
+                  <input type="email" class="form-control" name="email_address_5" id="email_address_5" placeholder=" " required>
+                  <label for="email_address_5" class="form-label">Alert Email Address 5*</label>
+                </div>
+                <div class="col-md-4 form-group">
+                  <input type="email" class="form-control" name="email_address_6" id="email_address_6" placeholder=" " required>
+                  <label for="email_address_6" class="form-label">Alert Email Address 6*</label>
+                </div>
+                <div class="col-md-4 form-group">
+                  <input type="email" class="form-control" name="email_address_7" id="email_address_7" placeholder=" " required>
+                  <label for="email_address_7" class="form-label">Alert Email Address 7*</label>
+                </div>
+                <div class="col-md-4 form-group">
+                  <input type="email" class="form-control" name="email_address_8" id="email_address_8" placeholder=" " required>
+                  <label for="email_address_8" class="form-label">Alert Email Address 8*</label>
+                </div>
+                <div class="col-md-4 form-group">
+                  <input type="email" class="form-control" name="email_address_9" id="email_address_9" placeholder=" " required>
+                  <label for="email_address_9" class="form-label">Alert Email Address 9*</label>
+                </div>
+                <div class="col-md-4 form-group">
+                  <input type="email" class="form-control" name="email_address_10" id="email_address_10" placeholder=" " required>
+                  <label for="email_address_10-" class="form-label">Alert Email Address 10*</label>
+                </div>
+                <div class="form-buttons">
+                  <button class="btn btn-outline-danger" type="button">Close</button>
+                  <button class="btn btn-outline-success">Save</button>
+                </div>
+              </div>
+            </div>
+          </form>
                     </div>
-                    <div class="form-buttons">
-                        <button type="button" class="btn btn-danger" data-bs-dismiss="modal" aria-label="hidden">Close</button>
-                        <button type="submit" class="btn btn-success">Save</button>
+                    <!-- SMS Form (Empty) -->
+                    <div class="tab-pane fade" id="sms" role="tabpanel" aria-labelledby="sms-tab">
+                        <form>
+                            <div class="container">
+                              <div class="row">
+                                <div class="col-md-12 form-group d-flex align-items-center ">
+                                  <label style="margin-right: 10px;">SMS System:</label>
+                                  <div id="status">
+                                    <div class="form-check form-check-inline">
+                                      <input class="form-check-input" type="radio" name="sms_status" id="sms-enable1" value="Enable" checked>
+                                      <label class="form-check-label" for="sms-enable1">Enable</label>
+                                    </div>
+                                    <div class="form-check form-check-inline">
+                                      <input class="form-check-input" type="radio" name="sms_status" id="sms-disable1" value="Disable">
+                                      <label class="form-check-label" for="sms-disable1">Disable</label>
+                                    </div>
+                                  </div>
+                                </div>
+                                <div class="col-md-6 form-group">
+                                  <input type="text" class="form-control" name="sms_delay" id="sms_delay" placeholder=" " required>
+                                  <label for="sms_delay" class="form-label">SMS Alert Delay*</label>
+                                </div>
+                                <div class="col-md-6 form-group">
+                                  <input type="time" class="form-control" name="sms_time" id="sms_time" placeholder=" " required>
+                                  <label for="sms_time" class="form-label">SMS Time</label>
+                                </div>
+                                <div class="col-md-3 form-group">
+                                  <input type="text" class="form-control" name="mobile_user1" id="mobile_user1" placeholder=" " required>
+                                  <label for="mobile_user1" class="form-label">Mobile User Name 1</label>
+                                </div>
+                                <div class="col-md-3 form-group">
+                                  <input type="text" class="form-control" name="mobile_no1" id="mobile_no1" placeholder=" " required>
+                                  <label for="mobile_no1" class="form-label">Mobile No 1</label>
+                                </div>
+                                <div class="col-md-3 form-group">
+                                  <input type="text" class="form-control" name="mobile_user2" id="mobile_user2" placeholder=" " required>
+                                  <label for="mobile_user2" class="form-label">Mobile User Name 2</label>
+                                </div>
+                                <div class="col-md-3 form-group">
+                                  <input type="text" class="form-control" name="mobile_no2" id="mobile_no2" placeholder=" " required>
+                                  <label for="mobile_no2" class="form-label">Mobile No 2</label>
+                                </div>
+                                <div class="col-md-3 form-group">
+                                  <input type="text" class="form-control" name="mobile_user3" id="mobile_user3" placeholder=" " required>
+                                  <label for="mobile_user3" class="form-label">Mobile User Name 3</label>
+                                </div>
+                                <div class="col-md-3 form-group">
+                                  <input type="text" class="form-control" name="mobile_no3" id="mobile_no3" placeholder=" " required>
+                                  <label for="mobile_no3" class="form-label">Mobile No 3</label>
+                                </div>
+                                <div class="col-md-3 form-group">
+                                  <input type="text" class="form-control" name="mobile_user4" id="mobile_user4" placeholder=" " required>
+                                  <label for="mobile_user4" class="form-label">Mobile User Name 4</label>
+                                </div>
+                                <div class="col-md-3 form-group">
+                                  <input type="text" class="form-control" name="mobile_no4" id="mobile_no4" placeholder=" " required>
+                                  <label for="mobile_no4" class="form-label">Mobile No 4</label>
+                                </div>
+                                <div class="col-md-3 form-group">
+                                  <input type="text" class="form-control" name="mobile_user5" id="mobile_user5" placeholder=" " required>
+                                  <label for="mobile_user5" class="form-label">Mobile User Name 5</label>
+                                </div>
+                                <div class="col-md-3 form-group">
+                                  <input type="text" class="form-control" name="mobile_no5" id="mobile_no5" placeholder=" " required>
+                                  <label for="mobile_no5" class="form-label">Mobile No 5</label>
+                                </div>
+                                <div class="col-md-3 form-group">
+                                  <input type="text" class="form-control" name="mobile_user6" id="mobile_user6" placeholder=" " required>
+                                  <label for="mobile_user6" class="form-label">Mobile User Name 6</label>
+                                </div>
+                                <div class="col-md-3 form-group">
+                                  <input type="text" class="form-control" name="mobile_no6" id="mobile_no6" placeholder=" " required>
+                                  <label for="mobile_no6" class="form-label">Mobile No 6</label>
+                                </div>
+                                <div class="col-md-3 form-group">
+                                  <input type="text" class="form-control" name="mobile_user7" id="mobile_user7" placeholder=" " required>
+                                  <label for="mobile_user7" class="form-label">Mobile User Name 7</label>
+                                </div>
+                                <div class="col-md-3 form-group">
+                                  <input type="text" class="form-control" name="mobile_no7" id="mobile_no7" placeholder=" " required>
+                                  <label for="mobile_no7" class="form-label">Mobile No 7</label>
+                                </div>
+                                <div class="col-md-3 form-group">
+                                  <input type="text" class="form-control" name="mobile_user8" id="mobile_user8" placeholder=" " required>
+                                  <label for="mobile_user8" class="form-label">Mobile User Name 8</label>
+                                </div>
+                                <div class="col-md-3 form-group">
+                                  <input type="text" class="form-control" name="mobile_no8" id="mobile_no8" placeholder=" " required>
+                                  <label for="mobile_no8" class="form-label">Mobile No 8</label>
+                                </div>
+                                <div class="col-md-3 form-group">
+                                  <input type="text" class="form-control" name="mobile_user9" id="mobile_user9" placeholder=" " required>
+                                  <label for="mobile_user9" class="form-label">Mobile User Name 9</label>
+                                </div>
+                                <div class="col-md-3 form-group">
+                                  <input type="text" class="form-control" name="mobile_no9" id="mobile_no9" placeholder=" " required>
+                                  <label for="mobile_no9" class="form-label">Mobile No9</label>
+                                </div>
+                                <div class="col-md-3 form-group">
+                                  <input type="text" class="form-control" name="mobile_user10" id="mobile_user510" placeholder=" " required>
+                                  <label for="mobile_user10" class="form-label">Mobile User Name 10</label>
+                                </div>
+                                <div class="col-md-3 form-group">
+                                  <input type="text" class="form-control" name="mobile_no10" id="mobile_no10" placeholder=" " required>
+                                  <label for="mobile_no10" class="form-label">Mobile No 10</label>
+                                </div>
+                                <div class="form-buttons">
+                                  <button class="btn btn-outline-danger" type="button">Close</button>
+                                  <button class="btn btn-outline-success">Save</button>
+                                </div>
+                              </div>
+                            </div>
+                          </form>
                     </div>
-                </form>
+                    <!-- WhatsApp Form (Empty) -->
+                    <div class="tab-pane fade" id="whatsapp" role="tabpanel" aria-labelledby="whatsapp-tab">
+                         <!-- WhatsApp Form fields -->
+          <form>
+            <div class="container">
+              <div class="row">
+                <div class="col-md-12 form-group d-flex align-items-center ">
+                  <label style="margin-right: 10px;">Whatsapp Message System:</label>
+                  <div id="status">
+                    <div class="form-check form-check-inline">
+                      <input class="form-check-input" type="radio" name="whatsapp_status" id="whatsapp-enable1" value="Enable" checked>
+                      <label class="form-check-label" for="whatsapp-enable1">Enable</label>
+                    </div>
+                    <div class="form-check form-check-inline">
+                      <input class="form-check-input" type="radio" name="whatsapp_status" id="whatsapp-disable1" value="Disable">
+                      <label class="form-check-label" for="whatsapp-disable1">Disable</label>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-md-6 form-group">
+                  <input type="text" class="form-control" name="whatsapp_delay" id="whatsapp_delay" placeholder=" " required>
+                  <label for="whatsapp_delay" class="form-label">WhatsApp Message Alert Delay*</label>
+                </div>
+                <div class="col-md-6 form-group">
+                  <input type="time" class="form-control" name="whatsapp_time" id="whatsapp_time" placeholder=" " required>
+                  <label for="whatsapp_time" class="form-label">Whatsapp Message Time</label>
+                </div>
+                <div class="col-md-3 form-group">
+                  <input type="text" class="form-control" name="whatsapp_user1" id="whatsapp_user1" placeholder=" " required>
+                  <label for="whatsapp_user1" class="form-label">Whatsapp User Name 1</label>
+                </div>
+                <div class="col-md-3 form-group">
+                  <input type="text" class="form-control" name="whatsapp_no1" id="whatsapp_no1" placeholder=" " required>
+                  <label for="whatsapp_no1" class="form-label">Whatsapp No 1</label>
+                </div>
+                <div class="col-md-3 form-group">
+                  <input type="text" class="form-control" name="whatsapp_user2" id="whatsapp_user2" placeholder=" " required>
+                  <label for="whatsapp_user2" class="form-label">Whatsapp User Name 2</label>
+                </div>
+                <div class="col-md-3 form-group">
+                  <input type="text" class="form-control" name="whatsapp_no2" id="whatsapp_no2" placeholder=" " required>
+                  <label for="whatsapp_no2" class="form-label">Whatsapp No 2</label>
+                </div>
+                <div class="col-md-3 form-group">
+                  <input type="text" class="form-control" name="whatsapp_user3" id="whatsapp_user3" placeholder=" " required>
+                  <label for="whatsapp_user3" class="form-label">Whatsapp User Name 3</label>
+                </div>
+                <div class="col-md-3 form-group">
+                  <input type="text" class="form-control" name="whatsapp_no3" id="whatsapp_no3" placeholder=" " required>
+                  <label for="whatsapp_no3" class="form-label">Whatsapp No 3</label>
+                </div>
+                <div class="col-md-3 form-group">
+                  <input type="text" class="form-control" name="whatsapp_user4" id="whatsapp_user4" placeholder=" " required>
+                  <label for="whatsapp_user4" class="form-label">Whatsapp User Name 4</label>
+                </div>
+                <div class="col-md-3 form-group">
+                  <input type="text" class="form-control" name="whatsapp_no4" id="whatsapp_no4" placeholder=" " required>
+                  <label for="whatsapp_no4" class="form-label">Whatsapp No 4</label>
+                </div>
+                <div class="col-md-3 form-group">
+                  <input type="text" class="form-control" name="whatsapp_user5" id="whatsapp_user5" placeholder=" " required>
+                  <label for="whatsapp_user5" class="form-label">Whatsapp User Name 5</label>
+                </div>
+                <div class="col-md-3 form-group">
+                  <input type="text" class="form-control" name="whatsapp_no5" id="whatsapp_no5" placeholder=" " required>
+                  <label for="whatsapp_no5" class="form-label">whatsapp No 5</label>
+                </div>
+                <div class="col-md-3 form-group">
+                  <input type="text" class="form-control" name="whatsapp_user6" id="whatsapp_user6" placeholder=" " required>
+                  <label for="whatsapp_user6" class="form-label">Whatsapp User Name 6</label>
+                </div>
+                <div class="col-md-3 form-group">
+                  <input type="text" class="form-control" name="whatsapp_no6" id="whatsapp_no6" placeholder=" " required>
+                  <label for="whatsapp_no6" class="form-label">Whatsapp No 6</label>
+                </div>
+                <div class="col-md-3 form-group">
+                  <input type="text" class="form-control" name="whatsapp_user7" id="whatsapp_user7" placeholder=" " required>
+                  <label for="whatsapp_user7" class="form-label">Whatsapp User Name 7</label>
+                </div>
+                <div class="col-md-3 form-group">
+                  <input type="text" class="form-control" name="whatsapp_no7" id="whatsapp_no7" placeholder=" " required>
+                  <label for="whatsapp_no7" class="form-label">Whatsapp No 7</label>
+                </div>
+                <div class="col-md-3 form-group">
+                  <input type="text" class="form-control" name="whatsapp_user8" id="whatsapp_user8" placeholder=" " required>
+                  <label for="whatsapp_user8" class="form-label">Whatsapp User Name 8</label>
+                </div>
+                <div class="col-md-3 form-group">
+                  <input type="text" class="form-control" name="whatsapp_no8" id="whatsapp_no8" placeholder=" " required>
+                  <label for="whatsapp_no8" class="form-label">Whatsapp No 8</label>
+                </div>
+                <div class="col-md-3 form-group">
+                  <input type="text" class="form-control" name="whatsapp_user9" id="whatsapp_user9" placeholder=" " required>
+                  <label for="whatsapp_user9" class="form-label">Whatsapp User Name 9</label>
+                </div>
+                <div class="col-md-3 form-group">
+                  <input type="text" class="form-control" name="whatsapp_no9" id="whatsapp_no9" placeholder=" " required>
+                  <label for="whatsapp_no9" class="form-label">Whatsapp No 9</label>
+                </div>
+                <div class="col-md-3 form-group">
+                  <input type="text" class="form-control" name="whatsapp_user10" id="whatsapp_user510" placeholder=" " required>
+                  <label for="whatsapp_user10" class="form-label">Whatsapp User Name 10</label>
+                </div>
+                <div class="col-md-3 form-group">
+                  <input type="text" class="form-control" name="whatsapp_no10" id="whatsapp_no10" placeholder=" " required>
+                  <label for="whatsapp_no10" class="form-label">Whatsapp No 10</label>
+                </div>
+                <div class="form-buttons">
+                  <button class="btn btn-outline-danger" type="button">Close</button>
+                  <button class="btn btn-outline-success">Save</button>
+                </div>
+              </div>
+            </div>
+          </form>
+                    </div>
+                </div>
             </div>
         </div>
     </div>

@@ -1,3 +1,4 @@
+
 {% extends "Base/base.html" %}
 {% load static %}
 
@@ -116,12 +117,12 @@
         }
 
         .table thead th {
-            background-color: #d3d3d3; /* Changed to grey */
+            background-color: #d3d3d3;
             color: #333;
         }
 
         .input-container #page-size {
-            max-width: 150px; /* Reduced size of Page Size input field */
+            max-width: 150px;
             padding: 8px;
             display: inline-block;
         }
@@ -134,37 +135,37 @@
             margin-top: 10px;
         }
         
-
         .button-group .btn {
             margin-left: 10px;
         }
 
         .status-section {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-top: 10px;
-    background-color: #f0f0f0;
-    padding: 10px;
-    border-radius: 5px;
-}
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 10px;
+            background-color: #f0f0f0;
+            padding: 10px;
+            border-radius: 5px;
+        }
 
-.status-section p {
-    margin: 0;
-}
+        .status-section p {
+            margin: 0;
+        }
 
-#filtered-records {
-    text-align: left;
-}
+        #filtered-records {
+            text-align: left;
+        }
 
-#record-count {
-    text-align: center;
-    flex: 1;
-}
+        #record-count {
+            text-align: center;
+            flex: 1;
+        }
 
         @media (max-width: 768px) {
             .filter-section .left-filter, .filter-section .right-filter {
                 width: 100%;
+                max-width: 100%;
             }
 
             .button-group {
@@ -174,6 +175,61 @@
 
             .button-group .btn {
                 margin-left: 15px;
+            }
+        }
+
+        /* New media queries for better responsiveness */
+        @media (max-width: 576px) {
+            .header-section {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .form-group {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .form-label {
+                margin-bottom: 5px;
+            }
+
+            .input-container {
+                width: 100%;
+                margin-left: 0;
+            }
+
+            .button-group {
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+
+            .button-group .btn {
+                margin: 5px;
+            }
+
+            .status-section {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            #filtered-records, #record-count {
+                text-align: left;
+                width: 100%;
+            }
+        }
+
+        @media (max-width: 400px) {
+            .table-responsive {
+                font-size: 14px;
+            }
+
+            .table thead th {
+                padding: 5px;
+            }
+
+            .table tbody td {
+                padding: 5px;
             }
         }
     </style>

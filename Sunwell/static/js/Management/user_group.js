@@ -1,6 +1,34 @@
 //form script
 
-// floatimg labels
+document.getElementById('commGroup').addEventListener('change', function () {
+    var commGroupValue = this.value;
+    var departmentSelect = document.getElementById('departmentName');
+    var options = departmentSelect.querySelectorAll('option');
+
+    console.log('CommGroup Selected:', commGroupValue);
+
+    options.forEach(option => {
+        console.log('Option:', option.value, 'CommGroup:', option.dataset.commgroup);
+        if (option.value === "") {
+            option.style.display = "block";
+        } else if (option.dataset.commgroup === commGroupValue) {
+            option.style.display = "block";
+        } else {
+            option.style.display = "none";
+        }
+    });
+
+    departmentSelect.disabled = !commGroupValue;  // Enable or disable based on selection
+    departmentSelect.value = ""; // Reset the selection
+});
+
+
+
+
+
+
+
+// floating labels
 document.addEventListener("DOMContentLoaded", function() {
     const inputs = document.querySelectorAll(".form-control, .form-select");
     inputs.forEach(input => {
@@ -223,3 +251,4 @@ document.getElementById('adminUserModal').addEventListener('hidden.bs.modal', fu
   });
 
 
+  

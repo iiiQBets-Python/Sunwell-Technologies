@@ -1,3 +1,5 @@
+from datetime import datetime, time, timedelta, timezone
+import threading
 from django.shortcuts import render, redirect,get_object_or_404
 from django.http import HttpResponse, HttpResponseRedirect
 from django.contrib.auth import login, logout
@@ -7,6 +9,7 @@ from django.conf import settings
 from django.http import JsonResponse
 import os
 import subprocess
+import schedule, time
 
 def base(request):
     return render(request, 'Base/base.html')
@@ -17,24 +20,29 @@ def user_login(request):
         password = request.POST.get('password')
 
         try:
-            super_admin = SuperAdmin.objects.get(sa_username=username)
+            super_admin = SuperAdmin.objects.get(sa_username__iexact=username.lower())
             if check_password(password, super_admin.sa_password):
                 request.session['username'] = super_admin.sa_username
                 messages.success(request, 'Login Successful!')
-                return redirect('SA_dashboard')
+                return redirect('dashboard')
             else:
                 messages.error(request, 'Invalid Username or Password!')
         except SuperAdmin.DoesNotExist:
-            try:
-                user = Custom_User.objects.get(username=username)
-                if check_password(password, user.password):
+            try:                
+                user = None
+                for u in User.objects.all():
+                    if u.check_login_name(username):  # Compare the unhashed login_name
+                        user = u
+                        break
+
+                if user and check_password(password, user.password):
                     request.session['username'] = user.username
                     messages.success(request, 'Login Successful!')
-                    return redirect('dashboard')
-                
-                else:
+                    return redirect('dashboard')              
+                else:   
+                               
                     messages.error(request, 'Invalid Username or Password!')
-            except Custom_User.DoesNotExist:
+            except User.DoesNotExist:
                 messages.error(request, 'User does not exist!')
 
         return render(request, 'Base/login.html')
@@ -128,6 +136,9 @@ def department(request):
     return render(request, 'Management/department.html',context )
 
 def user_group(request):
+    emp_user = request.session.get('username', None)
+
+    data = User.objects.get(username = emp_user)
     if request.method == 'POST':
         username = request.POST.get('userName')
         login_name = request.POST.get('loginName')
@@ -152,7 +163,8 @@ def user_group(request):
             role=role,
             commGroup=commgroup,
             department=department,
-            status=status
+            status=status,
+            
         )
         newuser.save()
 
@@ -164,7 +176,7 @@ def user_group(request):
         return redirect('user_group')
 
     # Fetch users, departments, and communication groups for the template
-    users = User.objects.all()
+    users = User.objects.all()  
     departments = Department.objects.all()
     groups = CommGroup.objects.all()
     context = {
@@ -173,6 +185,7 @@ def user_group(request):
         'users': users
     }
     return render(request, 'Management/user_group.html', context)
+
 
 
 def role_permission(request):
@@ -184,8 +197,60 @@ def user_access(request):
 def app_settings(request):
     return render (request, 'Management/app_settings.html')
 
-def livedata_summary(request):
-    return render (request, 'Live Data/realtime_summary.html')
+def perform_backup():
+    backup_setting = BackupSettings.objects.last()
+    if not backup_setting:
+        print("No backup settings found.")
+        return "failure", "No backup settings found."
+
+    current_time = datetime.now().strftime("%d%m%Y_%H%M")
+    backup_filename = f"ESTDAS_{current_time}.bak"
+
+    local_backup_file_path = os.path.join(backup_setting.local_path, backup_filename)
+    remote_backup_file_path = os.path.join(backup_setting.remote_path, backup_filename) if backup_setting.remote_path else None
+
+    # Remove all existing .bak files in the local path
+    for file_name in os.listdir(backup_setting.local_path):
+        if file_name.endswith(".bak"):
+            os.remove(os.path.join(backup_setting.local_path, file_name))
+
+    # Remove all existing .bak files in the remote path if it exists
+    if backup_setting.remote_path:
+        for file_name in os.listdir(backup_setting.remote_path):
+            if file_name.endswith(".bak"):
+                os.remove(os.path.join(backup_setting.remote_path, file_name))
+
+    db_settings = settings.DATABASES['default']
+    db_name = db_settings['NAME']
+    db_user = db_settings['USER']
+    db_password = db_settings['PASSWORD']
+    db_host = db_settings['HOST']
+
+    local_backup_command = (
+        f"sqlcmd -S {db_host} -U {db_user} -P {db_password} "
+        f"-Q \"BACKUP DATABASE [{db_name}] TO DISK = N'{local_backup_file_path}'\""
+    )
+    
+    try:
+        subprocess.run(local_backup_command, check=True, shell=True)
+        print("Local backup successful")
+
+        if backup_setting.remote_path:
+            remote_backup_command = (
+                f"sqlcmd -S {db_host} -U {db_user} -P {db_password} "
+                f"-Q \"BACKUP DATABASE [{db_name}] TO DISK = N'{remote_backup_file_path}'\""
+            )
+            subprocess.run(remote_backup_command, check=True, shell=True)
+            print("Remote backup successful")
+        
+        return "success", "Backup successful"
+    except subprocess.CalledProcessError as e:
+        print(f"Backup failed: {str(e)}")
+        return "failure", f"Backup failed: {str(e)}"
+
+def download_backup(request):
+    status, message = perform_backup()
+    return JsonResponse({"status": status, "message": message})
 
 def backup(request):
     if request.method == 'POST':
@@ -193,7 +258,6 @@ def backup(request):
         remote_path = request.POST.get('backup-remote-path')
         backup_time = request.POST.get('backup-time')
 
-        # Save backup settings to the database
         backup_setting = BackupSettings(
             local_path=local_path,
             remote_path=remote_path,
@@ -201,44 +265,33 @@ def backup(request):
         )
         backup_setting.save()
 
-        # Set a success message
         messages.success(request, 'Backup settings saved successfully!')
-
-        # Redirect back to the backup page
         return redirect('backup')
 
     return render(request, 'Management/backup.html')
 
-def download_backup(request):
-    # Get the last backup setting
+def schedule_daily_backup():
+    print("Scheduler thread started")
     backup_setting = BackupSettings.objects.last()
-    local_backup_file_path = os.path.join(backup_setting.local_path, 'backup.bak')
-    remote_backup_file_path = os.path.join(backup_setting.remote_path, 'backup.bak')
+    if backup_setting and backup_setting.backup_time:
+        
+        backup_time_str = backup_setting.backup_time.strftime("%H:%M")
+        print(f"Scheduling daily backup at {backup_time_str}")
 
-    # Get the database settings
-    db_settings = settings.DATABASES['default']
-    db_name = db_settings['NAME']
-    db_user = db_settings['USER']
-    db_password = db_settings['PASSWORD']
-    db_host = db_settings['HOST']
+        
+        schedule.every().day.at(backup_time_str).do(perform_backup)
 
-    # Commands to backup MSSQL database to local and remote paths
-    local_backup_command = (
-        f"sqlcmd -S {db_host} -U {db_user} -P {db_password} "
-        f"-Q \"BACKUP DATABASE [{db_name}] TO DISK = N'{local_backup_file_path}'\""
-    )
-    remote_backup_command = (
-        f"sqlcmd -S {db_host} -U {db_user} -P {db_password} "
-        f"-Q \"BACKUP DATABASE [{db_name}] TO DISK = N'{remote_backup_file_path}'\""
-    )
+        while True:
+            schedule.run_pending()
+            time.sleep(1)  
 
-    try:
-        # Run backup commands
-        subprocess.run(local_backup_command, check=True, shell=True)
-        subprocess.run(remote_backup_command, check=True, shell=True)
-        return JsonResponse({"status": "success", "message": "Backup successful"})
-    except subprocess.CalledProcessError as e:
-        return JsonResponse({"status": "failure", "message": f"Backup failed: {str(e)}"}, status=500)
+def start_backup_scheduler():
+    print("Starting backup scheduler")
+    backup_thread = threading.Thread(target=schedule_daily_backup, daemon=True)
+    backup_thread.start()
+
+start_backup_scheduler()
+
 
 def restore(request):
     return render (request, 'Management/restore.html')
@@ -280,6 +333,10 @@ def view_log(request):
 def alaram_log(request):
     return render(request, 'Data_Analysis/alaram_log.html')
 
+
+# Live data
+def livedata_summary(request):
+    return render (request, 'Live Data/realtime_summary.html')
 
 # audit_logs #
 def useractivity(request):

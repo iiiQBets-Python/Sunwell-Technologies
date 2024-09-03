@@ -13,6 +13,80 @@
             font-size: 16px; 
             vertical-align: middle; 
         }
+        @media (max-width: 992px) {
+            .table-wrapper {
+                overflow-x: auto;
+            }
+            
+            .custom-label {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            
+            .custom-label > div {
+                margin-top: 10px;
+            }
+            
+            .d-flex.justify-content-end.align-items-center {
+                flex-direction: column;
+                align-items: stretch !important;
+            }
+            
+            .d-flex.input-group {
+                width: 100% !important;
+                margin-bottom: 10px;
+            }
+            
+            .btn-primary {
+                width: 100%;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .entries-info {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            
+            .pagination {
+                margin-top: 10px;
+            }
+            
+            .d-flex.justify-content-between.align-items-center.mt-3 {
+                flex-direction: column;
+                align-items: stretch !important;
+            }
+            
+            .d-flex.justify-content-between.align-items-center.mt-3 > div {
+                text-align: center;
+                margin: 5px 0;
+            }
+            
+            #adminUserModal .modal-dialog {
+                max-width: 95%;
+                margin: 1.75rem auto;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .entries-info, .pagination {
+                justify-content: center;
+                margin-top: 10px;
+            }
+            
+            #adminUserModal .modal-dialog {
+                margin: 0.5rem;
+            }
+            
+            .form-buttons {
+                flex-direction: column;
+            }
+            
+            .form-buttons .btn {
+                width: 100%;
+                margin-bottom: 10px;
+            }
+        }
     </style>
 {% endblock styles %}
 

@@ -30,26 +30,6 @@ class SuperAdmin(models.Model):
         return None
 
 
-class Custom_User(models.Model):
-    Company_name = models.CharField(max_length=30)
-    username = models.CharField(max_length=30, unique=True)
-    password = models.CharField(max_length=255)
-    no_of_users = models.PositiveIntegerField()
-
-    def __str__(self):
-        return self.username
-
-    def set_password(self, raw_password):
-        self.password = make_password(raw_password)
-
-    def check_password(self, raw_password):
-        return check_password(raw_password, self.password)
-
-    def save(self, *args, **kwargs):
-        if self.pk is None:  # If new instance, hash password before saving
-            self.set_password(self.password)
-        super().save(*args, **kwargs)
-
 
 class Organization(models.Model):
     name = models.CharField(max_length=255)
@@ -77,14 +57,15 @@ class Department(models.Model):
     commGroup = models.ForeignKey(CommGroup, on_delete=models.CASCADE)
     header_note = models.CharField(max_length=100)
     footer_note = models.CharField(max_length=100)
+    report_datetime_stamp = models.BooleanField(default=False)
 
     def __str__(self):
         return self.department_name
         
 
-class User(models.Model):
+class User(models.Model):    
     username = models.CharField(max_length=30, unique=True)
-    login_name = models.CharField(max_length=50)
+    login_name = models.CharField(max_length=255)
     password = models.CharField(max_length=255)
     password_duration = models.PositiveIntegerField(default=30)
     role = models.CharField(max_length=50)
@@ -92,26 +73,26 @@ class User(models.Model):
     department = models.ForeignKey(Department, on_delete=models.SET_NULL, null=True)
     status = models.CharField(max_length=10, choices=[('Active', 'Active'), ('Inactive', 'Inactive')], default='Active')
     accessible_departments = models.ManyToManyField(Department, related_name='accessible_departments', blank=True)
-
+    
     def set_password(self, raw_password):
         self.password = make_password(raw_password)
 
-    # def set_login_name(self, raw_login_name):
-    #     self.login_name = make_password(raw_login_name)
+    def set_login_name(self, raw_login_name):
+        self.login_name = make_password(raw_login_name)
 
     def check_password(self, raw_password):
         return check_password(raw_password, self.password)
 
-    # def check_login_name(self, raw_login_name):
-    #     return check_password(raw_login_name, self.login_name)
+    def check_login_name(self, raw_login_name):
+        return check_password(raw_login_name, self.login_name)
 
     def save(self, *args, **kwargs):
         if not self.pk:  # If new instance, hash password and login name before saving
             self.set_password(self.password)
-            # self.set_login_name(self.login_name)
-        super().save(*args, **kwargs)  
-    
-    
+            self.set_login_name(self.login_name)
+        super().save(*args, **kwargs)            
+
+
     def __str__(self):
         return self.username
     

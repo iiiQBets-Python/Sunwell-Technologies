@@ -146,6 +146,7 @@
             </div>
             <div class="col-md-6 form-group">
               <select class="form-select" id="commGroup" name="commGroup" placeholder=" " required>
+                <option value="">Select Comm. Group</option>
                 {% for group in groups %}
                     <option value="{{ group.CommGroup_code }}">{{ group.CommGroup_name }}</option>
                   {% endfor %} 
@@ -153,11 +154,17 @@
               <label for="commGroup" class="form-label">Comm. Group*</label>
             </div>
             <div class="col-md-6 form-group">
-              <select class="form-select mb-2" id="departmentName" name="departmentName" placeholder=" " required>
+              <select class="form-select" id="departmentName" name="departmentName" required disabled>
+                <option value="">Select Department</option>
                 {% for department in departments %}
-                    <option value="{{ department.id }}">{{ department.department_name }}</option>
-                  {% endfor %} 
-              </select>
+                    {% if department.commGroup %}
+                        <option value="{{ department.id }}" data-commgroup="{{ department.commGroup.CommGroup_code }}">
+                            {{ department.department_name }}
+                        </option>
+                    {% endif %}
+                {% endfor %}
+            </select>
+   
               <label for="departmentName" class="form-label">Department Name*</label>
               <label>Status</label>
               <div id="status">

@@ -99,7 +99,7 @@
                             <td>Temperature1</td>
                             <td>
                                 <select class="form-select color-select">
-                                    <option value="color">Select Color</option>
+                                    <option value="" disabled selected>Select Color</option>
                                     <option value="black">Black</option>
                                     <option value="darkred">DarkRed</option>
                                     <option value="midnightblue">MidnightBlue</option>
@@ -199,6 +199,57 @@
                         <tr>
                             <td><input type="checkbox" class="row-checkbox"></td>
                             <td>Temperature4</td>
+                            <td>
+                                <select class="form-select color-select">
+                                    <option value="color">Select Color</option>
+                                    <option value="black">Black</option>
+                                    <option value="darkred">DarkRed</option>
+                                    <option value="midnightblue">MidnightBlue</option>
+                                    <option value="darksalmon">DarkSalmon</option>
+                                    <option value="olive">Olive</option>
+                                    <option value="darkslateblue">DarkSlateBlue</option>
+                                    <option value="orange">Orange</option>
+                                    <option value="darkorange">DarkOrange</option>
+                                </select>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><input type="checkbox" class="row-checkbox"></td>
+                            <td>Humidity4</td>
+                            <td>
+                                <select class="form-select color-select">
+                                    <option value="color">Select Color</option>
+                                    <option value="black">Black</option>
+                                    <option value="darkred">DarkRed</option>
+                                    <option value="midnightblue">MidnightBlue</option>
+                                    <option value="darksalmon">DarkSalmon</option>
+                                    <option value="olive">Olive</option>
+                                    <option value="darkslateblue">DarkSlateBlue</option>
+                                    <option value="orange">Orange</option>
+                                    <option value="darkorange">DarkOrange</option>
+                                </select>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><input type="checkbox" class="row-checkbox"></td>
+                            <td>Humidity4</td>
+                            <td>
+                                <select class="form-select color-select">
+                                    <option value="color">Select Color</option>
+                                    <option value="black">Black</option>
+                                    <option value="darkred">DarkRed</option>
+                                    <option value="midnightblue">MidnightBlue</option>
+                                    <option value="darksalmon">DarkSalmon</option>
+                                    <option value="olive">Olive</option>
+                                    <option value="darkslateblue">DarkSlateBlue</option>
+                                    <option value="orange">Orange</option>
+                                    <option value="darkorange">DarkOrange</option>
+                                </select>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><input type="checkbox" class="row-checkbox"></td>
+                            <td>Humidity4</td>
                             <td>
                                 <select class="form-select color-select">
                                     <option value="color">Select Color</option>
@@ -423,90 +474,238 @@
         </div>
 
         <div class="tab-pane fade" id="write-event" role="tabpanel" aria-labelledby="write-event-tab">
-            <!-- Equipment Write Event content here -->
-            <p>Equipment Write Event content goes here.</p>
+            <div class="table-wrapper">
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th><input type="checkbox" id="selectAll"></th>
+                            <th scope="col">Equipment Name</th>
+                            <th scope="col">Write Date time</th>
+                            <th scope="col">Parameter Label</th>
+                            <th scope="col">Parameter Value</th>
+                            <th scope="col">Status</th>
+                            <th scope="col">Status Description</th>
+                        </tr>
+                    </thead>
+                    <tbody id="write-event_form-data-table" class="scrollable-tbody">
+                        <tr>
+                            <td><input type="checkbox" class="row-checkbox"></td>
+                            <td>Autoclave Fo</td>
+                            <td>31-08-2024 14:59</td>
+                            <td>Temperature Set Value</td>
+                            <td>10</td>
+                            <td>Pending</td>
+                            <td></td>
+                        </tr>      
+                        <tr>
+                            <td><input type="checkbox" class="row-checkbox"></td>
+                            <td>Autoclave For</td>
+                            <td>31-08-2024 14:59</td>
+                            <td>Temperature Set Value</td>
+                            <td>10</td>
+                            <td>Pending</td>
+                            <td></td>
+                        </tr>  
+                        <tr>
+                            <td><input type="checkbox" class="row-checkbox"></td>
+                            <td>Autoclave Fo</td>
+                            <td>31-08-2024 14:59</td>
+                            <td>Temperatur Value</td>
+                            <td>111</td>
+                            <td>Pending</td>
+                            <td></td>
+                        </tr>  
+                        <tr>
+                            <td><input type="checkbox" class="row-checkbox"></td>
+                            <td>Autoclave Fo</td>
+                            <td>31-08-2024 14:59</td>
+                            <td>Temperature Set Value</td>
+                            <td>10</td>
+                            <td>Pending</td>
+                            <td></td>
+                        </tr>  
+                        <tr>
+                            <td><input type="checkbox" class="row-checkbox"></td>
+                            <td>Autoclave Fo</td>
+                            <td>31-08-2024 14:59</td>
+                            <td>Temperature Set Value</td>
+                            <td>10</td>
+                            <td>Pending</td>
+                            <td></td>
+                        </tr>  
+                        <tr>
+                            <td><input type="checkbox" class="row-checkbox"></td>
+                            <td>Autoclave Fo</td>
+                            <td>31-08-2024 14:59</td>
+                            <td>Temperature Set Value</td>
+                            <td>10</td>
+                            <td>Pending</td>
+                            <td></td>
+                        </tr>  
+                        <tr>
+                            <td><input type="checkbox" class="row-checkbox"></td>
+                            <td>Autoclave Fo</td>
+                            <td>31-08-2024 14:59</td>
+                            <td>Temperature Set Value</td>
+                            <td>10</td>
+                            <td>Pending</td>
+                            <td></td>
+                        </tr>  
+                        <tr>
+                            <td><input type="checkbox" class="row-checkbox"></td>
+                            <td>Autoclave Fo</td>
+                            <td>31-08-2024 14:59</td>
+                            <td>Temperature Set Value</td>
+                            <td>10</td>
+                            <td>Pending</td>
+                            <td></td>
+                        </tr>  
+                        <tr>
+                            <td><input type="checkbox" class="row-checkbox"></td>
+                            <td>star</td>
+                            <td>31-08-2024 14:59</td>
+                            <td>Temperature Set Value</td>
+                            <td>11</td>
+                            <td>active</td>
+                            <td></td>
+                        </tr>  
+                        <tr>
+                            <td><input type="checkbox" class="row-checkbox"></td>
+                            <td>autostart</td>
+                            <td>02-09-2024 14:59</td>
+                            <td>Temperature Set Value</td>
+                            <td>18</td>
+                            <td>active</td>
+                            <td></td>
+                        </tr> 
+                        <tr>
+                            <td><input type="checkbox" class="row-checkbox"></td>
+                            <td>adasdks kjc</td>
+                            <td>0cdcb kbfv</td>
+                            <td>TcdCdc</td>
+                            <td>18sdcsc</td>
+                            <td>acdscdsctive</td>
+                            <td>fcds</td>
+                        </tr>  
+                    </tbody>
+                </table>
+            </div>
+            <div class="d-flex justify-content-between mb-2">
+                <div class="entries-info d-flex align-items-center">
+                    <span>Show</span>
+                    <select id="entriesPerPage" class="form-select d-inline-block mx-2 entriesPerPage">
+                        <option value="10" selected>10</option>
+                        <option value="15">15</option>
+                        <option value="25">25</option>
+                        <option value="50">50</option>
+                        <option value="100">100</option>
+                    </select>
+                    <span>entries per page</span>
+                </div>
+                <div class="entries-info d-flex align-items-center">
+                    <small>Showing <span id="visible-entries">0</span> of <span id="total-entries">0</span> entries</small>
+                </div>
+                <nav aria-label="Page navigation" class="d-flex justify-content-end">
+                    <ul class="pagination mb-0">
+                        <li class="page-item" id="prev-page"><a class="page-link" href="#">Previous</a></li>
+                        <li class="page-item"><a class="page-link" href="#">1</a></li>
+                        <li class="page-item"><a class="page-link" href="#">2</a></li>
+                        <li class="page-item" id="next-page"><a class="page-link" href="#">Next</a></li>
+                    </ul>
+                </nav>
+            </div>
         </div>
     </div>
 </div>
 
-<script src="script.js"></script>
-<script>
-document.addEventListener('DOMContentLoaded', function () {
-    // Update entries info
-    const updateEntriesInfo = () => {
-        const totalEntries = document.querySelectorAll('#form-data-table tr').length;
-        const visibleEntries = document.querySelectorAll('#form-data-table tr:not(.d-none)').length;
-        document.getElementById('total-entries').textContent = totalEntries;
-        document.getElementById('visible-entries').textContent = visibleEntries;
-    };
+{% block scripts %}
+    {{ block.super }}
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+    document.addEventListener('DOMContentLoaded', function () {
+        // Function to update entries info based on active tab
+        const updateEntriesInfo = (tableSelector) => {
+            const totalEntries = document.querySelectorAll(${tableSelector} tbody tr).length;
+            const visibleEntries = document.querySelectorAll(${tableSelector} tbody tr:not(.d-none)).length;
+            document.querySelector(${tableSelector} #total-entries).textContent = totalEntries;
+            document.querySelector(${tableSelector} #visible-entries).textContent = visibleEntries;
+        };
 
-    // Initial update
-    updateEntriesInfo();
+        // Function to handle pagination and visibility of rows
+        const paginateRows = (tableSelector, currentPage, rowsPerPage) => {
+            const rows = document.querySelectorAll(${tableSelector} tbody tr);
+            const totalPages = Math.ceil(rows.length / rowsPerPage);
 
-    // Handle entries per page change
-    document.getElementById('entriesPerPage').addEventListener('change', function () {
-        const entriesPerPage = parseInt(this.value);
-        const rows = document.querySelectorAll('#form-data-table tr');
-        rows.forEach((row, index) => {
-            row.classList.toggle('d-none', index >= entriesPerPage);
+            rows.forEach((row, index) => {
+                const start = (currentPage - 1) * rowsPerPage;
+                const end = start + rowsPerPage;
+                row.classList.toggle('d-none', index < start || index >= end);
+            });
+
+            updateEntriesInfo(tableSelector);
+        };
+
+        // Initial update for both tables with default 10 entries per page
+        document.querySelectorAll('.entriesPerPage').forEach(function(selectElement) {
+            const tableSelector = selectElement.closest('.tab-pane').id === 'parameters' ? '#parameters' : '#write-event';
+            paginateRows(tableSelector, 1, 10);  // Default to 10 entries per page on load
         });
-        updateEntriesInfo();
-    });
 
-    // Handle pagination (basic example)
-    let currentPage = 1;
-    const rowsPerPage = 10;
-    const rows = document.querySelectorAll('#form-data-table tr');
-    const totalPages = Math.ceil(rows.length / rowsPerPage);
-
-    const showPage = (pageNumber) => {
-        rows.forEach((row, index) => {
-            const start = (pageNumber - 1) * rowsPerPage;
-            const end = start + rowsPerPage;
-            row.classList.toggle('d-none', index < start || index >= end);
+        // Handle entries per page change
+        document.querySelectorAll('.entriesPerPage').forEach(function(selectElement) {
+            selectElement.addEventListener('change', function () {
+                const entriesPerPage = parseInt(this.value);
+                const tableSelector = this.closest('.tab-pane').id === 'parameters' ? '#parameters' : '#write-event';
+                paginateRows(tableSelector, 1, entriesPerPage);  // Reset to first page on change
+            });
         });
-        currentPage = pageNumber;
-        updateEntriesInfo();
-    };
 
-    document.getElementById('prev-page').addEventListener('click', function (e) {
-        e.preventDefault();
-        if (currentPage > 1) {
-            showPage(currentPage - 1);
-        }
-    });
+        // Handle pagination
+        document.querySelectorAll('.pagination .page-link').forEach(function(link) {
+            link.addEventListener('click', function (e) {
+                e.preventDefault();
+                const tableSelector = this.closest('.tab-pane').id === 'parameters' ? '#parameters' : '#write-event';
+                const rowsPerPage = parseInt(document.querySelector(${tableSelector} .entriesPerPage).value);
+                const rows = document.querySelectorAll(${tableSelector} tbody tr);
+                const totalPages = Math.ceil(rows.length / rowsPerPage);
+                let currentPage = parseInt(this.textContent) || 1;
 
-    document.getElementById('next-page').addEventListener('click', function (e) {
-        e.preventDefault();
-        if (currentPage < totalPages) {
-            showPage(currentPage + 1);
-        }
-    });
+                if (this.closest('li').id === 'prev-page' && currentPage > 1) {
+                    currentPage -= 1;
+                } else if (this.closest('li').id === 'next-page' && currentPage < totalPages) {
+                    currentPage += 1;
+                }
 
-    showPage(currentPage);
+                paginateRows(tableSelector, currentPage, rowsPerPage);
+            });
+        });
 
-    // Handle select all functionality
-    document.getElementById('selectAll').addEventListener('change', function () {
-        const checkboxes = document.querySelectorAll('.row-checkbox');
-        checkboxes.forEach(checkbox => {
-            checkbox.checked = this.checked;
+        // Handle select all functionality
+        document.querySelectorAll('#selectAll').forEach(function(selectAllElement) {
+            selectAllElement.addEventListener('change', function () {
+                const tableSelector = this.closest('.tab-pane').id === 'parameters' ? '#parameters' : '#write-event';
+                const checkboxes = document.querySelectorAll(${tableSelector} .row-checkbox);
+                checkboxes.forEach(checkbox => {
+                    checkbox.checked = this.checked;
+                });
+            });
+        });
+
+        // Handle color select change
+        document.querySelectorAll('.color-select').forEach(function(selectElement) {
+            selectElement.addEventListener('change', function() {
+                const selectedColor = this.value;
+
+                this.style.backgroundColor = selectedColor;
+                this.style.color = 'white';
+                this.style.fontWeight = 'bold';
+
+                // Keep the dropdown background as default
+                this.classList.add('custom-select');
+            });
         });
     });
-
-    document.querySelectorAll('.color-select').forEach(function(selectElement) {
-    selectElement.addEventListener('change', function() {
-        const selectedColor = this.value;
-
-        // Apply styles to the <select> element
-        this.style.backgroundColor = selectedColor;
-        this.style.color = 'white';
-        this.style.fontWeight = 'bold';
-
-        // Keep the dropdown background as default
-        this.classList.add('custom-select');
-        });
-    });
-});
-</script>
+    </script>
+{% endblock %}
 
 {% endblock content %}

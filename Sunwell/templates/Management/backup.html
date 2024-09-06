@@ -170,7 +170,7 @@
 {% block content %} 
 
 <div class="container pt-5">
-    <div id="floating-alert" class="floating-alert">
+    {% comment %} <div id="floating-alert" class="floating-alert">
         {% if messages %}
             {% for message in messages %}
                 <div class="alert alert-success alert-dismissible fade show" role="alert">
@@ -179,7 +179,7 @@
                 </div>
             {% endfor %}
         {% endif %}
-    </div>
+    </div> {% endcomment %}
     <div class="row">
         <!-- Left column with the image -->
         <div class="col-md-5 left-column">

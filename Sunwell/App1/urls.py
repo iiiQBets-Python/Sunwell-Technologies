@@ -37,7 +37,8 @@ urlpatterns = [
     path('alaram_log/',alaram_log,name='alaram_log'),
 
     # audit_logs #
-    path('useractivity/', useractivity, name="useractivity"),
-    path('Equipment_Audit/', Equipment_Audit, name="Equipment_Audit"),
-    path('user_Audit/', user_Audit, name="user_Audit"),
+    path('user_activity_log/', user_activity, name="user_activity"),
+    path('generate_user_activity_pdf/', generate_user_activity_pdf, name='generate_user_activity_pdf'),
+    path('Equipment_Audit/', equipment_Audit_log, name="Equipment_Audit_log"),
+    path('alaram_Audit_log/', alaram_Audit_log, name="alaram_Audit_log"),
 ]

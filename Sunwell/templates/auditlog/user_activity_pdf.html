@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>User Activity Report</title>
+    <style>
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th, td {
+            border: 1px solid black;
+            padding: 2px;
+            text-align: left;
+            word-wrap: break-word;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+        .slno {
+            width: 5%;
+            text-align: center;  /* Center the text */
+        }
+        .log_date, .log_time, .login_name, .event_name {
+            text-align: left;
+        }
+        .log_date {
+            width: 15%;
+        }
+        .log_time {
+            width: 15%;
+        }
+        .login_name {
+            width: 15%;
+        }
+        .event_name {
+            width: 50%;
+        }
+    </style>
+</head>
+<body>
+    <h2>User Activity Report</h2>
+    <table>
+        <thead>
+            <tr>
+                <th class="slno">Slno</th>
+                <th class="log_date">Log Date</th>
+                <th class="log_time">Log Time</th>
+                <th class="login_name">Login Name</th>
+                <th class="event_name">Event Name</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for log in logs %}
+            <tr>
+                <td>{{ forloop.counter }}</td>  <!-- Serial number -->
+                <td>{{ log.log_date|date:"d-m-Y" }}</td>  <!-- Formatted date -->
+                <td>{{ log.log_time|time:"H:i:s" }}</td>  <!-- Time with seconds -->
+                <td>{{ log.user.username }}</td>
+                <td>{{ log.event_name }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</body>
+</html>

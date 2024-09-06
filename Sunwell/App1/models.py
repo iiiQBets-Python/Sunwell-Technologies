@@ -1,5 +1,8 @@
+
 from django.db import models
 from django.contrib.auth.hashers import make_password, check_password
+from django.utils import timezone
+
 
 class SuperAdmin(models.Model):
     sa_full_name = models.CharField(max_length=25)
@@ -65,7 +68,7 @@ class Department(models.Model):
 
 class User(models.Model):    
     username = models.CharField(max_length=30, unique=True)
-    login_name = models.CharField(max_length=255)
+    login_name = models.CharField(max_length=255, unique=True)
     password = models.CharField(max_length=255)
     password_duration = models.PositiveIntegerField(default=30)
     role = models.CharField(max_length=50)
@@ -90,11 +93,11 @@ class User(models.Model):
         if not self.pk:  # If new instance, hash password and login name before saving
             self.set_password(self.password)
             self.set_login_name(self.login_name)
-        super().save(*args, **kwargs)            
-
+        super().save(*args, **kwargs)
 
     def __str__(self):
         return self.username
+
     
 class BackupSettings(models.Model):
     local_path = models.CharField(max_length=255)
@@ -127,4 +130,14 @@ class Equipment(models.Model):
     door_access_type = models.CharField(max_length=15, choices=EQUIPMENT_ACCESS_CHOICES)
 
     def __str__(self):
-        return self.name
+        return self.equip_name
+    
+
+class UserActivityLog(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    log_date = models.DateField(default=timezone.now)
+    log_time = models.TimeField(default=timezone.now)
+    event_name = models.CharField(max_length=255)
+
+    def __str__(self):
+        return f"{self.user.username} - {self.event_name} - {self.log_date} {self.log_time}"

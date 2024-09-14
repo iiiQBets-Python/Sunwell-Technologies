@@ -26,6 +26,10 @@ urlpatterns = [
     path('backup/', backup, name='backup'),
     path('download-backup/', download_backup, name='download_backup'),
     path('restore/', restore, name='restore'),
+
+    path('edit_comm_group/<str:comm_code>/', edit_comm_group, name='edit_comm_group'),
+    path('edit_department/<str:department_id>/', edit_department, name='edit_department'),
+    path('edit_user/<str:user_id>/', edit_user, name='edit_user'),
     
     
     # Settings
@@ -38,7 +42,8 @@ urlpatterns = [
 
     # audit_logs #
     path('user_activity_log/', user_activity, name="user_activity"),
-    path('generate_user_activity_pdf/', generate_user_activity_pdf, name='generate_user_activity_pdf'),
     path('Equipment_Audit/', equipment_Audit_log, name="Equipment_Audit_log"),
     path('alaram_Audit_log/', alaram_Audit_log, name="alaram_Audit_log"),
+
+    path('upload_csv/', upload_csv, name='upload_csv'),
 ]

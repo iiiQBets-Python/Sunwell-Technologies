@@ -56,14 +56,16 @@
           <tbody id="form-data-table">
             {% for user in users %}
             <tr>
-                <td><input type="checkbox" class="row-checkbox"></td>
+                <td><input type="checkbox" class="row-checkbox" name="user_checkbox"></td>
                 <td>{{ user.username }}</td>
                 <td>{{ user.commGroup }}</td>
                 <td>{{ user.department }}</td>
                 <td>{{ user.role }}</td>
                 <td>
                     <div class="dropdown">
-                        <a class="dropdown-item btn-edit" href="#"><i class="fas fa-edit"></i></a>
+                      <a class="dropdown-item btn-edit"  data-bs-toggle="edit_modal" data-bs-target="#editUserModal-{{ user.id }}">
+                        <i class="fas fa-edit"></i>
+                    </a>
                     </div>
                 </td>
             </tr>
@@ -115,7 +117,7 @@
           {% csrf_token %}
           <div class="row">
             <div class="col-md-6 form-group">
-              <input type="text" class="form-control" id="userName" name="userName" maxlength="15" placeholder=" " required>
+              <input type="text" class="form-control" id="userName" name="userName" autocomplete="username" maxlength="15" placeholder=" " required>
               <label for="userName" class="form-label">User Name*</label>
             </div>
             <div class="col-md-6 form-group">
@@ -146,7 +148,6 @@
             </div>
             <div class="col-md-6 form-group">
               <select class="form-select" id="commGroup" name="commGroup" placeholder=" " required>
-                <option value="">Select Comm. Group</option>
                 {% for group in groups %}
                     <option value="{{ group.CommGroup_code }}">{{ group.CommGroup_name }}</option>
                   {% endfor %} 
@@ -163,10 +164,8 @@
                         </option>
                     {% endif %}
                 {% endfor %}
-            </select>
-   
-              <label for="departmentName" class="form-label">Department Name*</label>
-              <label>Status</label>
+              </select>
+              <h6>Status</h6>
               <div id="status">
                 <div class="form-check form-check-inline">
                   <input class="form-check-input" type="radio" name="status" id="statusActive" value="Active" checked required>
@@ -181,8 +180,12 @@
             <div class="col-md-6 form-group">
               <select class="form-select" id="accessibleDepartment" name="accessibleDepartment" multiple required>
                 {% for department in departments %}
-                    <option value="{{ department.id }}">{{ department.department_name }}</option>
-                  {% endfor %} 
+                    {% if department.commGroup %}
+                        <option value="{{ department.id }}" data-commgroup="{{ department.commGroup.CommGroup_code }}">
+                            {{ department.department_name }}
+                        </option>
+                    {% endif %}
+                {% endfor %}
               </select>
               <label for="accessibleDepartment" class="form-label">Accessible Department</label>
               <div id="selectedDepartments" class="mt-2"></div>
@@ -197,6 +200,182 @@
     </div>
   </div>
 </div>
+
+{% for user in users %}
+<!-- Edit User Modal -->
+<div class="modal fade" id="editUserModal-{{ user.id }}" tabindex="-1" aria-labelledby="editUserModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content container-custom">
+      <div class="modal-header">
+        <h4 class="modal-title" id="editUserModalLabel">Edit User</h4>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <form id="editUserForm-{{ user.id }}" method="post" action="{% url 'edit_user' user.id %}">
+          {% csrf_token %}
+          <input type="hidden" name="userId" value="{{ user.id }}">
+          <div class="row">
+            <div class="col-md-6 form-group">
+              <input type="text" class="form-control" id="editUsername-{{ user.id }}" name="editUsername" value="{{ user.username }}" maxlength="15" placeholder=" " required>
+              <label for="editUsername-{{ user.id }}" class="form-label">User Name*</label>
+            </div>
+            <div class="col-md-6 form-group">
+              <input type="text" class="form-control" id="editLoginName-{{ user.id }}" name="editLoginName" value="{{ user.login_name }}" placeholder=" " required>
+              <label for="editLoginName-{{ user.id }}" class="form-label">Login Name*</label>
+            </div>
+            <div class="col-md-6 form-group">
+              <input type="password" class="form-control" id="editPassword-{{ user.id }}" name="editPassword" value="{{ user.password }}" placeholder="" minlength="8" maxlength="15">
+              <label for="editPassword-{{ user.id }}" class="form-label">Password*</label>
+            </div>
+            <div class="col-md-6 form-group">
+              <select class="form-select" id="editpasswordDuration-{{ user.id }}" name="editpasswordDuration" required>
+                <option value="30" {% if user.password_duration == 30 %}selected{% endif %}>30 Days</option>
+                <option value="60" {% if user.password_duration == 60 %}selected{% endif %}>60 Days</option>
+                <option value="90" {% if user.password_duration == 90 %}selected{% endif %}>90 Days</option>
+                <option value="120" {% if user.password_duration == 120 %}selected{% endif %}>120 Days</option>
+              </select>
+              <label for="editpasswordDuration-{{ user.id }}" class="form-label">Set Password Duration in Days</label>
+            </div>
+            <div class="col-md-6 form-group">
+              <select class="form-select" id="editRole-{{ user.id }}" name="editRole" required>
+                <option value="admin" {% if user.role == 'admin' %}selected{% endif %}>Admin</option>
+                <option value="general" {% if user.role == 'general' %}selected{% endif %}>General</option>
+                <option value="operator" {% if user.role == 'operator' %}selected{% endif %}>Operator</option>
+              </select>
+              <label for="editRole-{{ user.id }}" class="form-label">Role*</label>
+            </div>
+            <div class="col-md-6 form-group">
+              <select class="form-select" id="editCommGroup-{{ user.id }}" name="editCommGroup" required>
+                {% for group in groups %}
+                  <option value="{{ group.CommGroup_code }}" {% if group == user.commGroup %}selected{% endif %}>
+                    {{ group.CommGroup_name }}
+                  </option>
+                {% endfor %}
+              </select>
+              <label for="editCommGroup-{{ user.id }}" class="form-label">Comm. Group*</label>
+            </div>
+            <div class="col-md-6 form-group">
+              <select class="form-select" id="editdepartmentName-{{ user.id }}" name="editdepartmentName" required>
+                <option value="">Select Department</option>
+                {% for department in departments %}
+                  {% if department.commGroup %}
+                    <option value="{{ department.id }}" data-commgroup="{{ department.commGroup.CommGroup_code }}" {% if department == user.department %}selected{% endif %}>
+                      {{ department.department_name }}
+                    </option>
+                  {% endif %}
+                {% endfor %}
+              </select>
+              <label for="editdepartmentName-{{ user.id }}" class="form-label">Department*</label>
+            
+              <h6>Status</h6>
+              <div id="status">
+                <div class="form-check form-check-inline">
+                  <input class="form-check-input" type="radio" name="editstatus" id="statusActive-{{ user.id }}" value="Active" {% if user.status == 'Active' %}checked{% endif %} required>
+                  <label class="form-check-label" for="statusActive">Active</label>
+                </div>
+                <div class="form-check form-check-inline">
+                  <input class="form-check-input" type="radio" name="editstatus" id="statusInactive-{{ user.id }}" value="Inactive" {% if user.status == 'Inactive' %}checked{% endif %}>
+                  <label class="form-check-label" for="statusInactive">Inactive</label>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-6 form-group">
+              <select class="form-select" id="editaccessibleDepartment-{{ user.id }}" name="editaccessibleDepartment" multiple required>
+                {% for department in departments %}
+                  {% if department.commGroup %}
+                    <option value="{{ department.id }}" data-commgroup="{{ department.commGroup.CommGroup_code }}" {% if department in user.accessible_departments.all %}selected{% endif %}>
+                      {{ department.department_name }}
+                    </option>
+                  {% endif %}
+                {% endfor %}
+              </select>
+              <label for="editaccessibleDepartment-{{ user.id }}" class="form-label">Accessible Department</label>
+              <div id="selectededitDepartments-{{ user.id }}" class="mt-2"></div>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Close</button>
+            <button type="submit" class="btn btn-success">Save</button>
+          </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endfor %}
+
+
+<script>
+  document.querySelectorAll('.btn-edit').forEach(button => {
+  button.addEventListener('click', function() {
+      const modalId = this.getAttribute('data-bs-target');
+      const modal = document.querySelector(modalId);
+      const modalInstance = new bootstrap.Modal(modal);
+      modalInstance.show();
+  });
+});
+</script>
+
+<script>
+  document.addEventListener("DOMContentLoaded", function() {
+    // Function to filter the "Select Department" dropdown based on selected CommGroup
+    function filterDepartments(commGroupSelect, departmentSelect) {
+        const commGroupValue = commGroupSelect.value;
+        const departmentOptions = departmentSelect.querySelectorAll('option');
+
+        departmentOptions.forEach(option => {
+            if (option.value === "") {
+                // Always show the default 'Select Department' option
+                option.style.display = "block";
+            } else if (option.dataset.commgroup === commGroupValue || commGroupValue === "") {
+                // Show options that match the selected CommGroup
+                option.style.display = "block";
+            } else {
+                // Hide options that don't match the selected CommGroup
+                option.style.display = "none";
+            }
+        });
+
+        // Enable/disable the department select based on CommGroup selection
+        departmentSelect.disabled = !commGroupValue;
+        departmentSelect.value = ""; // Reset the department selection to the default
+    }
+
+    // Loop through each edit modal to attach event listeners
+    document.querySelectorAll('[id^="editUserModal-"]').forEach(modal => {
+        const commGroupSelect = modal.querySelector('.form-select[id^="editCommGroup"]');
+        const departmentSelect = modal.querySelector('.form-select[id^="editdepartmentName"]');
+
+        // Attach the event listener to the CommGroup dropdown for each modal
+        if (commGroupSelect && departmentSelect) {
+            commGroupSelect.addEventListener('change', function() {
+                filterDepartments(commGroupSelect, departmentSelect);
+            });
+
+            // Initial call to filter departments based on the initially selected CommGroup
+            filterDepartments(commGroupSelect, departmentSelect);
+        }
+    });
+
+    // Event listener for the main Add User modal (if needed)
+    const mainCommGroupSelect = document.getElementById('commGroup');
+    const mainDepartmentSelect = document.getElementById('departmentName');
+
+    if (mainCommGroupSelect && mainDepartmentSelect) {
+        mainCommGroupSelect.addEventListener('change', function() {
+            filterDepartments(mainCommGroupSelect, mainDepartmentSelect);
+        });
+
+        // Initial call to filter departments based on the initially selected CommGroup in Add User modal
+        filterDepartments(mainCommGroupSelect, mainDepartmentSelect);
+    }
+});
+
+
+</script>
+
 {% block scripts %}
 {{ block.super }}
 <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>

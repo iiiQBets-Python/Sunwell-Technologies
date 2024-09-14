@@ -1,56 +1,29 @@
-//form script
-
-document.getElementById('commGroup').addEventListener('change', function () {
-    var commGroupValue = this.value;
-    var departmentSelect = document.getElementById('departmentName');
-    var options = departmentSelect.querySelectorAll('option');
-
-    console.log('CommGroup Selected:', commGroupValue);
-
-    options.forEach(option => {
-        console.log('Option:', option.value, 'CommGroup:', option.dataset.commgroup);
-        if (option.value === "") {
-            option.style.display = "block";
-        } else if (option.dataset.commgroup === commGroupValue) {
-            option.style.display = "block";
-        } else {
-            option.style.display = "none";
-        }
-    });
-
-    departmentSelect.disabled = !commGroupValue;  // Enable or disable based on selection
-    departmentSelect.value = ""; // Reset the selection
-});
-
-
-
-
-
-
-
-// floating labels
 document.addEventListener("DOMContentLoaded", function() {
-    const inputs = document.querySelectorAll(".form-control, .form-select");
-    inputs.forEach(input => {
-      input.addEventListener("blur", function() {
-        if (input.value) {
-          input.classList.add("filled");
-        } else {
-          input.classList.remove("filled");
-        }
-      });
-
-      // Initial check to handle pre-filled inputs
-      if (input.value) {
-        input.classList.add("filled");
-      }
-    });
-  });
-  // form select multiple slection
-  document.addEventListener("DOMContentLoaded", function() {
+    // Get the necessary elements
+    const commGroupSelect = document.getElementById('commGroup');
+    const departmentSelect = document.getElementById('departmentName');
     const accessibleDepartmentSelect = document.getElementById('accessibleDepartment');
     const selectedDepartmentsDiv = document.getElementById('selectedDepartments');
 
+    // Function to filter the "Select Department" dropdown based on selected CommGroup
+    function filterDepartments() {
+        const commGroupValue = commGroupSelect.value;
+        const departmentOptions = departmentSelect.querySelectorAll('option');
+
+        departmentOptions.forEach(option => {
+            if (option.dataset.commgroup === commGroupValue || commGroupValue === "") {
+                option.style.display = "block";
+            } else {
+                option.style.display = "none";
+            }
+        });
+
+        // Enable/disable the department select based on CommGroup selection
+        departmentSelect.disabled = !commGroupValue;
+        departmentSelect.value = ""; // Reset the department selection
+    }
+
+    // Function to update the selected accessible departments display
     function updateSelectedDepartments() {
         const selectedOptions = Array.from(accessibleDepartmentSelect.selectedOptions);
         selectedDepartmentsDiv.innerHTML = ''; // Clear existing selected items
@@ -72,14 +45,21 @@ document.addEventListener("DOMContentLoaded", function() {
         });
     }
 
+    // Event listeners
+    commGroupSelect.addEventListener('change', filterDepartments);
     accessibleDepartmentSelect.addEventListener('change', updateSelectedDepartments);
+
+    // Initial setup
+    filterDepartments(); // Filter "Select Department" based on the initially selected CommGroup
+    updateSelectedDepartments(); // Display initially selected accessible departments
 });
+
 
 //table script
 document.addEventListener("DOMContentLoaded", function() {
     const searchBar = document.getElementById('searchBar');
-    const roleFilterDropdown = document.getElementById('roleFilterDropdown');
-    const roleFilterItems = document.querySelectorAll('.role-filter .dropdown-item');
+    const deptFilterDropdown = document.getElementById('deptFilterDropdown');
+    const deptFilterItems = document.querySelectorAll('.dept-filter .dropdown-item');
     const formDataTable = document.getElementById('form-data-table');
     const tableRows = Array.from(formDataTable.querySelectorAll('tr'));
     const visibleEntries = document.getElementById('visible-entries');
@@ -98,22 +78,22 @@ document.addEventListener("DOMContentLoaded", function() {
 
     function filterTable() {
         const searchTerm = searchBar.value.toLowerCase().trim();
-        const selectedRole = roleFilterDropdown.getAttribute('data-selected-role') || 'all';
+        const selectedDept = deptFilterDropdown.getAttribute('data-selected-dept') || 'all';
 
         filteredRows = tableRows.filter(row => {
             const cells = Array.from(row.cells);
             const matchesSearch = cells.some(cell => cell.textContent.toLowerCase().includes(searchTerm));
-            const roleCell = cells[5]; // Assuming the role is in the 6th column (index 5)
-            const matchesRole = selectedRole === 'all' || roleCell.textContent.toLowerCase() === selectedRole;
+            const deptCell = cells[3]; // Assuming the department is in the 4th column (index 3)
+            const matchesDept = selectedDept === 'all' || deptCell.textContent.toLowerCase() === selectedDept;
 
-            return matchesSearch && matchesRole;
+            return matchesSearch && matchesDept;
         });
 
         totalEntriesCount = filteredRows.length;
         totalPages = Math.ceil(totalEntriesCount / entriesPerPage);
         currentPage = 1;
         updateTable();
-        updateRoleCounts(); // Update role counts after filtering
+        updateDeptCounts(); // Update department counts after filtering
     }
 
     function updateTable() {
@@ -160,23 +140,23 @@ document.addEventListener("DOMContentLoaded", function() {
         document.getElementById('records-info').textContent = `(Records Found: ${totalEntriesCount}, Selected: ${getSelectedRowsCount()})`;
     }
 
-    function updateRoleCounts() {
-        // Reset counts for all roles
-        roleFilterItems.forEach(item => {
-            const role = item.getAttribute('data-value');
-            let roleCount = 0;
+    function updateDeptCounts() {
+        // Reset counts for all departments
+        deptFilterItems.forEach(item => {
+            const dept = item.getAttribute('data-value');
+            let deptCount = 0;
 
-            // Count rows that match the role
+            // Count rows that match the department
             tableRows.forEach(row => {
                 const cells = Array.from(row.cells);
-                const rowRole = cells[5]?.textContent.toLowerCase() || ''; // Assuming role is in the 6th column
-                if (role === 'all' || rowRole === role) {
-                    roleCount++;
+                const rowDept = cells[3]?.textContent.toLowerCase() || ''; // Assuming department is in the 4th column
+                if (dept === 'all' || rowDept === dept) {
+                    deptCount++;
                 }
             });
 
             // Update the count in the dropdown
-            item.querySelector('.option-count').textContent = `${roleCount}`;
+            item.querySelector('.option-count').textContent = `${deptCount}`;
         });
     }
 
@@ -198,10 +178,10 @@ document.addEventListener("DOMContentLoaded", function() {
         updateRecordsInfo();
     });
 
-    roleFilterItems.forEach(item => {
+    deptFilterItems.forEach(item => {
         item.addEventListener('click', function() {
-            roleFilterDropdown.setAttribute('data-selected-role', item.getAttribute('data-value'));
-            roleFilterDropdown.textContent = item.textContent;
+            deptFilterDropdown.setAttribute('data-selected-dept', item.getAttribute('data-value'));
+            deptFilterDropdown.textContent = item.textContent;
             filterTable();
             updateRecordsInfo();
         });
@@ -230,11 +210,11 @@ document.addEventListener("DOMContentLoaded", function() {
         }
     });
 
-    document.querySelectorAll('.role-filter .dropdown-item').forEach(item => {
+    document.querySelectorAll('.dept-filter .dropdown-item').forEach(item => {
         item.addEventListener('click', function (e) {
             e.preventDefault();
             const selectedText = this.innerHTML;
-            document.getElementById('roleFilterDropdown').innerHTML = selectedText;
+            document.getElementById('deptFilterDropdown').innerHTML = selectedText;
         });
     });
 
@@ -242,13 +222,15 @@ document.addEventListener("DOMContentLoaded", function() {
     updateRecordsInfo(); // Ensure records info is updated initially
 });
 
+// Reset the form and other elements when the modal is hidden
 document.getElementById('adminUserModal').addEventListener('hidden.bs.modal', function (e) {
     var form = document.getElementById('adminUserForm');
     form.reset(); // Reset form fields
     document.getElementById('selectedDepartments').innerHTML = ''; 
     const inputs = document.querySelectorAll(".form-control, .form-select");
-      inputs.forEach(input => input.classList.remove("filled"));
-  });
+    inputs.forEach(input => input.classList.remove("filled"));
+});
+
 
 
   

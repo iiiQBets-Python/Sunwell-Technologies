@@ -67,30 +67,30 @@ WSGI_APPLICATION = 'Core.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
 
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.sqlite3',
-#         'NAME': BASE_DIR / 'db.sqlite3',
-#     }
-# }
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / 'db.sqlite3',
+    }
+}
 
 # MSSQL Database Connection
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'mssql',  
-        'NAME': 'ESTDAS',
-        'USER': 'Sunwell',
-        'PASSWORD': 'sunwell@123',
-        'HOST': 'Darshan\\SQLEXPRESS',
-        'PORT': '',
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'mssql',  
+#         'NAME': 'ESTDAS',
+#         'USER': 'Sunwell',
+#         'PASSWORD': 'sunwell@123',
+#         'HOST': 'Darshan\\SQLEXPRESS',
+#         'PORT': '',
 
-        'OPTIONS': {
-            'driver': 'ODBC Driver 18 for SQL Server',
-            'extra_params': 'TrustServerCertificate=yes;',  # This is sometimes needed if SSL is not setup
-        },
-    }
-}
+#         'OPTIONS': {
+#             'driver': 'ODBC Driver 18 for SQL Server',
+#             'extra_params': 'TrustServerCertificate=yes;',  # This is sometimes needed if SSL is not setup
+#         },
+#     }
+# }
 
 
 # Password validation

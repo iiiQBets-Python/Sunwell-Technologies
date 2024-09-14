@@ -119,10 +119,4 @@ document.addEventListener("DOMContentLoaded", function() {
     updateRecordsInfo(); // Ensure records info is updated initially
 });
 
-document.getElementById('adminUserModal').addEventListener('hidden.bs.modal', function (e) {
-    var form = document.getElementById('adminUserForm');
-    form.reset(); // Reset form fields
-    document.getElementById('selectedDepartments').innerHTML = ''; 
-    const inputs = document.querySelectorAll(".form-control, .form-select");
-    inputs.forEach(input => input.classList.remove("filled"));
-});
+

@@ -98,7 +98,7 @@
                 <input type="text" id="searchBar" class="form-control" placeholder="Search here..">
             </div>
             <div class="d-flex">
-                <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#adminUserModal">
+                <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#departmentModal">
                     Add Department
                 </button>
             </div>
@@ -117,12 +117,15 @@
             <tbody id="form-data-table">
                 {% for department in departments %}
                 <tr>
-                    <td><input type="checkbox" class="row-checkbox"></td>
+                    <td><input type="checkbox" class="row-checkbox" name="comm_checkbox"></td>
                     <td>{{department.department_name}}</td>
                     <td>{{ department.commGroup.CommGroup_name }}</td>
                     <td>
                         <div class="dropdown">
-                            <a class="dropdown-item btn-edit" href="#"><i class="fas fa-edit"></i></a>
+                          <a class="dropdown-item btn-edit"  data-bs-toggle="edit_modal" data-bs-target="#editDeptModal-{{ department.id }}">
+                            <i class="fas fa-edit"></i>
+                        </a>
+    
                         </div>
                     </td>
                 </tr>
@@ -158,7 +161,7 @@
 </div>
 
 <!-- The Modal -->
-<div class="modal fade" id="adminUserModal" tabindex="-1" aria-labelledby="adminUserModalLabel" aria-hidden="true">
+<div class="modal fade" id="departmentModal" tabindex="-1" aria-labelledby="departmentModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg">
         <div class="modal-content container-custom">
             <!-- Modal Header -->
@@ -171,7 +174,7 @@
                 <!-- Nav tabs -->
                 <ul class="nav nav-tabs" id="myTab" role="tablist">
                     <li class="nav-item" role="presentation">
-                        <a class="nav-link active" id="department-tab" data-bs-toggle="tab" href="#department" role="tab" aria-controls="department" aria-selected="true">Department Form</a>
+                        <a class="nav-link active" id="department-tab" data-bs-toggle="tab" href="#department" role="department" aria-controls="department" aria-selected="true">Department Form</a>
                     </li>
                     <li class="nav-item" role="presentation">
                         <a class="nav-link" id="email-tab" data-bs-toggle="tab" href="#email" role="tab" aria-controls="email" aria-selected="false">Email Form</a>
@@ -187,7 +190,7 @@
                 <div class="tab-content mt-3" id="myTabContent">
                     <!-- Department Form -->
                     <div class="tab-pane fade show active" id="department" role="tabpanel" aria-labelledby="department-tab">
-                        <form method="post" action="{% url 'department' %}">
+                        <form method="post" id="deptForm" action="{% url 'department' %}">
                             {% csrf_token %}
                             <div class="row">
                               <div class="col-md-6 form-group">
@@ -196,8 +199,9 @@
                             </div>
                             <div class="col-md-6 form-group">
                                 <select class="form-select" id="commGroup" name="commGroup" placeholder=" " required>
-                                    {% for group in groups %}
-                                    <option value="{{ group.CommGroup_code }}">{{ group.CommGroup_name }}</option>
+                                  <option value="">-- Select Comm. Group --</option>  
+                                  {% for group in groups %}
+                                    <option value="{{ group.CommGroup_name }}">{{ group.CommGroup_name }}</option>
                                     {% endfor %}
                                 </select>
                                 <label for="commGroup" class="form-label">Comm. Group*</label>
@@ -212,7 +216,7 @@
                                 <label for="footerNote" class="form-label">Footer Note</label>
                             </div>
                             <div class="col-md-12 form-group d-flex align-items-center ">
-                              <label style="margin-right: 10px;">Report Date/Time Stamp:</label>
+                              <h6 style="margin-right: 10px;">Report Date/Time Stamp:</h6>
                               <div id="status">
                                 <div class="form-check form-check-inline">
                                   <input class="form-check-input" type="radio" name="report-datetime-stamp" id="report-datetime-stamp-yes" value="Yes" >
@@ -233,11 +237,11 @@
                     <!-- Email Form (Empty) -->
                     <div class="tab-pane fade" id="email" role="tabpanel" aria-labelledby="email-tab">
                          <!-- Email Form fields -->
-          <form>
+          <form id="emailForm">
             <div class="container">
               <div class="row">
                 <div class="col-md-12 form-group d-flex align-items-center ">
-                  <label style="margin-right: 10px;">Email System:</label>
+                  <h6 style="margin-right: 10px;">Email System:</h6>
                   <div id="status">
                     <div class="form-check form-check-inline">
                       <input class="form-check-input" type="radio" name="email_status" id="email-enable1" value="Enable" >
@@ -295,10 +299,10 @@
                 </div>
                 <div class="col-md-4 form-group">
                   <input type="email" class="form-control" name="email_address_10" id="email_address_10" placeholder=" " required>
-                  <label for="email_address_10-" class="form-label">Alert Email Address 10*</label>
+                  <label for="email_address_10" class="form-label">Alert Email Address 10*</label>
                 </div>
                 <div class="form-buttons">
-                  <button class="btn btn-outline-danger" type="button">Close</button>
+                  <button class="btn btn-outline-danger" type="button" data-bs-dismiss="modal" aria-label="hidden">Close</button>
                   <button class="btn btn-outline-success">Save</button>
                 </div>
               </div>
@@ -307,11 +311,11 @@
                     </div>
                     <!-- SMS Form (Empty) -->
                     <div class="tab-pane fade" id="sms" role="tabpanel" aria-labelledby="sms-tab">
-                        <form>
+                        <form id="smsForm">
                             <div class="container">
                               <div class="row">
                                 <div class="col-md-12 form-group d-flex align-items-center ">
-                                  <label style="margin-right: 10px;">SMS System:</label>
+                                  <h6 style="margin-right: 10px;">SMS System:</h6>
                                   <div id="status">
                                     <div class="form-check form-check-inline">
                                       <input class="form-check-input" type="radio" name="sms_status" id="sms-enable1" value="Enable" checked>
@@ -404,7 +408,7 @@
                                   <label for="mobile_no9" class="form-label">Mobile No9</label>
                                 </div>
                                 <div class="col-md-3 form-group">
-                                  <input type="text" class="form-control" name="mobile_user10" id="mobile_user510" placeholder=" " required>
+                                  <input type="text" class="form-control" name="mobile_user10" id="mobile_user10" placeholder=" " required>
                                   <label for="mobile_user10" class="form-label">Mobile User Name 10</label>
                                 </div>
                                 <div class="col-md-3 form-group">
@@ -412,7 +416,7 @@
                                   <label for="mobile_no10" class="form-label">Mobile No 10</label>
                                 </div>
                                 <div class="form-buttons">
-                                  <button class="btn btn-outline-danger" type="button">Close</button>
+                                  <button class="btn btn-outline-danger" type="button" data-bs-dismiss="modal" aria-label="hidden">Close</button>
                                   <button class="btn btn-outline-success">Save</button>
                                 </div>
                               </div>
@@ -422,11 +426,11 @@
                     <!-- WhatsApp Form (Empty) -->
                     <div class="tab-pane fade" id="whatsapp" role="tabpanel" aria-labelledby="whatsapp-tab">
                          <!-- WhatsApp Form fields -->
-          <form>
+          <form id="whatsappForm">
             <div class="container">
               <div class="row">
                 <div class="col-md-12 form-group d-flex align-items-center ">
-                  <label style="margin-right: 10px;">Whatsapp Message System:</label>
+                  <h6 style="margin-right: 10px;">Whatsapp Message System:</h6>
                   <div id="status">
                     <div class="form-check form-check-inline">
                       <input class="form-check-input" type="radio" name="whatsapp_status" id="whatsapp-enable1" value="Enable" checked>
@@ -519,7 +523,7 @@
                   <label for="whatsapp_no9" class="form-label">Whatsapp No 9</label>
                 </div>
                 <div class="col-md-3 form-group">
-                  <input type="text" class="form-control" name="whatsapp_user10" id="whatsapp_user510" placeholder=" " required>
+                  <input type="text" class="form-control" name="whatsapp_user10" id="whatsapp_user10" placeholder=" " required>
                   <label for="whatsapp_user10" class="form-label">Whatsapp User Name 10</label>
                 </div>
                 <div class="col-md-3 form-group">
@@ -527,7 +531,7 @@
                   <label for="whatsapp_no10" class="form-label">Whatsapp No 10</label>
                 </div>
                 <div class="form-buttons">
-                  <button class="btn btn-outline-danger" type="button">Close</button>
+                  <button class="btn btn-outline-danger" type="button" data-bs-dismiss="modal" aria-label="hidden">Close</button>
                   <button class="btn btn-outline-success">Save</button>
                 </div>
               </div>
@@ -539,6 +543,78 @@
         </div>
     </div>
 </div>
+
+{% for department in departments %}
+<div class="modal fade" id="editDeptModal-{{ department.id }}" tabindex="-1" aria-labelledby="editDeptModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content container-custom ">
+            <div class="modal-header">
+                <h4 class="modal-title" id="editDeptModalLabel">Edit Department Form</h4>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="editDepartmentForm" method="post" action="{% url 'edit_department' department.id %}">
+                    {% csrf_token %}
+                    <div class="row">
+                        <div class="col-md-6 form-group">
+                            <input type="text" class="form-control" name="edit_dept_name" id="edit_dept_name" value="{{ department.department_name }}" maxlength="50" required>
+                            <label for="edit_dept_name" class="form-label">Dept. Name</label>
+                        </div>
+                        <div class="col-md-6 form-group">
+                          <select class="form-select" id="edit_commGroup" value="{{ department.commGroup }}" name="edit_commGroup" placeholder=" " required>
+                              {% for group in groups %}
+                              <option value="{{ group.CommGroup_name }}" {% if group.CommGroup_name == department.commGroup.CommGroup_name %}selected{% endif %}>{{ group.CommGroup_name }}</option>
+                              {% endfor %}
+                          </select>
+                          <label for="edit_commGroup" class="form-label">Comm. Group*</label>
+                      </div>
+                      </div>
+                      <div class="col-md-12 form-group">
+                          <input type="text" class="form-control" id="edit_headerNote" name="edit_headerNote" value="{{ department.header_note }}" placeholder=" " required>
+                          <label for="edit_headerNote" class="form-label">Header Note*</label>
+                      </div>
+                      <div class="col-md-12 form-group">
+                          <input type="text" class="form-control" id="edit_footerNote" name="edit_footerNote" value="{{ department.footer_note }}" placeholder=" " required>
+                          <label for="edit_footerNote" class="form-label">Footer Note</label>
+                      </div>
+                      <div class="col-md-12 form-group d-flex align-items-center ">
+                        <h6 style="margin-right: 10px;">Report Date/Time Stamp:</h6>
+                        <div id="status">
+                          <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="edit_report_datetime_stamp" id="report-datetime-stamp-yes-{{ department.id }}" value="True"
+                            {% if department.report_datetime_stamp %} checked {% endif %}>
+                            <label class="form-check-label" for="report-datetime-stamp-yes-{{ department.id }}">Yes</label>
+                        </div>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="edit_report_datetime_stamp" id="report-datetime-stamp-no-{{ department.id }}" value="False"
+                            {% if not department.report_datetime_stamp %} checked {% endif %}>
+                            <label class="form-check-label" for="report-datetime-stamp-no-{{ department.id }}">No</label>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-success">Save</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endfor %}
+
+
+<script>
+  document.querySelectorAll('.btn-edit').forEach(button => {
+  button.addEventListener('click', function() {
+      const modalId = this.getAttribute('data-bs-target');
+      const modal = document.querySelector(modalId);
+      const modalInstance = new bootstrap.Modal(modal);
+      modalInstance.show();
+  });
+});
+</script>
+
 {% block scripts %}
   {{ block.super }}
   <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
@@ -546,3 +622,18 @@
   <script src="{% static 'js/Management/department.js' %}"></script>
 {% endblock %}
 {% endblock content %}
+<script>
+  
+document.getElementById('departmentModal').addEventListener('hidden.bs.modal', function (e) {
+    // Reset each form by its ID
+    document.getElementById('deptForm').reset();
+    document.getElementById('emailForm').reset();
+    document.getElementById('smsForm').reset();
+    document.getElementById('whatsappForm').reset();
+    
+    // Remove 'filled' class from inputs and selects
+    const inputs = document.querySelectorAll(".form-control, .form-select");
+    inputs.forEach(input => input.classList.remove("filled"));
+});
+
+</script>

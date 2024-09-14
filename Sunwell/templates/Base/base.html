@@ -432,6 +432,7 @@
                     <ul class="submenu">    
                     </ul>
                 </li>
+                <li><a href="{% url 'upload_csv' %}"><i class="fas fa-file-alt"></i> <b> Upload Csv File</b></a></li>
             </ul>
         </div>
         <div class="main-content">
@@ -549,7 +550,7 @@
 function filterDropdown(searchInputId, dropdownId) {
     const input = document.getElementById(searchInputId);
     const filter = input.value.toUpperCase();
-    const dropdown = document.querySelector(`#${dropdownId}`);
+    const dropdown = document.getElementById(dropdownId);
     const items = dropdown.getElementsByClassName('dropdown-item');
     
     // Filter items based on the search input
@@ -576,23 +577,22 @@ function setupDropdownSelection(dropdownButtonId, dropdownMenuId) {
             dropdownButton.textContent = selectedText;
         });
     });
+
 }
 
 // Initialize the dropdown functionality
 document.addEventListener('DOMContentLoaded', function () {
-    // Setup dropdowns for each dropdown menu
-    document.querySelectorAll('.dropdown').forEach(dropdown => {
-        const dropdownButtonId = dropdown.querySelector('.dropdown-toggle').id;
-        const dropdownMenuId = dropdown.querySelector('.dropdown-menu').id;
-        setupDropdownSelection(dropdownButtonId, dropdownMenuId);
-        
-        // Event listener for search input to filter dropdown items
-        const searchInput = dropdown.querySelector('.dropdown-input');
-        if (searchInput) {
-            searchInput.addEventListener('keyup', function () {
-                filterDropdown(this.id, dropdownMenuId);
-            });
-        }
+    // Setup each dropdown
+    setupDropdownSelection('unitDropdownButton', 'unitDropdownMenu');
+    setupDropdownSelection('qcDropdownButton', 'qcDropdownMenu');
+
+    // Event listener for search input to filter dropdown items
+    document.getElementById('unitSearchInput').addEventListener('keyup', function () {
+        filterDropdown('unitSearchInput', 'unitDropdownMenu');
+    });
+
+    document.getElementById('qcSearchInput').addEventListener('keyup', function () {
+        filterDropdown('qcSearchInput', 'qcDropdownMenu');
     });
 });
 

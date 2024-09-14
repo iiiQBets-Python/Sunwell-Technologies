@@ -32,7 +32,7 @@
           </thead>
           <tbody id="form-data-table">
               <tr>
-                  <td><input type="checkbox" class="row-checkbox"></td>
+                  <td><input type="checkbox" class="row-checkbox" name="admin_checkbox"></td>
                   <td><a href="{% url 'user_access' %}" style="text-decoration: none; color: inherit;">Administrator</a></td>
                   <td>
                     <div class="dropdown">
@@ -41,7 +41,7 @@
                   </td>
               </tr>
               <tr>
-                  <td><input type="checkbox" class="row-checkbox"></td>
+                  <td><input type="checkbox" class="row-checkbox" name="operator_checkbox"></td>
                   <td><a href="{% url 'user_access' %}" style="text-decoration: none; color: inherit;">Operator</a></td>
                   <td>
                     <div class="dropdown">
@@ -50,7 +50,7 @@
                   </td>
               </tr>
               <tr>
-                  <td><input type="checkbox" class="row-checkbox"></td>
+                  <td><input type="checkbox" class="row-checkbox" name="user_checkbox"></td>
                   <td><a href="{% url 'user_access' %}" style="text-decoration: none; color: inherit;">General User</a></td>
                   <td>
                     <div class="dropdown">

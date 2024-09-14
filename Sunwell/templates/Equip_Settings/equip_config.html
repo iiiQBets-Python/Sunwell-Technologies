@@ -132,7 +132,7 @@
             <tbody id="form-data-table" class="scrollable-tbody">
                 {% for equipment in equipment_list %}
                 <tr>
-                    <td><input type="checkbox" class="row-checkbox"></td>
+                    <td><input type="checkbox" class="row-checkbox" name="comm_checkbox"></td>
                     <td><a href="{% url 'equipment_setting' %}">{{ equipment.equip_name }}</a></td>
                     <td>{{ equipment.ip_address }} </td>
                     <td>{{ equipment.status }}</td>
@@ -184,7 +184,7 @@
                     {% csrf_token %}
                     <div class="row">
                         <div class="col-md-8 form-group">
-                            <input type="text" class="form-control" id="userName" maxlength="15" placeholder=" " name="equipname" required>
+                            <input type="text" class="form-control" id="userName" maxlength="15" placeholder=" " name="equipname" autocomplete="username" required>
                             <label for="userName" class="form-label">Equipment Name</label>
                         </div>
                         <div class="col-md-4 form-group">
@@ -197,7 +197,7 @@
                         </div>
                         
                         <div class="col-md-8 form-group">
-                            <input type="numbers" class="form-control" id="password" name="ipaddress"  placeholder=" " required>
+                            <input type="numbers" class="form-control" id="passwordDuration" name="ipaddress"  placeholder=" " required>
                             <label for="passwordDuration" class="form-label">IP Address</label>
                         </div>
                         <div class="col-md-4 form-group">

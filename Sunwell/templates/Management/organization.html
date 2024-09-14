@@ -51,25 +51,25 @@
             <div class="mb-3 row">
                 <label for="name" class="col-lg-3 col-form-label"><strong>Company Name:</strong></label>
                 <div class="col-lg-9">
-                    <input type="text" class="form-control" name="name" id="name" value="{{ organization.name }}" readonly>
+                    <input type="text" class="form-control" name="name" id="name" value="{{ organization.name }}" autocomplete="organization" required readonly>
                 </div>
             </div>
             <div class="mb-3 row">
                 <label for="email" class="col-lg-3 col-form-label"><strong>Email:</strong></label>
                 <div class="col-lg-9">
-                    <input type="email" class="form-control" name="email" id="email" value="{{ organization.email }}" readonly>
+                    <input type="email" class="form-control" name="email" id="email" value="{{ organization.email }}" autocomplete="email" required readonly>
                 </div>
             </div>
             <div class="mb-3 row">
                 <label for="phoneNo" class="col-lg-3 col-form-label"><strong>Phone Number:</strong></label>
                 <div class="col-lg-9">
-                    <input type="tel" class="form-control" name="phoneNo" id="phoneNo" value="{{ organization.phoneNo }}" readonly>
+                    <input type="tel" class="form-control" name="phoneNo" id="phoneNo" value="{{ organization.phoneNo }}" required readonly>
                 </div>
             </div>
             <div class="mb-3 row">
                 <label for="address" class="col-lg-3 col-form-label"><strong>Address</strong>:</label>
                 <div class="col-lg-9">
-                    <textarea class="form-control address-input" name="address" readonly id="address">{{ organization.address }} </textarea>
+                    <textarea class="form-control address-input" name="address" readonly id="address" autocomplete="address" required>{{ organization.address }} </textarea>
                 </div>
             </div>
         </div>

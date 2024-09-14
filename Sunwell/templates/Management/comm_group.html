@@ -1,4 +1,5 @@
 
+
 {% extends "Base/base.html" %}
 {% load static %}
 {% block title %} comm_group {% endblock %}
@@ -62,7 +63,15 @@
         }
     </style>
 {% endblock styles %}
-
+{% if messages %}
+  <div class="alert alert-dismissible">
+    {% for message in messages %}
+      <div class="alert alert-{{ message.tags }}">
+        {{ message }}
+      </div>
+    {% endfor %}
+  </div>
+{% endif %}
 {% block content %}
 <div class="container mt-2 table-container fade-in">
     <!-- <div class="d-flex justify-content-end mb-2">
@@ -100,12 +109,14 @@
             <tbody id="form-data-table" class="scrollable-tbody">
             {% for group in comm_groups %}
             <tr>
-                <td><input type="checkbox" class="row-checkbox"></td>
+                <td><input type="checkbox" class="row-checkbox" name="comm_checkbox"></td>
                 <td>{{ group.CommGroup_code }}</td>
                 <td>{{ group.CommGroup_name }}</td>
                 <td>
                   <div class="dropdown">
-                    <a class="dropdown-item btn-edit" href="#"><i class="fas fa-edit"></i></a>
+                    <a class="dropdown-item btn-edit"  data-bs-toggle="edit_modal" data-bs-target="#editCommGroupModal-{{ group.CommGroup_code }}">
+                        <i class="fas fa-edit"></i>
+                    </a>
                   </div>
                 </td>
             </tr>
@@ -156,11 +167,11 @@
                     {% csrf_token %}
                     <div class="row">
                         <div class="col-md-12 form-group">
-                            <input type="text" class="form-control" id="name"  name="comm_name" maxlength="50" placeholder=" " required>
+                            <input type="text" class="form-control" id="comm_name"  name="comm_name" maxlength="50" placeholder=" " required>
                             <label for="comm_name" class="form-label">Comm.Group Name</label>
                         </div>
                         <div class="col-md-12 form-group">
-                            <input type="number" class="form-control" id="code" name="comm_code" maxlength="10" placeholder=" " required>
+                            <input type="number" class="form-control" id="comm_code" name="comm_code" maxlength="10" placeholder=" " required>
                             <label for="comm_code" class="form-label">Comm.Group Code</label>
                         </div>
                         <div class="col-md-12 form-group">
@@ -183,6 +194,59 @@
         </div>
     </div>
 </div>
+
+
+{% for group in comm_groups %}
+<div class="modal fade" id="editCommGroupModal-{{ group.CommGroup_code }}" tabindex="-1" aria-labelledby="editCommGroupModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content container-custom">
+            <div class="modal-header">
+                <h4 class="modal-title" id="editCommGroupModalLabel">Edit Comm.Group Form</h4>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="editCommGroupForm" method="post" action="{% url 'edit_comm_group' group.CommGroup_code %}">
+                    {% csrf_token %}
+                    <div class="row">
+                        <div class="col-md-12 form-group">
+                            <input type="text" class="form-control" name="edit_comm_name" id="edit_comm_name" value="{{ group.CommGroup_name }}" maxlength="50" required>
+                            <label for="edit_comm_name" class="form-label">Comm.Group Name</label>
+                        </div>
+                        <div class="col-md-12 form-group">
+                            <input type="number" class="form-control" name="edit_comm_code" id="edit_comm_code" value="{{ group.CommGroup_code }}" readonly >
+                            <label for="edit_comm_code" class="form-label">Comm.Group Code</label>
+                        </div>
+                        <div class="col-md-12 form-group">
+                            <input type="text" class="form-control" name="edit_softKey" id="edit_softKey" value="{{ group.soft_key }}" maxlength="50"  readonly>
+                            <label for="edit_softKey" class="form-label">Soft Key</label>
+                        </div>
+                        <div class="col-md-12 form-group">
+                            <input type="text" class="form-control" name="edit_activationKey" id="edit_activationKey" value="{{ group.activation_key }}" maxlength="50" readonly>
+                            <label for="edit_activationKey" class="form-label">Activation Key</label>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-success">Save</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endfor %}
+
+
+<script>
+    document.querySelectorAll('.btn-edit').forEach(button => {
+    button.addEventListener('click', function() {
+        const modalId = this.getAttribute('data-bs-target');
+        const modal = document.querySelector(modalId);
+        const modalInstance = new bootstrap.Modal(modal);
+        modalInstance.show();
+    });
+});
+</script>
 
 {% block scripts %}
   {{ block.super }}

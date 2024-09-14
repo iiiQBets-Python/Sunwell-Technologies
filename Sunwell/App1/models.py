@@ -46,13 +46,14 @@ class Organization(models.Model):
 
 
 class CommGroup(models.Model):
-    CommGroup_name = models.CharField(max_length=50, primary_key=True)
-    CommGroup_code = models.CharField(max_length=10, unique=True)
+    CommGroup_name = models.CharField(max_length=50, unique=True)
+    CommGroup_code = models.CharField(max_length=10, primary_key=True)
     soft_key = models.CharField(max_length=50)
     activation_key = models.CharField(max_length=50)
 
     def __str__(self):
         return self.CommGroup_name
+
     
 
 class Department(models.Model):
@@ -141,3 +142,42 @@ class UserActivityLog(models.Model):
 
     def __str__(self):
         return f"{self.user.username} - {self.event_name} - {self.log_date} {self.log_time}"
+    
+
+class TemperatureHumidityRecord(models.Model):
+    equip_name = models.ForeignKey(Equipment, on_delete=models.SET_NULL, null=True)
+    date = models.DateField()
+    time = models.TimeField(blank=True, null=True)
+    set_temp = models.FloatField()
+    t_low_alarm = models.FloatField()
+    t_low_alert = models.FloatField()
+    t_high_alarm = models.FloatField()
+    t_high_alert = models.FloatField()
+    tmp_1 = models.FloatField()
+    tmp_2 = models.FloatField()
+    tmp_3 = models.FloatField()
+    tmp_4 = models.FloatField()
+    tmp_5 = models.FloatField()
+    tmp_6 = models.FloatField()
+    tmp_7 = models.FloatField()
+    tmp_8 = models.FloatField()
+    tmp_9 = models.FloatField()
+    tmp_10 = models.FloatField()
+    set_rh = models.FloatField()
+    rh_low_alarm = models.FloatField()
+    rh_low_alert = models.FloatField()
+    rh_high_alarm = models.FloatField()
+    rh_high_alert = models.FloatField()
+    rh_1 = models.FloatField()
+    rh_2 = models.FloatField()
+    rh_3 = models.FloatField()
+    rh_4 = models.FloatField()
+    rh_5 = models.FloatField()
+    rh_6 = models.FloatField()
+    rh_7 = models.FloatField()
+    rh_8 = models.FloatField()
+    rh_9 = models.FloatField()
+    rh_10 = models.FloatField()
+
+    def _str_(self):
+        return f"Date: {self.date}, Time: {self.time}"

@@ -34,6 +34,12 @@
             flex: 1;
             position: relative;
         }
+        .path-display {
+            padding-left: 10px;
+            color: rgb(255, 100, 100);
+            font-size: 0.8rem;
+            font-weight:bold ;
+        }
 
         /* Floating label styles */
         .input-container input.form-control,
@@ -53,7 +59,7 @@
 
         .input-container .floating-label {
             position: absolute;
-            top: 50%;
+            top: 30%;
             left: 12px;
             transform: translateY(-50%);
             background-color: #ffffff;
@@ -200,24 +206,27 @@
                     <!-- Backup Local Path (Floating Label) -->
                     <div class="form-group">
                         <div class="input-container">
-                            <input type="text" id="backup-local-path" name="backup-local-path" class="form-control" placeholder=" " required>
+                            <input type="text" id="backup-local-path" name="backup-local-path" class="form-control" placeholder=" " required >
                             <label for="backup-local-path" class="floating-label">Enter Backup local path</label>
+                            <span id="local-path-display" class="path-display">Current Local Path is: {{ local_path }}</span>
                         </div>
                     </div>
 
                     <!-- Backup Remote Path (Floating Label) -->
                     <div class="form-group">
                         <div class="input-container">
-                            <input type="text" id="backup-remote-path" name="backup-remote-path" class="form-control" placeholder=" ">
+                            <input type="text" id="backup-remote-path" name="backup-remote-path" class="form-control" placeholder=" " >
                             <label for="backup-remote-path" class="floating-label">Enter Backup remote path</label>
+                            <span id="remote-path-display" class="path-display">Current Remote Path is: {{ remote_path }}</span>
                         </div>
                     </div>
 
                     <!-- Backup Time (Standard Label) -->
                     <div class="form-group">
-                        <div class="input-container d-flex align-items-center">
-                            <input type="time" id="backup-time" name="backup-time" class="form-control" placeholder=" " value="00:00">
-                            <label for="backup-time" class="floating-label">Enter Backup Time</label>  
+                        <div class="input-container ">
+                            <input type="time" id="backup-time" name="backup-time" class="form-control" placeholder=" " >
+                            <label for="backup-time" class="floating-label">Enter Backup Time</label> 
+                            <span id="backup-time-display" class="path-display">Last Backup Time is: {{ backup_time }}</span> 
                         </div>
                     </div>
 
@@ -237,6 +246,7 @@
   <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.min.js"></script>
   <script>
+
     function takeBackup() {
         fetch("{% url 'download_backup' %}", {
             method: 'GET',
@@ -249,28 +259,10 @@
             alert('An error occurred: ' + error.message);
         });
     }
-    
-
-    // Function to show the floating alert
-    function showFloatingAlert(message, isSuccess = true) {
-        const alertElement = document.getElementById('floating-alert');
-        alertElement.textContent = message;
-        alertElement.style.backgroundColor = isSuccess ? '#28a745' : '#dc3545'; // Green for success, red for error
-        alertElement.classList.add('show');
-
-        // Hide the alert after 2 seconds
-        setTimeout(() => {
-            alertElement.classList.remove('show');
-        }, 2000);
-    }
-
-    // Automatically hide the alert if present when the page loads
-    document.addEventListener("DOMContentLoaded", function () {
-        const alertElement = document.getElementById('floating-alert');
-        if (alertElement.textContent.trim()) {
-            showFloatingAlert(alertElement.textContent);
-        }
-    });
   </script>
 {% endblock scripts %}
 {% endblock content %}
+
+
+
+

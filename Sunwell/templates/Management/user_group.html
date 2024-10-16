@@ -1,387 +1,596 @@
 {% extends "Base/base.html" %}
 {% load static %}
-
-{% block title %} Dashboard {% endblock %}
-
+{% block title %} user_access {% endblock %}
 {% block styles %}
     {{ block.super }}
-    <link rel="stylesheet" href="{% static 'css/Management/user_group.css' %}">
+    <style>
+        .table-container {
+             height:95%;
+             background-color: #f9f9f9;
+             border-radius: 10px;
+             padding: 20px;
+             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+         }
+         .table th {
+             text-align: center;
+             vertical-align: middle;
+         }
+         .table thead th {
+             position: sticky;
+             top: 0;
+             z-index: 1;
+             padding: 15px;
+             font-weight:600;
+             border-bottom: 2px solid #dee2e6;
+             background-color: #ededed;
+             color: rgb(0, 0, 0);
+         }
+         @keyframes fadeIn {
+             from {
+                 opacity: 0;
+             }
+             to {
+                 opacity: 1;
+             }
+         }
+         .main-row td {
+             background-color: #e4e4e4;
+         }
+         .sub-row td {
+             background-color: #f8f5f5;
+         }
+         .super-sub-row td {
+             background-color: #fafafa;
+         }
+         h4 {
+             vertical-align: center;
+             padding-left: 10px;
+             font-size: small;
+             font-weight: 700;
+         }
+ 
+         h5 {
+             vertical-align: center;
+             padding-left: 30px;
+             font-size: small;
+             font-weight: 500;
+         }
+         h6 {
+             vertical-align: center;
+             padding-left: 60px;
+             font-size: small;
+             font-weight: 400;
+         }
+         tbody {
+             display: block;
+             max-height: 500px;
+             overflow-y: auto;
+         }
+         thead, tbody tr {
+             display: table;
+             width: 100%;
+             table-layout: fixed;
+         }
+         .checkbox-cell {
+             padding-left: 10px;
+             text-align: center; 
+         }
+     </style>
 {% endblock styles %}
 
-{% block content %} 
-<div class="container mt-2 table-container fade-in">
-    <div class="d-flex justify-content-end mb-2">
-        <div class="ms-auto">
-            <div class="dropdown dept-filter">
-                <button class="btn btn-outline-secondary dropdown-toggle" type="button" id="deptFilterDropdown" data-bs-toggle="dropdown" aria-expanded="false">
-                    Select Departments
-                </button>
-                <ul class="dropdown-menu" aria-labelledby="deptFilterDropdown">
-                    <li><a class="dropdown-item" href="#" data-value="all">All Departments <span class="option-count">3</span></a></li>
-                    <li><a class="dropdown-item" href="#" data-value="qc">QC <span class="option-count">1</span></a></li>
-                    <li><a class="dropdown-item" href="#" data-value="it">IT <span class="option-count">1</span></a></li>
-                    <li><a class="dropdown-item" href="#" data-value="hr">HR <span class="option-count">1</span></a></li>
-                </ul>
-            </div>
-        </div>
-    </div>
-    <div class="d-flex justify-content-between align-items-center custom-label mb-2" style="font-weight: bold; padding: 5px 10px; background-color: rgb(235, 235, 235);">
-        <section class="d-block custom-label mb-2" style="background-color: rgb(235, 235, 235);text-align: center;font-weight: bold; padding: 5px 0px">
-             Users <span id="records-info">(Records Found: 0, Selected: 0)</span>
-        </section>
-        <div class="d-flex justify-content-end align-items-center">
-            <div class="d-flex input-group me-3" style="width: 200px;">
-                <span class="input-group-text"><i class="fas fa-search"></i></span>
-                <input type="text" id="searchBar" class="form-control" placeholder="Search here..">
-            </div>
-            <div class="d-flex">
-                <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#adminUserModal">
-                    Add User
-                </button>
-            </div>
-        </div> 
-    </div>
-  <div class="table-wrapper">
-      <table class="table table-bordered">
-          <thead>
-              <tr>
-                  <th><input type="checkbox" id="selectAll"></th>
-                  <th scope="col">User Name</th>
-                  <th scope="col">Comm. Group</th>
-                  <th scope="col">Department Name</th>
-                  <th scope="col">Access Group</th>
-                  <th scope="col">Actions</th>
-              </tr>
-          </thead>
-          <tbody id="form-data-table">
-            {% for user in users %}
-            <tr>
-                <td><input type="checkbox" class="row-checkbox" name="user_checkbox"></td>
-                <td>{{ user.username }}</td>
-                <td>{{ user.commGroup }}</td>
-                <td>{{ user.department }}</td>
-                <td>{{ user.role }}</td>
-                <td>
-                    <div class="dropdown">
-                      <a class="dropdown-item btn-edit"  data-bs-toggle="edit_modal" data-bs-target="#editUserModal-{{ user.id }}">
-                        <i class="fas fa-edit"></i>
-                    </a>
-                    </div>
-                </td>
-            </tr>
-            {% endfor %}
-          </tbody>
-      </table>
-    </div>
-      <div class="d-flex justify-content-between mb-2">
-        <div class="entries-info d-flex align-items-center">
-          <span>Show</span>
-          <select id="entriesPerPage" class="form-select d-inline-block mx-2 entriesPerPage">
-              <option value="10" selected>10</option>
-              <option value="15">15</option>
-              <option value="25">25</option>
-              <option value="50">50</option>
-              <option value="100">100</option>
-          </select>
-          <span>entries per page</span>
-      </div>
-        <div class="entries-info d-flex align-items-center">
-            <small>Showing <span id="visible-entries">0</span> of <span id="total-entries">0</span> entries</small>
-        </div>
-        <nav aria-label="Page navigation" class="d-flex justify-content-end">
-            <ul class="pagination mb-0">
-                <li class="page-item" id="prev-page"><a class="page-link" href="#">Previous</a></li>
-                <li class="page-item"><a class="page-link" href="#">1</a></li>
-                <li class="page-item"><a class="page-link" href="#">2</a></li>
-                <li class="page-item" id="next-page"><a class="page-link" href="#">Next</a></li>
-            </ul>
-        </nav>
-    </div>
-  </div>
-  
+{% block content %}
+<div class="container table-container fade-in">
+    <section class=" d-block custom-label mb-2" style="background-color: rgb(235, 235, 235);text-align: center;font-weight: bold; padding: 5px 0px">
+        All Rights Select/Diselect all <input type="checkbox" id="select-all">
+    </section>
 
- <!-- The Modal -->
- <div class="modal fade" id="adminUserModal" tabindex="-1" aria-labelledby="adminUserModalLabel" aria-hidden="true">
-  <div class="modal-dialog modal-lg">
-    <div class="modal-content container-custom">
-  
-      <!-- Modal Header -->
-      <div class="modal-header">
-        <h4 class="modal-title" id="adminUserModalLabel"> User</h4>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-      </div>
-  
-      <!-- Modal Body -->
-      <div class="modal-body">
-        <form id="adminUserForm" method="post" action="{% url 'user_group' %}">
-          {% csrf_token %}
-          <div class="row">
-            <div class="col-md-6 form-group">
-              <input type="text" class="form-control" id="userName" name="userName" autocomplete="username" maxlength="15" placeholder=" " required>
-              <label for="userName" class="form-label">User Name*</label>
-            </div>
-            <div class="col-md-6 form-group">
-              <input type="text" class="form-control" id="loginName" name="loginName" placeholder=" " required>
-              <label for="loginName" class="form-label">Login Name*</label>
-            </div>
-            <div class="col-md-6 form-group">
-              <input type="password" class="form-control" id="password" name="password" minlength="8" maxlength="15" placeholder=" " required>
-              <label for="password" class="form-label">Password*</label>
-            </div>
-            <div class="col-md-6 form-group">
-              <select class="form-select" id="passwordDuration" name="passwordDuration"  required>
-                <option value="30">30 Days</option>
-                <option value="60">60 Days</option>
-                <option value="90">90 Days</option>
-                <option value="120">120 Days</option>
-              </select>
-              <label for="passwordDuration" class="form-label">Set Password Duration in Days</label>
-            </div>
-            <div class="col-md-6 form-group">
-              <select class="form-select" id="role" name="role" placeholder=" " required>
-                <option value="admin">Admin</option>
-                <option value="general">General</option>
-                <option value="operator">Operator</option>
-                <!-- Options go here -->
-              </select>
-              <label for="role" class="form-label">Role*</label>
-            </div>
-            <div class="col-md-6 form-group">
-              <select class="form-select" id="commGroup" name="commGroup" placeholder=" " required>
-                {% for group in groups %}
-                    <option value="{{ group.CommGroup_code }}">{{ group.CommGroup_name }}</option>
-                  {% endfor %} 
-              </select>
-              <label for="commGroup" class="form-label">Comm. Group*</label>
-            </div>
-            <div class="col-md-6 form-group">
-              <select class="form-select" id="departmentName" name="departmentName" required disabled>
-                <option value="">Select Department</option>
-                {% for department in departments %}
-                    {% if department.commGroup %}
-                        <option value="{{ department.id }}" data-commgroup="{{ department.commGroup.CommGroup_code }}">
-                            {{ department.department_name }}
-                        </option>
-                    {% endif %}
-                {% endfor %}
-              </select>
-              <h6>Status</h6>
-              <div id="status">
-                <div class="form-check form-check-inline">
-                  <input class="form-check-input" type="radio" name="status" id="statusActive" value="Active" checked required>
-                  <label class="form-check-label" for="statusActive">Active</label>
-                </div>
-                <div class="form-check form-check-inline">
-                  <input class="form-check-input" type="radio" name="status" id="statusInactive" value="Inactive">
-                  <label class="form-check-label" for="statusInactive">Inactive</label>
-                </div>
-              </div>
-            </div>
-            <div class="col-md-6 form-group">
-              <select class="form-select" id="accessibleDepartment" name="accessibleDepartment" multiple required>
-                {% for department in departments %}
-                    {% if department.commGroup %}
-                        <option value="{{ department.id }}" data-commgroup="{{ department.commGroup.CommGroup_code }}">
-                            {{ department.department_name }}
-                        </option>
-                    {% endif %}
-                {% endfor %}
-              </select>
-              <label for="accessibleDepartment" class="form-label">Accessible Department</label>
-              <div id="selectedDepartments" class="mt-2"></div>
-            </div>
-          </div>
-          <div class="modal-footer">
-            <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Close</button>
-            <button type="submit" class="btn btn-success">Save</button>
-          </div>
-        </form>
-      </div>
-    </div>
-  </div>
+    
+    <form  method="post">
+        {% csrf_token %}
+        {% if data.role == 'Super Admin' or acc_db.role_e %}
+            {% if data.role == 'Admin' and  role_dt.role == 'Admin' %}
+                
+            {% else %}
+            <button type="submit" class="btn btn-primary btn-sm">Save Changes</button>
+            {% endif %}
+        {% endif %}
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Menu Name</th>
+                    <th>View</th>
+                    <th>Add</th>
+                    <th>Edit</th>
+                    <th>Delete</th>
+                    <th>Print</th>
+                </tr>
+            </thead>
+            <tbody id="form-data-table">
+                <tr class="main-row">
+                    <td><h4>Management</h4></td>
+                    <td class="checkbox-cell"><input type="checkbox"></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                
+                <tr class="sub-row">
+                    <td><h5>Organization</h5></td>
+                    <td class="checkbox-cell"><input type="checkbox" name="org_v" {% if role_dt and role_dt.org_v %} checked {% endif %} ></td>
+                    <td class="checkbox-cell"><input type="checkbox" name="org_a" {% if role_dt and role_dt.org_a %} checked {% endif %}></td>
+                    <td class="checkbox-cell"><input type="checkbox" name="org_e" {% if role_dt and role_dt.org_e %} checked {% endif %}></td>
+                    <td class="checkbox-cell"><input type="checkbox" name="org_d" {% if role_dt and role_dt.org_d %} checked {% endif %}></td>
+                    <td class="checkbox-cell"><input type="checkbox" name="org_p" {% if role_dt and role_dt.org_p %} checked {% endif %}></td>
+                </tr>
+                <tr class="sub-row">
+                    <td><h5>Comm. Group</h5></td>
+                    <td class="checkbox-cell"><input type="checkbox" name="c_group_v" {% if role_dt and role_dt.c_group_v %} checked {% endif %}></td>
+                    <td class="checkbox-cell"><input type="checkbox" name="c_group_a" {% if role_dt and role_dt.c_group_a %} checked {% endif %}></td>
+                    <td class="checkbox-cell"><input type="checkbox" name="c_group_e" {% if role_dt and role_dt.c_group_e %} checked {% endif %}></td>
+                    <td class="checkbox-cell"><input type="checkbox" name="c_group_d" {% if role_dt and role_dt.c_group_d %} checked {% endif %}></td>
+                    <td class="checkbox-cell"><input type="checkbox" name="c_group_p" {% if role_dt and role_dt.c_group_p %} checked {% endif %}></td>
+                </tr>
+                <tr class="sub-row">
+                    <td><h5>Departments</h5></td>
+                    <td class="checkbox-cell"><input type="checkbox" name="dep_v" {% if role_dt and role_dt.dep_v %} checked {% endif %}></td>
+                    <td class="checkbox-cell"><input type="checkbox" name="dep_a" {% if role_dt and role_dt.dep_a %} checked {% endif %}></td>
+                    <td class="checkbox-cell"><input type="checkbox" name="dep_e" {% if role_dt and role_dt.dep_e %} checked {% endif %}></td>
+                    <td class="checkbox-cell"><input type="checkbox" name="dep_d" {% if role_dt and role_dt.dep_d %} checked {% endif %}></td>
+                    <td class="checkbox-cell"><input type="checkbox" name="dep_p" {% if role_dt and role_dt.dep_p %} checked {% endif %}></td>
+                </tr>
+                <tr class="sub-row">
+                    <td><h5>Roles and Permissions</h5></td>
+                    <td class="checkbox-cell"><input type="checkbox" name="role_v" {% if role_dt and role_dt.role_v %} checked {% endif %}></td>
+                    <td class="checkbox-cell"><input type="checkbox" name="role_a" {% if role_dt and role_dt.role_a %} checked {% endif %}></td>
+                    <td class="checkbox-cell"><input type="checkbox" name="role_e" {% if role_dt and role_dt.role_e %} checked {% endif %}></td>
+                    <td class="checkbox-cell"><input type="checkbox" name="role_d" {% if role_dt and role_dt.role_d %} checked {% endif %}></td>
+                    <td class="checkbox-cell"><input type="checkbox" name="role_p" {% if role_dt and role_dt.role_p %} checked {% endif %}></td>
+                </tr>
+                <tr class="sub-row">
+                    <td><h5>Users</h5></td>
+                    <td class="checkbox-cell"><input type="checkbox" name="user_v" {% if role_dt and role_dt.user_v %} checked {% endif %}></td>
+                    <td class="checkbox-cell"><input type="checkbox" name="user_a" {% if role_dt and role_dt.user_a %} checked {% endif %}></td>
+                    <td class="checkbox-cell"><input type="checkbox" name="user_e" {% if role_dt and role_dt.user_e %} checked {% endif %}></td>
+                    <td class="checkbox-cell"><input type="checkbox" name="user_d" {% if role_dt and role_dt.user_d %} checked {% endif %}></td>
+                    <td class="checkbox-cell"><input type="checkbox" name="user_p" {% if role_dt and role_dt.user_p %} checked {% endif %}></td>
+                </tr>
+                <tr class="sub-row">
+                    <td><h5>App Settings</h5></td>
+                    <td class="checkbox-cell"><input type="checkbox" name="app_v" {% if role_dt and role_dt.app_v %} checked {% endif %}></td>
+                    <td class="checkbox-cell"><input type="checkbox" name="app_a" {% if role_dt and role_dt.app_a %} checked {% endif %}></td>
+                    <td class="checkbox-cell"><input type="checkbox" name="app_e" {% if role_dt and role_dt.app_e %} checked {% endif %}></td>
+                    <td class="checkbox-cell"><input type="checkbox" name="app_d" {% if role_dt and role_dt.app_d %} checked {% endif %}></td>
+                    <td class="checkbox-cell"><input type="checkbox" name="app_p" {% if role_dt and role_dt.app_p %} checked {% endif %}></td>
+                </tr>
+                <tr class="sub-row">
+                    <td><h5>Backup</h5></td>
+                    <td class="checkbox-cell"><input type="checkbox" name="back_v" {% if role_dt and role_dt.back_v %} checked {% endif %}></td>
+                    <td class="checkbox-cell"><input type="checkbox" name="back_a" {% if role_dt and role_dt.back_a %} checked {% endif %}></td>
+                    <td class="checkbox-cell"><input type="checkbox" name="back_e" {% if role_dt and role_dt.back_e %} checked {% endif %}></td>
+                    <td class="checkbox-cell"><input type="checkbox" name="back_d" {% if role_dt and role_dt.back_d %} checked {% endif %}></td>
+                    <td class="checkbox-cell"><input type="checkbox" name="back_p" {% if role_dt and role_dt.back_p %} checked {% endif %}></td>
+                </tr>
+                <tr class="sub-row">
+                    <td><h5>System Diagnosis</h5></td>
+                    <td class="checkbox-cell"><input type="checkbox" name="sys_v" {% if role_dt and role_dt.sys_v %} checked {% endif %}></td>
+                    <td class="checkbox-cell"><input type="checkbox" name="sys_a" {% if role_dt and role_dt.sys_a %} checked {% endif %}></td>
+                    <td class="checkbox-cell"><input type="checkbox" name="sys_e" {% if role_dt and role_dt.sys_e %} checked {% endif %}></td>
+                    <td class="checkbox-cell"><input type="checkbox" name="sys_d" {% if role_dt and role_dt.sys_d %} checked {% endif %}></td>
+                    <td class="checkbox-cell"><input type="checkbox" name="sys_p" {% if role_dt and role_dt.sys_p %} checked {% endif %}></td>
+                </tr>
+                <tr class="sub-row">
+                    <td><h5>Restore</h5></td>
+                    <td class="checkbox-cell"><input type="checkbox" name="res_v" {% if role_dt and role_dt.res_v %} checked {% endif %}></td>
+                    <td class="checkbox-cell"><input type="checkbox" name="res_a" {% if role_dt and role_dt.res_a %} checked {% endif %}></td>
+                    <td class="checkbox-cell"><input type="checkbox" name="res_e" {% if role_dt and role_dt.res_e %} checked {% endif %}></td>
+                    <td class="checkbox-cell"><input type="checkbox" name="res_d" {% if role_dt and role_dt.res_d %} checked {% endif %}></td>
+                    <td class="checkbox-cell"><input type="checkbox" name="res_p" {% if role_dt and role_dt.res_p %} checked {% endif %}></td>
+                </tr>
+
+                <tr class="main-row">
+                    <td><h4>Configuration</h4></td>
+                    <td class="checkbox-cell"><input type="checkbox"></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr class="sub-row">
+                    <td><h5>Equipment Config</h5></td>
+                    <td class="checkbox-cell"><input type="checkbox"></td>
+                    <td class="checkbox-cell"><input type="checkbox"></td>
+                    <td class="checkbox-cell"><input type="checkbox"></td>
+                    <td class="checkbox-cell"><input type="checkbox"></td>
+                    <td class="checkbox-cell"><input type="checkbox"></td>
+                </tr>
+                <tr class="sub-row">
+                    <td><h5>Equipment Settings</h5></td>
+                    <td class="checkbox-cell"><input type="checkbox"></td>
+                    <td class="checkbox-cell"><input type="checkbox"></td>
+                    <td class="checkbox-cell"><input type="checkbox"></td>
+                    <td class="checkbox-cell"><input type="checkbox"></td>
+                    <td class="checkbox-cell"><input type="checkbox"></td>
+                </tr>
+                <tr class="sub-row">
+                    <td><h5>Equipment Status</h5></td>
+                    <td class="checkbox-cell"><input type="checkbox"></td>
+                    <td class="checkbox-cell"><input type="checkbox"></td>
+                    <td class="checkbox-cell"><input type="checkbox"></td>
+                    <td class="checkbox-cell"><input type="checkbox"></td>
+                    <td class="checkbox-cell"><input type="checkbox"></td>
+                </tr>
+                <tr class="sub-row">
+                    <td><h5>Synchronize RTC</h5></td>
+                    <td class="checkbox-cell"><input type="checkbox"></td>
+                    <td class="checkbox-cell"><input type="checkbox"></td>
+                    <td class="checkbox-cell"><input type="checkbox"></td>
+                    <td class="checkbox-cell"><input type="checkbox"></td>
+                    <td class="checkbox-cell"><input type="checkbox"></td>
+                </tr>
+                <tr class="sub-row">
+                    <td><h5>Email and SMS Alert</h5></td>
+                    <td class="checkbox-cell"><input type="checkbox"></td>
+                    <td class="checkbox-cell"><input type="checkbox"></td>
+                    <td class="checkbox-cell"><input type="checkbox"></td>
+                    <td class="checkbox-cell"><input type="checkbox"></td>
+                    <td class="checkbox-cell"><input type="checkbox"></td>
+                </tr>
+                <tr class="sub-row">
+                    <td><h5>Biometric RTC</h5></td>
+                    <td class="checkbox-cell"><input type="checkbox"></td>
+                    <td class="checkbox-cell"><input type="checkbox"></td>
+                    <td class="checkbox-cell"><input type="checkbox"></td>
+                    <td class="checkbox-cell"><input type="checkbox"></td>
+                    <td class="checkbox-cell"><input type="checkbox"></td>
+                </tr>
+                <tr class="sub-row">
+                    <td><h5>Timer Reset</h5></td>
+                    <td class="checkbox-cell"><input type="checkbox"></td>
+                    <td class="checkbox-cell"><input type="checkbox"></td>
+                    <td class="checkbox-cell"><input type="checkbox"></td>
+                    <td class="checkbox-cell"><input type="checkbox"></td>
+                    <td class="checkbox-cell"><input type="checkbox"></td>
+                </tr>
+                <tr class="sub-row">
+                    <td><h5>Lux/UV Timer</h5></td>
+                    <td class="checkbox-cell"><input type="checkbox"></td>
+                    <td class="checkbox-cell"><input type="checkbox"></td>
+                    <td class="checkbox-cell"><input type="checkbox"></td>
+                    <td class="checkbox-cell"><input type="checkbox"></td>
+                    <td class="checkbox-cell"><input type="checkbox"></td>
+                </tr>
+                <tr class="sub-row">
+                    <td><h5>Thaw Timer</h5></td>
+                    <td class="checkbox-cell"><input type="checkbox"></td>
+                    <td class="checkbox-cell"><input type="checkbox"></td>
+                    <td class="checkbox-cell"><input type="checkbox"></td>
+                    <td class="checkbox-cell"><input type="checkbox"></td>
+                    <td class="checkbox-cell"><input type="checkbox"></td>
+                </tr>
+                <tr class="main-row">
+                    <td><h4>Real Time</h4></td>
+                    <td class="checkbox-cell"><input type="checkbox"></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr class="sub-row">
+                    <td><h5>Real Time Summary</h5></td>
+                    <td class="checkbox-cell"><input type="checkbox"></td>
+                    <td class="checkbox-cell"><input type="checkbox"></td>
+                    <td class="checkbox-cell"><input type="checkbox"></td>
+                    <td class="checkbox-cell"><input type="checkbox"></td>
+                    <td class="checkbox-cell"><input type="checkbox"></td>
+                </tr>
+                <tr class="sub-row">
+                    <td><h5>Real Time Display</h5></td>
+                    <td class="checkbox-cell"><input type="checkbox"></td>
+                    <td class="checkbox-cell"><input type="checkbox"></td>
+                    <td class="checkbox-cell"><input type="checkbox"></td>
+                    <td class="checkbox-cell"><input type="checkbox"></td>
+                    <td class="checkbox-cell"><input type="checkbox"></td>
+                </tr>
+                <tr class="sub-row">
+                    <td class="sub-row"><h5>IO Status</h5></td>
+                    <td class="checkbox-cell"><input type="checkbox"></td>
+                    <td class="checkbox-cell"><input type="checkbox"></td>
+                    <td class="checkbox-cell"><input type="checkbox"></td>
+                    <td class="checkbox-cell"><input type="checkbox"></td>
+                    <td class="checkbox-cell"><input type="checkbox"></td>
+                </tr>
+                <tr class="sub-row">
+                    <td><h5>Running Hours</h5></td>
+                    <td class="checkbox-cell"><input type="checkbox"></td>
+                    <td class="checkbox-cell"><input type="checkbox"></td>
+                    <td class="checkbox-cell"><input type="checkbox"></td>
+                    <td class="checkbox-cell"><input type="checkbox"></td>
+                    <td class="checkbox-cell"><input type="checkbox"></td>>
+                </tr>
+                <tr class="main-row">
+                    <td><h4>Data Log Analysis</h4></td>
+                    <td class="checkbox-cell"><input type="checkbox"></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr class="sub-row">
+                    <td><h5>Manage Data Log</h5></td>
+                    <td class="checkbox-cell"><input type="checkbox"></td>
+                    <td class="checkbox-cell"><input type="checkbox"></td>
+                    <td class="checkbox-cell"><input type="checkbox"></td>
+                    <td class="checkbox-cell"><input type="checkbox"></td>
+                    <td class="checkbox-cell"><input type="checkbox"></td>
+                </tr>
+                <tr class="super-sub-row">
+                    <td><h6>Review Data Log</h6></td>
+                    <td class="checkbox-cell"><input type="checkbox"></td>
+                    <td class="checkbox-cell"><input type="checkbox"></td>
+                    <td class="checkbox-cell"><input type="checkbox"></td>
+                    <td class="checkbox-cell"><input type="checkbox"></td>
+                    <td class="checkbox-cell"><input type="checkbox"></td>
+                </tr>
+                <tr class="super-sub-row">
+                    <td><h6>Approve Data Log</h6></td>
+                    <td class="checkbox-cell"><input type="checkbox"></td>
+                    <td class="checkbox-cell"><input type="checkbox"></td>
+                    <td class="checkbox-cell"><input type="checkbox"></td>
+                    <td class="checkbox-cell"><input type="checkbox"></td>
+                    <td class="checkbox-cell"><input type="checkbox"></td>
+                </tr>
+                <tr class="super-sub-row">
+                    <td><h6>View Data Log</h6></td>
+                    <td class="checkbox-cell"><input type="checkbox"></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td class="checkbox-cell"><input type="checkbox"></td>
+                </tr>
+                <tr class="super-sub-row">
+                    <td><h6>View Reviewed Data</h6></td>
+                    <td class="checkbox-cell"><input type="checkbox"></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td class="checkbox-cell"><input type="checkbox"></td>
+                </tr>
+                <tr class="super-sub-row">
+                    <td><h6>View Approved Data</h6></td>
+                    <td class="checkbox-cell"><input type="checkbox"></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td class="checkbox-cell"><input type="checkbox"></td>
+                </tr>
+                <tr class="super-sub-row">
+                    <td><h6>MKT Analysis</h6></td>
+                    <td class="checkbox-cell"><input type="checkbox"></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td class="checkbox-cell"><input type="checkbox"></td>
+                </tr>
+                <tr class="super-sub-row">
+                    <td><h6>Alarm Log</h6></td>
+                    <td class="checkbox-cell"><input type="checkbox"></td>
+                    <td class="checkbox-cell"><input type="checkbox"></td>
+                    <td class="checkbox-cell"><input type="checkbox"></td>
+                    <td class="checkbox-cell"><input type="checkbox"></td>
+                    <td class="checkbox-cell"><input type="checkbox"></td>
+                </tr>
+                <tr class="super-sub-row">
+                    <td><h6>Moving Average</h6></td>
+                    <td class="checkbox-cell"><input type="checkbox"></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td class="checkbox-cell"><input type="checkbox"></td>
+                </tr>
+                <tr class="sub-row">
+                    <td><h5>Audit Trails</h5></td>
+                    <td class="checkbox-cell"><input type="checkbox"></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr class="super-sub-row">
+                    <td><h6>Alarm Audit Trails </h6></td>
+                    <td class="checkbox-cell"><input type="checkbox"></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td class="checkbox-cell"><input type="checkbox"></td>
+                </tr>
+                <tr class="super-sub-row">
+                    <td><h6>Equipment Audit Trails </h6></td>
+                    <td class="checkbox-cell"><input type="checkbox"></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td class="checkbox-cell"><input type="checkbox"></td>
+                </tr>
+                <tr class="super-sub-row">
+                    <td><h6>User Audit Trails</h6></td>
+                    <td class="checkbox-cell"><input type="checkbox"></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td class="checkbox-cell"><input type="checkbox"></td>
+                </tr>
+                <tr class="super-sub-row">
+                    <td><h6>Email Audit Trails</h6></td>
+                    <td class="checkbox-cell"><input type="checkbox"></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td class="checkbox-cell"><input type="checkbox"></td>
+                </tr>
+                <tr class="super-sub-row">
+                    <td><h6>SMS Audit Trails</h6></td>
+                    <td class="checkbox-cell"><input type="checkbox"></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td class="checkbox-cell"><input type="checkbox"></td>
+                </tr>
+                <tr class="super-sub-row">
+                    <td><h6>Review/Approved Audit Trails</h6></td>
+                    <td class="checkbox-cell"><input type="checkbox"></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td class="checkbox-cell"><input type="checkbox"></td>
+                </tr>
+                <tr class="main-row">
+                    <td><h4>Archive Analysis</h4></td>
+                    <td class="checkbox-cell"><input type="checkbox"></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr class="sub-row">
+                    <td><h5>Data Log Analysis</h5></td>
+                    <td class="checkbox-cell"><input type="checkbox"></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr class="super-sub-row">
+                    <td><h6>View Data Log</h6></td>
+                    <td class="checkbox-cell"><input type="checkbox"></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td class="checkbox-cell"><input type="checkbox"></td>
+                </tr>
+                <tr class="super-sub-row">
+                    <td><h6>View Reviwed Data Log</h6></td>
+                    <td class="checkbox-cell"><input type="checkbox"></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td class="checkbox-cell"><input type="checkbox"></td>
+                </tr>
+                <tr class="super-sub-row">
+                    <td><h6>View Aprroved Data Log</h6></td>
+                    <td class="checkbox-cell"><input type="checkbox"></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td class="checkbox-cell"><input type="checkbox"></td>
+                </tr>
+                <tr class="super-sub-row">
+                    <td><h6>MKT Analysis</h6></td>
+                    <td class="checkbox-cell"><input type="checkbox"></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td class="checkbox-cell"><input type="checkbox"></td>
+                </tr>
+                <tr class="super-sub-row">
+                    <td><h6>Alarm Log</h6></td>
+                    <td class="checkbox-cell"><input type="checkbox"></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td class="checkbox-cell"><input type="checkbox"></td>
+                </tr>
+                <tr class="super-sub-row">
+                    <td><h6>Moving Average</h6></td>
+                    <td class="checkbox-cell"><input type="checkbox"></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td class="checkbox-cell"><input type="checkbox"></td>
+                </tr>
+                <tr class="sub-row">
+                    <td><h5>Audit Trails Analysis  </h5></td>
+                    <td class="checkbox-cell"><input type="checkbox"></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr class="super-sub-row">
+                    <td><h6>Alarm Audit Trail </h6></td>
+                    <td class="checkbox-cell"><input type="checkbox"></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td class="checkbox-cell"><input type="checkbox"></td>
+                </tr>
+                <tr class="super-sub-row">
+                    <td><h6>Equipment Audit Trail </h6></td>
+                    <td class="checkbox-cell"><input type="checkbox"></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td class="checkbox-cell"><input type="checkbox"></td>
+                </tr>
+                <tr class="super-sub-row">
+                    <td><h6>User Audit Trail</h6></td>
+                    <td class="checkbox-cell"><input type="checkbox"></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td class="checkbox-cell"><input type="checkbox"></td>
+                </tr>
+                <tr class="super-sub-row">
+                    <td><h6>Email Audit Trail</h6></td>
+                    <td class="checkbox-cell"><input type="checkbox"></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td class="checkbox-cell"><input type="checkbox"></td>
+                </tr>
+                <tr class="super-sub-row">
+                    <td><h6>SMS Audit Trail</h6></td>
+                    <td class="checkbox-cell"><input type="checkbox"></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td class="checkbox-cell"><input type="checkbox"></td>
+                </tr>
+                <tr class="super-sub-row">
+                    <td><h6>Review/Approved Audit Trail</h6></td>
+                    <td class="checkbox-cell"><input type="checkbox"></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td class="checkbox-cell"><input type="checkbox"></td>
+                </tr>
+            </tbody>
+        </table>
+    </form>
 </div>
 
-{% for user in users %}
-<!-- Edit User Modal -->
-<div class="modal fade" id="editUserModal-{{ user.id }}" tabindex="-1" aria-labelledby="editUserModalLabel" aria-hidden="true">
-  <div class="modal-dialog modal-lg">
-    <div class="modal-content container-custom">
-      <div class="modal-header">
-        <h4 class="modal-title" id="editUserModalLabel">Edit User</h4>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-      </div>
-      <div class="modal-body">
-        <form id="editUserForm-{{ user.id }}" method="post" action="{% url 'edit_user' user.id %}">
-          {% csrf_token %}
-          <input type="hidden" name="userId" value="{{ user.id }}">
-          <div class="row">
-            <div class="col-md-6 form-group">
-              <input type="text" class="form-control" id="editUsername-{{ user.id }}" name="editUsername" value="{{ user.username }}" maxlength="15" placeholder=" " required>
-              <label for="editUsername-{{ user.id }}" class="form-label">User Name*</label>
-            </div>
-            <div class="col-md-6 form-group">
-              <input type="text" class="form-control" id="editLoginName-{{ user.id }}" name="editLoginName" value="{{ user.login_name }}" placeholder=" " required>
-              <label for="editLoginName-{{ user.id }}" class="form-label">Login Name*</label>
-            </div>
-            <div class="col-md-6 form-group">
-              <input type="password" class="form-control" id="editPassword-{{ user.id }}" name="editPassword" value="{{ user.password }}" placeholder="" minlength="8" maxlength="15">
-              <label for="editPassword-{{ user.id }}" class="form-label">Password*</label>
-            </div>
-            <div class="col-md-6 form-group">
-              <select class="form-select" id="editpasswordDuration-{{ user.id }}" name="editpasswordDuration" required>
-                <option value="30" {% if user.password_duration == 30 %}selected{% endif %}>30 Days</option>
-                <option value="60" {% if user.password_duration == 60 %}selected{% endif %}>60 Days</option>
-                <option value="90" {% if user.password_duration == 90 %}selected{% endif %}>90 Days</option>
-                <option value="120" {% if user.password_duration == 120 %}selected{% endif %}>120 Days</option>
-              </select>
-              <label for="editpasswordDuration-{{ user.id }}" class="form-label">Set Password Duration in Days</label>
-            </div>
-            <div class="col-md-6 form-group">
-              <select class="form-select" id="editRole-{{ user.id }}" name="editRole" required>
-                <option value="admin" {% if user.role == 'admin' %}selected{% endif %}>Admin</option>
-                <option value="general" {% if user.role == 'general' %}selected{% endif %}>General</option>
-                <option value="operator" {% if user.role == 'operator' %}selected{% endif %}>Operator</option>
-              </select>
-              <label for="editRole-{{ user.id }}" class="form-label">Role*</label>
-            </div>
-            <div class="col-md-6 form-group">
-              <select class="form-select" id="editCommGroup-{{ user.id }}" name="editCommGroup" required>
-                {% for group in groups %}
-                  <option value="{{ group.CommGroup_code }}" {% if group == user.commGroup %}selected{% endif %}>
-                    {{ group.CommGroup_name }}
-                  </option>
-                {% endfor %}
-              </select>
-              <label for="editCommGroup-{{ user.id }}" class="form-label">Comm. Group*</label>
-            </div>
-            <div class="col-md-6 form-group">
-              <select class="form-select" id="editdepartmentName-{{ user.id }}" name="editdepartmentName" required>
-                <option value="">Select Department</option>
-                {% for department in departments %}
-                  {% if department.commGroup %}
-                    <option value="{{ department.id }}" data-commgroup="{{ department.commGroup.CommGroup_code }}" {% if department == user.department %}selected{% endif %}>
-                      {{ department.department_name }}
-                    </option>
-                  {% endif %}
-                {% endfor %}
-              </select>
-              <label for="editdepartmentName-{{ user.id }}" class="form-label">Department*</label>
-            
-              <h6>Status</h6>
-              <div id="status">
-                <div class="form-check form-check-inline">
-                  <input class="form-check-input" type="radio" name="editstatus" id="statusActive-{{ user.id }}" value="Active" {% if user.status == 'Active' %}checked{% endif %} required>
-                  <label class="form-check-label" for="statusActive">Active</label>
-                </div>
-                <div class="form-check form-check-inline">
-                  <input class="form-check-input" type="radio" name="editstatus" id="statusInactive-{{ user.id }}" value="Inactive" {% if user.status == 'Inactive' %}checked{% endif %}>
-                  <label class="form-check-label" for="statusInactive">Inactive</label>
-                </div>
-              </div>
-            </div>
-            <div class="col-md-6 form-group">
-              <select class="form-select" id="editaccessibleDepartment-{{ user.id }}" name="editaccessibleDepartment" multiple required>
-                {% for department in departments %}
-                  {% if department.commGroup %}
-                    <option value="{{ department.id }}" data-commgroup="{{ department.commGroup.CommGroup_code }}" {% if department in user.accessible_departments.all %}selected{% endif %}>
-                      {{ department.department_name }}
-                    </option>
-                  {% endif %}
-                {% endfor %}
-              </select>
-              <label for="editaccessibleDepartment-{{ user.id }}" class="form-label">Accessible Department</label>
-              <div id="selectededitDepartments-{{ user.id }}" class="mt-2"></div>
-            </div>
-          </div>
-          <div class="modal-footer">
-            <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Close</button>
-            <button type="submit" class="btn btn-success">Save</button>
-          </div>
-          </div>
-        </form>
-      </div>
-    </div>
-  </div>
-</div>
 
-{% endfor %}
-
-
-<script>
-  document.querySelectorAll('.btn-edit').forEach(button => {
-  button.addEventListener('click', function() {
-      const modalId = this.getAttribute('data-bs-target');
-      const modal = document.querySelector(modalId);
-      const modalInstance = new bootstrap.Modal(modal);
-      modalInstance.show();
-  });
-});
+{% if success_msg %}
+<script>     
+    window.onload = function () {
+        alert("{{  success_msg|safe }}");                
+        window.location.href = "{% url 'role_permission' %}";
+    };
 </script>
-
-<script>
-  document.addEventListener("DOMContentLoaded", function() {
-    // Function to filter the "Select Department" dropdown based on selected CommGroup
-    function filterDepartments(commGroupSelect, departmentSelect) {
-        const commGroupValue = commGroupSelect.value;
-        const departmentOptions = departmentSelect.querySelectorAll('option');
-
-        departmentOptions.forEach(option => {
-            if (option.value === "") {
-                // Always show the default 'Select Department' option
-                option.style.display = "block";
-            } else if (option.dataset.commgroup === commGroupValue || commGroupValue === "") {
-                // Show options that match the selected CommGroup
-                option.style.display = "block";
-            } else {
-                // Hide options that don't match the selected CommGroup
-                option.style.display = "none";
-            }
-        });
-
-        // Enable/disable the department select based on CommGroup selection
-        departmentSelect.disabled = !commGroupValue;
-        departmentSelect.value = ""; // Reset the department selection to the default
-    }
-
-    // Loop through each edit modal to attach event listeners
-    document.querySelectorAll('[id^="editUserModal-"]').forEach(modal => {
-        const commGroupSelect = modal.querySelector('.form-select[id^="editCommGroup"]');
-        const departmentSelect = modal.querySelector('.form-select[id^="editdepartmentName"]');
-
-        // Attach the event listener to the CommGroup dropdown for each modal
-        if (commGroupSelect && departmentSelect) {
-            commGroupSelect.addEventListener('change', function() {
-                filterDepartments(commGroupSelect, departmentSelect);
-            });
-
-            // Initial call to filter departments based on the initially selected CommGroup
-            filterDepartments(commGroupSelect, departmentSelect);
-        }
-    });
-
-    // Event listener for the main Add User modal (if needed)
-    const mainCommGroupSelect = document.getElementById('commGroup');
-    const mainDepartmentSelect = document.getElementById('departmentName');
-
-    if (mainCommGroupSelect && mainDepartmentSelect) {
-        mainCommGroupSelect.addEventListener('change', function() {
-            filterDepartments(mainCommGroupSelect, mainDepartmentSelect);
-        });
-
-        // Initial call to filter departments based on the initially selected CommGroup in Add User modal
-        filterDepartments(mainCommGroupSelect, mainDepartmentSelect);
-    }
-});
-
-
-</script>
+{% endif %}
 
 {% block scripts %}
-{{ block.super }}
-<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.min.js"></script>
-<script src="{% static 'js/Management/user_group.js' %}"></script>
-{% endblock %}
+  {{ block.super }}
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <script>
+    document.getElementById('select-all').addEventListener('change', function() {
+        var checkboxes = document.querySelectorAll('#form-data-table input[type="checkbox"]');
+        for (var checkbox of checkboxes) {
+            checkbox.checked = this.checked;
+        }
+    });
+</script>
+  {% endblock %}
 {% endblock content %}
 
 

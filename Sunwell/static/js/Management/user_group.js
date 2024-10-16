@@ -1,16 +1,63 @@
+//form script
+
+document.getElementById('commGroup').addEventListener('change', function () {
+    var commGroupValue = this.value;
+    var departmentSelect = document.getElementById('departmentName');
+    var options = departmentSelect.querySelectorAll('option');
+
+    console.log('CommGroup Selected:', commGroupValue);
+
+    options.forEach(option => {
+        console.log('Option:', option.value, 'CommGroup:', option.dataset.commgroup);
+        if (option.value === "") {
+            option.style.display = "block";
+        } else if (option.dataset.commgroup === commGroupValue) {
+            option.style.display = "block";
+        } else {
+            option.style.display = "none";
+        }
+    });
+
+    departmentSelect.disabled = !commGroupValue;  // Enable or disable based on selection
+    departmentSelect.value = ""; // Reset the selection
+});
+
+
+
+
+
+
+//form script
+
+// floatimg labels
 document.addEventListener("DOMContentLoaded", function() {
-    // Get the necessary elements
+    const inputs = document.querySelectorAll(".form-control, .form-select");
+    inputs.forEach(input => {
+      input.addEventListener("blur", function() {
+        if (input.value) {
+          input.classList.add("filled");
+        } else {
+          input.classList.remove("filled");
+        }
+      });
+
+      // Initial check to handle pre-filled inputs
+      if (input.value) {
+        input.classList.add("filled");
+      }
+    });
+  });
+  document.addEventListener("DOMContentLoaded", function() {
     const commGroupSelect = document.getElementById('commGroup');
-    const departmentSelect = document.getElementById('departmentName');
     const accessibleDepartmentSelect = document.getElementById('accessibleDepartment');
     const selectedDepartmentsDiv = document.getElementById('selectedDepartments');
 
-    // Function to filter the "Select Department" dropdown based on selected CommGroup
+    // Function to update the visible options based on the selected commGroup
     function filterDepartments() {
         const commGroupValue = commGroupSelect.value;
-        const departmentOptions = departmentSelect.querySelectorAll('option');
+        const options = accessibleDepartmentSelect.querySelectorAll('option');
 
-        departmentOptions.forEach(option => {
+        options.forEach(option => {
             if (option.dataset.commgroup === commGroupValue || commGroupValue === "") {
                 option.style.display = "block";
             } else {
@@ -18,12 +65,17 @@ document.addEventListener("DOMContentLoaded", function() {
             }
         });
 
-        // Enable/disable the department select based on CommGroup selection
-        departmentSelect.disabled = !commGroupValue;
-        departmentSelect.value = ""; // Reset the department selection
+        // Reset the selection if no commGroup is selected
+        accessibleDepartmentSelect.disabled = !commGroupValue;
+        if (!commGroupValue) {
+            accessibleDepartmentSelect.value = ""; // Clear selection
+        }
+        
+        // Update the display of selected departments
+        updateSelectedDepartments();
     }
 
-    // Function to update the selected accessible departments display
+    // Function to update the selected departments display
     function updateSelectedDepartments() {
         const selectedOptions = Array.from(accessibleDepartmentSelect.selectedOptions);
         selectedDepartmentsDiv.innerHTML = ''; // Clear existing selected items
@@ -45,15 +97,13 @@ document.addEventListener("DOMContentLoaded", function() {
         });
     }
 
-    // Event listeners
+    // Add event listeners
     commGroupSelect.addEventListener('change', filterDepartments);
     accessibleDepartmentSelect.addEventListener('change', updateSelectedDepartments);
 
-    // Initial setup
-    filterDepartments(); // Filter "Select Department" based on the initially selected CommGroup
-    updateSelectedDepartments(); // Display initially selected accessible departments
+    // Initial call to set up the filter and display selected departments
+    filterDepartments();
 });
-
 
 //table script
 document.addEventListener("DOMContentLoaded", function() {

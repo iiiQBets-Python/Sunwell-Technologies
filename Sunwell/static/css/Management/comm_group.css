@@ -406,8 +406,32 @@ vertical-align: middle;
 height: 34px; /* Match height with other form elements */
 }
 
+.validate-btn {
+    /* position: absolute; */
+    margin-top: 9px;
+    left: 10px;
+    /* top: 60%; */
+    /* transform: translateY(-60%); */
+    background-color: #4CAF50; /* Green background */
+    color: white;
+    border: none;
+    padding: 6px 12px;
+    cursor: pointer;
+    border-radius: 5px;
+}
 
+#validationIcon {
+    position: absolute;
+    right: 20px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 20px;
+}
 
+.valid {
+    color: green;
+}
 
-
-
+.invalid {
+    color: red;
+}

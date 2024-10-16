@@ -127,6 +127,7 @@
                     <th scope="col">Equipment Name</th>
                     <th scope="col">IP Address</th>
                     <th scope="col">Status</th>
+                    <th scope="col">Action</th>
                 </tr>
             </thead>
             <tbody id="form-data-table" class="scrollable-tbody">
@@ -136,6 +137,13 @@
                     <td><a href="{% url 'equipment_setting' %}">{{ equipment.equip_name }}</a></td>
                     <td>{{ equipment.ip_address }} </td>
                     <td>{{ equipment.status }}</td>
+                    <td>
+                        <div class="dropdown">
+                          <a class="dropdown-item btn-edit"  data-bs-toggle="edit_modal">
+                              <i class="fas fa-edit"></i>
+                          </a>
+                        </div>
+                      </td>
                 </tr>
                 {% endfor %}
             </tbody>
@@ -184,33 +192,29 @@
                     {% csrf_token %}
                     <div class="row">
                         <div class="col-md-8 form-group">
-                            <input type="text" class="form-control" id="userName" maxlength="15" placeholder=" " name="equipname" autocomplete="username" required>
-                            <label for="userName" class="form-label">Equipment Name</label>
+                            <input type="text" class="form-control" id="equipname" name="equipname" placeholder=" " required>
+                            <label for="equipname" class="form-label">Equipment Name</label>
                         </div>
                         <div class="col-md-4 form-group">
-                            <select class="form-control" id="userStatus" name="equipStatus"required>
+                            <select class="form-control" id="equipStatus" name="equipStatus" required>
                                 <option value="" disabled selected>Select Status</option>
                                 <option value="Active">Active</option>
                                 <option value="Inactive">Inactive</option>
                             </select>
-                            <label for="userStatus" class="form-label">Status</label>
+                            <label for="equipStatus" class="form-label">Status</label>
                         </div>
                         
                         <div class="col-md-8 form-group">
-                            <input type="numbers" class="form-control" id="passwordDuration" name="ipaddress"  placeholder=" " required>
-                            <label for="passwordDuration" class="form-label">IP Address</label>
+                            <input type="text" class="form-control" id="ipaddress" name="ipaddress" placeholder=" " required>
+                            <label for="ipaddress" class="form-label">IP Address</label>
                         </div>
                         <div class="col-md-4 form-group">
                             <img src="{% static 'images/computericon.png' %}" alt="server" class="icon-size">
                             <i class="fa-solid fa-power-off"></i>
-                            <!-- <i class="fa-solid fa-desktop icon-size"></i>
-                            <i class="fa-solid fa-rss icon-size"></i>
-                            <i class="fa-solid fa-wifi icon-size"></i>
-                            <i class="fa-solid fa-signal-stream icon-size"></i> -->
                         </div>
-                            
+
                         <div class="col-md-12 form-group">
-                            <select class="form-control" id="login-interval" name="interval" required>
+                            <select class="form-control" id="interval" name="interval" required>
                                 <option value="" disabled selected>Select an interval</option>
                                 <option value="1">1</option>
                                 <option value="2">2</option>
@@ -218,228 +222,89 @@
                                 <option value="4">4</option>
                                 <option value="5">5</option>
                             </select>
-                            <label for="login-interval" class="form-label">Interval</label>
+                            <label for="interval" class="form-label">Interval</label>
                         </div>
-                        
-                        <div class="col-md-12 form-group">
-                            <input type="text" class="form-control" id="equipment_type" maxlength="50" name="equiptype" placeholder=" " required>
-                            <label for="equipment_type" class="form-label">Equipment Type</label>
-                        </div>
-                        <div class="container">
-                            <div class="row">
-                                <div class="col-md-12 form-group">
-                                    <select class="form-control" id="door-access-type" name="dooracctype" required>
-                                        <option value="" disabled selected>Select Door Access Type</option>
-                                        <option value="none">None</option>
-                                        <option value="plc">PLC</option>
-                                        <option value="biometric">Biometric</option>
-                                    </select>
-                                    <label for="door-access-type" class="form-label">Door Access Type</label>
-                                </div>
-                            </div>
-                            <div class="row additional-inputs" id="additional-inputs">
-                                <!-- Dynamic input fields will be inserted here -->
-                            </div>
-                        </div>
-                        
-                        <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
-                        <script>
-                            $(document).ready(function() {
-                                $('#door-access-type').on('change', function() {
-                                    var selectedValue = $(this).val();
-                                    var $additionalInputs = $('#additional-inputs');
-                                    $additionalInputs.empty(); // Clear any existing inputs
 
-                                    if (selectedValue === 'plc') {
-                                        // Add 15 inputs for "Door Access User"
-                                        for (var i = 1; i <= 15; i+=2) {
-                                            $additionalInputs.append(
-                                                '<div class="row mb-3">' +
-                                                    '<div class="col-md-6 form-group">' +
-                                                        '<input type="text" class="form-control" id="door-access-user' + i + '" placeholder=" ">' +
-                                                        '<label for="door-access-user' + i + '" class="form-label">Door Access User ' + i + '</label>' +
-                                                    '</div>' +
-                                                    (i + 1 <= 15 ? // Check if there's a next user to add to the second column
-                                                    '<div class="col-md-6 form-group">' +
-                                                        '<input type="text" class="form-control" id="door-access-user' + (i + 1) + '" placeholder=" ">' +
-                                                        '<label for="door-access-user' + (i + 1) + '" class="form-label">Door Access User ' + (i + 1) + '</label>' +
-                                                    '</div>' : '') +
-                                                '</div>'
-                                            );
-                                        }
-                                        $additionalInputs.show();
-                                    } else if (selectedValue === 'biometric') {
-                                        // Add the inputs for biometric (existing code)
-                                        $additionalInputs.append(
-                                            '<div class="row">' +
-                                                '<div class="col-md-6 form-group">' +
-                                                    '<input type="text" class="form-control" id="biometric_banner_text" placeholder=" ">' +
-                                                    '<label for="biometric_banner_text" class="form-label">Biometric Banner Text</label>' +
-                                                '</div>' +
-                                                '<div class="col-md-6 form-group">' +
-                                                    '<label>Door Access User Name Display</label>' +
-                                                    '<div class="form-check">' +
-                                                        '<input type="checkbox" class="form-check-input" id="disableCheckbox">' +
-                                                        '<label>Disabled</label>' +
-                                                    '</div>' +
-                                                '</div>' +
-                                            '</div>'+
-                                            '<div class="row">' +
-                                                '<div class="col-md-12 mb-4">'+
-                                                    '<label for="ipAddress" class="form-label1">Biometric IP Address</label>'+
-                                                    '<div class="d-flex">'+
-                                                        '<input type="text" class="form-control me-2" value="192">'+
-                                                        '<span>.</span>'+
-                                                        '<input type="text" class="form-control me-2 ms-2" value="168">'+
-                                                        '<span>.</span>'+
-                                                        '<input type="text" class="form-control me-2 ms-2" value="1">'+
-                                                        '<span>.</span>'+
-                                                        '<input type="text" class="form-control ms-2" value="2">'+
-                                                    '</div>'+
-                                                '</div>'+
-                                            '</div>' +
-                                            '<div class="row">' +
-                                                '<div class="col-md-6 form-group">' +  
-                                                    '<input type="text" class="form-control" placeholder=" ">' +
-                                                    '<label for="door_access_user1" class="form-label">Door Access User 1</label>' +
-                                                '</div>' +
-                                                '<div class="col-md-6 form-group">' +
-                                                    '<input type="text" class="form-control" placeholder=" ">' +
-                                                    '<label for="access_user_cards1" class="form-label">Access User Card No. 1</label>' +
-                                                '</div>' +
-                                                '<div class="col-md-6 form-group">' +  
-                                                    '<input type="text" class="form-control" placeholder=" ">' +
-                                                    '<label for="door_access_user1" class="form-label">Door Access User 2</label>' +
-                                                '</div>' +
-                                                '<div class="col-md-6 form-group">' +
-                                                    '<input type="text" class="form-control" placeholder=" ">' +
-                                                    '<label for="access_user_cards1" class="form-label">Access User Card No. 2</label>' +
-                                                '</div>' +
-                                                '<div class="col-md-6 form-group">' +  
-                                                    '<input type="text" class="form-control" placeholder=" ">' +
-                                                    '<label for="door_access_user1" class="form-label">Door Access User 3</label>' +
-                                                '</div>' +
-                                                '<div class="col-md-6 form-group">' +
-                                                    '<input type="text" class="form-control" placeholder=" ">' +
-                                                    '<label for="access_user_cards1" class="form-label">Access User Card No. 3</label>' +
-                                                '</div>' +
-                                                '<div class="col-md-6 form-group">' +  
-                                                    '<input type="text" class="form-control" placeholder=" ">' +
-                                                    '<label for="door_access_user1" class="form-label">Door Access User 4</label>' +
-                                                '</div>' +
-                                                '<div class="col-md-6 form-group">' +
-                                                    '<input type="text" class="form-control" placeholder=" ">' +
-                                                    '<label for="access_user_cards1" class="form-label">Access User Card No. 4</label>' +
-                                                '</div>' +
-                                                '<div class="col-md-6 form-group">' +  
-                                                    '<input type="text" class="form-control" placeholder=" ">' +
-                                                    '<label for="door_access_user1" class="form-label">Door Access User 5</label>' +
-                                                '</div>' +
-                                                '<div class="col-md-6 form-group">' +
-                                                    '<input type="text" class="form-control" placeholder=" ">' +
-                                                    '<label for="access_user_cards1" class="form-label">Access User Card No. 5</label>' +
-                                                '</div>' +
-                                                '<div class="col-md-6 form-group">' +  
-                                                    '<input type="text" class="form-control" placeholder=" ">' +
-                                                    '<label for="door_access_user1" class="form-label">Door Access User 6</label>' +
-                                                '</div>' +
-                                                '<div class="col-md-6 form-group">' +
-                                                    '<input type="text" class="form-control" placeholder=" ">' +
-                                                    '<label for="access_user_cards1" class="form-label">Access User Card No. 6</label>' +
-                                                '</div>' +
-                                                '<div class="col-md-6 form-group">' +  
-                                                    '<input type="text" class="form-control" placeholder=" ">' +
-                                                    '<label for="door_access_user1" class="form-label">Door Access User 7</label>' +
-                                                '</div>' +
-                                                '<div class="col-md-6 form-group">' +
-                                                    '<input type="text" class="form-control" placeholder=" ">' +
-                                                    '<label for="access_user_cards1" class="form-label">Access User Card No. 7</label>' +
-                                                '</div>' +
-                                                '<div class="col-md-6 form-group">' +  
-                                                    '<input type="text" class="form-control" placeholder=" ">' +
-                                                    '<label for="door_access_user1" class="form-label">Door Access User 8</label>' +
-                                                '</div>' +
-                                                '<div class="col-md-6 form-group">' +
-                                                    '<input type="text" class="form-control" placeholder=" ">' +
-                                                    '<label for="access_user_cards1" class="form-label">Access User Card No. 8</label>' +
-                                                '</div>' +
-                                                '<div class="col-md-6 form-group">' +  
-                                                    '<input type="text" class="form-control" placeholder=" ">' +
-                                                    '<label for="door_access_user1" class="form-label">Door Access User 9</label>' +
-                                                '</div>' +
-                                                '<div class="col-md-6 form-group">' +
-                                                    '<input type="text" class="form-control" placeholder=" ">' +
-                                                    '<label for="access_user_cards1" class="form-label">Access User Card No. 9</label>' +
-                                                '</div>' +
-                                                '<div class="col-md-6 form-group">' +  
-                                                    '<input type="text" class="form-control" placeholder=" ">' +
-                                                    '<label for="door_access_user1" class="form-label">Door Access User 10</label>' +
-                                                '</div>' +
-                                                '<div class="col-md-6 form-group">' +
-                                                    '<input type="text" class="form-control" placeholder=" ">' +
-                                                    '<label for="access_user_cards1" class="form-label">Access User Card No. 10</label>' +
-                                                '</div>' +
-                                                '<div class="col-md-6 form-group">' +  
-                                                    '<input type="text" class="form-control" placeholder=" ">' +
-                                                    '<label for="door_access_user1" class="form-label">Door Access User 11</label>' +
-                                                '</div>' +
-                                                '<div class="col-md-6 form-group">' +
-                                                    '<input type="text" class="form-control" placeholder=" ">' +
-                                                    '<label for="access_user_cards1" class="form-label">Access User Card No. 11</label>' +
-                                                '</div>' +
-                                                '<div class="col-md-6 form-group">' +  
-                                                    '<input type="text" class="form-control" placeholder=" ">' +
-                                                    '<label for="door_access_user1" class="form-label">Door Access User 12</label>' +
-                                                '</div>' +
-                                                '<div class="col-md-6 form-group">' +
-                                                    '<input type="text" class="form-control" placeholder=" ">' +
-                                                    '<label for="access_user_cards1" class="form-label">Access User Card No. 12</label>' +
-                                                '</div>' +
-                                                '<div class="col-md-6 form-group">' +  
-                                                    '<input type="text" class="form-control" placeholder=" ">' +
-                                                    '<label for="door_access_user1" class="form-label">Door Access User 13</label>' +
-                                                '</div>' +
-                                                '<div class="col-md-6 form-group">' +
-                                                    '<input type="text" class="form-control" placeholder=" ">' +
-                                                    '<label for="access_user_cards1" class="form-label">Access User Card No. 13</label>' +
-                                                '</div>' +
-                                                '<div class="col-md-6 form-group">' +  
-                                                    '<input type="text" class="form-control" placeholder=" ">' +
-                                                    '<label for="door_access_user1" class="form-label">Door Access User 14</label>' +
-                                                '</div>' +
-                                                '<div class="col-md-6 form-group">' +
-                                                    '<input type="text" class="form-control" placeholder=" ">' +
-                                                    '<label for="access_user_cards1" class="form-label">Access User Card No. 14</label>' +
-                                                '</div>' +
-                                                '<div class="col-md-6 form-group">' +  
-                                                    '<input type="text" class="form-control" placeholder=" ">' +
-                                                    '<label for="door_access_user1" class="form-label">Door Access User 15</label>' +
-                                                '</div>' +
-                                                '<div class="col-md-6 form-group">' +
-                                                    '<input type="text" class="form-control" placeholder=" ">' +
-                                                    '<label for="access_user_cards1" class="form-label">Access User Card No. 15</label>' +
-                                                '</div>' +
-                                                // Continue adding more inputs as per existing code...
-                                            '</div>'
-                                        );
-                                        $additionalInputs.show();
-                                    } else {
-                                        $additionalInputs.hide();
-                                    }
-                                });
-                            });
-                        </script>
+                        <div class="col-md-12 form-group">
+                            <input type="text" class="form-control" id="equiptype" name="equiptype" placeholder=" " required>
+                            <label for="equiptype" class="form-label">Equipment Type</label>
+                        </div>
+
+                        <div class="col-md-12 form-group">
+                            <select class="form-control" id="door-access-type" name="dooracctype" required>
+                                <option value="" disabled selected>Select Door Access Type</option>
+                                <option value="none">None</option>
+                                <option value="plc">PLC</option>
+                                <option value="biometric">Biometric</option>
+                            </select>
+                            <label for="door-access-type" class="form-label">Door Access Type</label>
+                        </div>
+
+                        <!-- Dynamic Input Fields -->
+                        <div class="row additional-inputs" id="additional-inputs"></div>
                     </div>
+
                     <!-- Modal Footer -->
                     <div class="modal-footer">
                         <button type="button" class="btn btn-outline-danger" data-bs-dismiss="modal">Close</button>
-                        <button type="submit" class="btn btn-outline-success" id="saveUserBtn">Save </button>
+                        <button type="submit" class="btn btn-outline-success">Save</button>
                     </div>
                 </form>
             </div>
         </div>
     </div>
 </div>
+<script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+<script>
+    $(document).ready(function() {
+        $('#door-access-type').on('change', function() {
+            var selectedValue = $(this).val();
+            var $additionalInputs = $('#additional-inputs');
+            $additionalInputs.empty(); // Clear any existing inputs
+
+            if (selectedValue === 'plc') {
+                // Add 15 inputs for "Door Access User"
+                for (var i = 1; i <= 15; i++) {
+                    $additionalInputs.append(
+                        '<div class="col-md-6 form-group">' +
+                            '<input type="text" class="form-control" id="plc_user_' + i + '" name="plc_user_' + i + '" placeholder=" ">' +
+                            '<label for="plc_user_' + i + '" class="form-label">Door Access User ' + i + '</label>' +
+                        '</div>'
+                    );
+                }
+            } else if (selectedValue === 'biometric') {
+                // Add fields for Biometric Banner and IP Address
+                $additionalInputs.append(
+                    '<div class="col-md-12 form-group">' +
+                        '<input type="text" class="form-control" id="biometric_banner_text" name="biometric_banner_text" placeholder=" ">' +
+                        '<label for="biometric_banner_text" class="form-label">Biometric Banner Text</label>' +
+                    '</div>' +
+                    '<div class="col-md-12 form-group">' +
+                        '<input type="text" class="form-control" id="biometric_ip_address" name="biometric_ip_address" placeholder=" ">' +
+                        '<label for="biometric_ip_address" class="form-label">Biometric IP Address</label>' +
+                    '</div>'
+                );
+
+                // Add 15 inputs for Biometric User and Card Number
+                for (var i = 1; i <= 15; i++) {
+                    $additionalInputs.append(
+                        '<div class="row mb-3">' +
+                            '<div class="col-md-6 form-group">' +
+                                '<input type="text" class="form-control" id="biometric_user_' + i + '" name="biometric_user_' + i + '" placeholder=" ">' +
+                                '<label for="biometric_user_' + i + '" class="form-label">Biometric User ' + i + '</label>' +
+                            '</div>' +
+                            '<div class="col-md-6 form-group">' +
+                                '<input type="text" class="form-control" id="biometric_card_' + i + '" name="biometric_card_' + i + '" placeholder=" ">' +
+                                '<label for="biometric_card_' + i + '" class="form-label">Card Number ' + i + '</label>' +
+                            '</div>' +
+                        '</div>'
+                    );
+                }
+            }
+        });
+    });
+</script>
+
     {% block scripts %}
     {{ block.super }}
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>

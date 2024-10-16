@@ -1,6 +1,6 @@
 {% extends "Base/base.html" %}
 {% load static %}
-{% block title %} Alarm Audit Trail {% endblock %}
+{% block title %} User Audit Trail {% endblock %}
 {% block styles %}
     {{ block.super }}
     <style>
@@ -317,7 +317,7 @@
             function validateForm() {
                 clearValidity(); // Clear previous custom messages
                 let isValid = true;
-    
+            
                 // Check if a format is selected
                 if (!formatSelect.value) {
                     formatSelect.setCustomValidity("Please select a format.");
@@ -325,7 +325,7 @@
                     isValid = false;
                     return false; // Stop further validation until the format is selected
                 }
-    
+            
                 // If Date Wise is selected, check From Date and then To Date (mandatory)
                 if (formatSelect.value === "Date Wise") {
                     if (!fromDate.value) {
@@ -338,16 +338,17 @@
                         isValid = false;
                     }
                 }
-    
+            
                 // If User Wise is selected, check if at least one user is selected (mandatory)
-                if (formatSelect.value === "User-wise") {
-                    if (!userList.value) {
+                if (formatSelect.value === "User Wise") {
+                    let selectedUsers = Array.from(userList.selectedOptions).map(option => option.value); // Get selected options
+                    if (selectedUsers.length === 0) {
                         userList.setCustomValidity("Please select at least one user.");
                         userList.reportValidity();
                         isValid = false;
                     }
                 }
-    
+            
                 return isValid;
             }
     

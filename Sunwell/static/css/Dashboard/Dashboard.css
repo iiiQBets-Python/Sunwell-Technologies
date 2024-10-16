@@ -475,3 +475,21 @@ select {
     padding: 5px;
     font-size: 16px;
 }
+
+.floating-alert {
+    position: fixed;
+    top: -100px; 
+    right: 30%;
+    z-index: 1050;
+    width: auto;
+    padding: 10px 20px;
+    border-radius: 5px;
+    background-color: #28a745; 
+    color: white;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    transition: top 0.5s ease-in-out; 
+}
+
+.floating-alert.show {
+    top: 100px; 
+}

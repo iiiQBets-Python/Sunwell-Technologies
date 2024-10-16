@@ -26,24 +26,45 @@
             top: 20px;
             right: 20px;
         }
+        .floating-alert {
+            position: fixed;
+            top: -100px;
+            right: 30%;
+            z-index: 1050;
+            width: auto;
+            padding: 10px 20px;
+            border-radius: 5px;
+            background-color: #28a745; /* Green background for success */
+            color: white;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            transition: top 0.5s ease-in-out;
+        }
+
+        .floating-alert.show {
+            top: 100px;
+        }
     </style>
 {% endblock styles %}
 
 {% block content %}
+{% if organization %}
 <div class="container mt-2 position-relative">
+    <div id="floating-alert" class="floating-alert">
+        Organization details updated successfully!
+    </div>
     <!-- Edit Button -->
-    <a href="{% url 'edit_organization' organization.id %}" class="btn btn-primary edit-button">Edit</a>
+    {% if data.role == 'Super Admin' or acc_db.org_e %}
+    <a href="{% url 'edit_organization' organization.id %}" class="btn btn-outline-primary edit-button">Edit</a>
+    {% endif %}
 
     <h1 class="text-center header">Company Profile</h1>
     <hr>
     <div class="row">
         <div class="col-md-3">
             <div class="text-center">  
-                {% if organization.logo %}                                               
-                    <img src="{{ organization.logo.url }}" class="img-thumbnail square-img mt-5" alt="Company Logo">
-                {% else %}
-                    <img src="{% static 'images/default_logo.png' %}" class="img-thumbnail square-img mt-5" alt="Company Logo">
-                {% endif %}
+                <div class="text-center">                                                 
+                    <img src="{{ organization.logo.url }}" class="img-thumbnail square-img" alt="Company Logo">
+                </div>
             </div>
         </div>
         
@@ -75,4 +96,79 @@
         </div>
     </div>
 </div>
+{% else %}
+
+<div class="container mt-0">
+    <h1 class="text-center header">Edit Company Profile</h1>
+    <hr>
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        <div class="row">
+            <div class="col-md-3">
+                <div class="text-center">                    
+                    <h6>Upload a different photo...</h6>
+                    <input type="file" class="form-control" name="logo" accept="image/*">
+                </div>
+            </div>
+            
+            <div class="col-md-9 mt-4">
+                <div class="mb-3 row">
+                    <label for="name" class="col-lg-3 col-form-label"><strong>Company Name:</strong></label>
+                    <div class="col-lg-9">
+                        <input type="text" class="form-control" name="name" id="name" value="">
+                    </div>
+                </div>
+                <div class="mb-3 row">
+                    <label for="email" class="col-lg-3 col-form-label"><strong>Email:</strong></label>
+                    <div class="col-lg-9">
+                        <input type="email" class="form-control" name="email" id="email" value="">
+                    </div>
+                </div>
+                <div class="mb-3 row">
+                    <label for="phoneNo" class="col-lg-3 col-form-label"><strong>Phone Number:</strong></label>
+                    <div class="col-lg-9">
+                        <input type="tel" class="form-control" name="phoneNo" id="phoneNo" value="">
+                    </div>
+                </div>
+                <div class="mb-3 row">
+                    <label for="address" class="col-lg-3 col-form-label"><strong>Address</strong>:</label>
+                    <div class="col-lg-9">
+                        <textarea class="form-control address-input" name="address" id="address"></textarea>
+                    </div>
+                </div>
+                
+                <div class="mb-3 row">
+                    <div class="col-lg-8 offset-lg-3 text-end">
+                        <button type="reset" class="btn btn-secondary me-2">Reset</button>
+                        <button type="submit" class="btn btn-success">Save</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+
+{% endif %}
+<script>
+    function showFloatingAlert() {
+        var alertElement = document.getElementById('floating-alert');
+        alertElement.classList.add('show');
+
+        // Hide the alert after 2 seconds
+        setTimeout(function() {
+            alertElement.classList.remove('show');
+        }, 2000); // 2 seconds delay
+    }
+
+    // Automatically show the floating alert if there's a success message
+    window.onload = function() {
+        {% if messages %}
+            {% for message in messages %}
+                {% if 'success' in message.tags %}
+                    showFloatingAlert();
+                {% endif %}
+            {% endfor %}
+        {% endif %}
+    }
+</script>
 {% endblock content %}

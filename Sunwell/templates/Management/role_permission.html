@@ -19,49 +19,47 @@
                 <span class="input-group-text"><i class="fas fa-search"></i></span>
                 <input type="text" id="searchBar" class="form-control" placeholder="Search here..">
             </div>
+            {% if data.role == 'Super Admin' or acc_db.role_a %}
+            <div class="d-flex">
+                <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#add_role_modal">Add Role</button> 
+            </div>
+            {% endif %}
         </div> 
     </div>
-  <div class="table-wrapper">
+    <div class="table-wrapper">
       <table class="table table-bordered">
           <thead>
               <tr>
                   <th><input type="checkbox" id="selectAll"></th>
                   <th scope="col">Role Name</th>
+                  {% if data.role == 'Super Admin' or acc_db.role_e %}
                   <th scope="col">Actions</th>
+                  {% endif %}
               </tr>
           </thead>
           <tbody id="form-data-table">
-              <tr>
-                  <td><input type="checkbox" class="row-checkbox" name="admin_checkbox"></td>
-                  <td><a href="{% url 'user_access' %}" style="text-decoration: none; color: inherit;">Administrator</a></td>
-                  <td>
+            {% if role_data %}
+            {% for i in role_data %}
+            <tr>
+                <td><input type="checkbox" class="row-checkbox" name="admin_checkbox"></td>                
+                <td><a href="{% url 'user_access' %}?role={{i.role}}" style="text-decoration: none; color: inherit;">{{i.role}}</a></td>                                
+                {% if data.role == 'Super Admin' or acc_db.role_e %}
+                <td>
                     <div class="dropdown">
-                        <a class="dropdown-item btn-edit" href="#"><i class="fas fa-edit"></i></a>
+                        <a class="dropdown-item btn-edit" href="#" data-bs-toggle="modal" data-bs-target="#edit_role_modal-{{ i.role }}">
+                            <i class="fas fa-edit"></i>
+                        </a>
                     </div>
-                  </td>
-              </tr>
-              <tr>
-                  <td><input type="checkbox" class="row-checkbox" name="operator_checkbox"></td>
-                  <td><a href="{% url 'user_access' %}" style="text-decoration: none; color: inherit;">Operator</a></td>
-                  <td>
-                    <div class="dropdown">
-                        <a class="dropdown-item btn-edit" href="#"><i class="fas fa-edit"></i></a>
-                    </div>
-                  </td>
-              </tr>
-              <tr>
-                  <td><input type="checkbox" class="row-checkbox" name="user_checkbox"></td>
-                  <td><a href="{% url 'user_access' %}" style="text-decoration: none; color: inherit;">General User</a></td>
-                  <td>
-                    <div class="dropdown">
-                        <a class="dropdown-item btn-edit" href="#"><i class="fas fa-edit"></i></a>
-                    </div>
-                  </td>
-              </tr>
+                    
+                </td>
+                {% endif %}
+            </tr>
+            {% endfor %}
+            {% endif %}              
           </tbody>
       </table>
     </div>
-      <div class="d-flex justify-content-between mb-2">
+    <div class="d-flex justify-content-between mb-2">
         <div class="entries-info d-flex align-items-center">
           <span>Show</span>
           <select id="entriesPerPage" class="form-select d-inline-block mx-2 entriesPerPage">
@@ -85,11 +83,99 @@
             </ul>
         </nav>
     </div>
-  </div>
+</div>
+
+
+<div class="modal fade" id="add_role_modal" tabindex="-1" aria-labelledby="add_role_modalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content container-custom">                    
+            <div class="modal-header">
+            <h4 class="modal-title" id="add_role_modalLabel">Add Role</h4>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+                    
+            <div class="modal-body">
+                <form action="" method="post">
+                    {% csrf_token %}
+                    <div class="row">
+                        <div class="col-md-12 form-group">                    
+                            <input type="text" class="form-control" id="role"  name="role" maxlength="50" placeholder=" " required>
+                            <label for="role" class="form-label">Role</label>
+                        </div>
+
+                        <div class="col-md-12 form-group">                
+                            <textarea name="description" class="form-control" id="description" rows="3"></textarea>
+                            <label for="description" class="form-label">Description:</label>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Close</button>
+                            <button type="submit" class="btn btn-success">Save</button>
+                        </div>
+                    </div>
+                </form>            
+            </div>
+        </div>
+    </div>
+</div>
+
+{% for i in role_data %}
+<!-- Edit Role Modal -->
+<div class="modal fade" id="edit_role_modal-{{ i.role }}" tabindex="-1" aria-labelledby="edit_role_modalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content container-custom">
+            <div class="modal-header">
+                <h4 class="modal-title" id="edit_role_modalLabel">Edit Role</h4>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="edit_role_form-{{ i.role }}" method="post" action="{% url 'edit_role' i.role %}">
+
+                    {% csrf_token %}
+                    <input type="hidden" name="role_id" value="{{ i.id }}">
+                    <div class="row">
+                        <div class="col-md-12 form-group">
+                            <input type="text" class="form-control" name="role" value="{{ i.role }}" maxlength="50" required>
+                            <label for="edit_role" class="form-label">Role</label>
+                        </div>
+
+                        <div class="col-md-12 form-group">
+                            <textarea name="description" class="form-control" rows="3">{{ i.description }}</textarea>
+                            <label for="edit_description" class="form-label">Description:</label>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-success">Save Changes</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endfor %}
+
+
+
+
+<script>
+    document.querySelectorAll('.btn-edit').forEach(button => {
+        button.addEventListener('click', function() {
+            const modalId = this.getAttribute('data-bs-target');
+            const modal = document.querySelector(modalId);
+            const modalInstance = new bootstrap.Modal(modal);
+            modalInstance.show();
+        });
+    });
+</script>
+
+
+
 
   {% block scripts %}
   {{ block.super }}
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
   <script src="{% static 'js/Management/role_permission.js' %}"></script>
   {% endblock %}
 

@@ -4,236 +4,66 @@
 {% block title %} email_sms {% endblock %}
 
 {% block styles %}
-    {{ block.super }}
-    <link rel="stylesheet" href="{% static 'css/Management/app_settings.css' %}">
+{{ block.super }}
+<link rel="stylesheet" href="{% static 'css/Management/app_settings.css' %}">
 {% endblock styles %}
 
-{% block content %} 
+{% block content %}
 <div class="container-custom">
   <h5 class="mb-3">Email, SMS, and WhatsApp Configuration</h5>
   <div class="tab-content" id="myTabContent">
     <div class="tab-pane fade show active" id="appsetting" role="tabpanel" aria-labelledby="appsetting-tab">
-        <!-- Tab Navigation -->
-        <ul class="nav nav-tabs" id="Tab" role="tablist">
-            <li class="nav-item" role="presentation">
-                <button class="nav-link active" id="appsettings-tab" data-bs-toggle="tab" data-bs-target="#app-settings" type="button" role="tab" aria-controls="app-settings" aria-selected="true">App Settings</button>
-            </li>
-            <li class="nav-item" role="presentation">
-                <button class="nav-link" id="email-settings-tab" data-bs-toggle="tab" data-bs-target="#email-settings" type="button" role="tab" aria-controls="email-settings" aria-selected="false">Email Settings</button>
-            </li>
-            <li class="nav-item" role="presentation">
-                <button class="nav-link" id="sms-settings-tab" data-bs-toggle="tab" data-bs-target="#sms-settings" type="button" role="tab" aria-controls="sms-settings" aria-selected="false">SMS Settings</button>
-            </li>
-            <li class="nav-item" role="presentation">
-                <button class="nav-link" id="whatsapp-settings-tab" data-bs-toggle="tab" data-bs-target="#whatsapp-settings" type="button" role="tab" aria-controls="whatsapp-settings" aria-selected="false">WhatsApp Settings</button>
-            </li>
-        </ul>
-        
-        <!-- Tab Content -->
-        <div class="tab-content mt-3" id="TabContent">
-            <!-- App Settings Tab Content -->
-            <div class="tab-pane fade show active" id="app-settings" role="tabpanel" aria-labelledby="appsettings-tab">
-                <!-- Empty content for App Settings -->
-                <form>
-                  <div class="container">
-                      <div class="row">
-                        <div class="form-group col-md-8">
-                          <input type="number" class="form-control" placeholder=" " id="password_change" name="password_change">
-                          <label class="form-label" for="password_change">Password Change</label>
-                        </div>
-                        <div class="form-group col-md-2">
-                           <span  class="form-span" >Days</span>
-                        </div>
-                        <div class="form-group col-md-8">
-                          <input type="number" class="form-control" placeholder=" " id="system_auto_logout" name="system_auto_logout">
-                          <label class="form-label" for="system_auto_logout">System Auto Logout Time</label>
-                        </div>
-                        <div class="form-group col-md-2">
-                          <span  class="form-span" >Minutes</span>
-                        </div>
-                        <div class="form-group col-md-8">
-                          <input type="number" class="form-control" placeholder=" " id="user_access_lock" name="user_access_lock">
-                          <label class="form-label" for="user_access_lock">User Access Lock Count</label>
-                        </div>
-                        <div class="form-group col-md-2">
-                          <span  class="form-span" >Attempts</span>
-                        </div>
-                          <div class="form-buttons">
-                              <button class="btn btn-outline-danger" type="button">Close</button>
-                              <button class="btn btn-outline-success">Save</button>
-                          </div>
-                      </div>
-                  </div>
-              </form>
-            </div>
-            
-            <!-- Email Settings Tab Content -->
-            <div class="tab-pane fade" id="email-settings" role="tabpanel" aria-labelledby="email-settings-tab">
-                <!-- Email Settings fields -->
-                <form>
-                    <div class="container">
-                        <div class="row">
-                            <div class="col-md-6 form-group d-flex align-items-center">
-                                <h6 style="margin-right: 10px;">Email System:</h6>
-                                <div id="status">
-                                    <div class="form-check form-check-inline">
-                                        <input class="form-check-input" type="radio" name="email_setting_status" id="email-enable2" value="Enable" checked>
-                                        <label class="form-check-label" for="email-enable2">Enable</label>
-                                    </div>
-                                    <div class="form-check form-check-inline">
-                                        <input class="form-check-input" type="radio" name="email_setting_status" id="email-disable2" value="Disable">
-                                        <label class="form-check-label" for="email-disable2">Disable</label>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-md-6 form-group d-flex align-items-center">
-                                <h6 style="margin-right: 10px;">SMTP Authentication:</h6>
-                                <div id="status">
-                                    <div class="form-check form-check-inline">
-                                        <input class="form-check-input" type="radio" name="smpt_authentication" id="smpt-yes" value="Yes" checked>
-                                        <label class="form-check-label" for="smpt-yes">Yes</label>
-                                    </div>
-                                    <div class="form-check form-check-inline">
-                                        <input class="form-check-input" type="radio" name="smpt_authentication" id="smpt-no" value="No">
-                                        <label class="form-check-label" for="smpt-no">No</label>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="form-group col-md-6">
-                                <input type="email" class="form-control" placeholder=" " id="smptemail" name="smptemail">
-                                <label class="form-label" for="smptemail">SMTP Email</label>
-                            </div>
-                            <div class="form-group col-md-6">
-                                <input type="text" class="form-control" placeholder=" " id="smptaddress" name="smptaddress">
-                                <label class="form-label" for="smptaddress">SMTP Address</label>
-                            </div>
-                            <div class="form-group col-md-6">
-                                <input type="text" class="form-control" placeholder=" " id="smptuser" name="smptuser">
-                                <label class="form-label" for="smptuser">SMTP Username</label>
-                            </div>
-                            <div class="form-group col-md-6">
-                                <input type="password" class="form-control" placeholder=" " id="smptpass" name="smptpass">
-                                <label class="form-label" for="smptpass">SMTP Password</label>
-                            </div>
-                            <div class="form-group col-md-6">
-                                <input type="number" class="form-control" placeholder=" " id="smtpPort">
-                                <label class="form-label" for="smtpPort">SMTP Port</label>
-                            </div>
-                            <div class="col-md-6 form-group d-flex align-items-center">
-                                <h6 style="margin-right: 10px;">SMTP Socket Layers:</h6>
-                                <div id="status">
-                                    <div class="form-check form-check-inline">
-                                        <input class="form-check-input" type="radio" name="smpt_layer" id="smpt-enable" value="Enable" checked>
-                                        <label class="form-check-label" for="smpt-enable">Enable</label>
-                                    </div>
-                                    <div class="form-check form-check-inline">
-                                        <input class="form-check-input" type="radio" name="smpt_layer" id="smpt-disable" value="Disable">
-                                        <label class="form-check-label" for="smpt-disable">Disable</label>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="form-group col-md-12">
-                                <textarea class="form-control" id="emailsign" rows="3" placeholder=" " required></textarea>
-                                <label class="form-label" for="emailsign">Email Signature</label>
-                            </div>
-                            <div class="form-group col-md-6">
-                                <input type="email" class="form-control" placeholder=" " id="testemail" name="testemail">
-                                <label class="form-label" for="testemail">Test Email ID</label>
-                            </div>
-                            <div class="form-group col-md-4">
-                                <input type="text" class="form-control" placeholder=" " id="testemailtime" name="testemailtime">
-                                <label class="form-label" for="testemailtime">Test Email Time</label>
-                            </div>
-                            <div class="form-group col-md-2">
-                                <button class="btn btn-outline-primary">Email Test</button>
-                            </div>
-                            <!-- Additional email settings fields -->
-                            <div class="form-buttons">
-                                <button class="btn btn-outline-danger" type="button">Close</button>
-                                <button class="btn btn-outline-success">Save</button>
-                            </div>
-                        </div>
-                    </div>
-                </form>
-            </div>
-            
-        <!-- SMS Settings Tab Content -->
-        <div class="tab-pane fade" id="sms-settings" role="tabpanel" aria-labelledby="sms-settings-tab">
-          <!-- SMS Settings fields -->
+      <!-- Tab Navigation -->
+      <ul class="nav nav-tabs" id="Tab" role="tablist">
+        <li class="nav-item" role="presentation">
+          <button class="nav-link active" id="appsettings-tab" data-bs-toggle="tab" data-bs-target="#app-settings"
+            type="button" role="tab" aria-controls="app-settings" aria-selected="true">App Settings</button>
+        </li>
+        <li class="nav-item" role="presentation">
+          <button class="nav-link" id="email-settings-tab" data-bs-toggle="tab" data-bs-target="#email-settings"
+            type="button" role="tab" aria-controls="email-settings" aria-selected="false">Email Settings</button>
+        </li>
+        <li class="nav-item" role="presentation">
+          <button class="nav-link" id="sms-settings-tab" data-bs-toggle="tab" data-bs-target="#sms-settings"
+            type="button" role="tab" aria-controls="sms-settings" aria-selected="false">SMS Settings</button>
+        </li>
+        <li class="nav-item" role="presentation">
+          <button class="nav-link" id="whatsapp-settings-tab" data-bs-toggle="tab" data-bs-target="#whatsapp-settings"
+            type="button" role="tab" aria-controls="whatsapp-settings" aria-selected="false">WhatsApp Settings</button>
+        </li>
+      </ul>
+
+      <!-- Tab Content -->
+      <div class="tab-content mt-3" id="TabContent">
+        <!-- App Settings Tab Content -->
+        <div class="tab-pane fade show active" id="app-settings" role="tabpanel" aria-labelledby="appsettings-tab">
+          <!-- Empty content for App Settings -->
           <form>
             <div class="container">
               <div class="row">
-                <div class="col-md-6 form-group d-flex align-items-center ">
-                  <h6 style="margin-right: 10px;">SMS System:</h6>
-                  <div id="status">
-                    <div class="form-check form-check-inline">
-                      <input class="form-check-input" type="radio" name="sms_setting_status" id="sms-enable2" value="Enable" checked>
-                      <label class="form-check-label" for="sms-enable2">Enable</label>
-                    </div>
-                    <div class="form-check form-check-inline">
-                      <input class="form-check-input" type="radio" name="sms_setting_status" id="sms-disable2" value="Disable">
-                      <label class="form-check-label" for="sms-disable2">Disable</label>
-                    </div>
-                  </div>
-                </div>
-                <div class="form-group col-md-6">
-                  <input type="number" class="form-control" placeholder=" " id="commport" name="commport">
-                  <label class="form-label" for="commport">Communication Port</label>
-                </div>
-                <div class="col-md-6 form-group">
-                  <select class="form-select" id="parity" name="parity" placeholder=" " required>
-                      <option value="" disabled selected hidden></option>
-                      <option value="none">None</option>
-                      <option value="">ABCD</option>
-                      <option value="">XYZ</option>
-                      <!-- Add category options as needed -->
-                  </select>
-                  <label for="parity" class="form-label">Parity</label>
-                </div>
-                <div class="col-md-6 form-group">
-                  <select class="form-select" id="baudrate" name="baudrate" placeholder=" " required>
-                      <option value="" disabled selected hidden></option>
-                      <option value="">115200</option>
-                      <option value="">115400</option>
-                      <option value="">115500</option>
-                      <!-- Add category options as needed -->
-                  </select>
-                  <label for="baudrate" class="form-label">Baud Rate</label>
-                </div>
-                <div class="col-md-6 form-group">
-                  <select class="form-select" id="databits" name="databits" placeholder=" " required>
-                      <option value="" disabled selected hidden></option>
-                      <option value="">8</option>
-                      <option value="">16</option>
-                      <option value="">32</option>
-                      <option value="">64</option>
-                      <!-- Add category options as needed -->
-                  </select>
-                  <label for="databits" class="form-label">Data Bits</label>
-                </div>
-                <div class="col-md-6 form-group">
-                  <select class="form-select" id="stopbits" name="stopbits" placeholder=" " required>
-                      <option value="" disabled selected hidden></option>
-                      <option value="">1</option>
-                      <option value="">2</option>
-                      <option value="">3</option>
-                      <option value="">4</option>
-                      <!-- Add category options as needed -->
-                  </select>
-                  <label for="stopbits" class="form-label">Stop Data</label>
-                </div>
-                <div class="form-group col-md-6">
-                  <input type="number" class="form-control" placeholder=" " id="testsms" name="testsms">
-                  <label class="form-label" for="testsms">Test SMS Number</label>
-                </div>
-                <div class="form-group col-md-4">
-                  <input type="number" class="form-control" placeholder=" " id="testsmstime" name="testsmstime">
-                  <label class="form-label" for="testsmstime">Test SMS Time</label>
+                <div class="form-group col-md-8">
+                  <input type="number" class="form-control" placeholder=" " id="password_change" name="password_change">
+                  <label class="form-label" for="password_change">Password Change</label>
                 </div>
                 <div class="form-group col-md-2">
-                  <button class="btn btn-outline-primary">SMS Test</button>
+                  <span class="form-span">Days</span>
                 </div>
-                <!-- Additional SMS settings fields -->
+                <div class="form-group col-md-8">
+                  <input type="number" class="form-control" placeholder=" " id="system_auto_logout"
+                    name="system_auto_logout">
+                  <label class="form-label" for="system_auto_logout">System Auto Logout Time</label>
+                </div>
+                <div class="form-group col-md-2">
+                  <span class="form-span">Minutes</span>
+                </div>
+                <div class="form-group col-md-8">
+                  <input type="number" class="form-control" placeholder=" " id="user_access_lock"
+                    name="user_access_lock">
+                  <label class="form-label" for="user_access_lock">User Access Lock Count</label>
+                </div>
+                <div class="form-group col-md-2">
+                  <span class="form-span">Attempts</span>
+                </div>
                 <div class="form-buttons">
                   <button class="btn btn-outline-danger" type="button">Close</button>
                   <button class="btn btn-outline-success">Save</button>
@@ -242,27 +72,249 @@
             </div>
           </form>
         </div>
-            
-        <!-- WhatsApp Settings Tab Content -->
-        <div class="tab-pane fade" id="whatsapp-settings" role="tabpanel" aria-labelledby="whatsapp-settings-tab">
-          <!-- WhatsApp Settings fields -->
-          <form>
-            <div class="container">
-              <div class="row">
-                <div class="col-md-12 form-group d-flex align-items-center ">
-                  <h6 style="margin-right: 10px;">Whatsapp Message System:</h6>
-                  <div id="status">
-                    <div class="form-check form-check-inline">
-                      <input class="form-check-input" type="radio" name="whatsapp_setting_status" id="whatsapp-enable2" value="Enable" checked>
-                      <label class="form-check-label" for="whatsapp-enable2">Enable</label>
-                    </div>
-                    <div class="form-check form-check-inline">
-                      <input class="form-check-input" type="radio" name="whatsapp_setting_status" id="whatsapp-disable2" value="Disable">
-                      <label class="form-check-label" for="whatsapp-disable2">Disable</label>
+
+        <!-- Email Settings Tab Content -->
+        <div class="tab-pane fade" id="email-settings" role="tabpanel" aria-labelledby="email-settings-tab">
+          <!-- Email Settings fields -->
+               <form method="post" action="email_settings">
+                 {% csrf_token %}
+
+
+                 
+                    <div class="container">
+                      <div class="row">
+                        <div class="col-md-6 form-group d-flex align-items-center">
+                          <h6 style="margin-right: 10px;">Email System:</h6>
+                          <div id="status">
+                            <div class="form-check form-check-inline">
+                              <input class="form-check-input" type="radio" name="email_setting_status" id="email-enable2"
+                                value="Enable" checked>
+                              <label class="form-check-label" for="email-enable2">Enable</label>
+                            </div>
+                            <div class="form-check form-check-inline">
+                              <input class="form-check-input" type="radio" name="email_setting_status" id="email-disable2"
+                                value="Disable">
+                              <label class="form-check-label" for="email-disable2">Disable</label>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="col-md-6 form-group d-flex align-items-center">
+                          <h6 style="margin-right: 10px;">SMTP Authentication:</h6>
+                          <div id="status">
+                            <div class="form-check form-check-inline">
+                              <input class="form-check-input" type="radio" name="smpt_authentication" id="smpt-yes" value="Yes"
+                                checked>
+                              <label class="form-check-label" for="smpt-yes">Yes</label>
+                            </div>
+                            <div class="form-check form-check-inline">
+                              <input class="form-check-input" type="radio" name="smpt_authentication" id="smpt-no" value="No">
+                              <label class="form-check-label" for="smpt-no">No</label>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="form-group col-md-6">
+                          <input type="text" class="form-control" placeholder=" " id="smptemail" name="smptemail">
+                          <!-- <label class="form-label" for="smptemail">Email Host</label> -->
+                          <label class="form-label" for="smptemail">SMTP Email</label>
+                        </div>
+
+                        <div class="form-group col-md-6">
+                          <input type="number" class="form-control" placeholder=" " id="smtpPort" name="smtpPort">
+                          <label class="form-label" for="smtpPort">SMTP Port</label>
+                        </div>
+
+                        <div class="form-group col-md-6">
+                          <input type="text" class="form-control" placeholder=" " id="smptuser" name="smptuser">
+                          <label class="form-label" for="smptuser">SMTP Username</label>
+                          <!-- <label class="form-label" for="smptuser">SMTP Username</label> -->
+                        </div>
+                        <div class="form-group col-md-6">
+                          <input type="password" class="form-control" placeholder=" " id="smptpass" name="smptpass">
+                          <label class="form-label" for="smptpass">SMTP Password</label>
+                          <!-- <label class="form-label" for="smptpass">SMTP Password</label> -->
+                        </div>
+                        <div class="form-group col-md-6">
+                          <input type="text" class="form-control" placeholder=" " id="smptaddress" name="smptaddress">
+                          <!-- <label class="form-label" for="smptaddress">Email Port</label> -->
+                          <label class="form-label" for="smptaddress">SMTP Address</label>
+                        </div>
+
+                        <div class="col-md-6 form-group d-flex align-items-center">
+                          <h6 style="margin-right: 10px;">SMTP Socket Layers:</h6>
+                          <div id="status">
+                            <div class="form-check form-check-inline">
+                              <input class="form-check-input" type="radio" name="smpt_layer" id="smpt-enable" value="Enable"
+                                checked>
+                              <label class="form-check-label" for="smpt-enable">Enable</label>
+                            </div>
+                            <div class="form-check form-check-inline">
+                              <input class="form-check-input" type="radio" name="smpt_layer" id="smpt-disable" value="Disable">
+                              <label class="form-check-label" for="smpt-disable">Disable</label>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="form-group col-md-12">
+                          <textarea class="form-control" id="emailsign" rows="3" placeholder=" "></textarea>
+                          <label class="form-label" for="emailsign">Email Signature</label>
+                        </div>
+
+                        <!-- Additional email settings fields -->
+                        <div class="form-buttons">
+                          <button class="btn btn-outline-danger" type="button">Close</button>
+                          <button class="btn btn-outline-success">Save</button>
+                          {% for msg in messages %}
+                        <p class="text-danger text-center mt-2 fw-bold" style="font-size: 0.9rem;">{{ msg }}</p>
+                        {% endfor %}
+                        </div>
+                      </div>
+                    </div> 
+                </form>
+
+                <form method="post" action="send_email">
+                  {% csrf_token %}
+                  <div class="container">
+                    <div class="row mt-3">
+                      
+                        <div class="form-group col-md-6">
+                          <input type="email" class="form-control" placeholder=" " id="testemail" name="testemail">
+                          <label class="form-label" for="testemail">Test Email ID</label>
+                        </div>
+                        <div class="form-group col-md-4">
+                          <input type="text" class="form-control" placeholder=" " id="testemailtime" name="testemailtime">
+                          <label class="form-label" for="testemailtime">Test Email Time</label>
+                        </div>
+                        <div class="form-group col-md-2">
+                          <button class="btn btn-outline-primary">Email Test</button>
+                        </div>
+                      
                     </div>
                   </div>
-                </div>
-                <!-- <div class="form-group col-md-6">
+                </form>
+               
+        </div>
+          
+        </div>
+
+
+
+
+      </div>
+
+
+    </div>
+
+  </div>
+
+  <!-- SMS Settings Tab Content -->
+  <div class="tab-pane fade" id="sms-settings" role="tabpanel" aria-labelledby="sms-settings-tab">
+    <!-- SMS Settings fields -->
+    <form>
+      <div class="container">
+        <div class="row">
+          <div class="col-md-6 form-group d-flex align-items-center ">
+            <h6 style="margin-right: 10px;">SMS System:</h6>
+            <div id="status">
+              <div class="form-check form-check-inline">
+                <input class="form-check-input" type="radio" name="sms_setting_status" id="sms-enable2" value="Enable"
+                  checked>
+                <label class="form-check-label" for="sms-enable2">Enable</label>
+              </div>
+              <div class="form-check form-check-inline">
+                <input class="form-check-input" type="radio" name="sms_setting_status" id="sms-disable2"
+                  value="Disable">
+                <label class="form-check-label" for="sms-disable2">Disable</label>
+              </div>
+            </div>
+          </div>
+          <div class="form-group col-md-6">
+            <input type="number" class="form-control" placeholder=" " id="commport" name="commport">
+            <label class="form-label" for="commport">Communication Port</label>
+          </div>
+          <div class="col-md-6 form-group">
+            <select class="form-select" id="parity" name="parity" placeholder=" " required>
+              <option value="" disabled selected hidden></option>
+              <option value="none">None</option>
+              <option value="">ABCD</option>
+              <option value="">XYZ</option>
+              <!-- Add category options as needed -->
+            </select>
+            <label for="parity" class="form-label">Parity</label>
+          </div>
+          <div class="col-md-6 form-group">
+            <select class="form-select" id="baudrate" name="baudrate" placeholder=" " required>
+              <option value="" disabled selected hidden></option>
+              <option value="">115200</option>
+              <option value="">115400</option>
+              <option value="">115500</option>
+              <!-- Add category options as needed -->
+            </select>
+            <label for="baudrate" class="form-label">Baud Rate</label>
+          </div>
+          <div class="col-md-6 form-group">
+            <select class="form-select" id="databits" name="databits" placeholder=" " required>
+              <option value="" disabled selected hidden></option>
+              <option value="">8</option>
+              <option value="">16</option>
+              <option value="">32</option>
+              <option value="">64</option>
+              <!-- Add category options as needed -->
+            </select>
+            <label for="databits" class="form-label">Data Bits</label>
+          </div>
+          <div class="col-md-6 form-group">
+            <select class="form-select" id="stopbits" name="stopbits" placeholder=" " required>
+              <option value="" disabled selected hidden></option>
+              <option value="">1</option>
+              <option value="">2</option>
+              <option value="">3</option>
+              <option value="">4</option>
+              <!-- Add category options as needed -->
+            </select>
+            <label for="stopbits" class="form-label">Stop Data</label>
+          </div>
+          <div class="form-group col-md-6">
+            <input type="number" class="form-control" placeholder=" " id="testsms" name="testsms">
+            <label class="form-label" for="testsms">Test SMS Number</label>
+          </div>
+          <div class="form-group col-md-4">
+            <input type="number" class="form-control" placeholder=" " id="testsmstime" name="testsmstime">
+            <label class="form-label" for="testsmstime">Test SMS Time</label>
+          </div>
+          <div class="form-group col-md-2">
+            <button class="btn btn-outline-primary">SMS Test</button>
+          </div>
+          <!-- Additional SMS settings fields -->
+          <div class="form-buttons">
+            <button class="btn btn-outline-danger" type="button">Close</button>
+            <button class="btn btn-outline-success">Save</button>
+          </div>
+        </div>
+      </div>
+    </form>
+  </div>
+
+  <!-- WhatsApp Settings Tab Content -->
+  <div class="tab-pane fade" id="whatsapp-settings" role="tabpanel" aria-labelledby="whatsapp-settings-tab">
+    <!-- WhatsApp Settings fields -->
+    <form>
+      <div class="container">
+        <div class="row">
+          <div class="col-md-12 form-group d-flex align-items-center ">
+            <h6 style="margin-right: 10px;">Whatsapp Message System:</h6>
+            <div id="status">
+              <div class="form-check form-check-inline">
+                <input class="form-check-input" type="radio" name="whatsapp_setting_status" id="whatsapp-enable2"
+                  value="Enable" checked>
+                <label class="form-check-label" for="whatsapp-enable2">Enable</label>
+              </div>
+              <div class="form-check form-check-inline">
+                <input class="form-check-input" type="radio" name="whatsapp_setting_status" id="whatsapp-disable2"
+                  value="Disable">
+                <label class="form-check-label" for="whatsapp-disable2">Disable</label>
+              </div>
+            </div>
+          </div>
+          <!-- <div class="form-group col-md-6">
                   <input type="number" class="form-control" placeholder=" " id="commport" name="commport">
                   <label class="form-label" for="commport">Communication Port</label>
                 </div>
@@ -308,52 +360,52 @@
                   </select>
                   <label for="stopbits" class="form-label">Stop Data</label>
                 </div> -->
-                <div class="form-group col-md-6">
-                  <input type="number" class="form-control" placeholder=" " id="testwhatsapp" name="testwhatsapp">
-                  <label class="form-label" for="testwhatsapp">Test Whatysapp Number</label>
-                </div>
-                <div class="form-group col-md-4">
-                  <input type="number" class="form-control" placeholder=" " id="testwhatsapptime" name="testwhatsapptime">
-                  <label class="form-label" for="testwhatsapptime">Test WhatsApp Time</label>
-                </div>
-                <div class="form-group col-md-2">
-                  <button class="btn btn-outline-primary">Whatsapp Test</button>
-                </div>
-                <!-- Additional SMS settings fields -->
-                <div class="form-buttons">
-                  <button class="btn btn-outline-danger" type="button">Close</button>
-                  <button class="btn btn-outline-success">Save</button>
-                </div>
-              </div>
-            </div>
-          </form>
+          <div class="form-group col-md-6">
+            <input type="number" class="form-control" placeholder=" " id="testwhatsapp" name="testwhatsapp">
+            <label class="form-label" for="testwhatsapp">Test Whatysapp Number</label>
+          </div>
+          <div class="form-group col-md-4">
+            <input type="number" class="form-control" placeholder=" " id="testwhatsapptime" name="testwhatsapptime">
+            <label class="form-label" for="testwhatsapptime">Test WhatsApp Time</label>
+          </div>
+          <div class="form-group col-md-2">
+            <button class="btn btn-outline-primary">Whatsapp Test</button>
+          </div>
+          <!-- Additional SMS settings fields -->
+          <div class="form-buttons">
+            <button class="btn btn-outline-danger" type="button">Close</button>
+            <button class="btn btn-outline-success">Save</button>
+          </div>
         </div>
       </div>
-    </div>
+    </form>
   </div>
+</div>
+</div>
+</div>
 </div>
 
 {% block scripts %}
-  {{ block.super }}
-  <script>
-    document.addEventListener("DOMContentLoaded", function() {
+{{ block.super }}
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
     const inputs = document.querySelectorAll(".form-control, .form-select");
     inputs.forEach(input => {
-        input.addEventListener("blur", function() {
-            if (input.value) {
-                input.classList.add("filled");
-            } else {
-                input.classList.remove("filled");
-            }
-        });
-
-        // Initial check to handle pre-filled inputs
+      input.addEventListener("blur", function () {
         if (input.value) {
-            input.classList.add("filled");
+          input.classList.add("filled");
+        } else {
+          input.classList.remove("filled");
         }
+      });
+
+      // Initial check to handle pre-filled inputs
+      if (input.value) {
+        input.classList.add("filled");
+      }
     });
-});
-  </script>
+  });
+</script>
 {% endblock %}
 
 {% endblock content %}

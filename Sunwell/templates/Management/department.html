@@ -56,7 +56,7 @@
               margin: 5px 0;
           }
           
-          #adminUserModal .modal-dialog {
+          #adminUserModal .modal_departement {
               max-width: 95%;
               margin: 1.75rem auto;
           }
@@ -68,7 +68,7 @@
               margin-top: 10px;
           }
           
-          #adminUserModal .modal-dialog {
+          #adminUserModal .modal_departement {
               margin: 0.5rem;
           }
           
@@ -98,9 +98,11 @@
                 <input type="text" id="searchBar" class="form-control" placeholder="Search here..">
             </div>
             <div class="d-flex">
+              {% if data.role == 'Super Admin' or acc_db.dep_a %}
                 <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#departmentModal">
                     Add Department
                 </button>
+              {% endif %}
             </div>
         </div> 
     </div>
@@ -111,7 +113,9 @@
                     <th><input type="checkbox" id="selectAll"></th>
                     <th scope="col">Department Name</th>
                     <th scope="col">Comm. Group</th>
-                    <th scope="col">Actions</th>
+                    {% if data.role == 'Super Admin' or acc_db.dep_e %}
+                      <th scope="col">Actions</th>
+                    {% endif %}
                 </tr>
             </thead>
             <tbody id="form-data-table">
@@ -120,14 +124,15 @@
                     <td><input type="checkbox" class="row-checkbox" name="comm_checkbox"></td>
                     <td>{{department.department_name}}</td>
                     <td>{{ department.commGroup.CommGroup_name }}</td>
+                    {% if data.role == 'Super Admin' or acc_db.dep_e %}
                     <td>
                         <div class="dropdown">
                           <a class="dropdown-item btn-edit"  data-bs-toggle="edit_modal" data-bs-target="#editDeptModal-{{ department.id }}">
                             <i class="fas fa-edit"></i>
-                        </a>
-    
+                          </a>    
                         </div>
                     </td>
+                    {% endif %}
                 </tr>
                 {% endfor %}
             </tbody>
@@ -162,15 +167,15 @@
 
 <!-- The Modal -->
 <div class="modal fade" id="departmentModal" tabindex="-1" aria-labelledby="departmentModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg">
-        <div class="modal-content container-custom">
+    <div class="modal-dialog modal-lg modal_departement">
+        <div class="modal-content container-custom dep_custom">
             <!-- Modal Header -->
-            <div class="modal-header">
-                <h4 class="modal-title" id="adminUserModalLabel">Department and settings</h4>
+            <div class="modal-header dep_head">
+                <h4 class="modal-title dep_title" id="adminUserModalLabel">Department and settings</h4>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <!-- Modal Body with Tabs -->
-            <div class="modal-body">
+            <div class="modal-body dep_body">
                 <!-- Nav tabs -->
                 <ul class="nav nav-tabs" id="myTab" role="tablist">
                     <li class="nav-item" role="presentation">
@@ -208,11 +213,11 @@
                             </div>
                             </div>
                             <div class="col-md-12 form-group">
-                                <input type="text" class="form-control" id="headerNote" name="headerNote" placeholder=" " required>
+                                <input type="text" class="form-control" id="headerNote" name="headerNote" placeholder=" " >
                                 <label for="headerNote" class="form-label">Header Note*</label>
                             </div>
                             <div class="col-md-12 form-group">
-                                <input type="text" class="form-control" id="footerNote" name="footerNote" placeholder=" " required>
+                                <input type="text" class="form-control" id="footerNote" name="footerNote" placeholder=" " >
                                 <label for="footerNote" class="form-label">Footer Note</label>
                             </div>
                             <div class="col-md-12 form-group d-flex align-items-center ">
@@ -236,79 +241,80 @@
                     </div>
                     <!-- Email Form (Empty) -->
                     <div class="tab-pane fade" id="email" role="tabpanel" aria-labelledby="email-tab">
-                         <!-- Email Form fields -->
-          <form id="emailForm">
-            <div class="container">
-              <div class="row">
-                <div class="col-md-12 form-group d-flex align-items-center ">
-                  <h6 style="margin-right: 10px;">Email System:</h6>
-                  <div id="status">
-                    <div class="form-check form-check-inline">
-                      <input class="form-check-input" type="radio" name="email_status" id="email-enable1" value="Enable" >
-                      <label class="form-check-label" for="email-enable1">Enable</label>
-                    </div>
-                    <div class="form-check form-check-inline">
-                      <input class="form-check-input" type="radio" name="email_status" id="email-disable1" value="Disable">
-                      <label class="form-check-label" for="email-disable1">Disable</label>
-                    </div>
-                  </div>
-                </div>
-                <div class="col-md-4 form-group">
-                  <input type="text" class="form-control" name="email_alert" id="email_alert" placeholder=" " required>
-                  <label for="email_alert" class="form-label">Email Alert Delay</label>
-                </div>
-                <div class="col-md-4 form-group">
-                  <input type="time" class="form-control" name="email_time" id="email_time" placeholder=" " required>
-                  <label for="email_time" class="form-label">Email Time</label>
-                </div>
-                <div class="col-md-4 form-group">
-                  <input type="email" class="form-control" name="email_address_1" id="email_address_1" placeholder=" " required>
-                  <label for="email_address_1" class="form-label">Alert Email Address 1*</label>
-                </div>
-                <div class="col-md-4 form-group">
-                  <input type="email" class="form-control" name="email_address_2" id="email_address_2" placeholder=" " required>
-                  <label for="email_address_2" class="form-label">Alert Email Address 2*</label>
-                </div>
-                <div class="col-md-4 form-group">
-                  <input type="email" class="form-control" name="email_address_3" id="email_address_3" placeholder=" " required>
-                  <label for="email_address_3" class="form-label">Alert Email Address 3*</label>
-                </div>
-                <div class="col-md-4 form-group">
-                  <input type="email" class="form-control" name="email_address_4" id="email_address_4" placeholder=" " required>
-                  <label for="email_address_4" class="form-label">Alert Email Address 4*</label>
-                </div>
-                <div class="col-md-4 form-group">
-                  <input type="email" class="form-control" name="email_address_5" id="email_address_5" placeholder=" " required>
-                  <label for="email_address_5" class="form-label">Alert Email Address 5*</label>
-                </div>
-                <div class="col-md-4 form-group">
-                  <input type="email" class="form-control" name="email_address_6" id="email_address_6" placeholder=" " required>
-                  <label for="email_address_6" class="form-label">Alert Email Address 6*</label>
-                </div>
-                <div class="col-md-4 form-group">
-                  <input type="email" class="form-control" name="email_address_7" id="email_address_7" placeholder=" " required>
-                  <label for="email_address_7" class="form-label">Alert Email Address 7*</label>
-                </div>
-                <div class="col-md-4 form-group">
-                  <input type="email" class="form-control" name="email_address_8" id="email_address_8" placeholder=" " required>
-                  <label for="email_address_8" class="form-label">Alert Email Address 8*</label>
-                </div>
-                <div class="col-md-4 form-group">
-                  <input type="email" class="form-control" name="email_address_9" id="email_address_9" placeholder=" " required>
-                  <label for="email_address_9" class="form-label">Alert Email Address 9*</label>
-                </div>
-                <div class="col-md-4 form-group">
-                  <input type="email" class="form-control" name="email_address_10" id="email_address_10" placeholder=" " required>
-                  <label for="email_address_10" class="form-label">Alert Email Address 10*</label>
-                </div>
-                <div class="form-buttons">
-                  <button class="btn btn-outline-danger" type="button" data-bs-dismiss="modal" aria-label="hidden">Close</button>
-                  <button class="btn btn-outline-success">Save</button>
-                </div>
-              </div>
-            </div>
-          </form>
-                    </div>
+                      <!-- Email Form fields -->
+       <form id="emailForm" method="post" action="email_form">
+         {% csrf_token %}
+         <div class="container">
+           <div class="row">
+             <div class="col-md-12 form-group d-flex align-items-center ">
+               <!-- <h6 style="margin-right: 10px;">Email System:</h6> -->
+               <!-- <div id="status">
+                 <div class="form-check form-check-inline">
+                   <input class="form-check-input" type="radio" name="email_status" id="email-enable1" value="Enable" >
+                   <label class="form-check-label" for="email-enable1">Enable</label>
+                 </div>
+                 <div class="form-check form-check-inline">
+                   <input class="form-check-input" type="radio" name="email_status" id="email-disable1" value="Disable">
+                   <label class="form-check-label" for="email-disable1">Disable</label>
+                 </div>
+               </div> -->
+             </div>
+             <div class="col-md-4 form-group">
+               <input type="text" class="form-control" name="email_alert" id="email_alert" placeholder=" " required>
+               <label for="email_alert" class="form-label">Email Alert Delay</label>
+             </div>
+             <div class="col-md-4 form-group">
+               <input type="time" class="form-control" name="email_time" id="email_time" placeholder=" " required>
+               <label for="email_time" class="form-label">Email Time</label>
+             </div>
+             <div class="col-md-4 form-group">
+               <input type="email" class="form-control" name="email_address_1" id="email_address_1" placeholder=" " required>
+               <label for="email_address_1" class="form-label">Alert Email Address 1*</label>
+             </div>
+             <div class="col-md-4 form-group">
+               <input type="email" class="form-control" name="email_address_2" id="email_address_2" placeholder=" " required>
+               <label for="email_address_2" class="form-label">Alert Email Address 2*</label>
+             </div>
+             <div class="col-md-4 form-group">
+               <input type="email" class="form-control" name="email_address_3" id="email_address_3" placeholder=" " required>
+               <label for="email_address_3" class="form-label">Alert Email Address 3*</label>
+             </div>
+             <div class="col-md-4 form-group">
+               <input type="email" class="form-control" name="email_address_4" id="email_address_4" placeholder=" " required>
+               <label for="email_address_4" class="form-label">Alert Email Address 4*</label>
+             </div>
+             <div class="col-md-4 form-group">
+               <input type="email" class="form-control" name="email_address_5" id="email_address_5" placeholder=" " required>
+               <label for="email_address_5" class="form-label">Alert Email Address 5*</label>
+             </div>
+             <div class="col-md-4 form-group">
+               <input type="email" class="form-control" name="email_address_6" id="email_address_6" placeholder=" " required>
+               <label for="email_address_6" class="form-label">Alert Email Address 6*</label>
+             </div>
+             <div class="col-md-4 form-group">
+               <input type="email" class="form-control" name="email_address_7" id="email_address_7" placeholder=" " required>
+               <label for="email_address_7" class="form-label">Alert Email Address 7*</label>
+             </div>
+             <div class="col-md-4 form-group">
+               <input type="email" class="form-control" name="email_address_8" id="email_address_8" placeholder=" " required>
+               <label for="email_address_8" class="form-label">Alert Email Address 8*</label>
+             </div>
+             <div class="col-md-4 form-group">
+               <input type="email" class="form-control" name="email_address_9" id="email_address_9" placeholder=" " required>
+               <label for="email_address_9" class="form-label">Alert Email Address 9*</label>
+             </div>
+             <div class="col-md-4 form-group">
+               <input type="email" class="form-control" name="email_address_10" id="email_address_10" placeholder=" " required>
+               <label for="email_address_10" class="form-label">Alert Email Address 10*</label>
+             </div>
+             <div class="form-buttons">
+               <button class="btn btn-outline-danger" type="button" data-bs-dismiss="modal" aria-label="hidden">Close</button>
+               <button class="btn btn-outline-success">Save</button>
+             </div>
+           </div>
+         </div>
+       </form>
+                 </div>
                     <!-- SMS Form (Empty) -->
                     <div class="tab-pane fade" id="sms" role="tabpanel" aria-labelledby="sms-tab">
                         <form id="smsForm">
@@ -546,13 +552,13 @@
 
 {% for department in departments %}
 <div class="modal fade" id="editDeptModal-{{ department.id }}" tabindex="-1" aria-labelledby="editDeptModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg">
-        <div class="modal-content container-custom ">
-            <div class="modal-header">
-                <h4 class="modal-title" id="editDeptModalLabel">Edit Department Form</h4>
+    <div class="modal-dialog modal-lg modal_departement">
+        <div class="modal-content container-custom dep_custom">
+            <div class="modal-header dep_head">
+                <h4 class="modal-title dep_title" id="editDeptModalLabel">Edit Department Form</h4>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <div class="modal-body">
+            <div class="modal-body dep_body">
                 <form id="editDepartmentForm" method="post" action="{% url 'edit_department' department.id %}">
                     {% csrf_token %}
                     <div class="row">

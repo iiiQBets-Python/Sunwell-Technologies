@@ -43,14 +43,6 @@
             text-align: center;
         }
 
-        /* .cmp-text {
-            position: absolute;
-            top: 35%;
-            left: 30%;
-            color: #fff;
-            text-align: center;
-        } */
-
         .cmp-text h4 {
             font-weight: bold;
             font-family: 'Montserrat', sans-serif; 
@@ -168,6 +160,97 @@
             cursor: pointer;
             pointer-events: all;
         }
+
+        .custom-alert {
+            font-weight: bold; 
+            background-color: transparent; 
+            border: none; 
+            color: red; 
+            text-align: center;
+            position: absolute;
+            left:55%;
+            transform: translateX(-50%);
+            width: 100%;
+        }        
+        /* Extra small devices (phones, less than 576px) */
+        @media (max-width: 575.98px) {
+            .login-container {
+                width: 90%;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+            }
+            .custom-alert {
+                left: 50%;
+                width: 90%;
+            }
+            .cmp-text h4, .cmp-text p {
+                font-size: 1.5em; /* Adjust font size for smaller devices */
+            }
+            .logo-container img {
+                width: 150px;
+            }
+            .btn-primary {
+                width: 100%; /* Adjust button width for small devices */
+            }
+        }
+
+        /* Small devices (landscape phones, 576px and up) */
+        @media (min-width: 576px) and (max-width: 767.98px) {
+            .login-container {
+                width: 80%;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+            }
+            .custom-alert {
+                left: 50%;
+                width: 80%;
+            }
+            .cmp-text h4, .cmp-text p {
+                font-size: 1.8em;
+            }
+            .logo-container img {
+                width: 200px;
+            }
+            .btn-primary {
+                width: 100%;
+            }
+        }
+
+        /* Medium devices (tablets, 768px and up) */
+        @media (min-width: 768px) and (max-width: 991.98px) {
+            .login-container {
+                width: 70%;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+            }
+            .custom-alert {
+                left: 50%;
+                width: 70%;
+            }
+            .cmp-text h4, .cmp-text p {
+                font-size: 2em;
+            }
+            .logo-container img {
+                width: 220px;
+            }
+            .btn-primary {
+                width: 100%;
+            }
+        }
+
+        #change_pass{
+            margin-top: 100px;
+        }
+        .modal-header{
+            background-color: lightgrey;            
+        }
+        .modal-title{
+            font-weight: bold;
+        }
+
     </style>
 </head>
 <body>
@@ -187,8 +270,8 @@
                 {% csrf_token %}
                 <div class="form-group did-floating-label-content position-relative">
                     <i class="fas fa-user form-control-icon" style="top:10px; left:10px;"></i>
-                    <input type="text" class="form-control did-floating-input" id="login_name" placeholder=" " name="username" required>  <!-- Changed 'username' to 'login_name' -->
-                    <label class="did-floating-label" for="login_name">Login Name</label> <!-- Updated label to reflect 'Login Name' -->
+                    <input type="text" class="form-control did-floating-input" id="login_name" placeholder=" " name="username" required>
+                    <label class="did-floating-label" for="login_name">Login Name</label> 
                 </div>
                 <div class="form-group did-floating-label-content position-relative">
                     <i class="fas fa-lock form-control-icon" style="top:10px; left:10px;"></i>
@@ -201,13 +284,95 @@
                     <label class="form-check-label" for="rememberMe">Remember Me</label>
                 </div>
                 <button type="submit" class="btn btn-primary btn-block">Login</button>
+                {% if messages %}
+                    <div class="mt-3">
+                        {% for message in messages %}
+                            <div class="custom-alert alert-dismissible fade show" role="alert">
+                                {{ message }}
+                                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+
+
             </form>
+
         </div>
         <!-- <div class="powered-by">
             <p>Powered by</p>
             <img src="{% static 'images/Base/iiiQ - Logo.png' %}" alt="Logo" style="width: 100px; height: 50px;">
         </div> -->
     </div>
+
+    <div class="modal fade" id="change_pass" tabindex="-1" aria-labelledby="change_passLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg" style="width: 40%;">
+        <div class="modal-content container-custom">
+        
+            <!-- Modal Header -->
+            <div class="modal-header" style="display: flex; justify-content: space-between; align-items: center;">
+                <h5 class="modal-title" id="change_passLabel" style="flex: 1; text-align: center; margin: 0;">Change Password</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+        
+            <!-- Modal Body -->
+            <div class="modal-body">
+                <form action="{% url 'change_pass' %}" method="post" class="form-control">
+                    {% csrf_token %}
+                    <div class="mt-1">
+                        <label for="username">Login Name:</label>
+                        <input type="text" name="username" id="username" class="form-control" required>
+                    </div>
+                    <div class="mt-1">
+                        <label for="old_pass">Old Password:</label>
+                        <input type="password" name="old_pass" id="old_pass" class="form-control" required>
+                    </div>
+                    <div class="mt-1">
+                        <label for="new_pass">New Password:</label>
+                        <input type="password" minlength="8" maxlength="15" name="new_pass" id="new_pass" class="form-control" required>
+                    </div>
+                    <div class="mt-2" style="text-align: center;">
+                        <button type="submit" class="btn btn-sm btn-primary" style="width: 100px; display: inline-block;">Submit</button>
+                        <button type="reset" class="btn btn-sm btn-danger" style="width: 100px; display: inline-block;">Clear</button>
+                    </div>
+                </form>            
+            </div>
+        </div>
+        </div>
+    </div>
+
+    {% if success_msg %}
+    <script>     
+        window.onload = function () {
+            alert("{{  success_msg|safe }}");                                    
+            setTimeout(function() {
+                var modal = new bootstrap.Modal(document.getElementById('change_pass'), {});
+                modal.show();
+            }); 
+        };
+    </script>
+    {% endif %}
+
+    {% if success_msg_2 %}
+    <script>     
+        window.onload = function () {
+            alert("{{  success_msg_2|safe }}");                
+            window.location.href = "{% url 'login' %}";
+        };
+    </script>
+    {% endif %}
+
+    {% if error_msg %}
+    <script>     
+        window.onload = function () {
+            alert("{{  error_msg|safe }}");                                    
+            setTimeout(function() {
+                var modal = new bootstrap.Modal(document.getElementById('change_pass'), {});
+                modal.show();
+            }); 
+        };
+    </script>
+    {% endif %}
 
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
@@ -226,6 +391,16 @@
                 toggleIcon.classList.add('fa-eye-slash');
             }
         }
+            setTimeout(function() {
+                let alertElement = document.querySelector('.custom-alert');
+                if (alertElement) {
+                    alertElement.classList.add('fade'); // Use Bootstrap's fade class for animation
+                    setTimeout(function() {
+                        alertElement.remove(); 
+                    }, 500); 
+                }
+            }, 2000); 
+        
     </script>
 </body>
 </html>

@@ -156,5 +156,18 @@ document.addEventListener("DOMContentLoaded", function() {
 
     filterTable(); // Initial filter to set up table and counts
     updateRecordsInfo(); // Ensure records info is updated initially
+
+});
+
+document.getElementById('departmentModal').addEventListener('hidden.bs.modal', function (e) {
+    var deptForm = document.getElementById('deptForm');
+    var emailForm = document.getElementById('emailForm');
+    var smsForm = document.getElementById('smsForm');
+    var whatsappForm = document.getElementById('whatsappForm');
+
+    if (deptForm) deptForm.reset(); // Reset department form fields
+    if (emailForm) emailForm.reset(); // Reset email form fields
+    if (smsForm) smsForm.reset(); // Reset SMS form fields
+    if (whatsappForm) whatsappForm.reset(); // Reset WhatsApp form fields
 });
 

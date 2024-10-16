@@ -9,7 +9,6 @@ from .models import User, SuperAdmin
 
 class UserActivityMiddleware(MiddlewareMixin):
     def process_view(self, request, view_func, view_args, view_kwargs):
-        # Your middleware logic
         pass
 
 # # Middleware to track user activity

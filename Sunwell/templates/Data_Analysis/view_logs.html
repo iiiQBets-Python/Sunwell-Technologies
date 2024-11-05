@@ -1,6 +1,6 @@
 {% extends "Base/base.html" %}
 {% load static %}
-{% block title %} Restore {% endblock %}
+{% block title %} View Logs {% endblock %}
 {% block styles %}
     {{ block.super }}
     <style>
@@ -142,33 +142,33 @@
 <div class="container mt-2 equipment-setting">
     <h3 class="mb-3">View Data Log</h3>
     <div class="form-container">
-        <form class="row g-4">
+        <form class="row g-4" action="{% url 'view_log' %}" method="GET" target="_blank">
             <div class="form-group col-md-4">
                 <div class="input-container">
-                    <select id="equipment" class="form-control" name="Equipment" placeholder=" " required>
+                    <select id="equipment" class="form-control" name="equipment" placeholder=" " required>
                         <option value="" disabled selected>Select Equipment</option>
-                        <option value="RND">RND/EPT/001</option>
-                        <option value="QC">QC/API/EP/04</option>
-                        <!-- Add more options as needed -->
+                        {% for equipment in equipment_list %}
+                            <option value="{{ equipment.equip_name }}">{{ equipment.equip_name }}</option>
+                        {% endfor %}
                     </select>
                     <label for="equipment" class="form-label">Equipment</label>
                 </div>
             </div>
             <div class="form-group col-md-4">
                 <div class="input-container">
-                    <input type="date" class="form-control" id="fromDate" placeholder=" ">
+                    <input type="date" class="form-control" name="from-date" id="fromDate" placeholder=" ">
                     <label for="fromDate" class="form-label">From Date</label>
                 </div>
             </div>
             <div class="form-group col-md-4">
                 <div class="input-container">
-                    <input type="date" class="form-control" id="toDate" placeholder=" ">
+                    <input type="date" class="form-control" name="to-date" id="toDate" placeholder=" ">
                     <label for="toDate" class="form-label">To Date</label>
                 </div>
             </div>
             <div class="form-group col-md-4">
                 <div class="input-container">
-                    <select id="plotDuration" class="form-control" name="plotDuration" placeholder="0 Minutes" required>
+                    <select id="plotDuration" class="form-control" name="plotDuration" placeholder="0 Minutes">
                         <option value="" disabled selected>Minutes</option>
                         <option value="1">1</option>
                         <option value="5">5</option>
@@ -184,13 +184,13 @@
             </div>
             <div class="form-group col-md-4">
                 <div class="input-container">
-                    <input type="time" class="form-control" id="fromTime" value="00:00">
+                    <input type="time" class="form-control" name="from-time" id="fromTime">
                     <label for="fromTime" class="form-label">From Time</label>
                 </div>
             </div>
             <div class="form-group col-md-4">
                 <div class="input-container">
-                    <input type="time" class="form-control" id="toTime" value="23:59">
+                    <input type="time" class="form-control" name="to-time" id="toTime">
                     <label for="toTime" class="form-label">To Time</label>
                 </div>
             </div>
@@ -218,7 +218,7 @@
                 </div>
             </div>
             <div class="form-group col-md-4 d-flex align-items-end">
-                <button type="submit" class="btn btn-primary w-50">Print</button>
+                <button type="submit" name="generate_pdf" class="btn btn-primary w-50">Print</button>
                 <button type="submit" class="btn btn-primary w-50 ms-2">Graph</button>
             </div>
         </form>

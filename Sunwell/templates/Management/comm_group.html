@@ -194,6 +194,9 @@
                         <div class="col-sm-1 form-group">
                             <span id="validationIcon" class="position-absolute"></span>
                         </div>
+                        <div class="col-sm-12">
+                            <span id="activationKeyMessage" class="form-text" style="margin-top: -5px; display: block;"></span>
+                        </div>
                         <div class="col-sm-12 form-group d-flex align-items-center">
                             <button type="button" id="validateButton" class="btn btn-primary validate-btn">Validate</button>
                         </div>
@@ -263,39 +266,57 @@
   {{ block.super }}
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
   <script src="{% static 'js/Management/comm_group.js' %}"></script>
-  <script>document.getElementById('validateButton').addEventListener('click', function() {
-    var activationKey = document.getElementById('activationKey').value;
-    var softKey = document.getElementById('softKey').value;
-    var validationIcon = document.getElementById('validationIcon');
-    var saveButton = document.getElementById('saveButton');
-    var validateButton = document.getElementById('validateButton');
+  <script>
     
-    $.ajax({
-        type: 'POST',
-        url: '{% url "validate_activation_key" %}',  // Ensure the URL is correct
-        data: {
-            'activation_key': activationKey,
-            'soft_key': softKey,
-            'csrfmiddlewaretoken': '{{ csrf_token }}'
-        },
-        success: function(response) {
-            if (response.validation_icon === '✔') {
-                validationIcon.innerHTML = '<i class="fas fa-check-circle" style="color: green;"></i>';
-                saveButton.disabled = false;  // Enable save button
-                validateButton.style.display = 'none';  // Hide the validation button
-            } else {
+    
+    document.getElementById('validateButton').addEventListener('click', function() {
+        var activationKey = document.getElementById('activationKey').value;
+        var softKey = document.getElementById('softKey').value;
+        var validationIcon = document.getElementById('validationIcon');
+        var activationKeyMessage = document.getElementById('activationKeyMessage');
+        var saveButton = document.getElementById('saveButton');
+        var validateButton = document.getElementById('validateButton');
+        
+        $.ajax({
+            type: 'POST',
+            url: '{% url "validate_activation_key" %}',
+            data: {
+                'activation_key': activationKey,
+                'soft_key': softKey,
+                'csrfmiddlewaretoken': '{{ csrf_token }}'
+            },
+            success: function(response) {
+                if (response.validation_icon === '✔') {
+                    validationIcon.innerHTML = '<i class="fas fa-check-circle" style="color: green;"></i>';
+                    activationKeyMessage.textContent = "Activation Key is valid";  // Set valid message
+                    activationKeyMessage.style.color = "green";  // Set color for valid message
+                    saveButton.disabled = false;
+                    validateButton.style.display = 'none';
+    
+                    var deviceCountInput = document.createElement('input');
+                    deviceCountInput.type = 'hidden';
+                    deviceCountInput.name = 'device_count';
+                    deviceCountInput.value = response.device_count;
+                    document.getElementById('adminUserForm').appendChild(deviceCountInput);
+                } else {
+                    validationIcon.innerHTML = '<i class="fa fa-times-circle" style="color: red;"></i>';
+                    activationKeyMessage.textContent = "Activation Key is Invalid or already exists!";  // Show message from response
+                    activationKeyMessage.style.color = "red";  // Set color for invalid messages
+                    saveButton.disabled = true;
+                    validateButton.style.display = 'inline-block';
+                }
+            },
+            error: function() {
                 validationIcon.innerHTML = '<i class="fa fa-times-circle" style="color: red;"></i>';
-                saveButton.disabled = true;  // Disable save button
-                validateButton.style.display = 'inline-block';  // Keep the button visible
+                activationKeyMessage.textContent = "Validation failed. Please try again.";  // Fallback error message
+                activationKeyMessage.style.color = "red";
+                saveButton.disabled = true;
+                validateButton.style.display = 'inline-block';
             }
-        },
-        error: function() {
-            validationIcon.innerHTML = '<i class="fa fa-times-circle" style="color: red;"></i>';
-            saveButton.disabled = true;  // Disable save button
-            validateButton.style.display = 'inline-block';  // Keep the button visible
-        }
+        });
     });
-});
+    
+    
 
   </script>
   {% endblock %}

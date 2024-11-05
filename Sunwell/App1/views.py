@@ -27,7 +27,7 @@ from datetime import datetime, time as datetime_time
 from django.db.models import DateTimeField
 from django.http import HttpResponse
 from reportlab.platypus import SimpleDocTemplate, Table, TableStyle, Spacer
-from reportlab.lib.pagesizes import A4
+from reportlab.lib.pagesizes import A4, landscape
 from reportlab.lib import colors
 from reportlab.lib.units import inch
 from reportlab.lib.styles import getSampleStyleSheet
@@ -302,12 +302,11 @@ def edit_organization(request, organization_id):
 def comm_group(request):
     emp_user = request.session.get('username', None)
     try:
-        data = User.objects.get(username = emp_user)
+        data = User.objects.get(username=emp_user)
     except:
         data = SuperAdmin.objects.get(username=emp_user)
     organization = Organization.objects.first()
     
-    # Generate the new soft key
     soft_key = generate_soft_key()
 
     try:
@@ -320,6 +319,15 @@ def comm_group(request):
         comm_code = request.POST.get('comm_code')
         soft_key = request.POST.get('softKey')
         activation_key = request.POST.get('activationKey')
+        device_count = int(request.POST.get('device_count', 0))  # Get validated device count from form input
+
+        # Calculate the new total devices and save it to Organization’s nod
+        current_nod = organization.get_nod()
+        print("Cnod", current_nod)
+        total_devices = current_nod + device_count
+        organization.set_nod(total_devices)
+        organization.save()
+        print("td", organization.get_nod())
 
         new_commgroup = CommGroup(
             CommGroup_name=comm_name,
@@ -329,7 +337,6 @@ def comm_group(request):
         )
         new_commgroup.save()
 
-        # Log the add event
         UserActivityLog.objects.create(
             user=emp_user,
             log_date=timezone.localtime(timezone.now()).date(),
@@ -340,55 +347,62 @@ def comm_group(request):
         return redirect('comm_group')
 
     comm_groups = CommGroup.objects.all()
-    return render(request, 'Management/comm_group.html', {'organization': organization, 'comm_groups': comm_groups, 'data': data, 'acc_db': acc_db, 'soft_key': soft_key})
+    return render(request, 'Management/comm_group.html', {
+        'organization': organization,
+        'comm_groups': comm_groups,
+        'data': data,
+        'acc_db': acc_db,
+        'soft_key': soft_key
+    })
 
-import logging
-from django.http import JsonResponse
-from .utils import get_motherboard_serial_number, decode_soft_key
-from .utils import decode_from_custom_base62
 
 def validate_activation_key(request):
     if request.method == 'POST':
+        emp_user = request.session.get('username', None)
+        try:
+            data = User.objects.get(username=emp_user)
+        except:
+            data = SuperAdmin.objects.get(username=emp_user)
+        
         entered_activation_key = request.POST.get('activation_key')
         entered_soft_key = request.POST.get('soft_key')
-        print("entered_activation_key",entered_activation_key)
 
         try:
-            # Fetch the motherboard serial number from the current machine
+            if CommGroup.objects.filter(activation_key=entered_activation_key).exists():
+                return JsonResponse({'validation_icon': '✖', 'message': "Activation key already exists and cannot be reused"})
+
             current_pc_serial_no = get_motherboard_serial_number()
-            # print(current_pc_serial_no)
 
             if not current_pc_serial_no:
                 raise ValueError("Unable to fetch motherboard serial number")
 
-            # Decode the soft key and compare the serial number
             decoded_soft_pc_serial_no = decode_soft_key(entered_soft_key)
-            # print("decoded_soft_pc_serial_no", decoded_soft_pc_serial_no)
+
             if decoded_soft_pc_serial_no != current_pc_serial_no:
                 return JsonResponse({'validation_icon': '✖', 'message': "Soft Key's PC/Server Serial No does not match the current machine"})
-            else:
-                # Decode the activation key and compare the serial number
-                decoded_activation_string = decode_from_custom_base62(entered_activation_key)
-                parts = decoded_activation_string.split('-IIIQBETS-')
-                print(parts)
-                print('parts', parts[1][0:2])
-                if len(parts) != 2:
-                    return JsonResponse({'validation_icon': '✖', 'message': "Invalid Activation Key format"})
 
-                decoded_activation_pc_serial_no = parts[0]
-                print("decoded_activation_pc_serial_no", decoded_activation_pc_serial_no)
+            decoded_activation_string = decode_from_custom_base62(entered_activation_key)
+            
+            parts = decoded_activation_string.split('-')
+            
+            if len(parts) != 7 or parts[1] != "IQBST" or parts[3] != "IIIQBETS" or parts[5] != "SUNWELL":
+                return JsonResponse({'validation_icon': '✖', 'message': "Invalid Activation Key format"})
 
-                # Check if all serial numbers match
-                if decoded_activation_pc_serial_no != current_pc_serial_no:
-                    return JsonResponse({'validation_icon': '✖', 'message': "Activation Key's PC/Server Serial No does not match the current machine"})
+            decoded_activation_pc_serial_no = parts[2]
+            device_count = int(parts[4])
 
-                # If all validations pass, return success
-                return JsonResponse({'validation_icon': '✔', 'message': "Validation successful"})
+            if decoded_activation_pc_serial_no != current_pc_serial_no:
+                return JsonResponse({'validation_icon': '✖', 'message': "Activation Key's PC/Server Serial No does not match the current machine"})
+
+            return JsonResponse({'validation_icon': '✔', 'message': "Validation successful", 'device_count': device_count})
 
         except Exception as e:
             return JsonResponse({'validation_icon': '✖', 'message': f"Validation failed: {str(e)}"})
 
     return JsonResponse({'validation_icon': '✖', 'message': "Invalid request method"})
+
+
+
 
 
 def edit_comm_group(request, comm_code):
@@ -1332,27 +1346,27 @@ def backup(request):
     return render(request, 'Management/backup.html', context)
 
 
-# def schedule_daily_backup():
-#     print("Scheduler thread started")
-#     backup_setting = BackupSettings.objects.last()
-#     if backup_setting and backup_setting.backup_time:
+def schedule_daily_backup():
+    print("Scheduler thread started")
+    backup_setting = BackupSettings.objects.last()
+    if backup_setting and backup_setting.backup_time:
         
-#         backup_time_str = backup_setting.backup_time.strftime("%H:%M")
-#         print(f"Scheduling daily backup at {backup_time_str}")
+        backup_time_str = backup_setting.backup_time.strftime("%H:%M")
+        print(f"Scheduling daily backup at {backup_time_str}")
 
-#         # Schedule backup at the specified time
-#         schedule.every().day.at(backup_time_str).do(perform_backup)
+        # Schedule backup at the specified time
+        schedule.every().day.at(backup_time_str).do(perform_backup)
 
-#         while True:
-#             schedule.run_pending()
-#             time.sleep(1)
+        while True:
+            schedule.run_pending()
+            time.sleep(1)
 
-# def start_backup_scheduler():
-#     print("Starting backup scheduler")
-#     backup_thread = threading.Thread(target=schedule_daily_backup, daemon=True)
-#     backup_thread.start()
+def start_backup_scheduler():
+    print("Starting backup scheduler")
+    backup_thread = threading.Thread(target=schedule_daily_backup, daemon=True)
+    backup_thread.start()
 
-# start_backup_scheduler()
+start_backup_scheduler()
 
 
 def restore(request):
@@ -1463,21 +1477,879 @@ def equipment_setting(request):
 
 
 # DATA Analysis
-def view_log(request):
+from django.utils.timezone import now
+from datetime import datetime, time as datetime_time
+from reportlab.platypus import SimpleDocTemplate, Table, TableStyle, Spacer, Paragraph, PageBreak
+from reportlab.lib.styles import ParagraphStyle
+from reportlab.lib import colors
 
+def view_log(request):
     emp_user = request.session.get('username', None)
     try:
-        data = User.objects.get(username = emp_user)
+        data = User.objects.get(username=emp_user)
     except:
         data = SuperAdmin.objects.get(username=emp_user)
     organization = Organization.objects.first()
-    
+
     try:
-        acc_db = user_access_db.objects.get(role = data.role)
+        acc_db = user_access_db.objects.get(role=data.role)
     except:
         acc_db = None
 
-    return render(request, 'Data_Analysis/view_logs.html', {'organization': organization, 'data':data, 'acc_db':acc_db})
+    equipment_list = Equipment.objects.all()
+
+    # Get filter parameters from the request
+    selected_equipment = request.GET.get('equipment')
+    from_date = request.GET.get('from-date')
+    to_date = request.GET.get('to-date')
+    from_time = request.GET.get('from-time', '00:00')
+    to_time = request.GET.get('to-time', '23:59')
+
+    filter_kwargs = Q()
+
+    # Filter by equipment if selected
+    if selected_equipment:
+        filter_kwargs &= Q(equip_name__equip_name=selected_equipment)
+
+    # Handle missing dates - default to the 1st of the current month and today's date
+    current_date = now().date()
+    if not from_date:
+        from_date = current_date.replace(day=1).strftime('%Y-%m-%d')  # 1st of the current month
+    if not to_date:
+        to_date = current_date.strftime('%Y-%m-%d')  # Today's date
+
+    # Parse the from_date and to_date
+    from_date_parsed = datetime.strptime(from_date, '%Y-%m-%d').date()
+    to_date_parsed = datetime.strptime(to_date, '%Y-%m-%d').date()
+
+    from_time_parsed = datetime.strptime(from_time, '%H:%M').time() if from_time else datetime.min.time()
+    to_time_parsed = datetime.strptime(to_time, '%H:%M').time() if to_time else datetime.max.time()
+
+    from_date_str = from_date_parsed.strftime('%d-%m-%Y')
+    to_date_str = to_date_parsed.strftime('%d-%m-%Y')
+    from_time_str = from_time_parsed.strftime('%H:%M')
+    to_time_str = to_time_parsed.strftime('%H:%M')
+
+    # Adjust filter for overnight time range
+    if from_time_parsed > to_time_parsed:
+        # Overnight range 
+        filter_kwargs &= (
+            Q(date=from_date_parsed, time__gte=from_time_parsed) |
+            Q(date=to_date_parsed, time__lte=to_time_parsed) |
+            Q(date__gt=from_date_parsed, date__lt=to_date_parsed)
+        )
+    else:
+        # Normal same-day range
+        filter_kwargs &= Q(date__range=(from_date_parsed, to_date_parsed)) & \
+                         Q(time__gte=from_time_parsed) & Q(time__lte=to_time_parsed)
+
+    # Fetch the filtered temperature and humidity records
+    data_logs = TemperatureHumidityRecord.objects.filter(filter_kwargs)
+    eqp_list = Equipment.objects.filter(status='Active')
+
+    # Handle PDF generation if requested
+    if 'generate_pdf' in request.GET:
+        # Determine the number of temperature and humidity columns
+        equipment_records = TemperatureHumidityRecord.objects.filter(equip_name__equip_name=selected_equipment)
+        temperature_channels = ['tmp_1', 'tmp_2', 'tmp_3', 'tmp_4', 'tmp_5', 'tmp_6', 'tmp_7', 'tmp_8', 'tmp_9', 'tmp_10']
+        humidity_channels = ['rh_1', 'rh_2', 'rh_3', 'rh_4', 'rh_5', 'rh_6', 'rh_7', 'rh_8', 'rh_9', 'rh_10']
+
+        active_temperature_channels = [channel for channel in temperature_channels if any(getattr(record, channel) is not None for record in equipment_records)]
+        active_humidity_channels = [channel for channel in humidity_channels if any(getattr(record, channel) is not None for record in equipment_records)]
+
+        # Check if both temperature and humidity columns exceed 5
+        if len(active_temperature_channels) > 5 and len(active_humidity_channels) > 5:
+            # Call the landscape mode PDF generator if both exceed 5
+            return generate_log_pdf_landscape(
+                request,
+                data_logs,
+                from_date_str,
+                to_date_str,
+                from_time_str,
+                to_time_str,
+                organization,
+                data.department,
+                data.username,
+                selected_equipment
+            )
+        else:
+            # Call the normal PDF generator
+            return generate_log_pdf(
+                request,
+                data_logs,
+                from_date_str,
+                to_date_str,
+                from_time_str,
+                to_time_str,
+                organization,
+                data.department,
+                data.username,
+                selected_equipment
+            )
+
+    # Render the logs to the HTML template if no PDF generation is requested
+    return render(request, 'Data_Analysis/view_logs.html', {
+        'organization': organization,
+        'data': data,
+        'acc_db': acc_db,
+        'data_logs': data_logs,
+        'equipment_list': equipment_list,
+        'eqp_list': eqp_list,
+    })
+
+def generate_log_pdf(request, records, from_date, to_date, from_time, to_time, organization, department, username, selected_equipment):
+    response = HttpResponse(content_type='application/pdf')
+    response['Content-Disposition'] = 'inline; filename="equipment_log_report.pdf"'
+
+    doc = SimpleDocTemplate(response, pagesize=A4, rightMargin=30, leftMargin=30, topMargin=160, bottomMargin=60)
+    styles = getSampleStyleSheet()
+    
+    # Determine "Records From" and "Records To"
+    if records.exists():
+        first_record = records.order_by('date', 'time').first()
+        last_record = records.order_by('date', 'time').last()
+        records_from_date = first_record.date.strftime('%d-%m-%Y')
+        records_from_time = first_record.time.strftime('%H:%M')
+        records_to_date = last_record.date.strftime('%d-%m-%Y')
+        records_to_time = last_record.time.strftime('%H:%M')
+    else:
+        records_from_date = from_date
+        records_from_time = from_time if from_time else "00:00"
+        records_to_date = to_date
+        records_to_time = to_time if to_time else "23:59"
+
+    # c = canvas.Canvas(response, pagesize=A4)
+
+    def create_page(canvas, doc):
+
+        page_num = canvas.getPageNumber()
+        total_pages = doc.page
+        current_time = localtime().strftime('%d-%m-%Y %H:%M')
+
+        # Set the title and logo
+        canvas.setFont("Helvetica-Bold", 14)
+        canvas.setFillColor(colors.blue)
+        canvas.drawCentredString(300, 800, organization.name)
+        
+        canvas.setFillColor(colors.black)
+        canvas.setFont("Helvetica", 12)
+        canvas.drawCentredString(300, 780, department.header_note)
+
+        logo_path = organization.logo.path
+        canvas.drawImage(logo_path, 470, 780, width=80, height=30)
+
+        # Draw the separator line under the header
+        canvas.setLineWidth(0.5)
+        canvas.line(30, 770, 570, 770)
+        
+        # Add the filters and records info
+        canvas.setFont("Helvetica-Bold", 12)
+        canvas.drawString(250, 750, "Data Log Report")
+
+        canvas.setFont("Helvetica-Bold", 10)
+        equipment_display = f"Equipment Name: {selected_equipment}" if selected_equipment else "Equipment Name: Unknown"
+        canvas.drawString(30, 730, equipment_display)
+        
+        canvas.setFont("Helvetica-Bold", 10)
+        canvas.drawString(30, 730, f"Equipment Name: {selected_equipment}")
+        canvas.drawString(30, 710, f"Filter From: {from_date} {from_time}")
+        canvas.drawString(400, 710, f"Filter To: {to_date} {to_time}")
+        canvas.drawString(30, 690, f"Records From: {records_from_date} {records_from_time}")
+        canvas.drawString(400, 690, f"Records To: {records_to_date} {records_to_time}")
+        
+        # Draw separator line above the new table
+        canvas.setLineWidth(0.5)
+        canvas.line(30, 670, 570, 670)  # Line above the new table
+
+        # Add a line above the footer
+        canvas.setLineWidth(1)
+        canvas.line(30, 60, 570, 60)  # Line just above the footer
+
+        # Add footer with page number
+        footer_left_top = "Sunwell"
+        footer_left_bottom = "ESTDAS v1.0"
+        footer_center = f"Printed By - {username} on {current_time}"
+        footer_right_top = department.footer_note
+        footer_right_bottom = f"Page {page_num} of {total_pages}"
+        
+        # Draw footer at the bottom of the page
+        canvas.setFont("Helvetica", 10)
+        canvas.drawString(30, 45, footer_left_top)
+        canvas.drawString(30, 35, footer_left_bottom)
+        canvas.drawCentredString(300, 40, footer_center)
+        canvas.drawRightString(570, 45, footer_right_top)
+        canvas.drawRightString(570, 35, footer_right_bottom)  
+        
+    def add_alarm_tables():
+
+        # Position the alarm table after the "Records From" section
+        # table_y = 650  # Adjust Y position
+
+        equipment = TemperatureHumidityRecord.objects.filter(equip_name__equip_name=selected_equipment).first()
+        # Data for Temperature and Humidity Alarms
+        alarm_data = [['Parameter', 'Low Alarm', 'Low Alert', 'High Alarm', 'High Alert']]
+
+        if equipment and (equipment.t_low_alarm is not None or equipment.t_high_alarm is not None):
+            alarm_data.append([
+                'Temperature (°C)',
+                f"{equipment.t_low_alarm:.1f}" if equipment.t_low_alarm is not None else 'N/A',
+                f"{equipment.t_low_alert:.1f}" if equipment.t_low_alert is not None else 'N/A',
+                f"{equipment.t_high_alarm:.1f}" if equipment.t_high_alarm is not None else 'N/A',
+                f"{equipment.t_high_alert:.1f}" if equipment.t_high_alert is not None else 'N/A',
+            ])
+
+        # Add humidity data if it exists
+        if equipment and (equipment.rh_low_alarm is not None or equipment.rh_high_alarm is not None):
+            alarm_data.append([
+                'Humidity (% RH)',
+                f"{equipment.rh_low_alarm:.1f}" if equipment.rh_low_alarm is not None else 'N/A',
+                f"{equipment.rh_low_alert:.1f}" if equipment.rh_low_alert is not None else 'N/A',
+                f"{equipment.rh_high_alarm:.1f}" if equipment.rh_high_alarm is not None else 'N/A',
+                f"{equipment.rh_high_alert:.1f}" if equipment.rh_high_alert is not None else 'N/A',
+            ])
+
+
+        # Define table style
+        alarm_table_style = TableStyle([
+            ('BACKGROUND', (0, 0), (-1, 0), colors.lightgrey),
+            ('TEXTCOLOR', (0, 0), (-1, 0), colors.black),
+            ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
+            ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
+            ('FONTSIZE', (0, 0), (-1, 0), 10),
+            ('BOTTOMPADDING', (0, 0), (-1, 0), 12),
+            ('BACKGROUND', (0, 1), (-1, -1), colors.whitesmoke),
+            ('GRID', (0, 0), (-1, -1), 1, colors.black),
+        ])
+
+        # Define column widths
+        col_widths = [130, 80, 80, 80, 80]  # Adjust column widths as needed
+
+        # Create the alarm table
+        alarm_table = Table(alarm_data, colWidths=col_widths)
+        alarm_table.setStyle(alarm_table_style)
+
+        # Draw the table on the canvas
+        # alarm_table.wrapOn(c, 50, table_y)
+        # alarm_table.drawOn(c, 70, table_y - (len(alarm_data) * 20))  # Adjust position
+        return alarm_table
+
+    def add_temperature_table():
+
+        # Position the temperature table
+        # temp_table_y = 580  # Adjust Y position for the temperature table
+    
+        # Initialize lists for temperature and humidity data
+        temperature_channels = ['tmp_1', 'tmp_2', 'tmp_3', 'tmp_4', 'tmp_5', 'tmp_6', 'tmp_7', 'tmp_8', 'tmp_9', 'tmp_10']
+        humidity_channels = ['rh_1', 'rh_2', 'rh_3', 'rh_4', 'rh_5', 'rh_6', 'rh_7', 'rh_8', 'rh_9', 'rh_10']
+        
+        temp_data = [['Temperature (°C)', 'Minimum', 'Maximum', 'Average']]
+        humidity_data = [['Humidity (% RH)', 'Minimum', 'Maximum', 'Average']]
+
+        # Dynamically calculate min, max, and average for temperature channels
+        for channel in temperature_channels:
+            channel_values = [getattr(record, channel) for record in records if getattr(record, channel) is not None]
+            if channel_values:
+                min_val = min(channel_values)
+                max_val = max(channel_values)
+                avg_val = sum(channel_values) / len(channel_values)
+                temp_data.append([channel.capitalize(), f"{min_val:.1f}", f"{max_val:.1f}", f"{avg_val:.1f}"])
+
+        # Calculate min, max, and average for each humidity channel in the filtered records
+        for channel in humidity_channels:
+            channel_values = [getattr(record, channel) for record in records if getattr(record, channel) is not None]
+            if channel_values:
+                min_val = min(channel_values)
+                max_val = max(channel_values)
+                avg_val = sum(channel_values) / len(channel_values)
+                humidity_data.append([channel.capitalize(), f"{min_val:.1f}", f"{max_val:.1f}", f"{avg_val:.1f}"])
+
+        # Define table style
+        table_style = TableStyle([
+            ('BACKGROUND', (0, 0), (-1, 0), colors.lightgrey),
+            ('TEXTCOLOR', (0, 0), (-1, 0), colors.black),
+            ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
+            ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
+            ('FONTSIZE', (0, 0), (-1, 0), 10),
+            ('BOTTOMPADDING', (0, 0), (-1, 0), 12),
+            ('BACKGROUND', (0, 1), (-1, -1), colors.whitesmoke),
+            ('GRID', (0, 0), (-1, -1), 1, colors.black),
+        ])
+
+        # Define column widths
+        col_widths = [130, 80, 120]  # Adjust column widths as needed
+
+        # Create the temperature table
+        temp_table = Table(temp_data, colWidths=col_widths)
+        temp_table.setStyle(table_style)
+
+        # Draw the temperature table on the canvas
+        # temp_table.wrapOn(c, 50, temp_table_y)
+        # temp_table.drawOn(c, 70, temp_table_y - (len(temp_data) * 20))  # Adjust position
+        
+        # Only display the humidity table if it contains data
+        humidity_table = None
+        if len(humidity_data) > 1:
+            # Create the humidity table
+            humidity_table = Table(humidity_data, colWidths=col_widths)
+            humidity_table.setStyle(table_style)
+
+            # Position the humidity table below the temperature table
+            # humidity_table_y = temp_table_y - (len(temp_data) * 20) - 150  # Adjust the space between tables
+
+            # # Draw the humidity table on the canvas
+            # humidity_table.wrapOn(c, 50, humidity_table_y)
+            # humidity_table.drawOn(c, 70, humidity_table_y)
+
+        return [temp_table, Spacer(1, 0.2 * inch), humidity_table] if humidity_table else [temp_table]
+    
+    from reportlab.lib import colors
+    from reportlab.platypus import Paragraph
+    from reportlab.lib.styles import ParagraphStyle
+
+    def add_main_table():
+        # Define styles for normal and bold text
+        normal_style = ParagraphStyle('Normal', fontName='Helvetica', fontSize=10)
+        bold_style = ParagraphStyle('Bold', fontName='Helvetica-Bold', fontSize=10)
+
+        # Fetch the equipment records based on the selected equipment
+        from_date_parsed = datetime.strptime(from_date, '%d-%m-%Y').date()
+        to_date_parsed = datetime.strptime(to_date, '%d-%m-%Y').date()
+
+        from_time_parsed = datetime.strptime(from_time, '%H:%M').time() if from_time else datetime_time(0, 0)
+        to_time_parsed = datetime.strptime(to_time, '%H:%M').time() if to_time else datetime_time(23, 59)
+
+        if from_time_parsed > to_time_parsed:
+            equipment_records = TemperatureHumidityRecord.objects.filter(
+                Q(equip_name__equip_name=selected_equipment),
+                Q(date=from_date_parsed, time__gte=from_time_parsed) |
+                Q(date=to_date_parsed, time__lte=to_time_parsed) |
+                Q(date__gt=from_date_parsed, date__lt=to_date_parsed)
+            ).order_by('date', 'time')
+        else:
+            equipment_records = TemperatureHumidityRecord.objects.filter(
+                equip_name__equip_name=selected_equipment,
+                date__range=(from_date_parsed, to_date_parsed),
+                time__gte=from_time_parsed,
+                time__lte=to_time_parsed
+            ).order_by('date', 'time')
+
+        temperature_channels = ['tmp_1', 'tmp_2', 'tmp_3', 'tmp_4', 'tmp_5', 'tmp_6', 'tmp_7', 'tmp_8', 'tmp_9', 'tmp_10']
+        humidity_channels = ['rh_1', 'rh_2', 'rh_3', 'rh_4', 'rh_5', 'rh_6', 'rh_7', 'rh_8', 'rh_9', 'rh_10']
+
+        active_humidity_channels = [channel for channel in humidity_channels if any(getattr(record, channel) is not None for record in equipment_records)]
+        active_humidity_channels = active_humidity_channels[:5] if active_humidity_channels else []
+        active_temperature_channels = temperature_channels[:5] if active_humidity_channels else temperature_channels[:10]
+
+        temperature_header = ['Ch-' + str(i+1) for i in range(len(active_temperature_channels))]
+        humidity_header = ['Ch-' + str(i+1) for i in range(5)] if active_humidity_channels else []
+
+        if active_humidity_channels:
+            data = [
+                [' ', 'Date', 'Time', 'Set'] + ['-----Temperature(°C)-----'] + [''] * (len(temperature_header) - 1) +
+                ['Set'] + ['-----Humidity(%RH)-----'] + [''] * (len(humidity_header) - 1),
+                ['Rec No', 'DD-MM-YYYY', 'HH:MM', 'Temp'] + temperature_header + ['Rh'] + humidity_header
+            ]
+        else:
+            data = [
+                [' ', 'Date', 'Time', 'Set'] + ['-----Temperature(°C)-----'] + [''] * (len(temperature_header) - 1),
+                ['Rec No', 'DD-MM-YYYY', 'HH:MM', 'Temp'] + temperature_header
+            ]
+
+        equipment = records.filter(equip_name__equip_name=selected_equipment).first()
+        if equipment:
+            t_low_alarm = equipment.t_low_alarm 
+            t_high_alarm = equipment.t_high_alarm 
+            t_low_alert = equipment.t_low_alert
+            t_high_alert = equipment.t_high_alert
+            rh_low_alarm = equipment.rh_low_alarm 
+            rh_high_alarm = equipment.rh_high_alarm
+            rh_low_alert = equipment.rh_low_alert
+            rh_high_alert = equipment.rh_high_alert
+        else:
+            t_low_alarm = t_high_alarm = rh_low_alarm = rh_high_alarm = None
+            t_low_alert = t_high_alert = rh_low_alert = rh_high_alert = None
+
+        for idx, record in enumerate(equipment_records, start=1):
+            temp_values = []
+            for channel in active_temperature_channels:
+                value = getattr(record, channel, None)
+                if value is not None:
+                    if value <= t_low_alarm or value >= t_high_alarm:
+                        # Bold for values outside alarm range
+                        temp_values.append(Paragraph(f"<b>{value:.1f}</b>", bold_style))
+                    elif (t_low_alarm < value <= t_low_alert) or (t_high_alarm <= value < t_high_alert):
+                        # Underline for values within alert range
+                        temp_values.append(Paragraph(f"<u>{value:.1f}</u>", normal_style))
+                    else:
+                        temp_values.append(Paragraph(f"{value:.1f}", normal_style))
+                else:
+                    temp_values.append('')
+
+            humidity_values = []
+            for channel in active_humidity_channels:
+                value = getattr(record, channel, None)
+                if value is not None:
+                    if value <= rh_low_alarm or value >= rh_high_alarm:
+                        # Bold for values outside alarm range
+                        humidity_values.append(Paragraph(f"<b>{value:.1f}</b>", bold_style))
+                    elif (rh_low_alarm < value <= rh_low_alert) or (rh_high_alarm <= value < rh_high_alert):
+                        # Underline for values within alert range
+                        humidity_values.append(Paragraph(f"<u>{value:.1f}</u>", normal_style))
+                    else:
+                        humidity_values.append(Paragraph(f"{value:.1f}", normal_style))
+                else:
+                    humidity_values.append('')
+
+            row = [
+                str(idx),
+                record.date.strftime('%d-%m-%Y'),
+                record.time.strftime('%H:%M'),
+                Paragraph(f"{record.set_temp:.1f}", normal_style) if record.set_temp is not None else ''
+            ] + temp_values + [
+                Paragraph(f"{record.set_rh:.1f}", normal_style) if record.set_rh is not None else ''
+            ] + humidity_values
+
+            data.append(row)
+
+        main_table_style = TableStyle([
+            ('SPAN', (4, 0), (3 + len(temperature_header), 0)),
+            ('BACKGROUND', (0, 1), (-1, 1), colors.lightgrey),
+            ('TEXTCOLOR', (0, 0), (-1, 1), colors.black),
+            ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
+            ('FONTNAME', (0, 0), (-1, 1), 'Helvetica-Bold'),
+            ('FONTSIZE', (0, 0), (-1, 1), 10),
+            ('BOTTOMPADDING', (0, 0), (-1, 1), 12),
+        ])
+
+        if active_humidity_channels:
+            main_table_style.add('SPAN', (4 + len(temperature_header) + 1, 0), (3 + len(temperature_header) + len(humidity_header) + 1, 0))
+        # colWidths = [40, 70, 44, 42] + [32] * len(temperature_header) + ([32] + [32] * len(humidity_header) if active_humidity_channels else [])
+        # page_table = Table(data, colWidths=colWidths)
+        # page_table.setStyle(TableStyle(table_style))
+
+        # table_row_height = 20
+        # max_rows_second_pages = 22
+        # max_rows_other_pages = 28
+        # top_margin_page2 = 550
+        # top_margin_other_pages = 655
+        # current_row = 2
+
+        # while current_row < len(data):
+        #     if page_num == 2:
+        #         top_margin = top_margin_page2
+        #         max_rows_per_page = max_rows_second_pages
+        #     else:
+        #         top_margin = top_margin_other_pages
+        #         max_rows_per_page = max_rows_other_pages
+
+        #     page_data = data[current_row:current_row + max_rows_per_page]
+        #     page_table = Table([data[0], data[1]] + page_data, colWidths=colWidths)
+        #     page_table.setStyle(TableStyle(table_style))
+
+        #     table_position_y = top_margin - (table_row_height * (min(len(page_data), max_rows_per_page)))
+        #     page_table.wrapOn(c, 50, top_margin)
+        #     page_table.drawOn(c, 25, table_position_y)
+
+        #     current_row += max_rows_per_page
+
+        #     if current_row < len(data):
+        #         c.showPage()
+        #         page_num += 1
+        #         create_page(c, page_num)
+        #         if page_num == 2:
+        #             add_temperature_table(c)
+
+        # return current_row
+        colWidths = [40, 70, 44, 42] + [32] * len(temperature_header) + ([32] + [32] * len(humidity_header) if active_humidity_channels else [])
+        main_table = Table(data, colWidths=colWidths, repeatRows=1)
+        main_table.setStyle(main_table_style)
+
+        return main_table
+
+
+    content = [
+        Spacer(1, 0.5 * inch),
+        add_alarm_tables(),
+        Spacer(1, 0.5 * inch),
+        *add_temperature_table(),
+        PageBreak(),
+        Spacer(1, 0.2 * inch),  # Start the main table on a new page
+        add_main_table(),
+    ]
+
+    doc.build(content, onFirstPage=create_page, onLaterPages=create_page)
+    return response
+
+
+def generate_log_pdf_landscape(request, records, from_date, to_date, from_time, to_time, organization, department, username, selected_equipment):
+    response = HttpResponse(content_type='application/pdf')
+    response['Content-Disposition'] = 'inline; filename="equipment_log_report.pdf"'
+    
+    # Determine "Records From" and "Records To"
+    if records.exists():
+        first_record = records.order_by('date', 'time').first()
+        last_record = records.order_by('date', 'time').last()
+        records_from_date = first_record.date.strftime('%d-%m-%Y')
+        records_from_time = first_record.time.strftime('%H:%M')
+        records_to_date = last_record.date.strftime('%d-%m-%Y')
+        records_to_time = last_record.time.strftime('%H:%M')
+    else:
+        records_from_date = from_date
+        records_from_time = from_time if from_time else "00:00"
+        records_to_date = to_date
+        records_to_time = to_time if to_time else "23:59"
+
+    c = canvas.Canvas(response, pagesize=landscape(A4))
+
+    def create_page(c, page_num):
+        # Set the title and logo
+        c.setFont("Helvetica-Bold", 14)
+        c.setFillColor(colors.blue)
+        c.drawString(350, 570, organization.name)
+
+        c.setFillColor(colors.black)
+        c.setFont("Helvetica", 12)
+        c.drawString(370, 550, department.header_note)
+        
+        logo_path = organization.logo.path
+        c.drawImage(logo_path, 730, 550, width=80, height=30)
+
+        # Draw the separator line under the header
+        c.setLineWidth(0.5)
+        c.line(13, 540, 830, 540)
+        
+        # Add the filters and records info
+        c.setFont("Helvetica-Bold", 12)
+        c.drawString(370, 520, "Data Log Report")
+
+        c.setFont("Helvetica-Bold", 10)
+        equipment_display = f"Equipment Name: {selected_equipment}" if selected_equipment else "Equipment Name: Unknown"
+        c.drawString(30, 500, equipment_display)
+        
+        c.setFont("Helvetica-Bold", 10)
+        c.drawString(30, 480, f"Filter From: {from_date} {from_time}")
+        c.drawString(600, 480, f"Filter To: {to_date} {to_time}")
+
+        c.drawString(30, 460, f"Records From: {records_from_date} {records_from_time}")
+        c.drawString(600, 460, f"Records To: {records_to_date} {records_to_time}")
+        
+        # Draw separator line above the new table
+        c.setLineWidth(0.5)
+        c.line(13, 440, 830, 440)  # Line above the new table
+
+        # Add a line above the footer
+        c.setLineWidth(1)
+        c.line(13, 60, 830, 60)  # Line just above the footer
+
+        # Add footer with page number
+        footer_text_left_top = "Sunwell"
+        footer_text_left_bottom = "ESTDAS v1.0"
+        footer_text_center = f"Printed By - {username} on {datetime.now().strftime('%d-%m-%Y %H:%M')}"  # Centered dynamic text
+        footer_text_right_top = department.footer_note
+        footer_text_right = f"Page {page_num}"
+        
+        # Draw footer at the bottom of the page
+        c.setFont("Helvetica", 10)
+        c.drawString(30, 45, footer_text_left_top)  # Draw "Sunwell"
+        c.drawString(30, 35, footer_text_left_bottom)  # Draw "ESTDAS v1.0" below "Sunwell"
+        c.drawCentredString(420, 40, footer_text_center)  # Centered
+        c.drawRightString(800, 45, footer_text_right_top)
+        c.drawRightString(800, 35, footer_text_right)  # Right side (page number)
+
+    def add_alarm_tables(c):
+        equipment = TemperatureHumidityRecord.objects.filter(equip_name__equip_name=selected_equipment).first()
+        # Data for Temperature and Humidity Alarms
+        alarm_data = [['Parameter', 'Low Alarm', 'Low Alert', 'High Alarm', 'High Alert']]
+
+        if equipment and (equipment.t_low_alarm is not None or equipment.t_high_alarm is not None):
+            alarm_data.append([
+                'Temperature (°C)',
+                f"{equipment.t_low_alarm:.1f}" if equipment.t_low_alarm is not None else 'N/A',
+                f"{equipment.t_low_alert:.1f}" if equipment.t_low_alert is not None else 'N/A',
+                f"{equipment.t_high_alarm:.1f}" if equipment.t_high_alarm is not None else 'N/A',
+                f"{equipment.t_high_alert:.1f}" if equipment.t_high_alert is not None else 'N/A',
+            ])
+
+        # Add humidity data if it exists
+        if equipment and (equipment.rh_low_alarm is not None or equipment.rh_high_alarm is not None):
+            alarm_data.append([
+                'Humidity (% RH)',
+                f"{equipment.rh_low_alarm:.1f}" if equipment.rh_low_alarm is not None else 'N/A',
+                f"{equipment.rh_low_alert:.1f}" if equipment.rh_low_alert is not None else 'N/A',
+                f"{equipment.rh_high_alarm:.1f}" if equipment.rh_high_alarm is not None else 'N/A',
+                f"{equipment.rh_high_alert:.1f}" if equipment.rh_high_alert is not None else 'N/A',
+            ])
+
+        # Define table style
+        alarm_table_style = TableStyle([
+            ('BACKGROUND', (0, 0), (-1, 0), colors.lightgrey),
+            ('TEXTCOLOR', (0, 0), (-1, 0), colors.black),
+            ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
+            ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
+            ('FONTSIZE', (0, 0), (-1, 0), 10),
+            ('BOTTOMPADDING', (0, 0), (-1, 0), 12),
+            ('BACKGROUND', (0, 1), (-1, -1), colors.whitesmoke),
+            ('GRID', (0, 0), (-1, -1), 1, colors.black),
+        ])
+
+        # Define column widths
+        col_widths = [210, 130, 130, 130, 130]  # Adjust column widths as needed
+
+        # Create the alarm table
+        alarm_table = Table(alarm_data, colWidths=col_widths)
+        alarm_table.setStyle(alarm_table_style)
+
+        # Position the alarm table after the "Records From" section
+        table_y = 420  # Adjust Y position
+
+        # Draw the table on the canvas
+        alarm_table.wrapOn(c, 50, table_y)
+        alarm_table.drawOn(c, 60, table_y - (len(alarm_data) * 20))  # Adjust position
+
+    def add_temperature_table(c):
+        
+        
+        # Initialize lists for temperature and humidity data
+        temperature_channels = ['tmp_1', 'tmp_2', 'tmp_3', 'tmp_4', 'tmp_5', 'tmp_6', 'tmp_7', 'tmp_8', 'tmp_9', 'tmp_10']
+        humidity_channels = ['rh_1', 'rh_2', 'rh_3', 'rh_4', 'rh_5', 'rh_6', 'rh_7', 'rh_8', 'rh_9', 'rh_10']
+        
+        temp_data = [['Temperature (°C)', 'Minimum', 'Maximum', 'Average']]
+        humidity_data = [['Humidity (% RH)', 'Minimum', 'Maximum', 'Average']]
+
+        # Dynamically calculate min, max, and average for temperature channels
+        for channel in temperature_channels:
+            channel_values = [getattr(record, channel) for record in records if getattr(record, channel) is not None]
+            if channel_values:
+                min_val = min(channel_values)
+                max_val = max(channel_values)
+                avg_val = sum(channel_values) / len(channel_values)
+                temp_data.append([channel.capitalize(), f"{min_val:.1f}", f"{max_val:.1f}", f"{avg_val:.1f}"])
+
+        # Dynamically calculate min, max, and average for humidity channels if data exists
+        for channel in humidity_channels:
+            channel_values = [getattr(record, channel) for record in records if getattr(record, channel) is not None]
+            if channel_values:
+                min_val = min(channel_values)
+                max_val = max(channel_values)
+                avg_val = sum(channel_values) / len(channel_values)
+                humidity_data.append([channel.capitalize(), f"{min_val:.1f}", f"{max_val:.1f}", f"{avg_val:.1f}"])
+
+        # Define table style
+        temp_table_style = TableStyle([
+            ('BACKGROUND', (0, 0), (-1, 0), colors.lightgrey),
+            ('TEXTCOLOR', (0, 0), (-1, 0), colors.black),
+            ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
+            ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
+            ('FONTSIZE', (0, 0), (-1, 0), 10),
+            ('BOTTOMPADDING', (0, 0), (-1, 0), 12),
+            ('BACKGROUND', (0, 1), (-1, -1), colors.whitesmoke),
+            ('GRID', (0, 0), (-1, -1), 1, colors.black),
+        ])
+
+        # Define column widths
+        col_widths = [100, 80, 80]  # Adjust column widths as needed
+
+        # Create the temperature table
+        temp_table = Table(temp_data, colWidths=col_widths)
+        temp_table.setStyle(temp_table_style)
+
+        # Create Humidity table
+        humidity_table = Table(humidity_data, colWidths=col_widths)
+        humidity_table.setStyle(temp_table_style)
+
+        # Position the temperature table below the alarm table
+        temp_table_y = 580  # Adjust Y position for the temperature table
+        humidity_table_y = temp_table_y - (len(temp_data) * 20) - 240  # Adjust the space between tables
+
+
+        # Define the position for the tables
+        temp_table_x = 60  # X position for the temperature table
+        humidity_table_x = 450  # X position for the humidity table (adjust as needed
+        temp_table_y = 340  # Adjust Y position for the temperature table
+
+        # Draw the table on the canvas
+        temp_table.wrapOn(c, 50, temp_table_y)
+        temp_table.drawOn(c, temp_table_x, temp_table_y - (len(temp_data) * 20))  # Adjust position
+
+        # Draw Humidity table on the canvas
+        humidity_table.wrapOn(c, 50, humidity_table_x)
+        humidity_table.drawOn(c, humidity_table_x, temp_table_y - (len(humidity_data) * 20))  # Adjust position
+
+
+    def add_main_table(c, page_num, start_row):
+        # Define styles for normal and bold text
+        normal_style = ParagraphStyle('Normal', fontName='Helvetica', fontSize=10)
+        bold_style = ParagraphStyle('Bold', fontName='Helvetica-Bold', fontSize=10)
+
+        # Fetch the equipment records based on the selected equipment
+        from_date_parsed = datetime.strptime(from_date, '%d-%m-%Y').date()
+        to_date_parsed = datetime.strptime(to_date, '%d-%m-%Y').date()
+
+        from_time_parsed = datetime.strptime(from_time, '%H:%M').time() if from_time else datetime_time(0, 0)
+        to_time_parsed = datetime.strptime(to_time, '%H:%M').time() if to_time else datetime_time(23, 59)
+
+        if from_time_parsed > to_time_parsed:
+            equipment_records = TemperatureHumidityRecord.objects.filter(
+                Q(equip_name__equip_name=selected_equipment),
+                Q(date=from_date_parsed, time__gte=from_time_parsed) |
+                Q(date=to_date_parsed, time__lte=to_time_parsed) |
+                Q(date__gt=from_date_parsed, date__lt=to_date_parsed)
+            ).order_by('date', 'time')
+        else:
+            equipment_records = TemperatureHumidityRecord.objects.filter(
+                equip_name__equip_name=selected_equipment,
+                date__range=(from_date_parsed, to_date_parsed),
+                time__gte=from_time_parsed,
+                time__lte=to_time_parsed
+            ).order_by('date', 'time')
+
+        temperature_channels = ['tmp_1', 'tmp_2', 'tmp_3', 'tmp_4', 'tmp_5', 'tmp_6', 'tmp_7', 'tmp_8', 'tmp_9', 'tmp_10']
+        humidity_channels = ['rh_1', 'rh_2', 'rh_3', 'rh_4', 'rh_5', 'rh_6', 'rh_7', 'rh_8', 'rh_9', 'rh_10']
+
+        equipment = records.filter(equip_name__equip_name=selected_equipment).first()
+        if equipment:
+            t_low_alarm = equipment.t_low_alarm
+            t_high_alarm = equipment.t_high_alarm
+            t_low_alert = equipment.t_low_alert
+            t_high_alert = equipment.t_high_alert
+            rh_low_alarm = equipment.rh_low_alarm
+            rh_high_alarm = equipment.rh_high_alarm
+            rh_low_alert = equipment.rh_low_alert
+            rh_high_alert = equipment.rh_high_alert
+        else:
+            t_low_alarm = t_high_alarm = rh_low_alarm = rh_high_alarm = None
+            t_low_alert = t_high_alert = rh_low_alert = rh_high_alert = None
+
+        print("thresholds:", t_low_alarm, t_low_alert, t_high_alert, t_high_alarm, rh_low_alarm, rh_low_alert, rh_high_alert, rh_high_alarm)
+
+        # Prepare the main table headers
+        data = [
+            [' ', 'Date', 'Time', 'Set', '<---------Temperature(°C)--------->', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', 'Set', '<---------Humidity(%RH)--------->', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '],
+            ['Rec No', 'DD-MM-YYYY', 'HH:MM', 'Temp', 'Ch-1', 'Ch-2', 'Ch-3', 'Ch-4', 'Ch-5', 'Ch-6', 'Ch-7', 'Ch-8', 'Ch-9', 'Ch-10', 'Rh', 'Ch-1', 'Ch-2', 'Ch-3', 'Ch-4', 'Ch-5', 'Ch-6', 'Ch-7', 'Ch-8', 'Ch-9', 'Ch-10']
+        ]
+
+        # Populate the table with filtered records
+        for idx, record in enumerate(equipment_records, start=1):
+            temp_values = []
+            for channel in temperature_channels:
+                value = getattr(record, channel, None)
+                if value is not None:
+                    # Bold for alarm values
+                    if value <= t_low_alarm or value >= t_high_alarm:
+                        temp_values.append(Paragraph(f"<b>{value:.1f}</b>", bold_style))
+                    # Underline for alert values
+                    elif (t_low_alarm < value <= t_low_alert) or (t_high_alarm <= value < t_high_alert):
+                        temp_values.append(Paragraph(f"<u>{value:.1f}</u>", normal_style))
+                    else:
+                        temp_values.append(Paragraph(f"{value:.1f}", normal_style))
+                else:
+                    temp_values.append('')
+
+            humidity_values = []
+            for channel in humidity_channels:
+                value = getattr(record, channel, None)
+                if value is not None:
+                    # Bold for alarm values
+                    if value <= rh_low_alarm or value >= rh_high_alarm:
+                        humidity_values.append(Paragraph(f"<b>{value:.1f}</b>", bold_style))
+                    # Underline for alert values
+                    elif (rh_low_alarm < value <= rh_low_alert) or (rh_high_alarm <= value < rh_high_alert):
+                        humidity_values.append(Paragraph(f"<u>{value:.1f}</u>", normal_style))
+                    else:
+                        humidity_values.append(Paragraph(f"{value:.1f}", normal_style))
+                else:
+                    humidity_values.append('')
+
+            # Construct the row with dynamic data
+            row = [
+                str(idx),
+                record.date.strftime('%d-%m-%Y'),
+                record.time.strftime('%H:%M'),
+                Paragraph(f"{record.set_temp:.1f}", normal_style) if record.set_temp is not None else ''
+            ] + temp_values + [
+                Paragraph(f"{record.set_rh:.1f}", normal_style) if record.set_rh is not None else ''
+            ] + humidity_values
+
+            data.append(row)
+
+        table_style = [
+            ('SPAN', (4, 0), (13, 0)),
+            ('SPAN', (15, 0), (24, 0)),
+            ('BACKGROUND', (0, 1), (-1, 1), colors.lightgrey),
+            ('TEXTCOLOR', (0, 0), (-1, 1), colors.black),
+            ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
+            ('FONTNAME', (0, 0), (-1, 1), 'Helvetica-Bold'),
+            ('FONTSIZE', (0, 0), (-1, 1), 8),
+            ('BOTTOMPADDING', (0, 0), (-1, 1), 12),
+        ]
+
+        colWidths = [29, 55, 36, 32] + [32] * 10 + [32] + [32] * 10
+
+        # Calculate table row height and dynamically position the table
+        table_row_height = 20
+        max_rows_second_pages = 10
+        max_rows_other_pages = 15
+        top_margin_page2 = 300
+        top_margin_other_pages = 400
+        current_row = 2
+
+        # Move the main table to the second page
+        while current_row < len(data):
+            if page_num == 2:
+                top_margin = top_margin_page2
+                max_rows_per_page = max_rows_second_pages
+            else:
+                top_margin = top_margin_other_pages
+                max_rows_per_page = max_rows_other_pages
+
+            # Prepare the data slice for the current page
+            page_data = data[current_row:current_row + max_rows_per_page]
+            page_table = Table([data[0], data[1]] + page_data, colWidths=colWidths)
+
+            # Apply the defined table style
+            page_table.setStyle(TableStyle(table_style))
+
+            # Adjust table position only by row height
+            table_position_y = top_margin - (table_row_height * (min(len(page_data), max_rows_per_page)))
+            page_table.wrapOn(c, 50, top_margin)
+            page_table.drawOn(c, 11, table_position_y)
+
+            # Move to the next set of rows
+            current_row += max_rows_per_page
+
+            # If more rows are left, create a new page
+            if current_row < len(data):
+                c.showPage()
+                page_num += 1
+                create_page(c, page_num)
+                if page_num == 2:
+                    add_temperature_table(c)
+
+        return current_row
+
+
+
+
+
+    # Create the first page and add tables
+    page_num = 1
+    create_page(c, page_num)
+    add_alarm_tables(c)
+    add_temperature_table(c)
+
+    c.showPage()
+    page_num += 1
+    create_page(c, page_num)
+    add_alarm_tables(c)
+
+    # Now add the main table from the second page
+    current_row = 2  # Start row of the main table data (after headers)
+    current_row = add_main_table(c, page_num, current_row)
+
+    # Save the canvas to the response
+    c.save()
+
+    return response    
 
 
 def alaram_log(request):
@@ -1618,6 +2490,7 @@ def user_activity(request):
     return render(request, 'auditlog/user_audit_log.html', context)
 
 
+
 def generate_userActivity_pdf(request, user_logs, from_date, to_date, from_time, to_time, organization, department, username, filter_format):
     response = HttpResponse(content_type='application/pdf')
     response['Content-Disposition'] = 'inline; filename="user_audit_report.pdf"'
@@ -1655,7 +2528,7 @@ def generate_userActivity_pdf(request, user_logs, from_date, to_date, from_time,
         canvas.drawCentredString(300, 800, organization.name)
         canvas.setFillColor(colors.black)
         canvas.setFont("Helvetica", 12)
-        canvas.drawCentredString(300, 780, "Report for QC")
+        canvas.drawCentredString(300, 780, department.header_note)
 
         logo_path = organization.logo.path
         canvas.drawImage(logo_path, 470, 780, width=80, height=30)

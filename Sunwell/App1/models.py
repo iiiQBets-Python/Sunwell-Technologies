@@ -2,6 +2,7 @@
 from django.db import models
 from django.contrib.auth.hashers import make_password, check_password
 from django.utils import timezone
+import base64
 
 
 class SuperAdmin(models.Model):        
@@ -38,16 +39,29 @@ class Organization(models.Model):
     phoneNo = models.CharField(max_length=15, null=True)
     address = models.TextField(null=True)
     logo = models.ImageField(blank=True, null=True)
+    nod = models.CharField(max_length=255, null=True, default='MA==')  # Encoded value stored as a string
 
-    def __str__(self):
-        return self.name
+    def set_nod(self, number_of_devices):
+        """Encode and set the number of devices."""
+        encoded_nod = base64.b64encode(str(number_of_devices).encode('utf-8')).decode('utf-8')
+        self.nod = encoded_nod
+
+    def get_nod(self):
+        """Decode and return the number of devices."""
+        if self.nod is None:
+            return 0  # Default value if nod is not set
+        decoded_nod = base64.b64decode(self.nod.encode('utf-8')).decode('utf-8')
+        return int(decoded_nod)
+
+    def _str_(self):
+        return self.name 
 
 
 class CommGroup(models.Model):
     CommGroup_name = models.CharField(max_length=50, unique=True)
     CommGroup_code = models.CharField(max_length=10, primary_key=True)
     soft_key = models.CharField(max_length=255)
-    activation_key = models.CharField(max_length=255)
+    activation_key = models.CharField(max_length=255, unique=True)
 
     def __str__(self):
         return self.CommGroup_name

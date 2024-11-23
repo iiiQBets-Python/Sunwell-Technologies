@@ -256,7 +256,7 @@
 <body>
     <div class="bg">
         <div class="logo-container">
-            <img src="{% static 'images/Base/Sunwell logo.jpg' %}" alt="Company Logo">
+            <img src="{% static 'images/Base/Sunwell_logo.jpg' %}" alt="Company Logo">
         </div>
         <div class="cmp-text">
             <h4>ESTDAS v1.0</h4>
@@ -280,7 +280,7 @@
                     <i class="fas fa-eye-slash form-control-icon pwd-toggle" onclick="togglePasswordVisibility()"></i>
                 </div>
                 <div class="form-group form-check">
-                    <label class="form-check-label" for="forgot_pass">Forgot Password?</label>
+                    <a href="#" class="form-check-label" data-bs-toggle="modal" data-bs-target="#forgot_pass">Forgot Password?</a>
                 </div>
                 <button type="submit" class="btn btn-primary btn-block">Login</button>
                 {% if messages %}
@@ -331,7 +331,7 @@
                         <input type="password" minlength="8" maxlength="15" name="new_pass" id="new_pass" class="form-control" required>
                     </div>
                     <div class="mt-2" style="text-align: center;">
-                        <button type="submit" class="btn btn-sm btn-primary" style="width: 100px; display: inline-block;">Submit</button>
+                        <button type="submit" class="btn btn-sm btn-primary" style="width: 100px; display: inline-block;" onclick="submitChangePasswordForm()">Submit</button>
                         <button type="reset" class="btn btn-sm btn-danger" style="width: 100px; display: inline-block;">Clear</button>
                     </div>
                 </form>            
@@ -339,6 +339,43 @@
         </div>
         </div>
     </div>
+
+    <div class="modal fade" id="forgot_pass" tabindex="-1" aria-labelledby="forgot_passLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg" style="width: 40%;">
+            <div class="modal-content container-custom">
+                <div class="modal-header">
+                    <h5 class="modal-title text-center" id="forgot_passLabel">Forgot Password</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" onclick="clearForgotPasswordForm()"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="forgotPasswordForm" class="form-control" method="POST">
+                        {% csrf_token %}
+                        <div class="mt-1">
+                            <label for="forgot_username">Login Name:</label>
+                            <input type="text" name="forgot_username" id="forgot_username" class="form-control" required>
+                        </div>
+                        <div class="mt-1">
+                            <label for="forgot_old_password">Old Password:</label>
+                            <input type="password" name="forgot_old_password" id="forgot_old_password" class="form-control" required>
+                        </div>
+                        <div class="mt-1">
+                            <label for="forgot_new_password">New Password:</label>
+                            <input type="password" name="forgot_new_password" id="forgot_new_password" class="form-control" minlength="8" maxlength="15" required>
+                        </div>
+                        <div class="mt-1">
+                            <label for="forgot_confirm_password">Confirm New Password:</label>
+                            <input type="password" name="forgot_confirm_password" id="forgot_confirm_password" class="form-control" minlength="8" maxlength="15" required>
+                        </div>
+                        <div class="mt-2 text-center">
+                            <button type="button" class="btn btn-sm btn-primary" style="width: 100px; display: inline-block;" onclick="submitForgotPasswordForm()">Submit</button>
+                            <button type="reset" class="btn btn-sm btn-danger" style="width: 100px; display: inline-block;">Clear</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
 
     {% if success_msg %}
     <script>     
@@ -399,6 +436,122 @@
                     }, 500); 
                 }
             }, 2000); 
+
+            function submitForgotPasswordForm() {
+                const form = document.getElementById('forgotPasswordForm');
+                const formData = new FormData(form);
+                const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+            
+                // Show overlay
+                const overlay = document.createElement('div');
+                overlay.style.position = 'fixed';
+                overlay.style.top = '0';
+                overlay.style.left = '0';
+                overlay.style.width = '100%';
+                overlay.style.height = '100%';
+                overlay.style.backgroundColor = 'rgba(0, 0, 0, 0.5)';
+                overlay.style.zIndex = '9999';
+                overlay.style.display = 'flex';
+                overlay.style.justifyContent = 'center';
+                overlay.style.alignItems = 'center';
+                overlay.innerHTML = '<span style="color: white; font-size: 24px;">Processing...</span>';
+                document.body.appendChild(overlay);
+            
+                fetch("{% url 'forgot_pass' %}", {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRFToken': csrfToken
+                    },
+                    body: formData
+                })
+                .then(response => {
+                    if (response.ok) {
+                        return response.json(); // Return JSON data on success
+                    } else {
+                        return response.json().then(data => {
+                            throw new Error(data.message || 'An unknown error occurred');
+                        });
+                    }
+                })
+                .then(data => {
+                    // Remove overlay
+                    document.body.removeChild(overlay);
+            
+                    // Display success message
+                    alert(data.message);
+            
+                    // Close the modal and clear the form after the alert is dismissed
+                    const modal = bootstrap.Modal.getInstance(document.getElementById('forgot_pass'));
+                    modal.hide();
+                    clearForgotPasswordForm();
+                })
+                .catch(error => {
+                    // Remove overlay in case of error
+                    document.body.removeChild(overlay);
+            
+                    // Display error message
+                    alert(error.message);
+                });
+            }
+
+            function submitChangePasswordForm() {
+                const form = document.getElementById('changePasswordForm');
+                const formData = new FormData(form);
+                const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+            
+                // Show overlay
+                const overlay = document.createElement('div');
+                overlay.style.position = 'fixed';
+                overlay.style.top = '0';
+                overlay.style.left = '0';
+                overlay.style.width = '100%';
+                overlay.style.height = '100%';
+                overlay.style.backgroundColor = 'rgba(0, 0, 0, 0.5)';
+                overlay.style.zIndex = '9999';
+                overlay.style.display = 'flex';
+                overlay.style.justifyContent = 'center';
+                overlay.style.alignItems = 'center';
+                overlay.innerHTML = '<span style="color: white; font-size: 24px;">Processing...</span>';
+                document.body.appendChild(overlay);
+            
+                fetch("{% url 'change_pass' %}", {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRFToken': csrfToken
+                    },
+                    body: formData
+                })
+                .then(response => {
+                    if (response.ok) {
+                        return response.json(); // Return JSON data on success
+                    } else {
+                        return response.json().then(data => {
+                            throw new Error(data.message || 'An unknown error occurred');
+                        });
+                    }
+                })
+                .then(data => {
+                    // Remove overlay
+                    document.body.removeChild(overlay);
+            
+                    // Display success message
+                    alert(data.message);
+            
+                    // Close the modal and clear the form after the alert is dismissed
+                    const modal = bootstrap.Modal.getInstance(document.getElementById('change_pass'));
+                    modal.hide();
+                    form.reset(); // Clear form
+                })
+                .catch(error => {
+                    // Remove overlay in case of error
+                    document.body.removeChild(overlay);
+            
+                    // Display error message
+                    alert(error.message);
+                });
+            }
+            
+            
         
     </script>
 </body>

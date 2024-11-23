@@ -63,7 +63,12 @@
         <div class="col-md-3">
             <div class="text-center">  
                 <div class="text-center">                                                 
-                    <img src="{{ organization.logo.url }}" class="img-thumbnail square-img" alt="Company Logo">
+                    {% if organization.logo %}
+                        <img src="{{ organization.logo.url }}" class="img-thumbnail square-img mt-5" alt="Company Logo">
+                    {% else %}
+                        <img src="{% static 'images/Base/Sunwell_logo.jpg' %}" class="img-thumbnail square-img mt-5" alt="Company Logo">
+                    {% endif %}
+
                 </div>
             </div>
         </div>
@@ -99,7 +104,7 @@
 {% else %}
 
 <div class="container mt-0">
-    <h1 class="text-center header">Edit Company Profile</h1>
+    <h1 class="text-center header">Company Profile</h1>
     <hr>
     <form method="post" enctype="multipart/form-data">
         {% csrf_token %}
@@ -139,8 +144,8 @@
                 
                 <div class="mb-3 row">
                     <div class="col-lg-8 offset-lg-3 text-end">
-                        <button type="reset" class="btn btn-secondary me-2">Reset</button>
-                        <button type="submit" class="btn btn-success">Save</button>
+                        <button type="reset" class="btn btn-outline-secondary me-2">Reset</button>
+                        <button type="submit" class="btn btn-outline-success">Save</button>
                     </div>
                 </div>
             </div>

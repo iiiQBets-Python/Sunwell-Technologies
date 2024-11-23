@@ -23,13 +23,13 @@ urlpatterns = [
     path('role_permission/', role_permission, name='role_permission'),
     path('user_access/', user_access, name='user_access'),
     path('app_setings/', app_settings, name='app_settings'),
+    path('app_sms_settings/', app_sms_settings, name='app_sms_settings'),
 
-    path('app_setings/send_email', send_email, name="send_email"),
-    path('department/email_form', email_form, name="email_form"),
-    path('app_setings/email_settings', email_settings, name="email_settings"),
-    path('save-qc-session/', save_qc_session, name='save_qc_session'),
+    path('app_setings/send_test_email', send_test_email, name="send_test_email"),
+    path('app_setings/send_test_sms/', send_test_sms, name='send_test_sms'),
     
     path('backup/', backup, name='backup'),
+    path('backup/edit/<int:id>/', edit_backup, name='edit_backup'),
     path('download-backup/', download_backup, name='download_backup'),
     path('restore/', restore, name='restore'),
 
@@ -60,4 +60,5 @@ urlpatterns = [
 
     path('change_pass', change_pass, name="change_pass"),
     path('change_pass_2', change_pass_2, name='change_pass_2'),
+    path('forgot_password/', forgot_password, name='forgot_pass'),
 ]

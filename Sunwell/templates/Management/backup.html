@@ -59,7 +59,7 @@
 
         .input-container .floating-label {
             position: absolute;
-            top: 30%;
+            top: 50%;
             left: 12px;
             transform: translateY(-50%);
             background-color: #ffffff;
@@ -131,6 +131,12 @@
             top: 100px; /* Slide down to be visible */
         }
 
+        .edit-button {
+            position: absolute;
+            top: 20px;
+
+        }
+
          /* Media Queries */
          @media (max-width: 768px) {
             .form-group {
@@ -173,12 +179,16 @@
     </style>
 {% endblock styles %}
 
-{% block content %} 
+{% block content %}
+
+
 
 <div class="container pt-5">
     <div id="floating-alert" class="floating-alert">
         Backup settings saved successfully!
     </div>
+
+
     
     <div class="row">
         <!-- Left column with the image -->
@@ -190,8 +200,46 @@
                 <button type="button" id="take-backup" class="btn btn-primary" onclick="takeBackup()">Take Backup</button>
             </div>
         </div>
-
+        {% if backup_setting %}
+        
+        
+        
         <!-- Right column with the form -->
+        <div class="col-md-7 right-column">
+            <div class="d-flex justify-content-between align-items-center px-4">
+                <h2 class="heading text-dark py-2 mb-0" style="text-align: left;">Backup Settings</h2>
+                {% if data.role == 'Super Admin' or acc_db.back_e %}
+                <a href="{% url 'edit_backup' backup_setting.id %}" class="btn btn-outline-primary">Edit</a>
+                {% endif %}
+            </div>
+            <div class="form-container mt-3">
+                <!-- Backup Local Path (Floating Label) -->
+                <div class="form-group">
+                    <div class="input-container">
+                        <input type="text" id="backup-local-path" name="backup-local-path" class="form-control" value="{{ backup_setting.local_path }}" placeholder=" " required readonly>
+                        <label for="backup-local-path" class="floating-label">Enter Backup local path</label>
+                    </div>
+                </div>
+        
+                <!-- Backup Remote Path (Floating Label) -->
+                <div class="form-group">
+                    <div class="input-container">
+                        <input type="text" id="backup-remote-path" name="backup-remote-path" class="form-control" value="{{ backup_setting.remote_path }}" placeholder=" " readonly>
+                        <label for="backup-remote-path" class="floating-label">Enter Backup remote path</label>
+                    </div>
+                </div>
+        
+                <!-- Backup Time (Standard Label) -->
+                <div class="form-group">
+                    <div class="input-container">
+                        <input type="time" id="backup-time" name="backup-time" class="form-control" value="{{ backup_setting.backup_time|time:'H:i' }}" placeholder=" " readonly>
+                        <label for="backup-time" class="floating-label">Enter Backup Time</label>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        {% else %}
         <div class="col-md-7 right-column">
             <h2 class="heading text-dark text-center py-2">Backup Settings</h2>
             <div class="form-container">
@@ -200,27 +248,27 @@
                     <!-- Backup Local Path (Floating Label) -->
                     <div class="form-group">
                         <div class="input-container">
-                            <input type="text" id="backup-local-path" name="backup-local-path" class="form-control" placeholder=" " required >
+                            <input type="text" id="backup-local-path" name="backup-local-path" class="form-control" value="" placeholder=" " required >
                             <label for="backup-local-path" class="floating-label">Enter Backup local path</label>
-                            <span id="local-path-display" class="path-display">Current Local Path is: {{ local_path }}</span>
+                            {% comment %} <span id="local-path-display" class="path-display">Current Local Path is: {{ local_path }}</span> {% endcomment %}
                         </div>
                     </div>
 
                     <!-- Backup Remote Path (Floating Label) -->
                     <div class="form-group">
                         <div class="input-container">
-                            <input type="text" id="backup-remote-path" name="backup-remote-path" class="form-control" placeholder=" " >
+                            <input type="text" id="backup-remote-path" name="backup-remote-path" class="form-control" value="" placeholder=" "  >
                             <label for="backup-remote-path" class="floating-label">Enter Backup remote path</label>
-                            <span id="remote-path-display" class="path-display">Current Remote Path is: {{ remote_path }}</span>
+                            {% comment %} <span id="remote-path-display" class="path-display">Current Remote Path is: {{ remote_path }}</span> {% endcomment %}
                         </div>
                     </div>
 
                     <!-- Backup Time (Standard Label) -->
                     <div class="form-group">
                         <div class="input-container ">
-                            <input type="time" id="backup-time" name="backup-time" class="form-control" placeholder=" " >
+                            <input type="time" id="backup-time" name="backup-time" class="form-control" value="" placeholder=" " >
                             <label for="backup-time" class="floating-label">Enter Backup Time</label> 
-                            <span id="backup-time-display" class="path-display">Current Backup Time is: {{ backup_time|time:"H:i" }}</span> 
+                            {% comment %} <span id="backup-time-display" class="path-display">Current Backup Time is: {{ backup_time|time:"H:i" }}</span>  {% endcomment %}
                         </div>
                     </div>
 
@@ -233,6 +281,7 @@
         </div>
     </div>
 </div>
+{% endif %}
 
 {% block scripts %}
   {{ block.super }}

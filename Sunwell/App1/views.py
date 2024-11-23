@@ -26,7 +26,7 @@ from django.utils.timezone import make_aware, now, localtime
 from datetime import datetime, time as datetime_time
 from django.db.models import DateTimeField
 from django.http import HttpResponse
-from reportlab.platypus import SimpleDocTemplate, Table, TableStyle, Spacer
+from reportlab.platypus import SimpleDocTemplate, Table, TableStyle, Spacer, Paragraph, PageBreak
 from reportlab.lib.pagesizes import A4, landscape
 from reportlab.lib import colors
 from reportlab.lib.units import inch
@@ -35,10 +35,16 @@ from django.core.mail import send_mail
 from django.shortcuts import render
 from django.http import HttpResponse
 from App1.emailsms import get_email_settings
+from django.utils.timezone import now
+from datetime import datetime, time as datetime_time
+from reportlab.lib.styles import ParagraphStyle
+from reportlab.lib import colors
+
+from datetime import datetime, timedelta
 
 
 def base(request):
-    return render(request, 'Base/base.html')
+    return render(request, 'Base/base.html', )
 
 def user_login(request):
     if request.method == 'POST':
@@ -46,7 +52,7 @@ def user_login(request):
         password = request.POST.get('password')
 
         try:
-            super_admin = SuperAdmin.objects.get(username__iexact=username.lower())
+            super_admin = SuperAdmin.objects.get(username__iexact=username)
             if check_password(password, super_admin.password):
                 request.session['username'] = super_admin.username
                 messages.success(request, 'Login Successful!')
@@ -68,6 +74,7 @@ def user_login(request):
                     if u.check_login_name(username):  
                         user = u
                         break
+
 
                 if user and check_password(password, user.password):
 
@@ -103,72 +110,168 @@ def user_login(request):
     else:
         return render(request, 'Base/login.html')
 
+
 def change_pass(request): 
-    username = request.session.get('username')
+    # username = request.session.get('username') 
+       
     
     if request.method == 'POST':
         username_1 = request.POST.get('username')
         old_pass = request.POST.get('old_pass')
         new_pass = request.POST.get('new_pass')
-
-        user = None
-        for u in User.objects.all():
-            if u.check_login_name(username_1):  
-                user = u
+        
+        
+        data = None
+        for user in User.objects.all():
+            if check_password(username_1, user.login_name):
+                data = user
                 break
+        
+  
+        # Check if the provided username and old password are correct
+        if check_password(username_1, data.login_name) and check_password(old_pass, data.password):
+            # Check if the new password matches any of the last 3 passwords
+            password_history = PasswordHistory.objects.filter(user=data).order_by('-created_at')[:3]
+            if any(check_password(new_pass, history.password) for history in password_history):
+                return JsonResponse({'message': 'New password cannot be the same as any of the last 3 passwords.'})
 
-        if user and check_password(old_pass, user.password):
+            # Update the password if no match is found in the last 3 entries
             user.password = new_pass
-            user.pass_change = True
-            user.created_at = timezone.now() + timedelta(hours=5, minutes=30)
-            user.save()
+            data.password = make_password(new_pass)
+            data.pass_change = True
+            data.created_at = timezone.now() + timedelta(hours=5, minutes=30)
+            data.save()
 
+
+            # Log the password change
             UserActivityLog.objects.create(
-                user=user.username,
+                user=data.username,
                 log_date=timezone.localtime(timezone.now()).date(),
                 log_time=timezone.localtime(timezone.now()).time(),
-                event_name=f"User {user.username} changed password"
-            ) 
+                event_name=f"User {data.username} changed password"
+            )
 
+            # Check if user has 3 entries in PasswordHistory
+            password_history = PasswordHistory.objects.filter(user=data).order_by('created_at')
+            if password_history.count() >= 3:
+                # If there are already 3 entries, replace the oldest entry
+                oldest_entry = password_history.first()
+                oldest_entry.password = data.password
+                oldest_entry.created_at = timezone.now()
+                oldest_entry.save()
+            else:
+                # If fewer than 3 entries, create a new entry
+                PasswordHistory.objects.create(user=data, password=data.password)
+            
+            # Flush the session
             success_msg_2 = 'Your password has been changed. Please login again'
-            return render(request, 'Base/login.html', {'success_msg_2': success_msg_2})
-
+            return render(request, 'Base/login.html', {'success_msg_2': success_msg_2})  
         else:
             error_msg = 'Please enter valid credentials.'
-            return render(request, 'Base/login.html', {'error_msg': error_msg})
+            return render(request, 'Base/login.html', {'error_msg': error_msg}) 
         
 
 def change_pass_2(request): 
     username = request.session.get('username') 
-
-    data = User.objects.get(username = username)   
+    data = User.objects.get(username=username)   
     
     if request.method == 'POST':
         username_1 = request.POST.get('username')
         old_pass = request.POST.get('old_pass')
         new_pass = request.POST.get('new_pass')
   
-        if  check_password(username_1, data.login_name):
-            if  check_password(old_pass, data.password):
-                data.password = new_pass
-                data.pass_change = True
-                data.created_at = timezone.now() + timedelta(hours=5, minutes=30)
-                data.save()
+        # Check if the provided username and old password are correct
+        if check_password(username_1, data.login_name) and check_password(old_pass, data.password):
+            # Check if the new password matches any of the last 3 passwords
+            password_history = PasswordHistory.objects.filter(user=data).order_by('-created_at')[:3]
+            if any(check_password(new_pass, history.password) for history in password_history):
+                return JsonResponse({'message': 'New password cannot be the same as any of the last 3 passwords.'})
 
-                UserActivityLog.objects.create(
-                    user=username,
-                    log_date=timezone.localtime(timezone.now()).date(),
-                    log_time=timezone.localtime(timezone.now()).time(),
-                    event_name=f"User {data.username} changed password"
-                ) 
+            # Update the password if no match is found in the last 3 entries
+            data.password = make_password(new_pass)
+            data.pass_change = True
+            data.created_at = timezone.now() + timedelta(hours=5, minutes=30)
+            data.save()
 
-                if username:
-                    request.session.flush()
+            # Log the password change
+            UserActivityLog.objects.create(
+                user=username,
+                log_date=timezone.localtime(timezone.now()).date(),
+                log_time=timezone.localtime(timezone.now()).time(),
+                event_name=f"User {data.username} changed password"
+            )
 
-                return JsonResponse({'message': 'Your password has been changed. Please login again'})  
+            # Check if user has 3 entries in PasswordHistory
+            password_history = PasswordHistory.objects.filter(user=data).order_by('created_at')
+            if password_history.count() >= 3:
+                # If there are already 3 entries, replace the oldest entry
+                oldest_entry = password_history.first()
+                oldest_entry.password = data.password
+                oldest_entry.created_at = timezone.now()
+                oldest_entry.save()
+            else:
+                # If fewer than 3 entries, create a new entry
+                PasswordHistory.objects.create(user=data, password=data.password)
+
+            # Flush the session
+            if username:
+                request.session.flush()
+
+            return JsonResponse({'message': 'Your password has been changed. Please login again'})  
         else:
-            return JsonResponse({'message': 'Please enter valid credentials.'})  
-        
+            return JsonResponse({'message': 'Please enter valid credentials.'})    
+
+def forgot_password(request):
+    if request.method == 'POST':
+        login_name = request.POST.get('forgot_username')
+        old_password = request.POST.get('forgot_old_password')
+        new_password = request.POST.get('forgot_new_password')
+        confirm_password = request.POST.get('forgot_confirm_password')
+
+        # Check if a user with the given login name exists
+        for user in User.objects.all():
+            if check_password(login_name, user.login_name):
+                user = user
+                break
+
+        # Fetch the last 3 passwords from PasswordHistory
+        password_history = PasswordHistory.objects.filter(user=user).order_by('-created_at')[:3]
+
+        # Check if old_password matches any of the last 3 passwords
+        if not any(history.check_password(old_password) for history in password_history):
+            return JsonResponse({'message': 'The old password does not match any of the last 3 passwords.'}, status=403)
+
+        # Validate new password and confirm password match
+        if new_password != confirm_password:
+            return JsonResponse({'message': 'New password and confirm password do not match.'}, status=400)
+
+        # Check if new password is not among the last 3 passwords
+        if any(history.check_password(new_password) for history in password_history):
+            return JsonResponse({'message': 'New password cannot be the same as any of the last 3 passwords.'}, status=400)
+
+        # Hash and set the new password
+        hashed_new_password = make_password(new_password)
+        user.password = hashed_new_password
+        user.pass_change = True
+        user.created_at = timezone.now()
+        user.save()
+
+        # Update password history
+        PasswordHistory.objects.create(user=user, password=new_password)
+
+        # Log the password reset event (optional)
+        UserActivityLog.objects.create(
+            user=user.username,
+            log_date=timezone.localtime(timezone.now()).date(),
+            log_time=timezone.localtime(timezone.now()).time(),
+            event_name=f"User {user.username} reset password"
+        )
+
+        # Redirect to login page with a success message
+        return JsonResponse({'message':"Your password has been reset successfully. Please log in with your new password."})
+    return render(request, 'Base/login.html')
+
+    
 
 def user_logout(request):
     username = request.session.get('username')
@@ -231,7 +334,7 @@ def organization(request):
         email = request.POST.get('email')
         phoneNo = request.POST.get('phoneNo')
         address = request.POST.get('address')        
-        logo = request.FILES['logo']
+        logo = request.FILES.get('logo')
 
         Organization_new = Organization(
             name = name,
@@ -253,8 +356,8 @@ def organization(request):
 
         return redirect('organization')
     
-
-    organization = Organization.objects.first()  # Fetch the first Organization object
+    
+    organization = Organization.objects.first()
     return render(request, 'Management/organization.html', {'organization': organization, 'data':data, 'acc_db':acc_db})
 
 def edit_organization(request, organization_id):
@@ -271,7 +374,7 @@ def edit_organization(request, organization_id):
     except:
         acc_db = None
 
-    organization = get_object_or_404(Organization, id=organization_id)
+    organization = Organization.objects.first()
     
     if request.method == 'POST':
         # Saving the changes
@@ -401,10 +504,6 @@ def validate_activation_key(request):
 
     return JsonResponse({'validation_icon': '✖', 'message': "Invalid request method"})
 
-
-
-
-
 def edit_comm_group(request, comm_code):
 
     emp_user = request.session.get('username', None)
@@ -460,20 +559,57 @@ def department(request):
     except:
         acc_db = None
 
+    try:
+        comm_group = CommGroup.objects.get(CommGroup_code=commgroup_name)
+    except:
+        comm_group = None   
+
 
     if request.method == "POST":
         department_name = request.POST.get('departmentName')
-        commgroup_code = request.POST.get('commGroup')
+        commgroup_name = request.POST.get('commGroup')
         header_note = request.POST.get('headerNote')
         footer_note = request.POST.get('footerNote')
+        report_datetime_stamp = request.POST.get('report_datetime_stamp') == 'True'
 
-        commgroup = CommGroup.objects.get(CommGroup_name=commgroup_code)
+        email_alert = request.POST.get('email_alert')
+        email_time = request.POST.get('email_time')  or None
+
+        email_address_1 = request.POST.get('email_address_1')
+        email_address_2 = request.POST.get('email_address_2')
+        email_address_3 = request.POST.get('email_address_3')
+        email_address_4 = request.POST.get('email_address_4')
+        email_address_5 = request.POST.get('email_address_5')
+        email_address_6 = request.POST.get('email_address_6')
+        email_address_7 = request.POST.get('email_address_7')
+        email_address_8 = request.POST.get('email_address_8')
+        email_address_9 = request.POST.get('email_address_9')
+        email_address_10 = request.POST.get('email_address_10')
+
+        
+        comm_group = CommGroup.objects.get(CommGroup_code=commgroup_name)
+        
 
         new_department = Department(
             department_name=department_name,
-            commGroup=commgroup,
+            commGroup=comm_group,
             header_note=header_note,
             footer_note=footer_note,
+            report_datetime_stamp=report_datetime_stamp,
+            
+            email_alert = email_alert,
+            email_time = email_time,
+            alert_email_address_1 = email_address_1,
+            alert_email_address_2 = email_address_2,
+            alert_email_address_3 = email_address_3,
+            alert_email_address_4 = email_address_4,
+            alert_email_address_5 = email_address_5,
+            alert_email_address_6 = email_address_6,
+            alert_email_address_7 = email_address_7,
+            alert_email_address_8 = email_address_8,
+            alert_email_address_9 = email_address_9,
+            alert_email_address_10 = email_address_10,
+
         )
         new_department.save()
 
@@ -495,37 +631,35 @@ def department(request):
         'organization': organization, 'data':data, 'acc_db':acc_db
     }
     
-    
     return render(request, 'Management/department.html', context)
 
 def edit_department(request, department_id):
-
-    emp_user = request.session.get('username', None)
-    try:
-        data = User.objects.get(username = emp_user)
-    except:
-        data = SuperAdmin.objects.get(username=emp_user)
-    organization = Organization.objects.first()
-    
-    try:
-        acc_db = user_access_db.objects.get(role = data.role)
-    except:
-        acc_db = None
-
-
-    department = get_object_or_404(Department, id=department_id)
+    departments = get_object_or_404(Department, id=department_id)
     if request.method == "POST":
-        department_name = request.POST.get('edit_dept_name')  
+        department_name = request.POST.get('edit_dept_name')  # Correct field name
         commgroup_name = request.POST.get('edit_commGroup')
         header_note = request.POST.get('edit_headerNote')
         footer_note = request.POST.get('edit_footerNote')
-        report_datetime_stamp = request.POST.get('edit_report_datetime_stamp')
+        report_datetime_stamp = request.POST.get('edit_report_datetime_stamp') == 'True'  
+
+        email_alert = request.POST.get('edit_email_alert')
+        email_time = request.POST.get('edit_email_time')  or None
+
+        email_address_1 = request.POST.get('edit_email_address_1')
+        email_address_2 = request.POST.get('edit_email_address_2')
+        email_address_3 = request.POST.get('edit_email_address_3')
+        email_address_4 = request.POST.get('edit_email_address_4')
+        email_address_5 = request.POST.get('edit_email_address_5')
+        email_address_6 = request.POST.get('edit_email_address_6')
+        email_address_7 = request.POST.get('edit_email_address_7')
+        email_address_8 = request.POST.get('edit_email_address_8')
+        email_address_9 = request.POST.get('edit_email_address_9')
+        email_address_10 = request.POST.get('edit_email_address_10')
 
         if not department_name:
             # Handle the missing department name error
             return render(request, 'Management/department.html', {
                 'department': department,
-                'organization': organization, 'data':data, 'acc_db':acc_db,
                 'groups': CommGroup.objects.all(),
                 'error': 'Department name is required.'
             })
@@ -533,32 +667,44 @@ def edit_department(request, department_id):
         commgroup = get_object_or_404(CommGroup, CommGroup_name=commgroup_name)
         
         # Update the department
-        department.department_name = department_name
-        department.commGroup = commgroup
-        department.header_note = header_note
-        department.footer_note = footer_note
-        department.report_datetime_stamp = report_datetime_stamp
-        department.save()
+        departments.department_name = department_name
+        departments.commGroup = commgroup
+        departments.header_note = header_note
+        departments.footer_note = footer_note
+        departments.report_datetime_stamp = report_datetime_stamp
+
+        departments.email_alert = email_alert
+        departments.email_time = email_time
+        departments.alert_email_address_1 = email_address_1
+        departments.alert_email_address_2 = email_address_2
+        departments.alert_email_address_3 = email_address_3
+        departments.alert_email_address_4 = email_address_4
+        departments.alert_email_address_5 = email_address_5
+        departments.alert_email_address_6 = email_address_6
+        departments.alert_email_address_7 = email_address_7
+        departments.alert_email_address_8 = email_address_8
+        departments.alert_email_address_9 = email_address_9
+        departments.alert_email_address_10 = email_address_10
+        
+        departments.save()
 
         # Log the edit event
         UserActivityLog.objects.create(
-            user=emp_user,
+            user=User.objects.get(username=request.session.get('username')),
             log_date=timezone.localtime(timezone.now()).date(),
             log_time=timezone.localtime(timezone.now()).time(),
-            event_name=f"Updated department {department_name} details"
+            event_name=f"Edited Department {department_name} details"
         )
 
         return redirect('department')
 
     groups = CommGroup.objects.all()
     context = {
-        'department': department,
+        'departments': departments,
         'groups': groups,
-        'organization': organization, 'data':data, 'acc_db':acc_db
     }
 
     return render(request, 'Management/department.html', context)
-
 
 def users(request):
 
@@ -610,6 +756,18 @@ def users(request):
         if accessible_departments:
             selected_departments = Department.objects.filter(id__in=accessible_departments)
             newuser.accessible_departments.set(selected_departments)
+
+        # Handle password history
+        password_history = PasswordHistory.objects.filter(user=newuser).order_by('created_at')
+        if password_history.count() >= 3:
+            # If there are already 3 entries, replace the oldest entry
+            oldest_entry = password_history.first()
+            oldest_entry.password = password
+            oldest_entry.created_at = timezone.now()
+            oldest_entry.save()
+        else:
+            # If fewer than 3 entries, create a new entry
+            PasswordHistory.objects.create(user=newuser, password=password)
 
         # Log the add event
         UserActivityLog.objects.create(
@@ -670,23 +828,15 @@ def edit_user(request, user_id):
         comm_group = get_object_or_404(CommGroup, CommGroup_code=comm_group_code)
         department = get_object_or_404(Department, id=department_id)
 
-
+ 
         user.username = username
-
-
-        if login_name:
-            user.set_login_name(login_name)  
-
-    
-        if password:
-            user.set_password(password)  
-
+        user.password = password
         user.password_duration = password_duration
         user.role = role
         user.commGroup = comm_group
         user.department = department
         user.status = status
-        user.save()  
+        user.save() 
 
 
         if accessible_departments:
@@ -694,6 +844,17 @@ def edit_user(request, user_id):
             user.accessible_departments.set(selected_departments)
         else:
             user.accessible_departments.clear()
+
+        password_history = PasswordHistory.objects.filter(user=user).order_by('created_at')
+        if password_history.count() >= 3:
+            # Replace the oldest entry if there are already 3 entries
+            oldest_entry = password_history.first()
+            oldest_entry.password = password
+            oldest_entry.created_at = timezone.now()
+            oldest_entry.save()
+        else:
+            # Create a new entry if fewer than 3 exist
+            PasswordHistory.objects.create(user=user, password=password)
 
         try:
             UserActivityLog.objects.create(
@@ -721,7 +882,6 @@ def edit_user(request, user_id):
 
 
     return render(request, 'Management/user.html', context)
-
 
 def role_permission(request):
 
@@ -1082,150 +1242,270 @@ def app_settings(request):
 
     emp_user = request.session.get('username', None)
     try:
-        data = User.objects.get(username = emp_user)
-    except:
+        data = User.objects.get(username=emp_user)
+    except User.DoesNotExist:
         data = SuperAdmin.objects.get(username=emp_user)
+
     organization = Organization.objects.first()
-    
+
     try:
-        acc_db = user_access_db.objects.get(role = data.role)
-    except:
+        acc_db = user_access_db.objects.get(role=data.role)
+    except user_access_db.DoesNotExist:
         acc_db = None
 
-    return render(request, 'Management/app_settings.html', {'organization': organization, 'data':data, 'acc_db':acc_db})
+    if request.method == 'POST':
 
-def send_email(request):
+        email_sys_set = request.POST.get('email_setting_status')
+        smpthost = request.POST.get('smpthost')
+        smtpPort = request.POST.get('smtpPort')
+        smptemail = request.POST.get('smptemail')
+        smptpass = request.POST.get('smptpass')
+        emailsignature = request.POST.get('emailsignature')
+
+        # Update or Create
+        app_email_settings, created = AppSettings.objects.update_or_create(
+            id=1,  # Assuming a single settings instance
+            defaults={
+                'email_sys_set': email_sys_set,
+                'email_host': smpthost,
+                'email_port': smtpPort,
+                'email_host_user': smptemail,
+                'email_host_password': smptpass,
+                'email_signature': emailsignature
+            }
+        )
+
+        # Log the settings update
+        UserActivityLog.objects.create(
+            user=emp_user,
+            log_date=timezone.localtime(timezone.now()).date(),
+            log_time=timezone.localtime(timezone.now()).time(),
+            event_name="Updated Application settings"
+        )
+        messages.success(request, 'Application settings saved successfully!')
+        return redirect('app_settings')
+
+    # Fetch the existing settings
+    app_email_settings = AppSettings.objects.first()
+    context = {
+        'organization': organization,
+        'data': data,
+        'acc_db': acc_db,
+        'app_settings': app_email_settings
+    }
+
+    return render(request, 'Management/app_settings.html', context)
+
+
+def app_sms_settings(request):
+    emp_user = request.session.get('username', None)
+
+    try:
+        data = User.objects.get(username=emp_user)
+    except User.DoesNotExist:
+        data = SuperAdmin.objects.get(username=emp_user)
+
+    organization = Organization.objects.first()
+    acc_db = user_access_db.objects.filter(role=data.role).first()
+
+    if request.method == 'POST':
+        sms_sys_set = request.POST.get('sms_setting_status')
+        comm_port = request.POST.get('commport')
+        parity = request.POST.get('parity')
+        baud_rate = request.POST.get('baudrate')
+        data_bits = request.POST.get('databits')
+        stop_bits = request.POST.get('stopbits')
+        flow_control = request.POST.get('flowcontrol')
+
+        # Update or Create
+        app_sms_settings, created = AppSettings.objects.update_or_create(
+            id=1,  # Assuming a single settings instance
+            defaults={
+                'sms_sys_set': sms_sys_set,
+                'comm_port': comm_port,
+                'parity': parity,
+                'baud_rate': baud_rate,
+                'data_bits': data_bits,
+                'stop_bits': stop_bits,
+                'flow_control': flow_control
+            }
+        )
+
+        # Log the settings update
+        UserActivityLog.objects.create(
+            user=emp_user,
+            log_date=timezone.localtime(timezone.now()).date(),
+            log_time=timezone.localtime(timezone.now()).time(),
+            event_name="Updated SMS settings"
+        )
+
+        messages.success(request, 'SMS settings saved successfully!')
+        return redirect('app_sms_settings')
+
+    # Fetch the existing SMS settings
+    app_sms_settings = AppSettings.objects.first()
+    context = {
+        'organization': organization,
+        'data': data,
+        'acc_db': acc_db,
+        'app_settings': app_sms_settings
+    }
+
+    return render(request, 'Management/app_settings.html', context)
+
+import serial
+import time
+from django.shortcuts import redirect
+from django.contrib import messages
+from .models import AppSettings
+
+def send_test_sms(request):
+    if request.method == 'POST':
+        # Get the test phone number from the POST request
+        test_sms_number = request.POST.get('testsms')
+        if not test_sms_number:
+            messages.error(request, "Please provide a valid phone number.")
+            return redirect('app_sms_settings')
+
+        # Fetch SMS settings from the database
+        sms_settings = AppSettings.objects.first()
+        if not sms_settings:
+            messages.error(request, "SMS settings not configured.")
+            return redirect('app_sms_settings')
+
+        try:
+            # Modem Configuration
+            comm_port = sms_settings.comm_port
+            baud_rate = int(sms_settings.baud_rate)
+            parity = serial.PARITY_NONE if sms_settings.parity == 'None' else sms_settings.parity.upper()[0]
+            data_bits = serial.EIGHTBITS
+            stop_bits = serial.STOPBITS_ONE if sms_settings.stop_bits == 1 else serial.STOPBITS_TWO
+            message = "Test SMS from Django Project"
+
+            # Initialize Serial Connection
+            ser = serial.Serial(
+                port=comm_port,
+                baudrate=baud_rate,
+                bytesize=data_bits,
+                parity=parity,
+                stopbits=stop_bits,
+                timeout=2
+            )
+
+            def send_command(command, wait_for_response=True, delay=2):
+                """Send a command to the modem and optionally wait for a response."""
+                ser.write(command.encode() + b'\r')
+                ser.flush()
+                time.sleep(delay)  # Allow time for the modem to process
+                if wait_for_response:
+                    response = ser.read(1000).decode(errors="ignore").strip()
+                    return response
+                return ""
+
+            # Send Initialization Commands
+            if "OK" not in send_command("AT"):
+                messages.error(request, "Modem not responding to 'AT' command. Check your connection.")
+                ser.close()
+                return redirect('app_sms_settings')
+
+            if "OK" not in send_command("AT+CMGF=1"):  # Set SMS mode to text
+                messages.error(request, "Failed to set SMS mode to text.")
+                ser.close()
+                return redirect('app_sms_settings')
+
+            # Send SMS
+            response = send_command(f'AT+CMGS="{test_sms_number}"', wait_for_response=True, delay=2)
+            if ">" not in response:
+                messages.error(request, "Modem did not prompt for message input.")
+                ser.close()
+                return redirect('app_sms_settings')
+
+            # Send the message and terminate with Ctrl+Z
+            ser.write((message + '\r').encode())
+            ser.flush()
+            time.sleep(1)  # Brief pause before sending Ctrl+Z
+            ser.write(b"\x1A")  # Ctrl+Z
+            ser.flush()
+
+            # Wait for final response
+            time.sleep(5)
+            response = ser.read(1000).decode(errors="ignore").strip()
+
+            if "+CMGS" in response and "OK" in response:
+                messages.success(request, f"Test SMS sent successfully to {test_sms_number}.")
+            else:
+                messages.error(request, f"Failed to send SMS. Detailed response: {response}")
+
+            ser.close()
+
+        except Exception as e:
+            messages.error(request, f"Error sending SMS: {str(e)}")
+            return redirect('app_sms_settings')
+
+        # Redirect back to settings page after successful execution
+        return redirect('app_sms_settings')
+    else:
+        messages.error(request, "Invalid request method.")
+        return redirect('app_sms_settings')
+
+def send_test_email(request):
     if request.method == 'POST':
         recipient_email = request.POST.get('testemail')
-        print(recipient_email,'recipient_email')
-
+        email_time = request.POST.get('testemailtime')
+        
         # Fetch the email settings dynamically
         email_settings = get_email_settings(request)
         if not email_settings:
             return HttpResponse("Email settings are not configured.", status=500)
         
-        subject='Sun Well'
+        subject = 'Sun Well'
         message = 'Welcome to Sun Well'
 
-
         # Set the dynamic email settings
-        from django.conf import settings
         settings.EMAIL_HOST = email_settings['EMAIL_HOST']
         settings.EMAIL_HOST_USER = email_settings['EMAIL_HOST_USER']
         settings.EMAIL_HOST_PASSWORD = email_settings['EMAIL_HOST_PASSWORD']
         settings.EMAIL_PORT = email_settings['EMAIL_PORT']
 
-        print(settings.EMAIL_HOST,'settings.EMAIL_HOST')
+        # Function to send the email
+        def send_email():
+            send_mail(
+                subject=subject,
+                message=message,
+                from_email=email_settings['EMAIL_HOST_USER'],
+                recipient_list=[recipient_email],
+                fail_silently=False,
+            )
 
-        # Send the email
-        send_mail(
-            subject=subject,  # Email subject
-            message=message,  # Email message
-            from_email=email_settings['EMAIL_HOST_USER'],  # Sender's email from dynamic settings
-            recipient_list=[recipient_email],  # Recipient's email
-            fail_silently=False,
-        )
+        # Calculate delay if time is provided
+        if email_time:
+            # Parse the provided time
+            email_datetime = datetime.strptime(email_time, "%H:%M").time()
+            now = datetime.now().time()
+            
+            # Combine the date with the time for full datetime comparison
+            today_date = date.today()
+            email_datetime_full = datetime.combine(today_date, email_datetime)
+            now_full = datetime.combine(today_date, now)
+            
+            # Calculate delay in seconds
+            delay = (email_datetime_full - now_full).total_seconds()
+
+            # If delay is negative, schedule the email for the next day
+            if delay < 0:
+                email_datetime_full += timedelta(days=1)
+                delay = (email_datetime_full - now_full).total_seconds()
+
+            # Schedule email with delay
+            threading.Timer(delay, send_email).start()
+        else:
+            # Send email immediately if no time is provided
+            send_email()
 
         return redirect('app_settings')
-
-        #return HttpResponse("Email sent successfully.")
-
-def email_form(request):
-    # Handle POST request
-    if request.method == 'POST':
-        email_alert = request.POST.get('email_alert')
-        email_time = request.POST.get('email_time')
-
-        email_address_1 = request.POST.get('email_address_1')
-        email_address_2 = request.POST.get('email_address_2')
-        email_address_3 = request.POST.get('email_address_3')
-        email_address_4 = request.POST.get('email_address_4')
-        email_address_5 = request.POST.get('email_address_5')
-        email_address_6 = request.POST.get('email_address_6')
-        email_address_7 = request.POST.get('email_address_7')
-        email_address_8 = request.POST.get('email_address_8')
-        email_address_9 = request.POST.get('email_address_9')
-        email_address_10 = request.POST.get('email_address_10')
-
-
-
-        email_form = EmailForm(
-            email_alert = email_alert,
-            email_time = email_time,
-            alert_email_address_1 = email_address_1,
-            alert_email_address_2 = email_address_2,
-            alert_email_address_3 = email_address_3,
-            alert_email_address_4 = email_address_4,
-            alert_email_address_5 = email_address_5,
-            alert_email_address_6 = email_address_6,
-            alert_email_address_7 = email_address_7,
-            alert_email_address_8 = email_address_8,
-            alert_email_address_9 = email_address_9,
-            alert_email_address_10 = email_address_10,
-
-
-
-        )
-        email_form.save()
-        return redirect('department')
-
-        
     else:
-        pass
-
-def email_settings(request):
-    # Handle POST request
-    if request.method == 'POST':
-        smptemail = request.POST.get('smptemail')
-        smtpPort = request.POST.get('smtpPort')
-        smptuser = request.POST.get('smptuser')
-        smptpass = request.POST.get('smptpass')
-        selected_qc = request.session['selected_qc']
-
-        try:
-            # Get the Department instance using the name stored in session
-            department_name = Department.objects.get(department_name=selected_qc)
-        except Department.DoesNotExist:
-            messages.error(request, 'Selected department does not exist.')
-            return redirect('app_settings')
-
-        # Check if an AppSettings already exists for the selected department
-        if not AppSettings.objects.filter(department=department_name).exists():
-            # Create and save AppSettings instance
-            app_email_settings = AppSettings(
-                department=department_name,  # Use the Department instance here
-                email_host=smptemail,
-                email_port=smtpPort,
-                email_host_user=smptuser,
-                email_host_password=smptpass
-            )
-            app_email_settings.save()
-            return redirect('app_settings')
-        else:
-            messages.error(request, 'App Setting with the selected department already exists.')
-            return redirect('app_settings')
-
-    # If the request is not POST, handle other cases
-    return redirect('app_settings')
-
-from django.http import JsonResponse
-from django.views.decorators.csrf import csrf_exempt
-import json
-
-@csrf_exempt  # Handle CSRF token manually (already done in JS)
-def save_qc_session(request):
-    if request.method == 'POST':
-        try:
-            data = json.loads(request.body)
-            qc_value = data.get('qc_value')
-            
-            request.session['selected_qc'] = qc_value  
-            print(request.session['selected_qc'],'session')
-            return JsonResponse({'success': True})
-        except Exception as e:
-            return JsonResponse({'success': False, 'error': str(e)})
-    return JsonResponse({'success': False})
-
+        return HttpResponse("Invalid request method.", status=405)
+    
 
 def perform_backup():
     backup_setting = BackupSettings.objects.last()
@@ -1302,8 +1582,6 @@ def backup(request):
     except:
         data = SuperAdmin.objects.get(username=emp_user)
     
-    organization = Organization.objects.first()
-    
     try:
         acc_db = user_access_db.objects.get(role = data.role)
     except:
@@ -1316,13 +1594,56 @@ def backup(request):
         backup_time = request.POST.get('backup-time')
 
         # Create or update the backup settings
-        backup_setting, created = BackupSettings.objects.update_or_create(
+        backup_setting= BackupSettings(
             local_path=local_path,
-            defaults={
-                'remote_path': remote_path,
-                'backup_time': backup_time
-            }
+                remote_path = remote_path,
+                backup_time= backup_time
         )
+        backup_setting.save()
+
+        # Log the backup settings update
+        UserActivityLog.objects.create(
+            user=emp_user,
+            log_date=timezone.localtime(timezone.now()).date(),
+            log_time=timezone.localtime(timezone.now()).time(),
+            event_name="Added backup settings"
+        )
+
+        messages.success(request, 'Backup settings saved successfully!')
+        return redirect('backup')
+    
+    backup_setting = BackupSettings.objects.first()
+    context={
+        
+        'data':data,
+        'acc_db':acc_db,
+        'backup_setting': backup_setting
+    }
+      # Get the first or handle appropriately
+    
+    return render(request, 'Management/backup.html', context)
+
+def edit_backup(request, id):
+
+    emp_user = request.session.get('username', None)
+    try:
+        data = User.objects.get(username = emp_user)
+    except:
+        data = SuperAdmin.objects.get(username=emp_user)
+    
+    try:
+        acc_db = user_access_db.objects.get(role = data.role)
+    except:
+        acc_db = None
+
+    backup_setting = BackupSettings.objects.first()
+    if request.method == 'POST':
+        
+        backup_setting.local_path = request.POST.get('backup-local-path')
+        backup_setting.remote_path = request.POST.get('backup-remote-path')
+        backup_setting.backup_time = request.POST.get('backup-time')
+
+        backup_setting.save()
 
         # Log the backup settings update
         UserActivityLog.objects.create(
@@ -1332,18 +1653,16 @@ def backup(request):
             event_name="Updated backup settings"
         )
 
-        messages.success(request, 'Backup settings saved successfully!')
+        messages.success(request, 'Updated Backup settings successfully!')
         return redirect('backup')
+    
+    context={
+        'backup_setting':backup_setting, 'data':data, 'acc_db':acc_db
+    }
 
     # Fetch the existing backup settings (if any)
-    backup_setting = BackupSettings.objects.first()  # Get the first or handle appropriately
-    context = {
-        'local_path': backup_setting.local_path if backup_setting else '',
-        'remote_path': backup_setting.remote_path if backup_setting else '',
-        'backup_time': backup_setting.backup_time if backup_setting else '00:00',
-        'organization': organization, 'data':data, 'acc_db':acc_db
-    }
-    return render(request, 'Management/backup.html', context)
+      # Get the first or handle appropriately
+    return render(request, 'Management/edit_backup.html', context)
 
 
 def schedule_daily_backup():
@@ -1401,16 +1720,19 @@ def equipment_configure_view(request):
         equip_name = request.POST.get('equipname')
         status = request.POST.get('equipStatus')
         ip_address = request.POST.get('ipaddress')
+        department_id = request.POST.get('selected_department')
         interval = request.POST.get('interval')
         equipment_type = request.POST.get('equiptype')
         door_access_type = request.POST.get('dooracctype')
 
+        print("Acess Dept", department_id)
         # Save equipment details
         equipment = Equipment(
             equip_name=equip_name,
             status=status,
             ip_address=ip_address,
             interval=interval,
+            department_id=department_id,
             equipment_type=equipment_type,
             door_access_type=door_access_type
         )
@@ -1459,6 +1781,7 @@ def equipment_configure_view(request):
         'data': data
     })
 
+
 def equipment_setting(request):
 
     emp_user = request.session.get('username', None)
@@ -1477,11 +1800,7 @@ def equipment_setting(request):
 
 
 # DATA Analysis
-from django.utils.timezone import now
-from datetime import datetime, time as datetime_time
-from reportlab.platypus import SimpleDocTemplate, Table, TableStyle, Spacer, Paragraph, PageBreak
-from reportlab.lib.styles import ParagraphStyle
-from reportlab.lib import colors
+
 
 def view_log(request):
     emp_user = request.session.get('username', None)
@@ -1502,8 +1821,8 @@ def view_log(request):
     selected_equipment = request.GET.get('equipment')
     from_date = request.GET.get('from-date')
     to_date = request.GET.get('to-date')
-    from_time = request.GET.get('from-time', '00:00')
-    to_time = request.GET.get('to-time', '23:59')
+    from_time = request.GET.get('from-time') or '00:00'  # Default to '00:00' if empty
+    to_time = request.GET.get('to-time') or '23:59'      # Default to '23:59' if empty
 
     filter_kwargs = Q()
 
@@ -1522,31 +1841,26 @@ def view_log(request):
     from_date_parsed = datetime.strptime(from_date, '%Y-%m-%d').date()
     to_date_parsed = datetime.strptime(to_date, '%Y-%m-%d').date()
 
-    from_time_parsed = datetime.strptime(from_time, '%H:%M').time() if from_time else datetime.min.time()
-    to_time_parsed = datetime.strptime(to_time, '%H:%M').time() if to_time else datetime.max.time()
+    from_time_parsed = datetime.strptime(from_time, '%H:%M').time()
+    to_time_parsed = datetime.strptime(to_time, '%H:%M').time()
 
-    from_date_str = from_date_parsed.strftime('%d-%m-%Y')
-    to_date_str = to_date_parsed.strftime('%d-%m-%Y')
-    from_time_str = from_time_parsed.strftime('%H:%M')
-    to_time_str = to_time_parsed.strftime('%H:%M')
-
-    # Adjust filter for overnight time range
-    if from_time_parsed > to_time_parsed:
-        # Overnight range 
+    if from_date_parsed == to_date_parsed:
         filter_kwargs &= (
-            Q(date=from_date_parsed, time__gte=from_time_parsed) |
-            Q(date=to_date_parsed, time__lte=to_time_parsed) |
-            Q(date__gt=from_date_parsed, date__lt=to_date_parsed)
+            Q(date=from_date_parsed) &
+            Q(time__gte=from_time_parsed) &
+            Q(time__lte=to_time_parsed)
         )
     else:
-        # Normal same-day range
-        filter_kwargs &= Q(date__range=(from_date_parsed, to_date_parsed)) & \
-                         Q(time__gte=from_time_parsed) & Q(time__lte=to_time_parsed)
+        filter_kwargs &= (
+            (Q(date=from_date_parsed) & Q(time__gte=from_time_parsed)) |  # from_time on from_date
+            (Q(date=to_date_parsed) & Q(time__lte=to_time_parsed)) |      # to_time on to_date
+            Q(date__gt=from_date_parsed, date__lt=to_date_parsed)         # all dates in between
+        )
 
     # Fetch the filtered temperature and humidity records
-    data_logs = TemperatureHumidityRecord.objects.filter(filter_kwargs)
+    data_logs = TemperatureHumidityRecord.objects.filter(filter_kwargs).order_by('date', 'time')
     eqp_list = Equipment.objects.filter(status='Active')
-
+    
     # Handle PDF generation if requested
     if 'generate_pdf' in request.GET:
         # Determine the number of temperature and humidity columns
@@ -1563,10 +1877,10 @@ def view_log(request):
             return generate_log_pdf_landscape(
                 request,
                 data_logs,
-                from_date_str,
-                to_date_str,
-                from_time_str,
-                to_time_str,
+                from_date_parsed.strftime('%d-%m-%Y'),
+                to_date_parsed.strftime('%d-%m-%Y'),
+                from_time_parsed.strftime('%H:%M'),
+                to_time_parsed.strftime('%H:%M'),
                 organization,
                 data.department,
                 data.username,
@@ -1577,10 +1891,10 @@ def view_log(request):
             return generate_log_pdf(
                 request,
                 data_logs,
-                from_date_str,
-                to_date_str,
-                from_time_str,
-                to_time_str,
+                from_date_parsed.strftime('%d-%m-%Y'),
+                to_date_parsed.strftime('%d-%m-%Y'),
+                from_time_parsed.strftime('%H:%M'),
+                to_time_parsed.strftime('%H:%M'),
                 organization,
                 data.department,
                 data.username,
@@ -1596,6 +1910,7 @@ def view_log(request):
         'equipment_list': equipment_list,
         'eqp_list': eqp_list,
     })
+
 
 def generate_log_pdf(request, records, from_date, to_date, from_time, to_time, organization, department, username, selected_equipment):
     response = HttpResponse(content_type='application/pdf')
@@ -1617,9 +1932,7 @@ def generate_log_pdf(request, records, from_date, to_date, from_time, to_time, o
         records_from_time = from_time if from_time else "00:00"
         records_to_date = to_date
         records_to_time = to_time if to_time else "23:59"
-
-    # c = canvas.Canvas(response, pagesize=A4)
-
+        
     def create_page(canvas, doc):
 
         page_num = canvas.getPageNumber()
@@ -1682,9 +1995,6 @@ def generate_log_pdf(request, records, from_date, to_date, from_time, to_time, o
         
     def add_alarm_tables():
 
-        # Position the alarm table after the "Records From" section
-        # table_y = 650  # Adjust Y position
-
         equipment = TemperatureHumidityRecord.objects.filter(equip_name__equip_name=selected_equipment).first()
         # Data for Temperature and Humidity Alarms
         alarm_data = [['Parameter', 'Low Alarm', 'Low Alert', 'High Alarm', 'High Alert']]
@@ -1728,16 +2038,10 @@ def generate_log_pdf(request, records, from_date, to_date, from_time, to_time, o
         alarm_table = Table(alarm_data, colWidths=col_widths)
         alarm_table.setStyle(alarm_table_style)
 
-        # Draw the table on the canvas
-        # alarm_table.wrapOn(c, 50, table_y)
-        # alarm_table.drawOn(c, 70, table_y - (len(alarm_data) * 20))  # Adjust position
+
         return alarm_table
 
     def add_temperature_table():
-
-        # Position the temperature table
-        # temp_table_y = 580  # Adjust Y position for the temperature table
-    
         # Initialize lists for temperature and humidity data
         temperature_channels = ['tmp_1', 'tmp_2', 'tmp_3', 'tmp_4', 'tmp_5', 'tmp_6', 'tmp_7', 'tmp_8', 'tmp_9', 'tmp_10']
         humidity_channels = ['rh_1', 'rh_2', 'rh_3', 'rh_4', 'rh_5', 'rh_6', 'rh_7', 'rh_8', 'rh_9', 'rh_10']
@@ -1781,24 +2085,11 @@ def generate_log_pdf(request, records, from_date, to_date, from_time, to_time, o
         # Create the temperature table
         temp_table = Table(temp_data, colWidths=col_widths)
         temp_table.setStyle(table_style)
-
-        # Draw the temperature table on the canvas
-        # temp_table.wrapOn(c, 50, temp_table_y)
-        # temp_table.drawOn(c, 70, temp_table_y - (len(temp_data) * 20))  # Adjust position
-        
-        # Only display the humidity table if it contains data
         humidity_table = None
         if len(humidity_data) > 1:
             # Create the humidity table
             humidity_table = Table(humidity_data, colWidths=col_widths)
             humidity_table.setStyle(table_style)
-
-            # Position the humidity table below the temperature table
-            # humidity_table_y = temp_table_y - (len(temp_data) * 20) - 150  # Adjust the space between tables
-
-            # # Draw the humidity table on the canvas
-            # humidity_table.wrapOn(c, 50, humidity_table_y)
-            # humidity_table.drawOn(c, 70, humidity_table_y)
 
         return [temp_table, Spacer(1, 0.2 * inch), humidity_table] if humidity_table else [temp_table]
     
@@ -1811,32 +2102,10 @@ def generate_log_pdf(request, records, from_date, to_date, from_time, to_time, o
         normal_style = ParagraphStyle('Normal', fontName='Helvetica', fontSize=10)
         bold_style = ParagraphStyle('Bold', fontName='Helvetica-Bold', fontSize=10)
 
-        # Fetch the equipment records based on the selected equipment
-        from_date_parsed = datetime.strptime(from_date, '%d-%m-%Y').date()
-        to_date_parsed = datetime.strptime(to_date, '%d-%m-%Y').date()
-
-        from_time_parsed = datetime.strptime(from_time, '%H:%M').time() if from_time else datetime_time(0, 0)
-        to_time_parsed = datetime.strptime(to_time, '%H:%M').time() if to_time else datetime_time(23, 59)
-
-        if from_time_parsed > to_time_parsed:
-            equipment_records = TemperatureHumidityRecord.objects.filter(
-                Q(equip_name__equip_name=selected_equipment),
-                Q(date=from_date_parsed, time__gte=from_time_parsed) |
-                Q(date=to_date_parsed, time__lte=to_time_parsed) |
-                Q(date__gt=from_date_parsed, date__lt=to_date_parsed)
-            ).order_by('date', 'time')
-        else:
-            equipment_records = TemperatureHumidityRecord.objects.filter(
-                equip_name__equip_name=selected_equipment,
-                date__range=(from_date_parsed, to_date_parsed),
-                time__gte=from_time_parsed,
-                time__lte=to_time_parsed
-            ).order_by('date', 'time')
-
         temperature_channels = ['tmp_1', 'tmp_2', 'tmp_3', 'tmp_4', 'tmp_5', 'tmp_6', 'tmp_7', 'tmp_8', 'tmp_9', 'tmp_10']
         humidity_channels = ['rh_1', 'rh_2', 'rh_3', 'rh_4', 'rh_5', 'rh_6', 'rh_7', 'rh_8', 'rh_9', 'rh_10']
 
-        active_humidity_channels = [channel for channel in humidity_channels if any(getattr(record, channel) is not None for record in equipment_records)]
+        active_humidity_channels = [channel for channel in humidity_channels if any(getattr(record, channel) is not None for record in records)]
         active_humidity_channels = active_humidity_channels[:5] if active_humidity_channels else []
         active_temperature_channels = temperature_channels[:5] if active_humidity_channels else temperature_channels[:10]
 
@@ -1869,7 +2138,7 @@ def generate_log_pdf(request, records, from_date, to_date, from_time, to_time, o
             t_low_alarm = t_high_alarm = rh_low_alarm = rh_high_alarm = None
             t_low_alert = t_high_alert = rh_low_alert = rh_high_alert = None
 
-        for idx, record in enumerate(equipment_records, start=1):
+        for idx, record in enumerate(records, start=1):
             temp_values = []
             for channel in active_temperature_channels:
                 value = getattr(record, channel, None)
@@ -1919,61 +2188,26 @@ def generate_log_pdf(request, records, from_date, to_date, from_time, to_time, o
             ('FONTNAME', (0, 0), (-1, 1), 'Helvetica-Bold'),
             ('FONTSIZE', (0, 0), (-1, 1), 10),
             ('BOTTOMPADDING', (0, 0), (-1, 1), 12),
+            ('TOPPADDING', (0, 0), (-1, 0), 12),
         ])
 
         if active_humidity_channels:
             main_table_style.add('SPAN', (4 + len(temperature_header) + 1, 0), (3 + len(temperature_header) + len(humidity_header) + 1, 0))
-        # colWidths = [40, 70, 44, 42] + [32] * len(temperature_header) + ([32] + [32] * len(humidity_header) if active_humidity_channels else [])
-        # page_table = Table(data, colWidths=colWidths)
-        # page_table.setStyle(TableStyle(table_style))
-
-        # table_row_height = 20
-        # max_rows_second_pages = 22
-        # max_rows_other_pages = 28
-        # top_margin_page2 = 550
-        # top_margin_other_pages = 655
-        # current_row = 2
-
-        # while current_row < len(data):
-        #     if page_num == 2:
-        #         top_margin = top_margin_page2
-        #         max_rows_per_page = max_rows_second_pages
-        #     else:
-        #         top_margin = top_margin_other_pages
-        #         max_rows_per_page = max_rows_other_pages
-
-        #     page_data = data[current_row:current_row + max_rows_per_page]
-        #     page_table = Table([data[0], data[1]] + page_data, colWidths=colWidths)
-        #     page_table.setStyle(TableStyle(table_style))
-
-        #     table_position_y = top_margin - (table_row_height * (min(len(page_data), max_rows_per_page)))
-        #     page_table.wrapOn(c, 50, top_margin)
-        #     page_table.drawOn(c, 25, table_position_y)
-
-        #     current_row += max_rows_per_page
-
-        #     if current_row < len(data):
-        #         c.showPage()
-        #         page_num += 1
-        #         create_page(c, page_num)
-        #         if page_num == 2:
-        #             add_temperature_table(c)
 
         # return current_row
         colWidths = [40, 70, 44, 42] + [32] * len(temperature_header) + ([32] + [32] * len(humidity_header) if active_humidity_channels else [])
-        main_table = Table(data, colWidths=colWidths, repeatRows=1)
+        main_table = Table(data, colWidths=colWidths, repeatRows=2)
         main_table.setStyle(main_table_style)
 
         return main_table
 
 
     content = [
-        Spacer(1, 0.5 * inch),
+        Spacer(1, 0.2 * inch),
         add_alarm_tables(),
-        Spacer(1, 0.5 * inch),
+        Spacer(1, 0.2 * inch),
         *add_temperature_table(),
         PageBreak(),
-        Spacer(1, 0.2 * inch),  # Start the main table on a new page
         add_main_table(),
     ]
 
@@ -1984,6 +2218,9 @@ def generate_log_pdf(request, records, from_date, to_date, from_time, to_time, o
 def generate_log_pdf_landscape(request, records, from_date, to_date, from_time, to_time, organization, department, username, selected_equipment):
     response = HttpResponse(content_type='application/pdf')
     response['Content-Disposition'] = 'inline; filename="equipment_log_report.pdf"'
+    
+    doc = SimpleDocTemplate(response, pagesize=landscape(A4), rightMargin=30, leftMargin=30, topMargin=160, bottomMargin=60)
+    styles = getSampleStyleSheet()
     
     # Determine "Records From" and "Records To"
     if records.exists():
@@ -1999,47 +2236,52 @@ def generate_log_pdf_landscape(request, records, from_date, to_date, from_time, 
         records_to_date = to_date
         records_to_time = to_time if to_time else "23:59"
 
-    c = canvas.Canvas(response, pagesize=landscape(A4))
+    # c = canvas.Canvas(response, pagesize=landscape(A4))
 
-    def create_page(c, page_num):
+    def create_page(canvas, doc):
+
+        page_num = canvas.getPageNumber()
+        total_pages = doc.page
+        current_time = localtime().strftime('%d-%m-%Y %H:%M')
+
         # Set the title and logo
-        c.setFont("Helvetica-Bold", 14)
-        c.setFillColor(colors.blue)
-        c.drawString(350, 570, organization.name)
+        canvas.setFont("Helvetica-Bold", 14)
+        canvas.setFillColor(colors.blue)
+        canvas.drawString(350, 570, organization.name)
 
-        c.setFillColor(colors.black)
-        c.setFont("Helvetica", 12)
-        c.drawString(370, 550, department.header_note)
+        canvas.setFillColor(colors.black)
+        canvas.setFont("Helvetica", 12)
+        canvas.drawString(370, 550, department.header_note)
         
         logo_path = organization.logo.path
-        c.drawImage(logo_path, 730, 550, width=80, height=30)
+        canvas.drawImage(logo_path, 730, 550, width=80, height=30)
 
         # Draw the separator line under the header
-        c.setLineWidth(0.5)
-        c.line(13, 540, 830, 540)
+        canvas.setLineWidth(0.5)
+        canvas.line(13, 540, 830, 540)
         
         # Add the filters and records info
-        c.setFont("Helvetica-Bold", 12)
-        c.drawString(370, 520, "Data Log Report")
+        canvas.setFont("Helvetica-Bold", 12)
+        canvas.drawString(370, 520, "Data Log Report")
 
-        c.setFont("Helvetica-Bold", 10)
+        canvas.setFont("Helvetica-Bold", 10)
         equipment_display = f"Equipment Name: {selected_equipment}" if selected_equipment else "Equipment Name: Unknown"
-        c.drawString(30, 500, equipment_display)
+        canvas.drawString(30, 500, equipment_display)
         
-        c.setFont("Helvetica-Bold", 10)
-        c.drawString(30, 480, f"Filter From: {from_date} {from_time}")
-        c.drawString(600, 480, f"Filter To: {to_date} {to_time}")
+        canvas.setFont("Helvetica-Bold", 10)
+        canvas.drawString(30, 480, f"Filter From: {from_date} {from_time}")
+        canvas.drawString(600, 480, f"Filter To: {to_date} {to_time}")
 
-        c.drawString(30, 460, f"Records From: {records_from_date} {records_from_time}")
-        c.drawString(600, 460, f"Records To: {records_to_date} {records_to_time}")
+        canvas.drawString(30, 460, f"Records From: {records_from_date} {records_from_time}")
+        canvas.drawString(600, 460, f"Records To: {records_to_date} {records_to_time}")
         
         # Draw separator line above the new table
-        c.setLineWidth(0.5)
-        c.line(13, 440, 830, 440)  # Line above the new table
+        canvas.setLineWidth(0.5)
+        canvas.line(13, 440, 830, 440)  # Line above the new table
 
         # Add a line above the footer
-        c.setLineWidth(1)
-        c.line(13, 60, 830, 60)  # Line just above the footer
+        canvas.setLineWidth(1)
+        canvas.line(13, 60, 830, 60)  # Line just above the footer
 
         # Add footer with page number
         footer_text_left_top = "Sunwell"
@@ -2049,14 +2291,14 @@ def generate_log_pdf_landscape(request, records, from_date, to_date, from_time, 
         footer_text_right = f"Page {page_num}"
         
         # Draw footer at the bottom of the page
-        c.setFont("Helvetica", 10)
-        c.drawString(30, 45, footer_text_left_top)  # Draw "Sunwell"
-        c.drawString(30, 35, footer_text_left_bottom)  # Draw "ESTDAS v1.0" below "Sunwell"
-        c.drawCentredString(420, 40, footer_text_center)  # Centered
-        c.drawRightString(800, 45, footer_text_right_top)
-        c.drawRightString(800, 35, footer_text_right)  # Right side (page number)
+        canvas.setFont("Helvetica", 10)
+        canvas.drawString(30, 45, footer_text_left_top)  # Draw "Sunwell"
+        canvas.drawString(30, 35, footer_text_left_bottom)  # Draw "ESTDAS v1.0" below "Sunwell"
+        canvas.drawCentredString(420, 40, footer_text_center)  # Centered
+        canvas.drawRightString(800, 45, footer_text_right_top)
+        canvas.drawRightString(800, 35, footer_text_right)  # Right side (page number)
 
-    def add_alarm_tables(c):
+    def add_alarm_tables():
         equipment = TemperatureHumidityRecord.objects.filter(equip_name__equip_name=selected_equipment).first()
         # Data for Temperature and Humidity Alarms
         alarm_data = [['Parameter', 'Low Alarm', 'Low Alert', 'High Alarm', 'High Alert']]
@@ -2099,14 +2341,10 @@ def generate_log_pdf_landscape(request, records, from_date, to_date, from_time, 
         alarm_table = Table(alarm_data, colWidths=col_widths)
         alarm_table.setStyle(alarm_table_style)
 
-        # Position the alarm table after the "Records From" section
-        table_y = 420  # Adjust Y position
+        return alarm_table
 
-        # Draw the table on the canvas
-        alarm_table.wrapOn(c, 50, table_y)
-        alarm_table.drawOn(c, 60, table_y - (len(alarm_data) * 20))  # Adjust position
 
-    def add_temperature_table(c):
+    def add_temperature_table():
         
         
         # Initialize lists for temperature and humidity data
@@ -2147,7 +2385,7 @@ def generate_log_pdf_landscape(request, records, from_date, to_date, from_time, 
         ])
 
         # Define column widths
-        col_widths = [100, 80, 80]  # Adjust column widths as needed
+        col_widths = [100, 80, 80, 80]  # Adjust column widths as needed
 
         # Create the temperature table
         temp_table = Table(temp_data, colWidths=col_widths)
@@ -2156,52 +2394,18 @@ def generate_log_pdf_landscape(request, records, from_date, to_date, from_time, 
         # Create Humidity table
         humidity_table = Table(humidity_data, colWidths=col_widths)
         humidity_table.setStyle(temp_table_style)
+        combined_table = Table(
+        [[temp_table, Spacer(1, 0.2 * inch), humidity_table]],  # Spacer to add space between the tables
+        colWidths=[290, 100, 350]  # Adjust widths to align both tables with the full width
+        )
 
-        # Position the temperature table below the alarm table
-        temp_table_y = 580  # Adjust Y position for the temperature table
-        humidity_table_y = temp_table_y - (len(temp_data) * 20) - 240  # Adjust the space between tables
+        return combined_table
 
-
-        # Define the position for the tables
-        temp_table_x = 60  # X position for the temperature table
-        humidity_table_x = 450  # X position for the humidity table (adjust as needed
-        temp_table_y = 340  # Adjust Y position for the temperature table
-
-        # Draw the table on the canvas
-        temp_table.wrapOn(c, 50, temp_table_y)
-        temp_table.drawOn(c, temp_table_x, temp_table_y - (len(temp_data) * 20))  # Adjust position
-
-        # Draw Humidity table on the canvas
-        humidity_table.wrapOn(c, 50, humidity_table_x)
-        humidity_table.drawOn(c, humidity_table_x, temp_table_y - (len(humidity_data) * 20))  # Adjust position
-
-
-    def add_main_table(c, page_num, start_row):
+    def add_main_table():
         # Define styles for normal and bold text
         normal_style = ParagraphStyle('Normal', fontName='Helvetica', fontSize=10)
         bold_style = ParagraphStyle('Bold', fontName='Helvetica-Bold', fontSize=10)
 
-        # Fetch the equipment records based on the selected equipment
-        from_date_parsed = datetime.strptime(from_date, '%d-%m-%Y').date()
-        to_date_parsed = datetime.strptime(to_date, '%d-%m-%Y').date()
-
-        from_time_parsed = datetime.strptime(from_time, '%H:%M').time() if from_time else datetime_time(0, 0)
-        to_time_parsed = datetime.strptime(to_time, '%H:%M').time() if to_time else datetime_time(23, 59)
-
-        if from_time_parsed > to_time_parsed:
-            equipment_records = TemperatureHumidityRecord.objects.filter(
-                Q(equip_name__equip_name=selected_equipment),
-                Q(date=from_date_parsed, time__gte=from_time_parsed) |
-                Q(date=to_date_parsed, time__lte=to_time_parsed) |
-                Q(date__gt=from_date_parsed, date__lt=to_date_parsed)
-            ).order_by('date', 'time')
-        else:
-            equipment_records = TemperatureHumidityRecord.objects.filter(
-                equip_name__equip_name=selected_equipment,
-                date__range=(from_date_parsed, to_date_parsed),
-                time__gte=from_time_parsed,
-                time__lte=to_time_parsed
-            ).order_by('date', 'time')
 
         temperature_channels = ['tmp_1', 'tmp_2', 'tmp_3', 'tmp_4', 'tmp_5', 'tmp_6', 'tmp_7', 'tmp_8', 'tmp_9', 'tmp_10']
         humidity_channels = ['rh_1', 'rh_2', 'rh_3', 'rh_4', 'rh_5', 'rh_6', 'rh_7', 'rh_8', 'rh_9', 'rh_10']
@@ -2220,8 +2424,7 @@ def generate_log_pdf_landscape(request, records, from_date, to_date, from_time, 
             t_low_alarm = t_high_alarm = rh_low_alarm = rh_high_alarm = None
             t_low_alert = t_high_alert = rh_low_alert = rh_high_alert = None
 
-        print("thresholds:", t_low_alarm, t_low_alert, t_high_alert, t_high_alarm, rh_low_alarm, rh_low_alert, rh_high_alert, rh_high_alarm)
-
+        
         # Prepare the main table headers
         data = [
             [' ', 'Date', 'Time', 'Set', '<---------Temperature(°C)--------->', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', 'Set', '<---------Humidity(%RH)--------->', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '],
@@ -2229,7 +2432,7 @@ def generate_log_pdf_landscape(request, records, from_date, to_date, from_time, 
         ]
 
         # Populate the table with filtered records
-        for idx, record in enumerate(equipment_records, start=1):
+        for idx, record in enumerate(records, start=1):
             temp_values = []
             for channel in temperature_channels:
                 value = getattr(record, channel, None)
@@ -2272,7 +2475,7 @@ def generate_log_pdf_landscape(request, records, from_date, to_date, from_time, 
 
             data.append(row)
 
-        table_style = [
+        main_table_style = TableStyle([
             ('SPAN', (4, 0), (13, 0)),
             ('SPAN', (15, 0), (24, 0)),
             ('BACKGROUND', (0, 1), (-1, 1), colors.lightgrey),
@@ -2281,75 +2484,26 @@ def generate_log_pdf_landscape(request, records, from_date, to_date, from_time, 
             ('FONTNAME', (0, 0), (-1, 1), 'Helvetica-Bold'),
             ('FONTSIZE', (0, 0), (-1, 1), 8),
             ('BOTTOMPADDING', (0, 0), (-1, 1), 12),
-        ]
+            ('TOPPADDING', (0, 0), (-1, 0), 12),
+        ])
 
         colWidths = [29, 55, 36, 32] + [32] * 10 + [32] + [32] * 10
+        main_table = Table(data, colWidths=colWidths, repeatRows=2)
+        main_table.setStyle(main_table_style)
 
-        # Calculate table row height and dynamically position the table
-        table_row_height = 20
-        max_rows_second_pages = 10
-        max_rows_other_pages = 15
-        top_margin_page2 = 300
-        top_margin_other_pages = 400
-        current_row = 2
+        return main_table
 
-        # Move the main table to the second page
-        while current_row < len(data):
-            if page_num == 2:
-                top_margin = top_margin_page2
-                max_rows_per_page = max_rows_second_pages
-            else:
-                top_margin = top_margin_other_pages
-                max_rows_per_page = max_rows_other_pages
+    content = [
+        Spacer(1, 0.2 * inch),
+        add_alarm_tables(),
+        Spacer(1, 0.2 * inch),
+        add_temperature_table(),
+        PageBreak(),
+        add_main_table(),
+    ]
 
-            # Prepare the data slice for the current page
-            page_data = data[current_row:current_row + max_rows_per_page]
-            page_table = Table([data[0], data[1]] + page_data, colWidths=colWidths)
-
-            # Apply the defined table style
-            page_table.setStyle(TableStyle(table_style))
-
-            # Adjust table position only by row height
-            table_position_y = top_margin - (table_row_height * (min(len(page_data), max_rows_per_page)))
-            page_table.wrapOn(c, 50, top_margin)
-            page_table.drawOn(c, 11, table_position_y)
-
-            # Move to the next set of rows
-            current_row += max_rows_per_page
-
-            # If more rows are left, create a new page
-            if current_row < len(data):
-                c.showPage()
-                page_num += 1
-                create_page(c, page_num)
-                if page_num == 2:
-                    add_temperature_table(c)
-
-        return current_row
-
-
-
-
-
-    # Create the first page and add tables
-    page_num = 1
-    create_page(c, page_num)
-    add_alarm_tables(c)
-    add_temperature_table(c)
-
-    c.showPage()
-    page_num += 1
-    create_page(c, page_num)
-    add_alarm_tables(c)
-
-    # Now add the main table from the second page
-    current_row = 2  # Start row of the main table data (after headers)
-    current_row = add_main_table(c, page_num, current_row)
-
-    # Save the canvas to the response
-    c.save()
-
-    return response    
+    doc.build(content, onFirstPage=create_page, onLaterPages=create_page)
+    return response   
 
 
 def alaram_log(request):
@@ -2368,8 +2522,6 @@ def alaram_log(request):
 
     return render(request, 'Data_Analysis/alaram_log.html', {'organization': organization, 'data':data, 'acc_db':acc_db})
 
-
-
 # Live data
 def livedata_summary(request):
 
@@ -2386,8 +2538,6 @@ def livedata_summary(request):
         acc_db = None
 
     return render(request, 'Live Data/realtime_summary.html', {'organization': organization, 'data':data, 'acc_db':acc_db})
-
-
 
 
 def user_activity(request):
@@ -2488,7 +2638,6 @@ def user_activity(request):
     }
 
     return render(request, 'auditlog/user_audit_log.html', context)
-
 
 
 def generate_userActivity_pdf(request, user_logs, from_date, to_date, from_time, to_time, organization, department, username, filter_format):
@@ -2615,7 +2764,6 @@ def generate_userActivity_pdf(request, user_logs, from_date, to_date, from_time,
     )
 
     return response
-
 
 
 def equipment_Audit_log(request):

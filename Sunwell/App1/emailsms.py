@@ -3,13 +3,9 @@ from App1.models import AppSettings, Department
 def get_email_settings(request):
     try:
         # Get the selected QC name from the session
-        selected_qc = request.session.get('selected_qc')
-
-        # First, get the Department instance that corresponds to the selected QC
-        department = Department.objects.get(department_name=selected_qc)
-
+       
         # Now, filter AppSettings using the Department instance and get the first match
-        app_settings = AppSettings.objects.filter(department=department).first()
+        app_settings = AppSettings.objects.first()
 
         if app_settings:
             return {

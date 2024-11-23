@@ -10,22 +10,22 @@
 
 {% block content %} 
 <div class="container mt-2 table-container fade-in">
-    <div class="d-flex justify-content-end mb-2">
-        <div class="ms-auto">
-            <div class="dropdown dept-filter">
-                <button class="btn btn-outline-secondary dropdown-toggle" type="button" id="deptFilterDropdown" data-bs-toggle="dropdown" aria-expanded="false">
-                    Select Departments
-                </button>
-                <ul class="dropdown-menu" aria-labelledby="deptFilterDropdown">
-                    <li><a class="dropdown-item" href="#" data-value="all">All Departments <span class="option-count">3</span></a></li>
-                    <li><a class="dropdown-item" href="#" data-value="qc">QC <span class="option-count">1</span></a></li>
-                    <li><a class="dropdown-item" href="#" data-value="it">IT <span class="option-count">1</span></a></li>
-                    <li><a class="dropdown-item" href="#" data-value="hr">HR <span class="option-count">1</span></a></li>
-                </ul>
-            </div>
-        </div>  
-    </div>
-    <div class="d-flex justify-content-between align-items-center custom-label mb-2" style="font-weight: bold; padding: 5px 10px; background-color: rgb(235, 235, 235);">
+    {% comment %} <div class="d-flex justify-content-end mb-2">
+      <div class="ms-auto">
+          <div class="dropdown dept-filter">
+              <button class="btn btn-outline-secondary dropdown-toggle" type="button" id="deptFilterDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                  Select Departments
+              </button>
+              <ul class="dropdown-menu" aria-labelledby="deptFilterDropdown">
+                  <li><a class="dropdown-item" href="#" data-value="all">All Departments <span class="option-count">3</span></a></li>
+                  <li><a class="dropdown-item" href="#" data-value="qc">QC <span class="option-count">1</span></a></li>
+                  <li><a class="dropdown-item" href="#" data-value="it">IT <span class="option-count">1</span></a></li>
+                  <li><a class="dropdown-item" href="#" data-value="hr">HR <span class="option-count">1</span></a></li>
+              </ul>
+          </div>
+      </div>  
+    </div> {% endcomment %}
+    <div class="d-flex justify-content-between align-items-center custom-label mt-5 mb-2" style="font-weight: bold; padding: 5px 10px; background-color: rgb(235, 235, 235);">
         <section class="d-block custom-label mb-2" style="background-color: rgb(235, 235, 235);text-align: center;font-weight: bold; padding: 5px 0px">
              Users <span id="records-info">(Records Found: 0, Selected: 0)</span>
         </section>
@@ -51,7 +51,8 @@
                   <th scope="col">User Name</th>
                   <th scope="col">Comm. Group</th>
                   <th scope="col">Department Name</th>
-                  <th scope="col">Access Group</th>
+                  <th scope="col">Role</th>
+                  <th scope="col">Status</th>
                   {% if data.role == 'Super Admin' or acc_db.user_e %}
                   <th scope="col">Actions</th>
                   {% endif %}
@@ -59,24 +60,25 @@
           </thead>
           <tbody id="form-data-table">
             {% for user in users %}
-            <tr>
+            <tr data-department-id="{{ user.department.id }}">
                 <td><input type="checkbox" class="row-checkbox" name="user_checkbox"></td>
                 <td>{{ user.username }}</td>
                 <td>{{ user.commGroup }}</td>
                 <td>{{ user.department }}</td>
                 <td>{{ user.role }}</td>
+                <td>{{ user.status }}</td>
                 {% if data.role == 'Super Admin' or acc_db.user_e %}
                 <td>
                     <div class="dropdown">
-                      <a class="dropdown-item btn-edit"  data-bs-toggle="edit_modal" data-bs-target="#editUserModal-{{ user.id }}">
-                        <i class="fas fa-edit"></i>
-                    </a>
+                        <a class="dropdown-item btn-edit" data-bs-toggle="edit_modal" data-bs-target="#editUserModal-{{ user.id }}">
+                            <i class="fas fa-edit"></i>
+                        </a>
                     </div>
                 </td>
                 {% endif %}
             </tr>
             {% endfor %}
-          </tbody>
+        </tbody>
       </table>
     </div>
       <div class="d-flex justify-content-between mb-2">
@@ -189,13 +191,11 @@
               </div>
             </div>
             <div class="col-md-6 form-group">
-              <select class="form-select" id="accessibleDepartment" name="accessibleDepartment" multiple required>
+              <select class="form-select" name="accessibleDepartment" multiple required>
                 {% for department in departments %}
-                    {% if department.commGroup %}
                         <option value="{{ department.id }}" data-commgroup="{{ department.commGroup.CommGroup_code }}">
                             {{ department.department_name }}
                         </option>
-                    {% endif %}
                 {% endfor %}
               </select>
               <label for="accessibleDepartment" class="form-label">Accessible Department</label>
@@ -322,73 +322,113 @@
 
 
 <script>
-  document.querySelectorAll('.btn-edit').forEach(button => {
-  button.addEventListener('click', function() {
-      const modalId = this.getAttribute('data-bs-target');
-      const modal = document.querySelector(modalId);
-      const modalInstance = new bootstrap.Modal(modal);
-      modalInstance.show();
+    document.querySelectorAll('.btn-edit').forEach(button => {
+    button.addEventListener('click', function() {
+        const modalId = this.getAttribute('data-bs-target');
+        const modal = document.querySelector(modalId);
+        const modalInstance = new bootstrap.Modal(modal);
+        modalInstance.show();
+    });
   });
-});
-</script>
 
-<script>
+  ///// Form filters ////////////////////////////////////
+
+    document.addEventListener("DOMContentLoaded", function() {
+      // Function to filter the "Select Department" dropdown based on selected CommGroup
+      function filterDepartments(commGroupSelect, departmentSelect) {
+          const commGroupValue = commGroupSelect.value;
+          const departmentOptions = departmentSelect.querySelectorAll('option');
+
+          departmentOptions.forEach(option => {
+              if (option.value === "") {
+                  // Always show the default 'Select Department' option
+                  option.style.display = "block";
+              } else if (option.dataset.commgroup === commGroupValue || commGroupValue === "") {
+                  // Show options that match the selected CommGroup
+                  option.style.display = "block";
+              } else {
+                  // Hide options that don't match the selected CommGroup
+                  option.style.display = "none";
+              }
+          });
+
+          // Enable/disable the department select based on CommGroup selection
+          departmentSelect.disabled = !commGroupValue;
+          departmentSelect.value = ""; // Reset the department selection to the default
+      }
+
+      // Loop through each edit modal to attach event listeners
+      document.querySelectorAll('[id^="editUserModal-"]').forEach(modal => {
+          const commGroupSelect = modal.querySelector('.form-select[id^="editCommGroup"]');
+          const departmentSelect = modal.querySelector('.form-select[id^="editdepartmentName"]');
+
+          // Attach the event listener to the CommGroup dropdown for each modal
+          if (commGroupSelect && departmentSelect) {
+              commGroupSelect.addEventListener('change', function() {
+                  filterDepartments(commGroupSelect, departmentSelect);
+              });
+
+              // Initial call to filter departments based on the initially selected CommGroup
+              filterDepartments(commGroupSelect, departmentSelect);
+          }
+      });
+
+      // Event listener for the main Add User modal (if needed)
+      const mainCommGroupSelect = document.getElementById('commGroup');
+      const mainDepartmentSelect = document.getElementById('departmentName');
+
+      if (mainCommGroupSelect && mainDepartmentSelect) {
+          mainCommGroupSelect.addEventListener('change', function() {
+              filterDepartments(mainCommGroupSelect, mainDepartmentSelect);
+          });
+
+          // Initial call to filter departments based on the initially selected CommGroup in Add User modal
+          filterDepartments(mainCommGroupSelect, mainDepartmentSelect);
+      }
+  });
+
+  ///////// Filtering user values from nav bar accessible departments ////////////
+  
   document.addEventListener("DOMContentLoaded", function() {
-    // Function to filter the "Select Department" dropdown based on selected CommGroup
-    function filterDepartments(commGroupSelect, departmentSelect) {
-        const commGroupValue = commGroupSelect.value;
-        const departmentOptions = departmentSelect.querySelectorAll('option');
+    const departmentSelect = document.getElementById("departmentSelect");
 
-        departmentOptions.forEach(option => {
-            if (option.value === "") {
-                // Always show the default 'Select Department' option
-                option.style.display = "block";
-            } else if (option.dataset.commgroup === commGroupValue || commGroupValue === "") {
-                // Show options that match the selected CommGroup
-                option.style.display = "block";
+    // Retrieve the selected department ID from localStorage; default to "all" if not set
+    let selectedDepartmentId = localStorage.getItem("selectedDepartmentId") || "all";
+
+    // Set the dropdown to the saved value
+    departmentSelect.value = selectedDepartmentId;
+
+    // Function to filter users based on selected department
+    function filterUsersByDepartment(departmentId) {
+        const rows = document.querySelectorAll("#form-data-table tr");
+        rows.forEach(row => {
+            const rowDepartmentId = row.getAttribute("data-department-id");
+            if (departmentId === "all" || rowDepartmentId === departmentId) {
+                row.style.display = ""; // Show row
             } else {
-                // Hide options that don't match the selected CommGroup
-                option.style.display = "none";
+                row.style.display = "none"; // Hide row
             }
         });
 
-        // Enable/disable the department select based on CommGroup selection
-        departmentSelect.disabled = !commGroupValue;
-        departmentSelect.value = ""; // Reset the department selection to the default
+        // Update the records info based on visible rows
+        const visibleRows = Array.from(rows).filter(row => row.style.display !== "none");
+        document.getElementById("records-info").textContent = `(Records Found: ${visibleRows.length}, Selected: 0)`;
     }
 
-    // Loop through each edit modal to attach event listeners
-    document.querySelectorAll('[id^="editUserModal-"]').forEach(modal => {
-        const commGroupSelect = modal.querySelector('.form-select[id^="editCommGroup"]');
-        const departmentSelect = modal.querySelector('.form-select[id^="editdepartmentName"]');
+    // Apply the filter based on the selected department ID from localStorage
+    filterUsersByDepartment(selectedDepartmentId);
 
-        // Attach the event listener to the CommGroup dropdown for each modal
-        if (commGroupSelect && departmentSelect) {
-            commGroupSelect.addEventListener('change', function() {
-                filterDepartments(commGroupSelect, departmentSelect);
-            });
-
-            // Initial call to filter departments based on the initially selected CommGroup
-            filterDepartments(commGroupSelect, departmentSelect);
-        }
+    // Event listener for department selection change
+    departmentSelect.addEventListener("change", function() {
+        selectedDepartmentId = this.value;
+        localStorage.setItem("selectedDepartmentId", selectedDepartmentId); // Save selection in localStorage
+        filterUsersByDepartment(selectedDepartmentId); // Apply filter
     });
-
-    // Event listener for the main Add User modal (if needed)
-    const mainCommGroupSelect = document.getElementById('commGroup');
-    const mainDepartmentSelect = document.getElementById('departmentName');
-
-    if (mainCommGroupSelect && mainDepartmentSelect) {
-        mainCommGroupSelect.addEventListener('change', function() {
-            filterDepartments(mainCommGroupSelect, mainDepartmentSelect);
-        });
-
-        // Initial call to filter departments based on the initially selected CommGroup in Add User modal
-        filterDepartments(mainCommGroupSelect, mainDepartmentSelect);
-    }
 });
 
-
 </script>
+
+
 
 {% block scripts %}
 {{ block.super }}

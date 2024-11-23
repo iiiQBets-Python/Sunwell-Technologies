@@ -106,7 +106,7 @@ document.addEventListener("DOMContentLoaded", function() {
 });
 
 //table script
-document.addEventListener("DOMContentLoaded", function() {
+document.addEventListener("DOMContentLoaded", function () {
     const searchBar = document.getElementById('searchBar');
     const deptFilterDropdown = document.getElementById('deptFilterDropdown');
     const deptFilterItems = document.querySelectorAll('.dept-filter .dropdown-item');
@@ -114,36 +114,41 @@ document.addEventListener("DOMContentLoaded", function() {
     const tableRows = Array.from(formDataTable.querySelectorAll('tr'));
     const visibleEntries = document.getElementById('visible-entries');
     const totalEntries = document.getElementById('total-entries');
+    const recordsInfo = document.getElementById('records-info');
+    const entriesPerPageSelect = document.getElementById('entriesPerPage');
     const pagination = document.querySelector('.pagination');
     const selectAllCheckbox = document.getElementById('selectAll');
-    const entriesPerPageSelect = document.getElementById('entriesPerPage');
     const prevPageButton = document.getElementById('prev-page');
     const nextPageButton = document.getElementById('next-page');
 
     let currentPage = 1;
     let entriesPerPage = parseInt(entriesPerPageSelect.value, 10);
-    let filteredRows = [];
+    let filteredRows = tableRows;
     let totalEntriesCount = 0;
     let totalPages = 0;
 
+    function applyDepartmentFilter() {
+        const selectedDepartmentId = localStorage.getItem("selectedDepartmentId");
+        filteredRows = tableRows.filter(row => {
+            const rowDepartmentId = row.getAttribute("data-department-id");
+            const isVisible = !selectedDepartmentId || rowDepartmentId === selectedDepartmentId;
+            row.style.display = isVisible ? '' : 'none';
+            return isVisible;
+        });
+        filterTable(); // Apply search filter after department filter
+    }
+
     function filterTable() {
         const searchTerm = searchBar.value.toLowerCase().trim();
-        const selectedDept = deptFilterDropdown.getAttribute('data-selected-dept') || 'all';
-
-        filteredRows = tableRows.filter(row => {
+        filteredRows = filteredRows.filter(row => {
             const cells = Array.from(row.cells);
-            const matchesSearch = cells.some(cell => cell.textContent.toLowerCase().includes(searchTerm));
-            const deptCell = cells[3]; // Assuming the department is in the 4th column (index 3)
-            const matchesDept = selectedDept === 'all' || deptCell.textContent.toLowerCase() === selectedDept;
-
-            return matchesSearch && matchesDept;
+            return cells.some(cell => cell.textContent.toLowerCase().includes(searchTerm));
         });
-
         totalEntriesCount = filteredRows.length;
         totalPages = Math.ceil(totalEntriesCount / entriesPerPage);
         currentPage = 1;
         updateTable();
-        updateDeptCounts(); // Update department counts after filtering
+        updateRecordsInfo();
     }
 
     function updateTable() {
@@ -154,12 +159,15 @@ document.addEventListener("DOMContentLoaded", function() {
         tableRows.forEach(row => row.style.display = 'none');
 
         // Show only the rows that are part of the current page
-        filteredRows.slice(startIndex, endIndex).forEach(row => row.style.display = '');
+        const visibleRows = filteredRows.slice(startIndex, endIndex);
+        visibleRows.forEach(row => row.style.display = '');
 
-        visibleEntries.textContent = filteredRows.slice(startIndex, endIndex).length;
+        // Update counts for visible entries and total entries
+        visibleEntries.textContent = visibleRows.length;
         totalEntries.textContent = totalEntriesCount;
 
         updatePagination();
+        updateRecordsInfo();
     }
 
     function updatePagination() {
@@ -183,68 +191,52 @@ document.addEventListener("DOMContentLoaded", function() {
     }
 
     function getSelectedRowsCount() {
-        return formDataTable.querySelectorAll('input[type="checkbox"]:checked:not(#selectAll)').length;
+        return filteredRows.filter(row => row.querySelector('input[type="checkbox"]').checked).length;
     }
 
     function updateRecordsInfo() {
-        document.getElementById('records-info').textContent = `(Records Found: ${totalEntriesCount}, Selected: ${getSelectedRowsCount()})`;
+        recordsInfo.textContent = `(Records Found: ${totalEntriesCount}, Selected: ${getSelectedRowsCount()})`;
     }
 
-    function updateDeptCounts() {
-        // Reset counts for all departments
-        deptFilterItems.forEach(item => {
-            const dept = item.getAttribute('data-value');
-            let deptCount = 0;
-
-            // Count rows that match the department
-            tableRows.forEach(row => {
-                const cells = Array.from(row.cells);
-                const rowDept = cells[3]?.textContent.toLowerCase() || ''; // Assuming department is in the 4th column
-                if (dept === 'all' || rowDept === dept) {
-                    deptCount++;
-                }
-            });
-
-            // Update the count in the dropdown
-            item.querySelector('.option-count').textContent = `${deptCount}`;
+    selectAllCheckbox.addEventListener('change', function () {
+        // Select only checkboxes in the visible filtered rows for the current page
+        const visibleCheckboxes = filteredRows.slice((currentPage - 1) * entriesPerPage, currentPage * entriesPerPage);
+        visibleCheckboxes.forEach(row => {
+            row.querySelector('input[type="checkbox"]').checked = selectAllCheckbox.checked;
         });
-    }
-
-    selectAllCheckbox.addEventListener('change', function() {
-        const checkboxes = formDataTable.querySelectorAll('input[type="checkbox"]:not(#selectAll)');
-        checkboxes.forEach(checkbox => checkbox.checked = this.checked);
         updateRecordsInfo();
     });
 
-    formDataTable.addEventListener('change', function(event) {
+    formDataTable.addEventListener('change', function (event) {
         if (event.target.type === 'checkbox' && event.target !== selectAllCheckbox) {
-            selectAllCheckbox.checked = Array.from(formDataTable.querySelectorAll('input[type="checkbox"]:not(#selectAll)')).every(checkbox => checkbox.checked);
+            // Update the master checkbox status based on individual checkbox selections
+            const visibleCheckboxes = filteredRows.slice((currentPage - 1) * entriesPerPage, currentPage * entriesPerPage);
+            selectAllCheckbox.checked = visibleCheckboxes.every(row => row.querySelector('input[type="checkbox"]').checked);
             updateRecordsInfo();
         }
     });
 
-    searchBar.addEventListener('input', function() {
-        filterTable();
-        updateRecordsInfo();
+    searchBar.addEventListener('input', function () {
+        applyDepartmentFilter(); // Reapply department filter when search term changes
     });
 
     deptFilterItems.forEach(item => {
-        item.addEventListener('click', function() {
+        item.addEventListener('click', function () {
             deptFilterDropdown.setAttribute('data-selected-dept', item.getAttribute('data-value'));
             deptFilterDropdown.textContent = item.textContent;
-            filterTable();
-            updateRecordsInfo();
+            localStorage.setItem("selectedDepartmentId", item.getAttribute('data-value'));
+            applyDepartmentFilter();
         });
     });
 
-    entriesPerPageSelect.addEventListener('change', function() {
+    entriesPerPageSelect.addEventListener('change', function () {
         entriesPerPage = parseInt(this.value, 10);
         totalPages = Math.ceil(totalEntriesCount / entriesPerPage);
         currentPage = 1;
         updateTable();
     });
 
-    prevPageButton.addEventListener('click', function(event) {
+    prevPageButton.addEventListener('click', function (event) {
         event.preventDefault();
         if (currentPage > 1) {
             currentPage--;
@@ -252,7 +244,7 @@ document.addEventListener("DOMContentLoaded", function() {
         }
     });
 
-    nextPageButton.addEventListener('click', function(event) {
+    nextPageButton.addEventListener('click', function (event) {
         event.preventDefault();
         if (currentPage < totalPages) {
             currentPage++;
@@ -260,16 +252,13 @@ document.addEventListener("DOMContentLoaded", function() {
         }
     });
 
-    document.querySelectorAll('.dept-filter .dropdown-item').forEach(item => {
-        item.addEventListener('click', function (e) {
-            e.preventDefault();
-            const selectedText = this.innerHTML;
-            document.getElementById('deptFilterDropdown').innerHTML = selectedText;
-        });
+    document.getElementById("departmentSelect").addEventListener("change", function () {
+        const selectedDepartmentId = this.value;
+        localStorage.setItem("selectedDepartmentId", selectedDepartmentId);
+        applyDepartmentFilter();
     });
 
-    filterTable(); // Initial filter to set up table and counts
-    updateRecordsInfo(); // Ensure records info is updated initially
+    applyDepartmentFilter(); // Initial filter to set up table and counts
 });
 
 // Reset the form and other elements when the modal is hidden
@@ -280,6 +269,7 @@ document.getElementById('adminUserModal').addEventListener('hidden.bs.modal', fu
     const inputs = document.querySelectorAll(".form-control, .form-select");
     inputs.forEach(input => input.classList.remove("filled"));
 });
+
 
 
 

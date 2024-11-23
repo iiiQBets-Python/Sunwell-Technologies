@@ -1,5 +1,6 @@
 
 
+
 {% load static %}
 <!DOCTYPE html>
 
@@ -309,6 +310,29 @@
    margin-right: 10px;
    font-size: 14px;
 }
+
+.nav-filter {
+    margin-right: 10px; /* Adds space between the two elements */
+}
+
+.comm-group-display {
+    display: inline-block;
+    padding: 6px 14px;
+    border: 1px solid #ced4da;
+    border-radius: 4px;
+    background-color: #ffffff;
+    color: #495057;
+    font-size: 1rem;
+    font-family: inherit;
+    text-align: center;
+    cursor: default;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.075);
+    vertical-align: middle;
+    min-width: 100px;
+    appearance: none; /* Removes the dropdown icon */
+    -moz-appearance: none;
+    -webkit-appearance: none;
+}
 /* Media Queries for Navbar Responsiveness */
 @media (max-width: 768px) {
        .top-navbar {
@@ -376,7 +400,7 @@
 <body>
     <div class="container-fluid">
         <div class="sidebar">
-            <img src="{% static 'images/Base/Sunwell logo.jpg' %}" alt="Your Logo" class="sidebar-logo">
+            <img src="{% static 'images/Base/Sunwell_logo.jpg' %}" alt="Your Logo" class="sidebar-logo">
             <ul class="sidebar-menu">
                 <li><a href="{% url 'dashboard' %}"><i class="fas fa-home"></i> <b> Dashboard</b></a></li>
                 <li>
@@ -477,36 +501,26 @@
                 <div class="navbar-upper">
                     <div class="navbar-left">
                         <div class="dropdown nav-filter">
-                            <button class="btn btn-outline-secondary dropdown-toggle" type="button" id="unitDropdownButton" data-bs-toggle="dropdown" aria-expanded="false">
-                                Select Unit
-                            </button>
-                            <ul class="dropdown-menu" aria-labelledby="unitDropdownButton" id="unitDropdownMenu">
-                                <input type="text" id="unitSearchInput" class="dropdown-input form-control " placeholder="Search Unit...">
-                                <li><a class="dropdown-item" href="#" data-value="unit1">Unit 1</a></li>
-                                <li><a class="dropdown-item" href="#" data-value="unit2">Unit 2</a></li>
-                                <li><a class="dropdown-item" href="#" data-value="unit3">Unit 3</a></li>
-                                <!-- Add more options as needed -->
-                            </ul>
+                            <span id="commGroupNameDisplay" class="comm-group-display"></span>
                         </div>
                         
                         <div class="dropdown nav-filter">
-                            <button class="btn btn-outline-secondary dropdown-toggle" type="button" id="qcDropdownButton" data-bs-toggle="dropdown" aria-expanded="false">
-                                Select QC
-                            </button>
-                            <ul class="dropdown-menu" aria-labelledby="qcDropdownButton" id="qcDropdownMenu">
-                                <input type="text" id="qcSearchInput" class="dropdown-input form-control" placeholder="Search QC...">
-                                <li><a class="dropdown-item" href="#" data-value="qc1">QC</a></li>
-                                <li><a class="dropdown-item" href="#" data-value="qc2">QC</a></li>
-                                <li><a class="dropdown-item" href="#" data-value="qc3">QC</a></li>
-                                <!-- Add more options as needed -->
-                            </ul>
+                            <select class="form-select" id="departmentSelect" onchange="selectDepartment(this.value)">
+                                {% for department in data.accessible_departments.all %}
+                                    <option value="{{ department.id }}" {% if department.id == data.user_department_id %}selected{% endif %}>
+                                        {{ department.department_name }}
+                                    </option>
+                                {% empty %}
+                                    <option disabled>No accessible departments</option>
+                                {% endfor %}
+                            </select>
                         </div>
                         
                     </div>
                     <div class="navbar-right">
                        <b><div id="current-date"></div></b> 
                         <div class="profile-menu">
-                            <img src="https://www.w3schools.com/howto/img_avatar.png" onclick="openSidebar('profileSidebar')">
+                            <img src="{% static 'images/Base/img_avatar.png' %}" onclick="openSidebar('profileSidebar')">
                         </div>
                     </div>
                 </div>
@@ -527,13 +541,17 @@
         </div>
         <div class="profile-body">
             <div class="profile-img">
-                <img src="{{ organization.logo.url }}" class="img-thumbnail square-img" alt="Company Logo" style="width: 120px; height: 70px;">
+                {% if organization.logo %}
+                    <img src="{{ organization.logo.url }}" class="img-thumbnail square-img" alt="Company Logo" style="width: 120px; height: 70px;">
+                {% else %}
+                    <img src="{% static 'images/Base/Sunwell_logo.jpg' %}" class="img-thumbnail square-img" alt="Company Logo" style="width: 120px; height: 70px;">
+                {% endif %}
             </div>
             <div>
                 <p>{{data.username}}</p>
                 <p>{{data.role}}</p>
 
-                {% if data.role != 'Super Admin' %}
+                {% if data.role != 'Super Admin' %}
                 <a href="#" data-bs-toggle="modal" data-bs-target="#change_pass" style="text-decoration: none;">Change Password</a>
                 {% endif %}            
                 <div class="modal" id="change_pass" tabindex="-1"  aria-labelledby="change_passLabel" aria-hidden="true">
@@ -704,97 +722,59 @@
             });
         });
 
-// Function to filter dropdown items based on the search input
-function filterDropdown(searchInputId, dropdownId) {
-    const input = document.getElementById(searchInputId);
-    const filter = input.value.toUpperCase();
-    const dropdown = document.getElementById(dropdownId);
-    const items = dropdown.getElementsByClassName('dropdown-item');
-    
-    // Filter items based on the search input
-    for (let i = 0; i < items.length; i++) {
-        const txtValue = items[i].textContent || items[i].innerText;
-        if (txtValue.toUpperCase().indexOf(filter) > -1) {
-            items[i].style.display = "";
-        } else {
-            items[i].style.display = "none";
-        }
+////////////////////////////////////
+
+// Map of department IDs to CommGroup names
+// Map of department IDs to CommGroup names
+const departmentCommGroupMap = {
+    {% for department in data.accessible_departments.all %}
+        "{{ department.id }}": "{{ department.commGroup.CommGroup_name }}",
+    {% endfor %}
+};
+
+function selectDepartment(departmentId) {
+    // Save the selected department ID in localStorage
+    localStorage.setItem("selectedDepartmentId", departmentId);
+
+    // Get the CommGroup name based on selected department
+    const commGroupName = departmentCommGroupMap[departmentId];
+    const commGroupNameDisplay = document.getElementById("commGroupNameDisplay");
+
+    // Set the CommGroup name in the display element
+    commGroupNameDisplay.textContent = commGroupName || "N/A";
+}
+
+// Initialize Department and CommGroup on page load
+document.addEventListener("DOMContentLoaded", function() {
+    const departmentSelect = document.getElementById("departmentSelect");
+
+    // Get the stored department ID from localStorage, if available
+    const storedDepartmentId = localStorage.getItem("selectedDepartmentId");
+
+    // Set the stored department ID as selected, if available, otherwise use the default
+    if (storedDepartmentId) {
+        departmentSelect.value = storedDepartmentId;
+        selectDepartment(storedDepartmentId);
+    } else {
+        // Set default selection if no stored value is found
+        selectDepartment(departmentSelect.value);
     }
-}
 
-// Event listener to update button text with selected item
-function setupDropdownSelection1(dropdownButtonId, dropdownMenuId) {
-    const dropdownButton = document.getElementById(dropdownButtonId);
-    const dropdownMenu = document.getElementById(dropdownMenuId);
-    
-    // Add click event listeners to dropdown items
-    dropdownMenu.querySelectorAll('.dropdown-item').forEach(item => {
-        item.addEventListener('click', function (e) {
-            e.preventDefault();
-            const selectedText = this.textContent.trim();
-            dropdownButton.textContent = selectedText;
-        });
+    // Add event listener for department selection change
+    departmentSelect.addEventListener("change", function() {
+        selectDepartment(this.value);
     });
-
-}
-
+});
 
 
-function setupDropdownSelection(dropdownButtonId, dropdownMenuId) {
-    const dropdownButton = document.getElementById(dropdownButtonId);
-    const dropdownMenu = document.getElementById(dropdownMenuId);
-    
-    // Add click event listeners to dropdown items
-    dropdownMenu.querySelectorAll('.dropdown-item').forEach(item => {
-        item.addEventListener('click', function (e) {
-            e.preventDefault();
-            const selectedText = this.textContent.trim();
-            dropdownButton.textContent = selectedText;
+///////// Equipment adding and filtering ////////////////////////////////////
 
-            // Save selected QC value in session using AJAX
-            saveQCToSession(selectedText);
-        });
-    });
-}
-
-// Function to make an AJAX call to save the selected QC to session
-function saveQCToSession(qcValue) {
-    fetch("{% url 'save_qc_session' %}", {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-            'X-CSRFToken': '{{ csrf_token }}', // CSRF token for security
-        },
-        body: JSON.stringify({ qc_value: qcValue }),
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (data.success) {
-            console.log('QC value saved successfully.');
-        } else {
-            console.log('Failed to save QC value.');
-        }
-    })
-    .catch(error => {
-        console.error('Error saving QC value:', error);
-    });
-}
-
-
-// Initialize the dropdown functionality
-document.addEventListener('DOMContentLoaded', function () {
-    // Setup each dropdown
-    setupDropdownSelection('unitDropdownButton', 'unitDropdownMenu');
-    setupDropdownSelection('qcDropdownButton', 'qcDropdownMenu');
-
-    // Event listener for search input to filter dropdown items
-    document.getElementById('unitSearchInput').addEventListener('keyup', function () {
-        filterDropdown('unitSearchInput', 'unitDropdownMenu');
-    });
-
-    document.getElementById('qcSearchInput').addEventListener('keyup', function () {
-        filterDropdown('qcSearchInput', 'qcDropdownMenu');
-    });
+document.addEventListener("DOMContentLoaded", function () {
+    const selectedDepartment = localStorage.getItem("selectedDepartmentId");
+    const departmentInput = document.getElementById("selectedDepartment");
+    if (departmentInput) {
+        departmentInput.value = selectedDepartment; // Set the hidden input's value
+    }
 });
 
 </script>

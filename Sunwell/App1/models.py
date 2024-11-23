@@ -73,10 +73,23 @@ class Department(models.Model):
     commGroup = models.ForeignKey(CommGroup, on_delete=models.CASCADE)
     header_note = models.CharField(max_length=100, null=True)
     footer_note = models.CharField(max_length=100, null=True)
-    report_datetime_stamp = models.BooleanField(default=False, null=True)
+    report_datetime_stamp = models.BooleanField(default=True, null=True)
+    email_alert = models.CharField(default=0, max_length=50, blank=True, null=True)
+    email_time = models.TimeField(blank=True, null=True)
+    alert_email_address_1 = models.EmailField(blank=True, null=True)
+    alert_email_address_2 = models.EmailField(blank=True, null=True)
+    alert_email_address_3 = models.EmailField(blank=True, null=True)
+    alert_email_address_4 = models.EmailField(blank=True, null=True)
+    alert_email_address_5 = models.EmailField(blank=True, null=True)
+    alert_email_address_6 = models.EmailField(blank=True, null=True)
+    alert_email_address_7 = models.EmailField(blank=True, null=True)
+    alert_email_address_8 = models.EmailField(blank=True, null=True)
+    alert_email_address_9 = models.EmailField(blank=True, null=True)
+    alert_email_address_10 = models.EmailField(blank=True, null=True)
 
     def __str__(self):
         return self.department_name
+
            
 class User_role(models.Model):
     role = models.CharField(max_length=50, primary_key=True)
@@ -183,30 +196,32 @@ class user_access_db(models.Model):
         return self.role
     
 class AppSettings(models.Model):
-    department = models.ForeignKey(Department,on_delete=models.CASCADE)
-    email_host = models.CharField(max_length=100)
-    email_host_user = models.EmailField()
-    email_host_password = models.CharField(max_length=100)
-    email_port = models.IntegerField()
-    #smtp_auth = models.BooleanField(null=True)
+
+    #App settings fields
+
+    # Email settings fields
+    email_sys_set = models.CharField(max_length=100, default='Enable')
+    email_host = models.CharField(max_length=100, null=True)
+    email_host_user = models.EmailField(null=True)
+    email_host_password = models.CharField(max_length=100, null=True)
+    email_port = models.IntegerField(null=True)
+    email_signature = models.TextField(blank=True, null=True)
+
+    # SMS settings fields
+    sms_sys_set = models.CharField(max_length=10, default='Enable')
+    comm_port = models.CharField(max_length=10, blank=True, null=True)
+    parity = models.CharField(max_length=10, blank=True, null=True)
+    baud_rate = models.CharField(max_length=10, blank=True, null=True)
+    data_bits = models.IntegerField(blank=True, null=True)
+    stop_bits = models.IntegerField(blank=True, null=True)
+    flow_control = models.CharField(max_length=10, blank=True, null=True)
+
+    #Whatsapp fields
+
+
     def _str_(self):
         return f"{self.department}"
     
-
-class EmailForm(models.Model):
-    email_alert = models.CharField(default=0,max_length=50)
-    email_time = models.TimeField()
-    alert_email_address_1 = models.EmailField(null=True)
-    alert_email_address_2 = models.EmailField(null=True)
-    alert_email_address_3 = models.EmailField(null=True)
-    alert_email_address_4 = models.EmailField(null=True)
-    alert_email_address_5 = models.EmailField(null=True)
-    alert_email_address_6 = models.EmailField(null=True)
-    alert_email_address_7 = models.EmailField(null=True)
-    alert_email_address_8 = models.EmailField(null=True)
-    alert_email_address_9 = models.EmailField(null=True)
-    alert_email_address_10 = models.EmailField(null=True)
-
 class BackupSettings(models.Model):
     local_path = models.CharField(max_length=255)
     remote_path = models.CharField(max_length=255, blank=True, null=True)
@@ -229,14 +244,15 @@ class Equipment(models.Model):
         ('plc', 'PLC'),
         ('biometric', 'Biometric')
     ]
-    
+
+    department=models.ForeignKey(Department, null=True, on_delete=models.SET_NULL)
     equip_name = models.CharField(max_length=255)
     status = models.CharField(max_length=10, choices=EQUIPMENT_STATUS_CHOICES)
     ip_address = models.GenericIPAddressField()
     interval = models.IntegerField()
     equipment_type = models.CharField(max_length=255)
     door_access_type = models.CharField(max_length=15, choices=EQUIPMENT_ACCESS_CHOICES)
-
+    
     # Biometric fields
     biometric_banner_text = models.CharField(max_length=255, blank=True, null=True)
     biometric_ip_address = models.GenericIPAddressField(blank=True, null=True)
@@ -311,7 +327,29 @@ class TemperatureHumidityRecord(models.Model):
         return f"Date: {self.date}, Time: {self.time}"
 
 
+class PasswordHistory(models.Model):
+    user = models.ForeignKey(User, null=True, on_delete=models.CASCADE)
+    password = models.CharField(max_length=128, null=True)  
+    created_at = models.DateTimeField(auto_now_add=True, null=True) 
 
+    def save(self, *args, **kwargs):
+        if not self.password.startswith('pbkdf2_'):
+            self.password = make_password(self.password)
+       
+        user_passwords = PasswordHistory.objects.filter(user=self.user).order_by('created_at')
+
+        
+        if user_passwords.count() >= 3:
+            user_passwords.first().delete()  
+
+        super().save(*args, **kwargs)
+
+    def check_password(self, raw_password):
+        return check_password(raw_password, self.password)
+    
+    def __str__(self):
+        return self.user.username
+    
 
     
 

@@ -42,7 +42,11 @@ urlpatterns = [
     
     # Settings
     path('equipment_configure/', equipment_configure_view, name='equipment_configure'),
+    path('equipment/edit/<int:equipment_id>/', equipment_edit, name='equipment_edit'),
     path('equipment_setting',equipment_setting,name='equipment_setting'),
+    # path('equipment_configure/', equipment_configure_view, name='equipment_configure'),
+    path('plc_connect/', plc_connect, name='plc_connect'),
+    path('plc_disconnect/', plc_disconnect, name='plc_disconnect'),
 
     #Live data
     path('livedata_summary/', livedata_summary, name='livedata_summary'),
@@ -50,6 +54,7 @@ urlpatterns = [
     #DATA Analysis
     path('view_log/',view_log,name='view_log'),
     path('alaram_log/',alaram_log,name='alaram_log'),
+    path('view_alarm_log', view_alarm_log, name="view_alarm_log"),
 
     # audit_logs #
     path('user_activity_log/', user_activity, name="user_activity"),
@@ -61,4 +66,7 @@ urlpatterns = [
     path('change_pass', change_pass, name="change_pass"),
     path('change_pass_2', change_pass_2, name='change_pass_2'),
     path('forgot_password/', forgot_password, name='forgot_pass'),
+    path('save_alarm_logs/', save_alarm_logs, name='save_alarm_logs'),
+    path('view_audit_alarm_logs', view_audit_alarm_logs, name='view_audit_alarm_logs'),
+
 ]

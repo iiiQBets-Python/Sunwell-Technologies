@@ -667,105 +667,125 @@
 
                   <div class="tab-pane fade" id="edit-sms-{{ department.id }}" role="tabpanel" aria-labelledby="edit-sms-tab-{{ department.id }}">
                     <div class="row">
-                      <div class="col-md-12 form-group d-flex align-items-center ">
+                      <div class="col-md-12 form-group d-flex align-items-center">
                         <h6 style="margin-right: 10px;">SMS System:</h6>
                         <div id="status">
                           <div class="form-check form-check-inline">
-                            <input class="form-check-input" type="radio" name="edit_sms_status" id="sms-enable1" value="Enable" checked>
-                            <label class="form-check-label" for="sms-enable1">Enable</label>
+                            <input
+                              class="form-check-input"
+                              type="radio"
+                              name="edit_sms_status"
+                              id="sms-enable-{{ department.id }}"
+                              value="Enable"
+                              {% if department.sms_alert %}
+                                checked
+                              {% endif %}
+                            />
+                            <label class="form-check-label" for="sms-enable-{{ department.id }}">Enable</label>
                           </div>
                           <div class="form-check form-check-inline">
-                            <input class="form-check-input" type="radio" name="edit_sms_status" id="sms-disable1" value="Disable">
-                            <label class="form-check-label" for="sms-disable1">Disable</label>
+                            <input
+                              class="form-check-input"
+                              type="radio"
+                              name="edit_sms_status"
+                              id="sms-disable-{{ department.id }}"
+                              value="Disable"
+                              {% if not department.sms_alert %}
+                                checked
+                              {% endif %}
+                            />
+                            <label class="form-check-label" for="sms-disable-{{ department.id }}">Disable</label>
                           </div>
                         </div>
                       </div>
+                   
+                  
                       <div class="col-md-6 form-group">
-                        <input type="text" class="form-control" name="edit_sms_delay" id="edit_sms_delay" placeholder=" ">
+                        <input type="text" class="form-control" name="edit_sms_delay" id="edit_sms_delay"  value="" placeholder=" ">
                         <label for="edit_sms_delay" class="form-label">SMS Alert Delay*</label>
                       </div>
                       <div class="col-md-6 form-group">
-                        <input type="time" class="form-control" name="edit_sms_time" id="edit_sms_time" placeholder=" ">
+                        <input type="time" class="form-control" name="edit_sms_time" id="edit_sms_time"  value="{{ department.sms_time|time:'H:i' }}" placeholder=" ">
                         <label for="edit_sms_time" class="form-label">SMS Time</label>
                       </div>
                       <div class="col-md-3 form-group">
-                        <input type="text" class="form-control" name="edit_mobile_user1" id="edit_mobile_user1" placeholder=" ">
+                        <input type="text" class="form-control" name="edit_mobile_user1" id="edit_mobile_user1"  value="{{ department.user1 }}" placeholder=" ">
                         <label for="edit_mobile_user1" class="form-label">Mobile User Name 1</label>
                       </div>
                       <div class="col-md-3 form-group">
-                        <input type="text" class="form-control" name="edit_mobile_no1" id="edit_mobile_no1" placeholder=" ">
+                        <input type="number" class="form-control" name="edit_mobile_no1" id="edit_mobile_no1"  value="{{ department.user1_num }}" placeholder=" ">
                         <label for="edit_mobile_no1" class="form-label">Mobile No 1</label>
                       </div>
                       <div class="col-md-3 form-group">
-                        <input type="text" class="form-control" name="edit_mobile_user2" id="edit_mobile_user2" placeholder=" ">
+                        <input type="text" class="form-control" name="edit_mobile_user2" id="edit_mobile_user2"  value="{{ department.user2 }}" placeholder=" ">
                         <label for="edit_mobile_user2" class="form-label">Mobile User Name 2</label>
                       </div>
                       <div class="col-md-3 form-group">
-                        <input type="text" class="form-control" name="edit_mobile_no2" id="edit_mobile_no2" placeholder=" ">
+                        <input type="number" class="form-control" name="edit_mobile_no2" id="edit_mobile_no2"  value="{{ department.user2_num }}" placeholder=" ">
                         <label for="edit_mobile_no2" class="form-label">Mobile No 2</label>
                       </div>
                       <div class="col-md-3 form-group">
-                        <input type="text" class="form-control" name="edit_mobile_user3" id="edit_mobile_user3" placeholder=" ">
+                        <input type="text" class="form-control" name="edit_mobile_user3" id="edit_mobile_user3"  value="{{ department.user3 }}" placeholder=" ">
                         <label for="edit_mobile_user3" class="form-label">Mobile User Name 3</label>
                       </div>
                       <div class="col-md-3 form-group">
-                        <input type="text" class="form-control" name="edit_mobile_no3" id="edit_mobile_no3" placeholder=" ">
+                        <input type="number" class="form-control" name="edit_mobile_no3" id="edit_mobile_no3"  value="{{ department.user3_num }}" placeholder=" ">
                         <label for="edit_mobile_no3" class="form-label">Mobile No 3</label>
                       </div>
                       <div class="col-md-3 form-group">
-                        <input type="text" class="form-control" name="edit_mobile_user4" id="edit_mobile_user4" placeholder=" ">
+                        <input type="text" class="form-control" name="edit_mobile_user4" id="edit_mobile_user4"  value="{{ department.user4 }}" placeholder=" ">
                         <label for="edit_mobile_user4" class="form-label">Mobile User Name 4</label>
                       </div>
                       <div class="col-md-3 form-group">
-                        <input type="text" class="form-control" name="edit_mobile_no4" id="edit_mobile_no4" placeholder=" ">
+                        <input type="number" class="form-control" name="edit_mobile_no4" id="edit_mobile_no4"  value="{{ department.user4_num }}" placeholder=" ">
                         <label for="edit_mobile_no4" class="form-label">Mobile No 4</label>
                       </div>
                       <div class="col-md-3 form-group">
-                        <input type="text" class="form-control" name="edit_mobile_user5" id="edit_mobile_user5" placeholder=" ">
+                        <input type="text" class="form-control" name="edit_mobile_user5" id="edit_mobile_user5"  value="{{ department.user5 }}" placeholder=" ">
                         <label for="edit_mobile_user5" class="form-label">Mobile User Name 5</label>
                       </div>
                       <div class="col-md-3 form-group">
-                        <input type="text" class="form-control" name="edit_mobile_no5" id="edit_mobile_no5" placeholder=" ">
+                        <input type="number" class="form-control" name="edit_mobile_no5" id="edit_mobile_no5"  value="{{ department.user5_num }}" placeholder=" ">
                         <label for="edit_mobile_no5" class="form-label">Mobile No 5</label>
                       </div>
                       <div class="col-md-3 form-group">
-                        <input type="text" class="form-control" name="edit_mobile_user6" id="edit_mobile_user6" placeholder=" ">
+                        <input type="text" class="form-control" name="edit_mobile_user6" id="edit_mobile_user6"  value="{{ department.user6 }}" placeholder=" ">
                         <label for="edit_mobile_user6" class="form-label">Mobile User Name 6</label>
                       </div>
                       <div class="col-md-3 form-group">
-                        <input type="text" class="form-control" name="edit_mobile_no6" id="edit_mobile_no6" placeholder=" ">
+                        <input type="number" class="form-control" name="edit_mobile_no6" id="edit_mobile_no6"  value="{{ department.user6_num }}" placeholder=" ">
                         <label for="edit_mobile_no6" class="form-label">Mobile No 6</label>
                       </div>
                       <div class="col-md-3 form-group">
-                        <input type="text" class="form-control" name="edit_mobile_user7" id="edit_mobile_user7" placeholder=" ">
+                        <input type="text" class="form-control" name="edit_mobile_user7" id="edit_mobile_user7"  value="{{ department.user7 }}" placeholder=" ">
                         <label for="edit_mobile_user7" class="form-label">Mobile User Name 7</label>
                       </div>
                       <div class="col-md-3 form-group">
-                        <input type="text" class="form-control" name="edit_mobile_no7" id="edit_mobile_no7" placeholder=" ">
+                        <input type="number" class="form-control" name="edit_mobile_no7" id="edit_mobile_no7"  value="{{ department.user7_num }}" placeholder=" ">
                         <label for="edit_mobile_no7" class="form-label">Mobile No 7</label>
                       </div>
                       <div class="col-md-3 form-group">
-                        <input type="text" class="form-control" name="edit_mobile_user8" id="edit_mobile_user8" placeholder=" ">
+                        <input type="text" class="form-control" name="edit_mobile_user8" id="edit_mobile_user8"  value="{{ department.user8 }}" placeholder=" ">
                         <label for="edit_mobile_user8" class="form-label">Mobile User Name 8</label>
                       </div>
                       <div class="col-md-3 form-group">
-                        <input type="text" class="form-control" name="edit_mobile_no8" id="edit_mobile_no8" placeholder=" ">
+                        <input type="number" class="form-control" name="edit_mobile_no8" id="edit_mobile_no8"  value="{{ department.user8_num }}" placeholder=" ">
                         <label for="edit_mobile_no8" class="form-label">Mobile No 8</label>
                       </div>
                       <div class="col-md-3 form-group">
-                        <input type="text" class="form-control" name="edit_mobile_user9" id="edit_mobile_user9" placeholder=" ">
+                        <input type="text" class="form-control" name="edit_mobile_user9" id="edit_mobile_user9"  value="{{ department.user9 }}" placeholder=" ">
                         <label for="mobile_user9" class="form-label">Mobile User Name 9</label>
                       </div>
                       <div class="col-md-3 form-group">
-                        <input type="text" class="form-control" name="edit_mobile_no9" id="edit_mobile_no9" placeholder=" ">
+                        <input type="number" class="form-control" name="edit_mobile_no9" id="edit_mobile_no9"  value="{{ department.user9_num }}" placeholder=" ">
                         <label for="edit_mobile_no9" class="form-label">Mobile No9</label>
                       </div>
                       <div class="col-md-3 form-group">
-                        <input type="text" class="form-control" name="edit_mobile_user10" id="edit_mobile_user10" placeholder=" ">
+                        <input type="text" class="form-control" name="edit_mobile_user10" id="edit_mobile_user10"  value="{{ department.user10 }}" placeholder=" ">
                         <label for="edit_mobile_user10" class="form-label">Mobile User Name 10</label>
                       </div>
                       <div class="col-md-3 form-group">
-                        <input type="text" class="form-control" name="edit_mobile_no10" id="edit_mobile_no10" placeholder=" ">
+                        <input type="number" class="form-control" name="edit_mobile_no10" id="edit_mobile_no10"  value="{{ department.user10_num }}" placeholder=" ">
                         <label for="edit_mobile_no10" class="form-label">Mobile No 10</label>
                       </div>
                       <div class="form-buttons mt-3">

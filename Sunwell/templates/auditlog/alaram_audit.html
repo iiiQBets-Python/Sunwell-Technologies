@@ -169,13 +169,14 @@
 {% block content %}
     <div class="container mt-2">
         <!-- Filter Section -->
-        <form class="row g-4">  
+        <form class="row g-4" action="{% url 'view_audit_alarm_logs' %}" method="post"> 
+            {% csrf_token %} 
             <div class="filter-section shadow-sm">
                 <h4 class="text-center mb-4">Alarm Audit Trail</h4>
                 <div class="row">
                     <div class="form-group col-md-4 mb-4">
                         <div class="input-container">
-                            <select class="form-select" id="formats">
+                            <select class="form-select" id="formats" name="formats">
                                 <option value="" disabled selected>Select Formats</option>
                                 <option value="Data Wise">Data Wise</option>
                                 <option value="Equipment-wise">Equipment Wise</option>
@@ -186,13 +187,13 @@
                     </div>
                     <div class="form-group col-md-4 mb-4">
                         <div class="input-container">
-                            <input type="text" class="form-control" id="size" placeholder=" ">
+                            <input type="text" class="form-control" id="size" placeholder=" " value="A4" readonly>
                             <label for="size" class="form-label">Size</label>
                         </div>
                     </div>
                     <div class="form-group col-md-4 mb-4">
                         <div class="input-container">
-                            <input type="text" class="form-control" id="orientation" placeholder=" ">
+                            <input type="text" class="form-control" id="orientation" placeholder=" " value="Potrait" readonly>
                             <label for="orientation" class="form-label">Orientation</label>
                         </div>  
                     </div>
@@ -203,13 +204,13 @@
                 <div class="row mb-1">
                     <div class="col-md-6 mb-4">
                         <div class="input-container">
-                            <input type="date" class="form-control" id="from-date">
+                            <input type="date" class="form-control" id="from-date" name="from_date">
                             <label for="from-date" class="form-label">From Date</label>
                         </div>
                     </div>
                     <div class="col-md-6 mb-4">
                         <div class="input-container">
-                            <input type="date" class="form-control" id="to-date">
+                            <input type="date" class="form-control" id="to-date" name="to_date">
                             <label for="to-date" class="form-label">To Date</label>
                         </div>
                     </div>
@@ -218,13 +219,13 @@
                 <div class="row mb-1">
                     <div class="col-md-6 mb-4">
                         <div class="input-container">    
-                            <input type="time" class="form-control" id="from-time">
+                            <input type="time" class="form-control" id="from-time" name="from_time">
                             <label for="from-time" class="form-label">From Time</label>
                         </div>   
                     </div>
                     <div class="col-md-6 mb-4">
                         <div class="input-container"> 
-                            <input type="time" class="form-control" id="to-time">
+                            <input type="time" class="form-control" id="to-time" name="to_time">
                             <label for="to-time" class="form-label">To Time</label>
                         </div> 
                     </div>
@@ -233,19 +234,24 @@
                 <div class="row mb-1">
                     <div class="col-md-6 mb-4">
                         <div class="input-container"> 
-                            <select class="form-select select-list" id="user-list" multiple>
-                                <option>admin</option>
-                                <option>abc123</option>
+                            <select class="form-select select-list" id="user-list" name="user_list" multiple>
+                                {% for user in users %}
+                                <option value="{{ user.id }}">{{ user.username }}</option>  
+                                {% empty %}
+                                <option>No users available</option>
+                                {% endfor %}
                             </select>
                             <label for="user-list" class="form-label">User List</label>
                         </div>
                     </div>
                     <div class="col-md-6 mb-4">
                         <div class="input-container"> 
-                            <select class="form-select select-list" id="equipment-list" multiple>
-                                <option>MICRO/LEP/008</option>
-                                <option>QC/API/EP/04</option>
-                                <option>RND/EPT/001</option>
+                            <select class="form-select select-list" id="equipment-list" name="equipment_list" multiple>
+                                {% for equipment in equipments %}
+                                <option value="{{ equipment.id }}">{{ equipment.equip_name }}</option>
+                                {% empty %}
+                                <option>No users available</option>
+                                {% endfor %}
                             </select>
                             <label for="equipment-list" class="form-label">Equipment List</label>
                         </div>
@@ -255,7 +261,7 @@
                 <div class="row mb-4">
                     <div class="col-md-6 mb-4">
                         <div class="input-container"> 
-                            <input type="text" class="form-control" id="event-name" placeholder=" ">
+                            <input type="text" class="form-control" id="event-name" name="event_name"  placeholder=" ">
                             <label for="event-name" class="form-label">Event Name</label>
                         </div>
                     </div>

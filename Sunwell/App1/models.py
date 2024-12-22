@@ -87,6 +87,32 @@ class Department(models.Model):
     alert_email_address_9 = models.EmailField(blank=True, null=True)
     alert_email_address_10 = models.EmailField(blank=True, null=True)
 
+    #sms alerts
+    sms_alert=models.BooleanField(default=False, null=True)
+    sms_time = models.TimeField(blank=True, null=True)
+    user1=models.CharField(max_length=25, null=True, blank=True)
+    user1_num=models.IntegerField(null=True)
+    user2=models.CharField(max_length=25, null=True, blank=True)
+    user2_num=models.IntegerField(null=True)
+    user3=models.CharField(max_length=25, null=True, blank=True)
+    user3_num=models.IntegerField(null=True)
+    user4=models.CharField(max_length=25, null=True, blank=True)
+    user4_num=models.IntegerField(null=True)
+    user5=models.CharField(max_length=25, null=True, blank=True)
+    user5_num=models.IntegerField(null=True)
+    user6=models.CharField(max_length=25, null=True, blank=True)
+    user6_num=models.IntegerField(null=True)
+    user7=models.CharField(max_length=25, null=True, blank=True)
+    user7_num=models.IntegerField(null=True)
+    user8=models.CharField(max_length=25, null=True, blank=True)
+    user8_num=models.IntegerField(null=True)
+    user9=models.CharField(max_length=25, null=True, blank=True)
+    user9_num=models.IntegerField(null=True)
+    user10=models.CharField(max_length=25, null=True, blank=True)
+    user10_num=models.IntegerField(null=True)
+
+
+
     def __str__(self):
         return self.department_name
 
@@ -216,6 +242,22 @@ class AppSettings(models.Model):
     stop_bits = models.IntegerField(blank=True, null=True)
     flow_control = models.CharField(max_length=10, blank=True, null=True)
 
+    #App Settings Fields
+    passwordchange=models.IntegerField(null=True)
+    lockcount=models.IntegerField(null=True)
+    autologouttime=models.TimeField(null=True)
+
+   #Whatsapp Settings Fields
+    whatsapp_comm_port = models.CharField(max_length=10, blank=True, null=True)
+    whatsapp_parity = models.CharField(max_length=10, blank=True, null=True)
+    whatsapp_baud_rate = models.CharField(max_length=10, blank=True, null=True)
+    whatsapp_data_bits = models.IntegerField(blank=True, null=True)
+    whatsapp_stop_bits = models.IntegerField(blank=True, null=True)
+    whatsapp_flow_control = models.CharField(max_length=10, blank=True, null=True)
+
+
+
+
     #Whatsapp fields
 
 
@@ -292,11 +334,11 @@ class TemperatureHumidityRecord(models.Model):
     equip_name = models.ForeignKey(Equipment, on_delete=models.SET_NULL, null=True)
     date = models.DateField()
     time = models.TimeField(blank=True, null=True)
-    set_temp = models.FloatField()
-    t_low_alarm = models.FloatField()
-    t_low_alert = models.FloatField()
-    t_high_alarm = models.FloatField()
-    t_high_alert = models.FloatField() 
+    set_temp = models.FloatField(blank=True, null=True)
+    t_low_alarm = models.FloatField(blank=True, null=True)
+    t_low_alert = models.FloatField(blank=True, null=True)
+    t_high_alarm = models.FloatField(blank=True, null=True)
+    t_high_alert = models.FloatField(blank=True, null=True) 
     tmp_1 = models.FloatField(blank=True, null=True)
     tmp_2 = models.FloatField(blank=True, null=True)
     tmp_3 = models.FloatField(blank=True, null=True)
@@ -352,5 +394,20 @@ class PasswordHistory(models.Model):
     
 
     
+class Alarm_codes(models.Model):
+    alarm_log=models.CharField(max_length=100, null=True)
+    code=models.IntegerField(unique=True)
+    remarks=models.TextField(null=True)
+
+class alarm_logs(models.Model):
+    equipment=models.ForeignKey(Equipment, on_delete=models.CASCADE, null=True)
+    alarm_code=models.ForeignKey(Alarm_codes, on_delete=models.CASCADE, to_field='code')
+    time=models.TimeField()
+    date=models.DateField()
+    comments=models.CharField(max_length=255, null=True)
+    acknowledge=models.BooleanField(null=True, default=False)
+    ack_date=models.DateField(null=True)
+    ack_user=models.CharField(max_length=50, null=True)
+
 
     

@@ -92,7 +92,7 @@
 
 {% block content %}
 <div class="container mt-2 table-container fade-in">
-    {% comment %} <div class="d-flex justify-content-end mb-2">
+    <div class="d-flex justify-content-end mb-2">
         <div class="dropdown role-filter">
             <button class="btn btn-outline-secondary dropdown-toggle" type="button" id="roleFilterDropdown" data-bs-toggle="dropdown" aria-expanded="false">
                 Select status
@@ -103,8 +103,8 @@
                 <li><a class="dropdown-item" href="#" data-value="InActive">InActive <span class="option-count">1</span></a></li>
             </ul>
         </div>
-    </div> {% endcomment %}
-    <div class="d-flex justify-content-between align-items-center custom-label mt-5 mb-2" style="font-weight: bold; padding: 5px 10px; background-color: rgb(235, 235, 235);">
+    </div>
+    <div class="d-flex justify-content-between align-items-center custom-label mb-2" style="font-weight: bold; padding: 5px 10px; background-color: rgb(235, 235, 235);">
         <section class="d-block custom-label mb-2" style="background-color: rgb(235, 235, 235); text-align: center; font-weight: bold; padding: 5px 0px">
             Equipment Settings <span id="records-info">(Records Found: 0, Selected: 0)</span>
         </section>    
@@ -132,17 +132,18 @@
             </thead>
             <tbody id="form-data-table" class="scrollable-tbody">
                 {% for equipment in equipment_list %}
-                <tr data-department-id="{{ equipment.department.id }}">
+                <tr>
                     <td><input type="checkbox" class="row-checkbox" name="comm_checkbox"></td>
                     <td><a href="{% url 'equipment_setting' %}">{{ equipment.equip_name }}</a></td>
                     <td>{{ equipment.ip_address }} </td>
                     <td>{{ equipment.status }}</td>
                     <td>
                         <div class="dropdown">
-                          <a class="dropdown-item btn-edit"  data-bs-toggle="edit_modal">
-                              <i class="fas fa-edit"></i>
-                          </a>
+                            <a class="dropdown-item btn-edit" data-id="{{ equipment.id }}" data-is-connected="{{ equipment.is_connected }}" data-bs-toggle="modal" data-bs-target="#editEquipmentModal-{{ equipment.id }}">
+                                <i class="fas fa-edit"></i>
+                            </a>
                         </div>
+                        
                       </td>
                 </tr>
                 {% endfor %}
@@ -198,8 +199,8 @@
                         <div class="col-md-4 form-group">
                             <select class="form-control" id="equipStatus" name="equipStatus" required>
                                 <option value="" disabled selected>Select Status</option>
-                                <option value="Active">Active</option>
-                                <option value="Inactive">Inactive</option>
+                                <option value="active">Active</option>
+                                <option value="inactive">Inactive</option>
                             </select>
                             <label for="equipStatus" class="form-label">Status</label>
                         </div>
@@ -209,9 +210,14 @@
                             <label for="ipaddress" class="form-label">IP Address</label>
                         </div>
                         <div class="col-md-4 form-group">
-                            <img src="{% static 'images/computericon.png' %}" alt="server" class="icon-size">
-                            <i class="fa-solid fa-power-off"></i>
+                            <i id="plc-connect-btn" class="fa-solid fa-plug-circle-check" style="cursor: pointer;"></i>
+                            <i id="plc-disconnect-btn" class="fa-solid fa-plug-circle-xmark" style="display: none; cursor: pointer;"></i>
                         </div>
+                        
+                        <div class="col-md-12 form-group">
+                            <span id="plc-status" class="text-success" style="display:none;">Connected</span>
+                            <span id="plc-error" class="text-danger" style="display:none;">Failed to Connect</span>
+                        </div>                        
 
                         <div class="col-md-12 form-group">
                             <select class="form-control" id="interval" name="interval" required>
@@ -221,10 +227,13 @@
                                 <option value="3">3</option>
                                 <option value="4">4</option>
                                 <option value="5">5</option>
+                                <option value="10">10</option>
+                                <option value="15">15</option>
+                                <option value="20">20</option>
                             </select>
                             <label for="interval" class="form-label">Interval</label>
                         </div>
-                        <input type="hidden" id="selectedDepartment" name="selected_department">
+
                         <div class="col-md-12 form-group">
                             <input type="text" class="form-control" id="equiptype" name="equiptype" placeholder=" " required>
                             <label for="equiptype" class="form-label">Equipment Type</label>
@@ -254,6 +263,113 @@
         </div>
     </div>
 </div>
+
+
+{% for equipment in equipment_list %}
+<!-- The Modal for Editing Equipment -->
+<div class="modal fade" id="editEquipmentModal-{{ equipment.id }}" tabindex="-1" aria-labelledby="editEquipmentModalLabel-{{ equipment.id }}" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content container-custom">
+            <div class="modal-header">
+                <h4 class="modal-title" id="editEquipmentModalLabel-{{ equipment.id }}">Edit Equipment</h4>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form method="post" action="{% url 'equipment_edit' equipment.id %}">
+                    {% csrf_token %}
+                    <div class="row">
+                        <div class="col-md-8 form-group">
+                            <input type="text" class="form-control" name="edit_equipname" value="{{ equipment.equip_name }}" maxlength="50" required>
+                            <label for="edit_equipname" class="form-label">Equipment Name</label>
+                        </div>
+                        <div class="col-md-4 form-group">
+                            <select class="form-control" name="edit_equipStatus" required>
+                                <option value="active" {% if equipment.status == 'active' %} selected {% endif %}>Active</option>
+                                <option value="inactive" {% if equipment.status == 'inactive' %} selected {% endif %}>Inactive</option>
+                            </select>
+                            <label for="edit_equipStatus" class="form-label">Status</label>
+                        </div>
+                        <div class="col-md-8 form-group">
+                            <input type="text" class="form-control" name="edit_ipaddress" id="edit_ipaddress_{{ equipment.id }}" value="{{ equipment.ip_address }}" required>
+                            <label for="edit_ipaddress" class="form-label">IP Address</label>
+                        </div>
+                        
+                        <div class="col-md-4 form-group">
+                            {% if equipment.is_connected %}
+                                <i id="plc-connect-btn-{{ equipment.id }}" class="fa-solid fa-plug-circle-check" 
+                                   style="cursor: pointer; display: none;"></i>
+                                <i id="plc-disconnect-btn-{{ equipment.id }}" class="fa-solid fa-plug-circle-xmark" 
+                                   style="cursor: pointer; display: inline;"></i>
+                            {% else %}
+                                <i id="plc-connect-btn-{{ equipment.id }}" class="fa-solid fa-plug-circle-check" 
+                                   style="cursor: pointer; display: inline;"></i>
+                                <i id="plc-disconnect-btn-{{ equipment.id }}" class="fa-solid fa-plug-circle-xmark" 
+                                   style="cursor: pointer; display: none;"></i>
+                            {% endif %}
+                        </div>                                                                 
+                        <div class="col-md-12 form-group">
+                            <span id="edit_plc-status-{{ equipment.id }}" class="text-success" style="display:none;">Connected</span>
+                            <span id="edit_plc-error-{{ equipment.id }}" class="text-danger" style="display:none;">Failed to Connect</span>
+                        </div>
+                        <div class="col-md-12 form-group">
+                            <input type="number" class="form-control" name="edit_interval" id="edit_interval_{{ equipment.id }}" value="{{ equipment.interval }}" required>
+                            <label for="edit_interval_{{ equipment.id }}" class="form-label">Interval</label>
+                        </div>
+                        <div class="col-md-12 form-group">
+                            <input type="text" class="form-control" name="edit_equiptype" id="edit_equiptype_{{ equipment.id }}" value="{{ equipment.equipment_type }}" required>
+                            <label for="edit_equiptype_{{ equipment.id }}"  class="form-label">Equipment Type</label>
+                        </div>
+                        
+                        <div class="col-md-12 form-group">
+                            <select class="form-control" name="edit_doorAccessType" required>
+                                <option value="none" {% if equipment.door_access_type == 'none' %} selected {% endif %}>None</option>
+                                <option value="plc" {% if equipment.door_access_type == 'plc' %} selected {% endif %}>PLC</option>
+                                <option value="biometric" {% if equipment.door_access_type == 'biometric' %} selected {% endif %}>Biometric</option>
+                            </select>
+                            <label for="edit_doorAccessType" class="form-label">Door Access Type</label>
+                        </div>
+                    </div>
+
+                    <!-- Dynamic Inputs for PLC and Biometric Users -->
+                    <div id="dynamic-fields-{{ equipment.id }}">
+                        {% if plc_users %}
+                            <div class="row">
+                                {% for user in plc_users %}
+                                    <div class="col-md-6 form-group">
+                                        <input type="text" class="form-control" name="edit_plc_user_{{ forloop.counter }}" value="{{ user.username }}" placeholder="PLC User {{ forloop.counter }}">
+                                        <label for="edit_plc_user_{{ forloop.counter }}" class="form-label">PLC User {{ forloop.counter }}</label>
+                                    </div>
+                                {% endfor %}
+                            </div>
+                        {% elif biometric_users %}
+                            <div class="row">
+                                {% for user in biometric_users %}
+                                    <div class="col-md-6 form-group">
+                                        <input type="text" class="form-control" name="edit_biometric_user_{{ forloop.counter }}" value="{{ user.username }}" placeholder="Biometric User {{ forloop.counter }}">
+                                        <label for="edit_biometric_user_{{ forloop.counter }}" class="form-label">Biometric User {{ forloop.counter }}</label>
+                                    </div>
+                                    <div class="col-md-6 form-group">
+                                        <input type="text" class="form-control" name="edit_biometric_card_{{ forloop.counter }}" value="{{ user.card_number }}" placeholder="Card Number {{ forloop.counter }}">
+                                        <label for="edit_biometric_card_{{ forloop.counter }}" class="form-label">Card Number {{ forloop.counter }}"></label>
+                                    </div>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-success">Save</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endfor %}
+
+
+
 <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
 <script>
     $(document).ready(function() {
@@ -303,67 +419,355 @@
             }
         });
     });
+    document.addEventListener("DOMContentLoaded", function () {
+    // Event listener to handle both connect and disconnect clicks
+    document.body.addEventListener('click', function (event) {
+        const target = event.target.closest('i');
+
+        // Handle connect button click (Add Modal)
+        if (target && target.id === 'plc-connect-btn') {
+            console.log("Connect button clicked in Add Modal");
+            handlePlcConnectForAdd();
+        }
+
+        // Handle connect button click (Edit Modal)
+        if (target && target.id.startsWith('plc-connect-btn-')) {
+            const equipmentId = target.id.split('-').pop();  // Get the equipment ID
+            console.log(`Connect button clicked for Equipment ID: ${equipmentId}`);
+            handlePlcConnectForEdit(equipmentId);
+        }
+
+        // Handle disconnect button click (Add Modal)
+        if (target && target.id === 'plc-disconnect-btn') {
+            console.log("Disconnect button clicked in Add Modal");
+            handlePlcDisconnectForAdd();
+        }
+
+        // Handle disconnect button click (Edit Modal)
+        if (target && target.id.startsWith('plc-disconnect-btn-')) {
+            const equipmentId = target.id.split('-').pop();  // Get the equipment ID
+            console.log(`Disconnect button clicked for Equipment ID: ${equipmentId}`);
+            handlePlcDisconnectForEdit(equipmentId);
+        }
+    });
+
+    function handlePlcDisconnectForEdit(equipmentId) {
+    const ipAddressInput = document.getElementById(`edit_ipaddress_${equipmentId}`);
+
+    if (!ipAddressInput || !ipAddressInput.value) {
+        console.error(`IP address is missing for Equipment ID: ${equipmentId}`);
+        return;
+    }
+
+    const ipAddress = ipAddressInput.value;
+
+    console.log(`Attempting to disconnect PLC at IP: ${ipAddress} for Equipment ID: ${equipmentId}`);
+
+    disconnectFromPlc(ipAddress).then((response) => {
+        if (response.status === 'disconnected') {
+            console.log(`PLC Disconnected for Equipment ID: ${equipmentId}`);
+
+            // Update UI to show disconnection status
+            document.getElementById(`plc-connect-btn-${equipmentId}`).style.display = 'inline';
+            document.getElementById(`plc-disconnect-btn-${equipmentId}`).style.display = 'none';
+            document.getElementById(`edit_plc-status-${equipmentId}`).style.display = 'none';
+            document.getElementById(`edit_plc-error-${equipmentId}`).style.display = 'none';
+
+            // Optionally, display a success alert
+            alert("PLC successfully disconnected!");
+        } else {
+            console.error(`Failed to disconnect from PLC for Equipment ID: ${equipmentId}`);
+        }
+    }).catch((error) => {
+        console.error(`Error during PLC disconnection for Equipment ID: ${equipmentId}`, error);
+    });
+}
+
+
+
+    // Function to handle PLC connection for Add Modal
+    function handlePlcConnectForAdd() {
+        const ipAddressInput = document.getElementById('ipaddress');  // Fetch the IP address from Add Modal
+
+        if (!ipAddressInput || !ipAddressInput.value) {
+            console.error("IP address is missing!");
+            return;
+        }
+
+        const ipAddress = ipAddressInput.value;
+
+        console.log(`Attempting to connect to PLC at IP: ${ipAddress} (Add Modal)`);
+
+        connectToPlc(ipAddress).then((response) => {
+            if (response.status === 'connected') {
+                console.log("PLC Connected (Add Modal)");
+
+                // Update the form fields with values fetched from PLC
+                document.getElementById('interval').value = response.interval;
+                document.getElementById('equiptype').value = response.equiptype;
+
+                // Display success alert
+                alert("PLC successfully connected!");
+
+                // Update UI to show connection status
+                document.getElementById('plc-connect-btn').style.display = 'none';
+                document.getElementById('plc-disconnect-btn').style.display = 'inline';
+                document.getElementById('plc-status').style.display = 'inline';
+                document.getElementById('plc-error').style.display = 'none';
+            } else {
+                console.error("Failed to connect to PLC (Add Modal)");
+                document.getElementById('plc-error').style.display = 'inline';
+                document.getElementById('plc-status').style.display = 'none';
+            }
+        }).catch((error) => {
+            console.error("Error during PLC connection (Add Modal):", error);
+            document.getElementById('plc-error').style.display = 'inline';
+            document.getElementById('plc-status').style.display = 'none';
+        });
+    }
+
+    // Function to handle PLC connection for Edit Modal
+    function handlePlcConnectForEdit(equipmentId) {
+    const ipAddressInput = document.getElementById(`edit_ipaddress_${equipmentId}`);
+
+    if (!ipAddressInput || !ipAddressInput.value) {
+        console.error(`IP address is missing for Equipment ID: ${equipmentId}`);
+        return;
+    }
+
+    const ipAddress = ipAddressInput.value;
+
+    console.log(`Attempting to connect to PLC at IP: ${ipAddress} for Equipment ID: ${equipmentId}`);
+
+    connectToPlc(ipAddress).then((response) => {
+        if (response.status === 'connected') {
+            console.log(`PLC Connected for Equipment ID: ${equipmentId}`);
+
+            // Update the form fields with values fetched from PLC
+            document.getElementById(`edit_interval_${equipmentId}`).value = response.interval;
+            document.getElementById(`edit_equiptype_${equipmentId}`).value = response.equiptype;
+
+            // Display success alert
+            alert("PLC successfully connected!");
+
+            // Update UI to show connection status
+            document.getElementById(`plc-connect-btn-${equipmentId}`).style.display = 'none';
+            document.getElementById(`plc-disconnect-btn-${equipmentId}`).style.display = 'inline';
+            document.getElementById(`edit_plc-status-${equipmentId}`).style.display = 'inline';
+            document.getElementById(`edit_plc-error-${equipmentId}`).style.display = 'none';
+        } else {
+            console.error(`Failed to connect to PLC for Equipment ID: ${equipmentId}`);
+            document.getElementById(`edit_plc-error-${equipmentId}`).style.display = 'inline';
+            document.getElementById(`edit_plc-status-${equipmentId}`).style.display = 'none';
+        }
+    }).catch((error) => {
+        console.error(`Error during PLC connection for Equipment ID: ${equipmentId}`, error);
+        document.getElementById(`edit_plc-error-${equipmentId}`).style.display = 'inline';
+        document.getElementById(`edit_plc-status-${equipmentId}`).style.display = 'none';
+    });
+}
+
+
+
+    // Function to connect to PLC
+    function connectToPlc(ipAddress) {
+        return fetch('/plc_connect/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+                'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value,
+            },
+            body: new URLSearchParams({ ipaddress: ipAddress }),
+        })
+        .then(response => response.json())
+        .then(data => {
+            console.log("PLC connect response:", data);
+            // Assuming the PLC response contains interval and equiptype
+            return {
+                status: data.status,
+                interval: data.interval || 5,  // Default interval if not provided
+                equiptype: data.equiptype || 'Unknown'  // Default equipment type if not provided
+            };
+        })
+        .catch(error => {
+            console.error("Error in PLC connect request:", error);
+            throw error;
+        });
+    }
+
+    // Function to handle PLC disconnection for Add Modal
+   function handlePlcDisconnectForAdd() {
+    const ipAddressInput = document.getElementById('ipaddress');
+
+    if (!ipAddressInput || !ipAddressInput.value) {
+        console.error("IP address is missing!");
+        return;
+    }
+
+    const ipAddress = ipAddressInput.value;
+
+    console.log(`Attempting to disconnect PLC at IP: ${ipAddress} (Add Modal)`);
+
+    disconnectFromPlc(ipAddress).then((response) => {
+        if (response.status === 'disconnected') {
+            console.log("PLC Disconnected (Add Modal)");
+
+            // Display disconnect alert
+            alert("PLC disconnected!");
+
+            // Update UI to show disconnection status
+            document.getElementById('plc-connect-btn').style.display = 'inline';
+            document.getElementById('plc-disconnect-btn').style.display = 'none';
+            document.getElementById('plc-status').style.display = 'none';
+            document.getElementById('plc-error').style.display = 'none';
+        } else if (response.status === 'already_disconnected') {
+            console.log("PLC is already disconnected.");
+            alert("PLC was already disconnected.");
+        } else {
+            console.error("Failed to disconnect from PLC (Add Modal)");
+            document.getElementById('plc-error').style.display = 'inline';
+        }
+    }).catch((error) => {
+        console.error("Error during PLC disconnection (Add Modal):", error);
+        document.getElementById('plc-error').style.display = 'inline';
+    });
+}
+
+
+
+    // Function to handle PLC disconnection for Edit Modal
+    function handlePlcDisconnectForEdit(equipmentId) {
+    const ipAddressInput = document.getElementById(`edit_ipaddress_${equipmentId}`);
+
+    if (!ipAddressInput || !ipAddressInput.value) {
+        console.error(`IP address is missing for Equipment ID: ${equipmentId}`);
+        return;
+    }
+
+    const ipAddress = ipAddressInput.value;
+
+    console.log(`Attempting to disconnect PLC at IP: ${ipAddress} for Equipment ID: ${equipmentId}`);
+
+    disconnectFromPlc(ipAddress).then((response) => {
+        if (response.status === 'disconnected') {
+            console.log(`PLC Disconnected for Equipment ID: ${equipmentId}`);
+
+            // Update UI to show disconnection status
+            document.getElementById(`plc-connect-btn-${equipmentId}`).style.display = 'inline';
+            document.getElementById(`plc-disconnect-btn-${equipmentId}`).style.display = 'none';
+            document.getElementById(`edit_plc-status-${equipmentId}`).style.display = 'none';
+            document.getElementById(`edit_plc-error-${equipmentId}`).style.display = 'none';
+
+            // Optionally, display a success alert
+            alert("PLC successfully disconnected!");
+        } else {
+            console.error(`Failed to disconnect from PLC for Equipment ID: ${equipmentId}`);
+        }
+    }).catch((error) => {
+        console.error(`Error during PLC disconnection for Equipment ID: ${equipmentId}`, error);
+    });
+}
+
+
+    // Function to stop PLC data reading
+    function stopPlcDataReading() {
+        console.log("Stopping data reading from PLC...");
+        // Logic to stop any background data reading from the PLC
+        // Implement your logic to stop the background task/thread for reading data
+    }
+
+    // Function to disconnect from PLC
+    function disconnectFromPlc(ipAddress) {
+        return fetch('/plc_disconnect/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+                'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value,
+            },
+            body: new URLSearchParams({ ipaddress: ipAddress }),
+        })
+        .then(response => response.json())
+        .then(data => {
+            console.log("PLC disconnect response:", data);
+            return data;
+        })
+        .catch(error => {
+            console.error("Error in PLC disconnect request:", error);
+            throw error;
+        });
+    }
+});
+
+
+
 </script>
 
     {% block scripts %}
     {{ block.super }}
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
-        document.addEventListener("DOMContentLoaded", function () {
+        document.addEventListener("DOMContentLoaded", function() {
             const searchBar = document.getElementById('searchBar');
+            const roleFilterDropdown = document.getElementById('roleFilterDropdown');
+            const roleFilterItems = document.querySelectorAll('.role-filter .dropdown-item');
             const formDataTable = document.getElementById('form-data-table');
             const tableRows = Array.from(formDataTable.querySelectorAll('tr'));
             const visibleEntries = document.getElementById('visible-entries');
             const totalEntries = document.getElementById('total-entries');
-            const recordsInfo = document.getElementById('records-info');
-            const entriesPerPageSelect = document.getElementById('entriesPerPage');
             const pagination = document.querySelector('.pagination');
             const selectAllCheckbox = document.getElementById('selectAll');
+            const entriesPerPageSelect = document.getElementById('entriesPerPage');
+            const prevPageButton = document.getElementById('prev-page');
+            const nextPageButton = document.getElementById('next-page');
+        
             let currentPage = 1;
             let entriesPerPage = parseInt(entriesPerPageSelect.value, 10);
             let filteredRows = [];
-        
-            function applyDepartmentFilter() {
-                const selectedDepartmentId = localStorage.getItem("selectedDepartmentId");
-                filteredRows = tableRows.filter(row => {
-                    const rowDepartmentId = row.getAttribute("data-department-id");
-                    const isVisible = rowDepartmentId === selectedDepartmentId;
-                    row.style.display = isVisible ? '' : 'none';
-                    return isVisible;
-                });
-                updateTable();
-            }
+            let totalEntriesCount = 0;
+            let totalPages = 0;
         
             function filterTable() {
                 const searchTerm = searchBar.value.toLowerCase().trim();
-                filteredRows = filteredRows.filter(row => {
+                const selectedRole = roleFilterDropdown.getAttribute('data-selected-role') || 'all';
+        
+                filteredRows = tableRows.filter(row => {
                     const cells = Array.from(row.cells);
-                    return cells.some(cell => cell.textContent.toLowerCase().includes(searchTerm));
+                    const matchesSearch = cells.some(cell => cell.textContent.toLowerCase().includes(searchTerm));
+                    const roleCell = cells[3]; // Status is in the 4th column (index 3)
+                    const matchesRole = selectedRole === 'all' || roleCell.textContent.toLowerCase() === selectedRole.toLowerCase();
+        
+                    return matchesSearch && matchesRole;
                 });
+        
+                totalEntriesCount = filteredRows.length;
+                totalPages = Math.ceil(totalEntriesCount / entriesPerPage);
+                currentPage = 1;
                 updateTable();
+                updateRoleCounts(); // Update role counts after filtering
             }
         
             function updateTable() {
-                const totalEntriesCount = filteredRows.length;
                 const startIndex = (currentPage - 1) * entriesPerPage;
                 const endIndex = startIndex + entriesPerPage;
         
+                // Hide all rows
                 tableRows.forEach(row => row.style.display = 'none');
+        
+                // Show only the rows that are part of the current page
                 filteredRows.slice(startIndex, endIndex).forEach(row => row.style.display = '');
         
                 visibleEntries.textContent = filteredRows.slice(startIndex, endIndex).length;
                 totalEntries.textContent = totalEntriesCount;
-                recordsInfo.textContent = `(Records Found: ${totalEntriesCount}, Selected: ${getSelectedRowsCount()})`;
         
-                updatePagination(totalEntriesCount);
-                updateSelectAllCheckbox();
+                updatePagination();
             }
         
-            function updatePagination(totalEntriesCount) {
-                const totalPages = Math.ceil(totalEntriesCount / entriesPerPage);
+            function updatePagination() {
                 const pageItems = Array.from(pagination.querySelectorAll('.page-item:not(#prev-page):not(#next-page)'));
-                
                 pageItems.forEach(item => item.remove());
+        
+                prevPageButton.classList.toggle('disabled', currentPage === 1);
+                nextPageButton.classList.toggle('disabled', currentPage === totalPages);
         
                 for (let i = 1; i <= totalPages; i++) {
                     const pageItem = document.createElement('li');
@@ -374,63 +778,141 @@
                         currentPage = i;
                         updateTable();
                     });
-                    pagination.insertBefore(pageItem, document.getElementById('next-page'));
+                    pagination.insertBefore(pageItem, nextPageButton);
                 }
-        
-                document.getElementById('prev-page').classList.toggle('disabled', currentPage === 1);
-                document.getElementById('next-page').classList.toggle('disabled', currentPage === totalPages);
             }
         
             function getSelectedRowsCount() {
-                return filteredRows.filter(row => row.querySelector('input[type="checkbox"]').checked).length;
-            }
-        
-            function updateSelectAllCheckbox() {
-                const allChecked = filteredRows.every(row => row.querySelector('input[type="checkbox"]').checked);
-                selectAllCheckbox.checked = allChecked;
+                return formDataTable.querySelectorAll('input[type="checkbox"]:checked:not(#selectAll)').length;
             }
         
             function updateRecordsInfo() {
-                recordsInfo.textContent = `(Records Found: ${filteredRows.length}, Selected: ${getSelectedRowsCount()})`;
+                document.getElementById('records-info').textContent = `(Records Found: ${totalEntriesCount}, Selected: ${getSelectedRowsCount()})`;
             }
         
-            // Apply department filter on page load
-            applyDepartmentFilter();
+            function updateRoleCounts() {
+                roleFilterItems.forEach(item => {
+                    const role = item.getAttribute('data-value').toLowerCase();
+                    let roleCount = 0;
         
-            searchBar.addEventListener('input', function () {
-                applyDepartmentFilter();
-                filterTable();
+                    // Count rows that match the role
+                    tableRows.forEach(row => {
+                        const statusCell = row.cells[3]; // Assuming status is in the 4th column (index 3)
+                        const rowStatus = statusCell.textContent.toLowerCase();
+        
+                        if (role === 'all' || rowStatus === role) {
+                            roleCount++;
+                        }
+                    });
+        
+                    // Update the count in the dropdown
+                    item.querySelector('.option-count').textContent = `${roleCount}`;
+                });
+            }
+        
+            selectAllCheckbox.addEventListener('change', function() {
+                const checkboxes = formDataTable.querySelectorAll('input[type="checkbox"]:not(#selectAll)');
+                checkboxes.forEach(checkbox => checkbox.checked = this.checked);
+                updateRecordsInfo();
             });
         
-            entriesPerPageSelect.addEventListener('change', function () {
+            formDataTable.addEventListener('change', function(event) {
+                if (event.target.type === 'checkbox' && event.target !== selectAllCheckbox) {
+                    selectAllCheckbox.checked = Array.from(formDataTable.querySelectorAll('input[type="checkbox"]:not(#selectAll)')).every(checkbox => checkbox.checked);
+                    updateRecordsInfo();
+                }
+            });
+        
+            searchBar.addEventListener('input', function() {
+                filterTable();
+                updateRecordsInfo();
+            });
+        
+            roleFilterItems.forEach(item => {
+                item.addEventListener('click', function () {
+                    roleFilterDropdown.setAttribute('data-selected-role', item.getAttribute('data-value'));
+                    roleFilterDropdown.textContent = item.textContent;
+                    filterTable();
+                    updateRecordsInfo();
+                });
+            });
+        
+            entriesPerPageSelect.addEventListener('change', function() {
                 entriesPerPage = parseInt(this.value, 10);
+                totalPages = Math.ceil(totalEntriesCount / entriesPerPage);
                 currentPage = 1;
                 updateTable();
             });
         
-            document.getElementById("departmentSelect").addEventListener("change", function () {
-                const selectedDepartmentId = this.value;
-                localStorage.setItem("selectedDepartmentId", selectedDepartmentId);
-                applyDepartmentFilter();
-            });
-        
-            selectAllCheckbox.addEventListener('change', function () {
-                const visibleCheckboxes = filteredRows.slice((currentPage - 1) * entriesPerPage, currentPage * entriesPerPage);
-                visibleCheckboxes.forEach(row => {
-                    row.querySelector('input[type="checkbox"]').checked = selectAllCheckbox.checked;
-                });
-                updateRecordsInfo();
-            });
-        
-            formDataTable.addEventListener('change', function (event) {
-                if (event.target.type === 'checkbox' && event.target !== selectAllCheckbox) {
-                    updateSelectAllCheckbox();
-                    updateRecordsInfo();
+            prevPageButton.addEventListener('click', function(event) {
+                event.preventDefault();
+                if (currentPage > 1) {
+                    currentPage--;
+                    updateTable();
                 }
             });
-        });
         
+            nextPageButton.addEventListener('click', function(event) {
+                event.preventDefault();
+                if (currentPage < totalPages) {
+                    currentPage++;
+                    updateTable();
+                }
+            });
+        
+            document.querySelectorAll('.role-filter .dropdown-item').forEach(item => {
+                item.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    const selectedText = this.innerHTML;
+                    document.getElementById('roleFilterDropdown').innerHTML = selectedText;
+                });
+            });
+        
+            filterTable(); // Initial filter to set up table and counts
+            updateRecordsInfo(); // Ensure records info is updated initially
+        });
 
+        const plcUsers = JSON.parse('{{ plc_users|safe }}');
+        const biometricUsers = JSON.parse('{{ biometric_users|safe }}');
+
+        document.addEventListener("DOMContentLoaded", function() {
+            const doorAccessTypeField = document.querySelector("select[name='edit_doorAccessType']");
+            
+            if (doorAccessTypeField) {
+                doorAccessTypeField.addEventListener("change", function() {
+                    const selectedValue = this.value;
+                    const additionalInputs = document.querySelector('#dynamic-fields-{{ equipment.id }}');
+                    additionalInputs.innerHTML = "";  // Clear existing inputs
+
+                    if (selectedValue === 'plc') {
+                        plcUsers.forEach(function(user, index) {
+                            additionalInputs.insertAdjacentHTML('beforeend', `
+                                <div class="col-md-6 form-group">
+                                    <input type="text" class="form-control" id="edit_plc_user_${index + 1}" name="edit_plc_user_${index + 1}" value="${user.username}" placeholder="PLC User ${index + 1}">
+                                    <label for="edit_plc_user_${index + 1}" class="form-label">PLC User ${index + 1}</label>
+                                </div>
+                            `);
+                        });
+                    } else if (selectedValue === 'biometric') {
+                        biometricUsers.forEach(function(user, index) {
+                            additionalInputs.insertAdjacentHTML('beforeend', `
+                                <div class="col-md-6 form-group">
+                                    <input type="text" class="form-control" id="edit_biometric_user_${index + 1}" name="edit_biometric_user_${index + 1}" value="${user.username}" placeholder="Biometric User ${index + 1}">
+                                    <label for="edit_biometric_user_${index + 1}" class="form-label">Biometric User ${index + 1}</label>
+                                </div>
+                                <div class="col-md-6 form-group">
+                                    <input type="text" class="form-control" id="edit_biometric_card_${index + 1}" name="edit_biometric_card_${index + 1}" value="${user.card_number}" placeholder="Card Number ${index + 1}">
+                                    <label for="edit_biometric_card_${index + 1}" class="form-label">Card Number ${index + 1}</label>
+                                </div>
+                            `);
+                        });
+                    }
+                });
+
+                // Trigger the change event on load to show the correct fields when editing
+                doorAccessTypeField.dispatchEvent(new Event("change"));
+            }
+        });
         
         document.getElementById('adminUserModal').addEventListener('hidden.bs.modal', function (e) {
             var form = document.getElementById('adminUserForm');
@@ -439,60 +921,6 @@
             const inputs = document.querySelectorAll(".form-control, .form-select");
             inputs.forEach(input => input.classList.remove("filled"));
         });
-
-
-        document.addEventListener("DOMContentLoaded", function() {
-    const departmentSelect = document.getElementById("departmentSelect"); // Assuming department dropdown has this ID
-    const rows = document.querySelectorAll("#form-data-table tr");
-
-    // Function to filter equipment based on department ID
-    function filterEquipmentByDepartment(departmentId) {
-        console.log("Filtering equipment with Department ID:", departmentId);
-
-        rows.forEach(row => {
-            const rowDepartmentId = row.getAttribute("data-department-id");
-
-            if (departmentId === "all" || rowDepartmentId === departmentId) {
-                row.style.display = "table-row"; // Show row if matches or "all" selected
-            } else {
-                row.style.display = "none"; // Hide row if doesn't match
-            }
-        });
-    }
-
-    // Apply initial filtering based on default selected department
-    function applyInitialFilter() {
-        const initialDepartmentId = departmentSelect.value;
-        console.log("Applying initial filter with Department ID:", initialDepartmentId);
-        filterEquipmentByDepartment(initialDepartmentId);
-    }
-
-    // Run the initial filter
-    applyInitialFilter();
-
-    // Add event listener for changes in department selection
-    departmentSelect.addEventListener("change", function() {
-        const selectedDepartmentId = this.value;
-        filterEquipmentByDepartment(selectedDepartmentId);
-    });
-});
-
-document.addEventListener("DOMContentLoaded", function() {
-    const selectedDepartment = localStorage.getItem("selectedDepartmentId");
-    const departmentInput = document.getElementById("selectedDepartment");
-
-    // Set the hidden input value with the department ID from localStorage
-    if (departmentInput && selectedDepartment) {
-        departmentInput.value = selectedDepartment;
-    }
-});
-
-document.querySelector('form').addEventListener('submit', function(event) {
-    const departmentInput = document.getElementById("selectedDepartment");
-    console.log("Department ID being submitted:", departmentInput.value);
-});
-
-
     </script>
     {% endblock %}
 {% endblock content %}

@@ -144,29 +144,29 @@
                       </div>
                     </div> {% endcomment %}
                     <div class="form-group col-md-6">
-                      <input type="text" class="form-control" placeholder=" " id="smpthost" name="smpthost">
+                      <input type="text" class="form-control" placeholder=" " id="smpthost" name="smpthost"  value="{{ app_settings.email_host }}" disabled
                       <!-- <label class="form-label" for="smptaddress">Email Port</label> -->
                       <label class="form-label" for="smpthost">SMTP Host</label>
                     </div>
                     <div class="form-group col-md-6">
-                      <input type="number" class="form-control" placeholder=" " id="smtpPort" name="smtpPort">
+                      <input type="number" class="form-control" placeholder=" " id="smtpPort" name="smtpPort" value="{{ app_settings.email_port }}" disabled>
                       <label class="form-label" for="smtpPort">SMTP Port</label>
                     </div>
                     <div class="form-group col-md-6">
-                      <input type="text" class="form-control" placeholder=" " id="smptemail" name="smptemail">
+                      <input type="text" class="form-control" placeholder=" " id="smptemail" name="smptemail" value="{{ app_settings.email_host_user }}" disabled>
                       <!-- <label class="form-label" for="smptemail">Email Host</label> -->
                       <label class="form-label" for="smptemail">SMTP Email</label>
                     </div>
 
                     
                     <div class="form-group col-md-6">
-                      <input type="password" class="form-control" placeholder=" " id="smptpass" name="smptpass">
+                      <input type="password" class="form-control" placeholder=" " id="smptpass" name="smptpass" value="{{ app_settings.email_host_password }}" disabled >
                       <label class="form-label" for="smptpass">SMTP Password</label>
                       <!-- <label class="form-label" for="smptpass">SMTP Password</label> -->
                     </div>
 
                     {% comment %} <div class="form-group col-md-6">
-                      <input type="text" class="form-control" placeholder=" " id="smptuser" name="smptuser">
+                      <input type="text" class="form-control" placeholder=" " id="smptuser" name="smptuser" >
                       <label class="form-label" for="smptuser">SMTP Username</label>
                       <!-- <label class="form-label" for="smptuser">SMTP Username</label> -->
                     </div> {% endcomment %}
@@ -182,13 +182,13 @@
                           <label class="form-check-label" for="smpt-enable">Enable</label>
                         </div>
                         <div class="form-check form-check-inline">
-                          <input class="form-check-input" type="radio" name="smpt_layer" id="smpt-disable" value="Disable">
+                          <input class="form-check-input" type="radio" name="smpt_layer" id="smpt-disable" value="Disable" >
                           <label class="form-check-label" for="smpt-disable">Disable</label>
                         </div>
                       </div>
                     </div> {% endcomment %}
                     <div class="form-group col-md-12">
-                      <textarea class="form-control" id="emailsign" name="emailsignature" rows="3" placeholder=" "></textarea>
+                      <textarea class="form-control" id="emailsign" name="emailsignature" rows="3" placeholder=" " value="{{ app_settings.email_signature }}" disabled></textarea>
                       <label class="form-label" for="emailsignature">Email Signature</label>
                     </div>
 
@@ -254,75 +254,80 @@
                     </div>
                   </div>
                   <div class="form-group col-md-6">
-                    <select class="form-select" id="commport" name="commport" placeholder=" " required>
-                      <option value="" disabled selected hidden></option>
-                      <option value="COM1">COM1</option>
-                      <option value="COM2">COM2</option>
-                      <option value="COM3">COM3</option>
-                      <option value="COM4">COM4</option>
+                    <select class="form-select" id="commport" name="commport" placeholder=" " required disabled>
+                      <option value="" disabled hidden>Select a port</option>
+                      <option value="COM1" {% if app_settings.comm_port == "COM1" %}selected{% endif %}>COM1</option>
+                      <option value="COM2" {% if app_settings.comm_port == "COM2" %}selected{% endif %}>COM2</option>
+                      <option value="COM3" {% if app_settings.comm_port == "COM3" %}selected{% endif %}>COM3</option>
+                      <option value="COM4" {% if app_settings.comm_port == "COM4" %}selected{% endif %}>COM4</option>
                     </select>
                     <label class="form-label" for="commport">Communication Port</label>
                   </div>
                   
+                  
                   <div class="col-md-6 form-group">
-                    <select class="form-select" id="baudrate" name="baudrate" placeholder=" " required>
-                      <option value="" disabled selected hidden></option>
-                      <option value="110">110</option>
-                      <option value="300">300</option>
-                      <option value="1200">1200</option>
-                      <option value="2400">2400</option>
-                      <option value="4800">4800</option>
-                      <option value="9600">9600</option>
-                      <option value="19200">19200</option>
-                      <option value="38400">38400</option>
-                      <option value="57600">57600</option>
-                      <option value="115200">115200</option>
-                      <option value="230400">230400</option>
-                      <option value="460800">460800</option>
-                      <option value="921600">921600</option>
+                    <select class="form-select" id="baudrate" name="baudrate" placeholder=" " required disabled>
+                      <option value="" disabled hidden></option>
+                      <option value="110" {% if app_settings.baud_rate == "110" %}selected{% endif %}>110</option>
+                      <option value="300" {% if app_settings.baud_rate == "300" %}selected{% endif %}>300</option>
+                      <option value="1200" {% if app_settings.baud_rate == "1200" %}selected{% endif %}>1200</option>
+                      <option value="2400" {% if app_settings.baud_rate == "2400" %}selected{% endif %}>2400</option>
+                      <option value="4800" {% if app_settings.baud_rate == "4800" %}selected{% endif %}>4800</option>
+                      <option value="9600" {% if app_settings.baud_rate == "9600" %}selected{% endif %}>9600</option>
+                      <option value="19200" {% if app_settings.baud_rate == "19200" %}selected{% endif %}>19200</option>
+                      <option value="38400" {% if app_settings.baud_rate == "38400" %}selected{% endif %}>38400</option>
+                      <option value="57600" {% if app_settings.baud_rate == "57600" %}selected{% endif %}>57600</option>
+                      <option value="115200" {% if app_settings.baud_rate == "115200" %}selected{% endif %}>115200</option>
+                      <option value="230400" {% if app_settings.baud_rate == "230400" %}selected{% endif %}>230400</option>
+                      <option value="460800" {% if app_settings.baud_rate == "460800" %}selected{% endif %}>460800</option>
+                      <option value="921600" {% if app_settings.baud_rate == "921600" %}selected{% endif %}>921600</option>
                     </select>
                     <label for="baudrate" class="form-label">Baud Rate</label>
                   </div>
+                  
                   <div class="col-md-6 form-group">
-                    <select class="form-select" id="databits" name="databits" placeholder=" " required>
-                      <option value="" disabled selected hidden></option>
-                      <option value="5">5</option>
-                      <option value="6">6</option>
-                      <option value="7">7</option>
-                      <option value="8">8</option>
-                      <!-- Add category options as needed -->
+                    <select class="form-select" id="databits" name="databits" placeholder=" " required disabled>
+                      <option value="" disabled hidden></option>
+                      <option value="5" {% if app_settings.data_bits == "5" %}selected{% endif %}>5</option>
+                      <option value="6" {% if app_settings.data_bits == "6" %}selected{% endif %}>6</option>
+                      <option value="7" {% if app_settings.data_bits == "7" %}selected{% endif %}>7</option>
+                      <option value="8" {% if app_settings.data_bits == "8" %}selected{% endif %}>8</option>
                     </select>
                     <label for="databits" class="form-label">Data Bits</label>
                   </div>
+                  
                   <div class="col-md-6 form-group">
-                    <select class="form-select" id="parity" name="parity" placeholder=" " required>
-                      <option value="" disabled selected hidden></option>
-                      <option value="Even">Even</option>
-                      <option value="Odd">Odd</option>
-                      <option value="None">None</option>
-                      <option value="Mark">Mark</option>
-                      <option value="Space">Space</option>
+                    <select class="form-select" id="parity" name="parity" placeholder=" " required disabled>
+                      <option value="" disabled hidden></option>
+                      <option value="Even" {% if app_settings.parity == "Even" %}selected{% endif %}>Even</option>
+                      <option value="Odd" {% if app_settings.parity == "Odd" %}selected{% endif %}>Odd</option>
+                      <option value="None" {% if app_settings.parity == "None" %}selected{% endif %}>None</option>
+                      <option value="Mark" {% if app_settings.parity == "Mark" %}selected{% endif %}>Mark</option>
+                      <option value="Space" {% if app_settings.parity == "Space" %}selected{% endif %}>Space</option>
                     </select>
                     <label for="parity" class="form-label">Parity</label>
                   </div>
+                  
                   <div class="col-md-6 form-group">
-                    <select class="form-select" id="stopbits" name="stopbits" placeholder=" " required>
-                      <option value="" disabled selected hidden></option>
-                      <option value="1">1</option>
-                      <option value="1.5">1.5</option>
-                      <option value="2">2</option>
+                    <select class="form-select" id="stopbits" name="stopbits" placeholder=" " required disabled>
+                      <option value="" disabled hidden></option>
+                      <option value="1" {% if app_settings.stop_bits == "1" %}selected{% endif %}>1</option>
+                      <option value="1.5" {% if app_settings.stop_bits == "1.5" %}selected{% endif %}>1.5</option>
+                      <option value="2" {% if app_settings.stop_bits == "2" %}selected{% endif %}>2</option>
                     </select>
                     <label for="stopbits" class="form-label">Stop Data</label>
                   </div>
+                  
                   <div class="col-md-6 form-group">
-                    <select class="form-select" id="flowcontrol" name="flowcontrol" placeholder=" " required>
-                      <option value="" disabled selected hidden></option>
-                      <option value="xon_xoff">Xon/Xoff</option>
-                      <option value="hardware">Hardware</option>
-                      <option value="none">None</option>
+                    <select class="form-select" id="flowcontrol" name="flowcontrol" placeholder=" " required disabled>
+                      <option value="" disabled hidden></option>
+                      <option value="xon_xoff" {% if app_settings.flow_control == "xon_xoff" %}selected{% endif %}>Xon/Xoff</option>
+                      <option value="hardware" {% if app_settings.flow_control == "hardware" %}selected{% endif %}>Hardware</option>
+                      <option value="none" {% if app_settings.flow_control == "none" %}selected{% endif %}>None</option>
                     </select>
                     <label for="flowcontrol" class="form-label">Flow Control</label>
                   </div>
+                  
                   <!-- Additional SMS settings fields -->
                   <div class="form-buttons">
                     <button class="btn btn-outline-danger" type="button">Close</button>

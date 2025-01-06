@@ -7,6 +7,12 @@
     {{ block.super }}
     <link rel="stylesheet" href="{% static 'css/Settings/graphcolor.css' %}">
     <style>
+        .content {
+            flex-grow: 1;
+            height: 85vh !important;
+            overflow-y: auto;
+            padding: 5px;
+        }
          .container {
             margin-top: 20px;
         }
@@ -35,6 +41,131 @@
         .color-select{
             cursor: pointer;
         }
+        .checkbox-list-1, .checkbox-list-2 {
+            max-height: 300px;
+            overflow-y: auto;
+            border: 1px solid #ddd;
+            padding: 15px;
+            border-radius: 8px;
+            background-color: #fff;
+        }
+        .form-check {
+            margin-bottom: 10px;
+        }
+        @media (max-width: 992px) {
+            .container{
+                max-width: 100% !important;
+            }
+            .content {
+                height: 89vh !important;
+            }
+            .table-wrapper {
+                overflow-x: auto;
+            }
+            
+            .custom-label {
+                /* flex-direction: column !important; */
+                align-items: center;
+            }
+            
+            
+            .custom-label > div {
+                margin-top: 10px;
+            }
+            
+            .d-flex.justify-content-end.align-items-center {
+                /* flex-direction: column; */
+                align-items: stretch !important;
+            }
+            
+            /* .d-flex.input-group {
+                width: 100% !important;
+                margin-bottom: 10px;
+            } */
+            
+            /* .btn-primary {
+                width: 100%;
+            } */
+        }
+        @media (width: 768px) {
+            .d-flex.justify-content-between.align-items-center.mt-3 {
+                flex-direction: row; 
+                align-items: center !important; 
+            }
+
+            .content {
+                height: 85vh !important;
+            }
+            .container{
+                max-width: 100% !important;
+            }
+        }
+
+        @media (max-width: 767px) {
+            .entries-info,
+    .pagination {
+        justify-content: center !important;
+        /* margin-top: 10px; */
+    }
+
+    .row.align-items-center > div {
+        text-align: center;
+    }
+            .content {
+                height: 75vh !important;
+            }
+            .entries-info {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            
+            .pagination {
+                margin-top: 10px;
+            }
+            
+            /* .d-flex.justify-content-between.align-items-center.mt-3 {
+                flex-direction: column;
+                align-items: stretch !important;
+            } */
+            
+            .d-flex.justify-content-between.align-items-center.mt-3 > div {
+                text-align: center;
+                margin: 5px 0;
+            }
+            
+            #adminUserModal .modal-dialog {
+                max-width: 95%;
+                margin: 1.75rem auto;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .custom-label {
+                flex-direction: column !important;
+                align-items: center;
+            }
+            .content {
+                height: 75vh !important;
+            }
+            .entries-info, .pagination {
+                justify-content: center;
+                margin-top: 10px;
+            }
+            
+            #adminUserModal .modal-dialog {
+                margin: 0.5rem;
+            }
+            
+            .form-buttons {
+                flex-direction: column;
+            }
+            
+            .form-buttons .btn {
+                width: 100%;
+                margin-bottom: 10px;
+            }
+            
+        }
 
     </style>
 {% endblock styles %}
@@ -45,29 +176,29 @@
     <div class="row mb-3">
         <div class="col-md-3">
             <label for="equipmentName" class="form-label">Equipment Name</label>
-            <input type="text" class="form-control" id="equipmentName" value="RND/EPT/001">
+            <input type="text" class="form-control" id="equipmentName" value="{{ equipment.equip_name }}">
         </div>
-        <div class="col-md-4">
+        <div class="col-md-3">
             <label for="ipAddress" class="form-label">IP Address</label>
             <div class="d-flex">
-                <input type="text" class="form-control me-2" value="192">
-                <span>.</span>
-                <input type="text" class="form-control me-2 ms-2" value="168">
-                <span>.</span>
-                <input type="text" class="form-control me-2 ms-2" value="1">
-                <span>.</span>
-                <input type="text" class="form-control ms-2" value="2">
+                <input type="text" class="form-control me-2" value="{{ equipment.ip_address }}">
             </div>
+        </div>
+        <div class="col-md-3">
+            <label for="status" class="form-label">Status</label>
+            <select name="status" id="status" class="form-select">
+                <option value="online" {% if equipment.status == "Yes" %}selected{% endif %}>Online</option>
+                <option value="offline" {% if equipment.status != "Yes" %}selected{% endif %}>Offline</option>
+            </select>
         </div>
         <div class="col-md-3">
             <label for="loginInterval" class="form-label">Login Interval</label>
             <div class="d-flex align-items-center">
-                <input type="number" class="form-control me-2" id="loginInterval" value="5" min="1" max="480">
+                <input type="number" class="form-control me-2" id="loginInterval" value="{{ equipment.interval }}" min="1" max="480">
                 <span style="white-space: nowrap;">mins (Max 480)</span>
             </div>
         </div>
     </div>
-
 
     <ul class="nav nav-tabs" id="myTab" role="tablist">
         <li class="nav-item" role="presentation">
@@ -79,8 +210,10 @@
         <li class="nav-item" role="presentation">
             <button class="nav-link" id="write-event-tab" data-bs-toggle="tab" data-bs-target="#write-event" type="button" role="tab" aria-controls="write-event" aria-selected="false">Equipment Write Event</button>
         </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="email-sms-alarm-alert-tab" data-bs-toggle="tab" data-bs-target="#emailsmsalert" type="button" role="tab" aria-controls="emailsmsalert" aria-selected="false">Email/SMS Alarm Alert</button>
+        </li>
     </ul>
-
 
     <div class="tab-content" id="myTabContent">
         <div class="tab-pane fade show active table-container" id="parameters" role="tabpanel" aria-labelledby="parameters-tab">
@@ -284,8 +417,10 @@
                     </tbody>
                 </table>
             </div>
-            <div class="d-flex justify-content-between mb-2">
-                <div class="entries-info d-flex align-items-center">
+
+            <div class="row align-items-center mt-3 mb-2">
+                <!-- Entries Per Page Dropdown -->
+                <div class="col-12 col-md-5 justify-content-start align-items-center mb-2 mb-md-0 entries-info">
                     <span>Show</span>
                     <select id="entriesPerPage" class="form-select d-inline-block mx-2 entriesPerPage">
                         <option value="10" selected>10</option>
@@ -296,17 +431,29 @@
                     </select>
                     <span>entries per page</span>
                 </div>
-                <div class="entries-info d-flex align-items-center">
+            
+                <!-- Showing Entries Info -->
+                <div class="col-12 col-md-3 d-flex justify-content-center align-items-center mb-2 mb-md-0">
                     <small>Showing <span id="visible-entries">0</span> of <span id="total-entries">0</span> entries</small>
                 </div>
-                <nav aria-label="Page navigation" class="d-flex justify-content-end">
-                    <ul class="pagination mb-0">
-                        <li class="page-item" id="prev-page"><a class="page-link" href="#">Previous</a></li>
-                        <li class="page-item"><a class="page-link" href="#">1</a></li>
-                        <li class="page-item"><a class="page-link" href="#">2</a></li>
-                        <li class="page-item" id="next-page"><a class="page-link" href="#">Next</a></li>
-                    </ul>
-                </nav>
+            
+                <!-- Pagination -->
+                <div class="col-12 col-md-4 d-flex justify-content-md-end justify-content-center">
+                    <nav aria-label="Page navigation">
+                        <ul class="pagination mb-0">
+                            <li class="page-item" id="prev-page"><a class="page-link" href="#">Previous</a></li>
+                            <li class="page-item"><a class="page-link" href="#">1</a></li>
+                            <li class="page-item"><a class="page-link" href="#">2</a></li>
+                            <li class="page-item"><a class="page-link" href="#">3</a></li>
+                            <li class="page-item" id="next-page"><a class="page-link" href="#">Next</a></li>
+                        </ul>
+                    </nav>
+                </div>
+            </div>  
+
+            <div class="d-flex justify-content-center align-items-center"> 
+                <button class="btn btn-secondary m-2" type="button">Cancel</button> 
+                <button class="btn btn-primary m-2" type="submit">Save</button> 
             </div>
         </div>
 
@@ -471,6 +618,10 @@
                     </div> -->
                 </div>
             </div>
+            <div class="d-flex justify-content-end align-items-center"> 
+                <button class="btn btn-secondary m-2" type="button">Cancel</button> 
+                <button class="btn btn-primary m-2" type="submit">Save</button> 
+            </div>
         </div>
 
         <div class="tab-pane fade" id="write-event" role="tabpanel" aria-labelledby="write-event-tab">
@@ -590,8 +741,9 @@
                     </tbody>
                 </table>
             </div>
-            <div class="d-flex justify-content-between mb-2">
-                <div class="entries-info d-flex align-items-center">
+            <div class="row align-items-center mt-3 mb-2">
+                <!-- Entries Per Page Dropdown -->
+                <div class="col-12 col-md-5 justify-content-start align-items-center mb-2 mb-md-0 entries-info">
                     <span>Show</span>
                     <select id="entriesPerPage" class="form-select d-inline-block mx-2 entriesPerPage">
                         <option value="10" selected>10</option>
@@ -602,17 +754,70 @@
                     </select>
                     <span>entries per page</span>
                 </div>
-                <div class="entries-info d-flex align-items-center">
+            
+                <!-- Showing Entries Info -->
+                <div class="col-12 col-md-3 d-flex justify-content-center align-items-center mb-2 mb-md-0">
                     <small>Showing <span id="visible-entries">0</span> of <span id="total-entries">0</span> entries</small>
                 </div>
-                <nav aria-label="Page navigation" class="d-flex justify-content-end">
-                    <ul class="pagination mb-0">
-                        <li class="page-item" id="prev-page"><a class="page-link" href="#">Previous</a></li>
-                        <li class="page-item"><a class="page-link" href="#">1</a></li>
-                        <li class="page-item"><a class="page-link" href="#">2</a></li>
-                        <li class="page-item" id="next-page"><a class="page-link" href="#">Next</a></li>
-                    </ul>
-                </nav>
+            
+                <!-- Pagination -->
+                <div class="col-12 col-md-4 d-flex justify-content-md-end justify-content-center">
+                    <nav aria-label="Page navigation">
+                        <ul class="pagination mb-0">
+                            <li class="page-item" id="prev-page"><a class="page-link" href="#">Previous</a></li>
+                            <li class="page-item"><a class="page-link" href="#">1</a></li>
+                            <li class="page-item"><a class="page-link" href="#">2</a></li>
+                            <li class="page-item"><a class="page-link" href="#">3</a></li>
+                            <li class="page-item" id="next-page"><a class="page-link" href="#">Next</a></li>
+                        </ul>
+                    </nav>
+                </div>
+                <div class="d-flex justify-content-center align-items-center"> 
+                    <button class="btn btn-secondary m-2" type="button">Cancel</button> 
+                    <button class="btn btn-primary m-2" type="submit">Save</button> 
+                </div>
+            </div>  
+        </div>
+
+        <div class="tab-pane fade" id="emailsmsalert" role="tabpanel" aria-labelledby="email-sms-alarm-alert-tab">
+            <div class="row mt-0 p-4" id="alertSections">
+                <!-- Email Alert Section -->
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <input class="form-check-input" type="checkbox" id="activateEmail">
+                        <label class="form-check-label" for="activateEmail">Activate Email Alert</label>
+                    </div>
+                    
+                    <div class="checkbox-list-1">
+                        {% for i in logs %} 
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="emailAlert1">
+                            <label class="form-check-label" for="emailAlert1">{{ i.alarm_log }}</label>
+                        </div>
+                        {% endfor %}
+                    </div>
+
+                </div>
+    
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <input class="form-check-input" type="checkbox" id="activateSms">
+                        <label class="form-check-label" for="activateSms">Activate SMS Alert</label>
+                    </div>
+                    <div class="checkbox-list-2">
+                        {% for i in logs %} 
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="smsAlert1">
+                            <label class="form-check-label" for="smsAlert1">{{ i.alarm_log }}</label>
+                        </div>
+                        {% endfor %}
+                            <!-- Add more alerts here -->
+                    </div>
+                </div>
+            </div>
+            <div class="d-flex justify-content-center align-items-center"> 
+                <button class="btn btn-secondary m-2" type="button">Cancel</button> 
+                <button class="btn btn-primary m-2" type="submit">Save</button> 
             </div>
         </div>
     </div>
@@ -621,91 +826,138 @@
 {% block scripts %}
     {{ block.super }}
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
     <script>
-    document.addEventListener('DOMContentLoaded', function () {
-        // Function to update entries info based on active tab
-        const updateEntriesInfo = (tableSelector) => {
-            const totalEntries = document.querySelectorAll(${tableSelector} tbody tr).length;
-            const visibleEntries = document.querySelectorAll(${tableSelector} tbody tr:not(.d-none)).length;
-            document.querySelector(${tableSelector} #total-entries).textContent = totalEntries;
-            document.querySelector(${tableSelector} #visible-entries).textContent = visibleEntries;
-        };
-
-        // Function to handle pagination and visibility of rows
-        const paginateRows = (tableSelector, currentPage, rowsPerPage) => {
-            const rows = document.querySelectorAll(${tableSelector} tbody tr);
-            const totalPages = Math.ceil(rows.length / rowsPerPage);
-
-            rows.forEach((row, index) => {
-                const start = (currentPage - 1) * rowsPerPage;
-                const end = start + rowsPerPage;
-                row.classList.toggle('d-none', index < start || index >= end);
-            });
-
-            updateEntriesInfo(tableSelector);
-        };
-
-        // Initial update for both tables with default 10 entries per page
-        document.querySelectorAll('.entriesPerPage').forEach(function(selectElement) {
-            const tableSelector = selectElement.closest('.tab-pane').id === 'parameters' ? '#parameters' : '#write-event';
-            paginateRows(tableSelector, 1, 10);  // Default to 10 entries per page on load
-        });
-
-        // Handle entries per page change
-        document.querySelectorAll('.entriesPerPage').forEach(function(selectElement) {
-            selectElement.addEventListener('change', function () {
-                const entriesPerPage = parseInt(this.value);
-                const tableSelector = this.closest('.tab-pane').id === 'parameters' ? '#parameters' : '#write-event';
-                paginateRows(tableSelector, 1, entriesPerPage);  // Reset to first page on change
-            });
-        });
-
-        // Handle pagination
-        document.querySelectorAll('.pagination .page-link').forEach(function(link) {
-            link.addEventListener('click', function (e) {
-                e.preventDefault();
-                const tableSelector = this.closest('.tab-pane').id === 'parameters' ? '#parameters' : '#write-event';
-                const rowsPerPage = parseInt(document.querySelector(${tableSelector} .entriesPerPage).value);
-                const rows = document.querySelectorAll(${tableSelector} tbody tr);
-                const totalPages = Math.ceil(rows.length / rowsPerPage);
-                let currentPage = parseInt(this.textContent) || 1;
-
-                if (this.closest('li').id === 'prev-page' && currentPage > 1) {
-                    currentPage -= 1;
-                } else if (this.closest('li').id === 'next-page' && currentPage < totalPages) {
-                    currentPage += 1;
+        document.addEventListener("DOMContentLoaded", function () {
+            function initTab(tab) {
+                const formDataTable = tab.querySelector("tbody");
+                const tableRows = Array.from(formDataTable.querySelectorAll("tr"));
+    
+                const visibleEntries = tab.querySelector("#visible-entries");
+                const totalEntries = tab.querySelector("#total-entries");
+                const pagination = tab.querySelector(".pagination");
+                const selectAllCheckbox = tab.querySelector("#selectAll");
+                const entriesPerPageSelect = tab.querySelector("#entriesPerPage");
+                const prevPageButton = tab.querySelector("#prev-page");
+                const nextPageButton = tab.querySelector("#next-page");
+    
+                let currentPage = 1;
+                let entriesPerPage = parseInt(entriesPerPageSelect.value, 10);
+                let filteredRows = tableRows;
+    
+                function updateTable() {
+                    const startIndex = (currentPage - 1) * entriesPerPage;
+                    const endIndex = startIndex + entriesPerPage;
+    
+                    tableRows.forEach(row => (row.style.display = "none"));
+                    filteredRows.slice(startIndex, endIndex).forEach(row => (row.style.display = ""));
+    
+                    visibleEntries.textContent = filteredRows.slice(startIndex, endIndex).length;
+                    totalEntries.textContent = filteredRows.length;
+    
+                    updatePagination();
                 }
-
-                paginateRows(tableSelector, currentPage, rowsPerPage);
-            });
-        });
-
-        // Handle select all functionality
-        document.querySelectorAll('#selectAll').forEach(function(selectAllElement) {
-            selectAllElement.addEventListener('change', function () {
-                const tableSelector = this.closest('.tab-pane').id === 'parameters' ? '#parameters' : '#write-event';
-                const checkboxes = document.querySelectorAll(${tableSelector} .row-checkbox);
-                checkboxes.forEach(checkbox => {
-                    checkbox.checked = this.checked;
+    
+                function updatePagination() {
+                    const pageItems = Array.from(pagination.querySelectorAll(".page-item:not(#prev-page):not(#next-page)"));
+                    pageItems.forEach(item => item.remove());
+    
+                    const totalPages = Math.ceil(filteredRows.length / entriesPerPage);
+    
+                    prevPageButton.classList.toggle("disabled", currentPage === 1);
+                    nextPageButton.classList.toggle("disabled", currentPage === totalPages);
+    
+                    for (let i = 1; i <= totalPages; i++) {
+                        const pageItem = document.createElement("li");
+                        pageItem.className = `page-item ${i === currentPage ? "active" : ""}`;
+                        pageItem.innerHTML = `<a class="page-link" href="#">${i}</a>`;
+                        pageItem.addEventListener("click", event => {
+                            event.preventDefault();
+                            currentPage = i;
+                            updateTable();
+                        });
+                        pagination.insertBefore(pageItem, nextPageButton);
+                    }
+                }
+    
+                selectAllCheckbox.addEventListener("change", function () {
+                    const checkboxes = formDataTable.querySelectorAll("input[type='checkbox']:not(#selectAll)");
+                    checkboxes.forEach(checkbox => (checkbox.checked = this.checked));
+                });
+    
+                formDataTable.addEventListener("change", function (event) {
+                    if (event.target.type === "checkbox" && event.target !== selectAllCheckbox) {
+                        selectAllCheckbox.checked = Array.from(formDataTable.querySelectorAll("input[type='checkbox']:not(#selectAll)"))
+                            .every(checkbox => checkbox.checked);
+                    }
+                });
+    
+                entriesPerPageSelect.addEventListener("change", function () {
+                    entriesPerPage = parseInt(this.value, 10);
+                    currentPage = 1; // Reset to first page
+                    updateTable();
+                });
+    
+                prevPageButton.addEventListener("click", function (event) {
+                    event.preventDefault();
+                    if (currentPage > 1) {
+                        currentPage--;
+                        updateTable();
+                    }
+                });
+    
+                nextPageButton.addEventListener("click", function (event) {
+                    event.preventDefault();
+                    const totalPages = Math.ceil(filteredRows.length / entriesPerPage);
+                    if (currentPage < totalPages) {
+                        currentPage++;
+                        updateTable();
+                    }
+                });
+    
+                updateTable(); // Initialize table on load
+            }
+    
+            function initializeAllTabs() {
+                const tabs = document.querySelectorAll(".tab-pane");
+                tabs.forEach(tab => {
+                    if (!tab.hasAttribute("data-initialized")) {
+                        tab.setAttribute("data-initialized", "true");
+                        initTab(tab);
+                    }
+                });
+            }
+    
+            // Initialize active tab on page load
+            initializeAllTabs();
+    
+            // Reinitialize on tab change
+            document.querySelectorAll('[data-bs-toggle="tab"]').forEach(tabTrigger => {
+                tabTrigger.addEventListener("shown.bs.tab", function () {
+                    initializeAllTabs();
                 });
             });
         });
+    </script>
 
-        // Handle color select change
-        document.querySelectorAll('.color-select').forEach(function(selectElement) {
-            selectElement.addEventListener('change', function() {
-                const selectedColor = this.value;
-
-                this.style.backgroundColor = selectedColor;
-                this.style.color = 'white';
-                this.style.fontWeight = 'bold';
-
-                // Keep the dropdown background as default
-                this.classList.add('custom-select');
-            });
+<script>
+    // Activate all email alert checkboxes
+    document.getElementById('activateEmail').addEventListener('change', function() {
+        let emailCheckboxes = document.querySelectorAll('.checkbox-list-1 .form-check-input');
+        emailCheckboxes.forEach(checkbox => {
+            checkbox.checked = this.checked;
         });
     });
-    </script>
+
+    // Activate all SMS alert checkboxes
+    document.getElementById('activateSms').addEventListener('change', function() {
+        let smsCheckboxes = document.querySelectorAll('.checkbox-list-2 .form-check-input');
+        smsCheckboxes.forEach(checkbox => {
+            checkbox.checked = this.checked;
+        });
+    });
+</script>
+    
 {% endblock %}
 
 {% endblock content %}

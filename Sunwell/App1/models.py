@@ -118,7 +118,7 @@ class Department(models.Model):
 
            
 class User_role(models.Model):
-    role = models.CharField(max_length=50, primary_key=True)
+    role = models.CharField(max_length=50, unique=True)
     description  = models.TextField()
 
     def __str__(self):
@@ -407,6 +407,7 @@ class alarm_logs(models.Model):
     comments=models.CharField(max_length=255, null=True)
     acknowledge=models.BooleanField(null=True, default=False)
     ack_date=models.DateField(null=True)
+    ack_time=models.TimeField(null=True)
     ack_user=models.CharField(max_length=50, null=True)
 
 

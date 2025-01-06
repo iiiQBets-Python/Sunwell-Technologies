@@ -6,6 +6,13 @@
 {% block styles %}
     {{ block.super }}
     <style type="text/css">
+        .content {
+            height: 75vh !important;
+        }
+        .content.edit-mode {
+            height: 75vh !important;
+        }
+
         .avatar {
             margin-top: 10px;
             width: 200px;  
@@ -18,12 +25,13 @@
             height: 100px; 
         }
         .header {
+            text-align: center;
             color: #000d1d;
         }
         
         .edit-button {
             position: absolute;
-            top: 20px;
+            top: 5px;
             right: 20px;
         }
         .floating-alert {
@@ -43,6 +51,54 @@
         .floating-alert.show {
             top: 100px;
         }
+        @media (width: 768px) {
+            .content {
+                height: 85vh !important;
+            }
+        }
+        @media (max-width: 767px) {
+            .content {
+                height: 75vh !important;
+            }
+            .edit-button {
+                position: absolute;
+                top: 0px;
+                right: 20px;
+            }
+            .header {
+                text-align: left;
+                color: #000d1d;
+            }
+
+        }
+        @media (max-width: 576px) {
+            .floating-alert {
+                /* position: fixed; */
+                top: -100px;
+                left: 0px;
+                transform: translateX(5%);
+                z-index: 1050;
+                width: 90%;
+                padding: 10px 20px;
+                border-radius: 5px;
+                background-color: #28a745; /* Green background for success */
+                color: white;
+                box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+                transition: top 0.5s ease-in-out;
+            }
+            .content {
+                height: 75vh !important;
+            }
+            .edit-button {
+                position: absolute;
+                top: 0px;
+                right: 20px;
+            }
+            .header {
+                text-align: left;
+                color: #000d1d;
+            }
+        }
     </style>
 {% endblock styles %}
 
@@ -57,10 +113,10 @@
     <a href="{% url 'edit_organization' organization.id %}" class="btn btn-outline-primary edit-button">Edit</a>
     {% endif %}
 
-    <h1 class="text-center header">Company Profile</h1>
+    <h1 class="header">Company Profile</h1>
     <hr>
     <div class="row">
-        <div class="col-md-3">
+        <div class="col-lg-3">
             <div class="text-center">  
                 <div class="text-center">                                                 
                     {% if organization.logo %}
@@ -73,7 +129,7 @@
             </div>
         </div>
         
-        <div class="col-md-9 mt-2">
+        <div class="col-lg-9 mt-2">
             <div class="mb-3 row">
                 <label for="name" class="col-lg-3 col-form-label"><strong>Company Name:</strong></label>
                 <div class="col-lg-9">
@@ -103,20 +159,20 @@
 </div>
 {% else %}
 
-<div class="container mt-0">
+<div class="container mt-2">
     <h1 class="text-center header">Company Profile</h1>
     <hr>
     <form method="post" enctype="multipart/form-data">
         {% csrf_token %}
         <div class="row">
-            <div class="col-md-3">
+            <div class="col-lg-3">
                 <div class="text-center">                    
                     <h6>Upload a different photo...</h6>
                     <input type="file" class="form-control" name="logo" accept="image/*">
                 </div>
             </div>
             
-            <div class="col-md-9 mt-4">
+            <div class="col-lg-9 mt-4">
                 <div class="mb-3 row">
                     <label for="name" class="col-lg-3 col-form-label"><strong>Company Name:</strong></label>
                     <div class="col-lg-9">

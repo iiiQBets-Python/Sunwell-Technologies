@@ -36,14 +36,14 @@ urlpatterns = [
     path('edit_comm_group/<str:comm_code>/', edit_comm_group, name='edit_comm_group'),
     path('edit_department/<str:department_id>/', edit_department, name='edit_department'),
     path('edit_user/<str:user_id>/', edit_user, name='edit_user'),
-    path('edit_role/<str:role>/', edit_role, name='edit_role'),
+    path('edit_role/<int:id>/', edit_role, name='edit_role'),
 
     
     
     # Settings
     path('equipment_configure/', equipment_configure_view, name='equipment_configure'),
     path('equipment/edit/<int:equipment_id>/', equipment_edit, name='equipment_edit'),
-    path('equipment_setting',equipment_setting,name='equipment_setting'),
+    path('equipment_setting/<int:id>/',equipment_setting,name='equipment_setting'),
     # path('equipment_configure/', equipment_configure_view, name='equipment_configure'),
     path('plc_connect/', plc_connect, name='plc_connect'),
     path('plc_disconnect/', plc_disconnect, name='plc_disconnect'),
@@ -67,6 +67,6 @@ urlpatterns = [
     path('change_pass_2', change_pass_2, name='change_pass_2'),
     path('forgot_password/', forgot_password, name='forgot_pass'),
     path('save_alarm_logs/', save_alarm_logs, name='save_alarm_logs'),
-    path('view_audit_alarm_logs', view_audit_alarm_logs, name='view_audit_alarm_logs'),
+    # path('view_audit_alarm_logs', view_audit_alarm_logs, name='view_audit_alarm_logs'),
 
 ]

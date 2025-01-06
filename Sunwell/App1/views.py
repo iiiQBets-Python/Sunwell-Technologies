@@ -41,6 +41,8 @@ from reportlab.lib.styles import ParagraphStyle
 from reportlab.lib import colors
 
 from datetime import datetime, timedelta
+from apscheduler.schedulers.background import BackgroundScheduler
+from apscheduler.triggers.cron import CronTrigger
 
 
 def base(request):
@@ -538,13 +540,11 @@ def edit_comm_group(request, comm_code):
         soft_key = request.POST.get('edit_softKey')
         activation_key = request.POST.get('edit_activationKey')
 
-        # Update the CommGroup instance
+        
         comm_group.CommGroup_name = comm_name
         comm_group.soft_key = soft_key
         comm_group.activation_key = activation_key
         comm_group.save()
-
-        # Log the edit event
         UserActivityLog.objects.create(
             user=emp_user,
             log_date=timezone.localtime(timezone.now()).date(),
@@ -600,26 +600,35 @@ def department(request):
         sms_status=request.POST.get('sms_status')
         sms_delay=request.POST.get('sms_delay')
         sms_time=request.POST.get('sms_time')
-        mobile_user1=request.POST.get('mobile_user1')
-        mobile_no1=request.POST.get('mobile_no1')
-        mobile_user2=request.POST.get('mobile_user2')
-        mobile_no2=request.POST.get('mobile_no2')
-        mobile_user3=request.POST.get('mobile_user3')
-        mobile_no3=request.POST.get('mobile_no3')
-        mobile_user4=request.POST.get('mobile_user4')
-        mobile_no4=request.POST.get('mobile_no4')
-        mobile_user5=request.POST.get('mobile_user5')
-        mobile_no5=request.POST.get('mobile_no5')
-        mobile_user6=request.POST.get('mobile_user6')
-        mobile_no6=request.POST.get('mobile_no6')
-        mobile_user7=request.POST.get('mobile_user7')
-        mobile_no7=request.POST.get('mobile_no7')
-        mobile_user8=request.POST.get('mobile_user8')
-        mobile_no8=request.POST.get('mobile_no8')
-        mobile_user9=request.POST.get('mobile_user9')
-        mobile_no9=request.POST.get('mobile_no9')
-        mobile_user10=request.POST.get('mobile_user10')
-        mobile_no10=request.POST.get('mobile_no10')
+        mobile_user1 = request.POST.get('mobile_user1') or None
+        mobile_no1 = request.POST.get('mobile_no1') or None if request.POST.get('mobile_no1', '').isdigit() else None
+
+        mobile_user2 = request.POST.get('mobile_user2') or None
+        mobile_no2 = request.POST.get('mobile_no2') or None if request.POST.get('mobile_no2', '').isdigit() else None
+
+        mobile_user3 = request.POST.get('mobile_user3') or None
+        mobile_no3 = request.POST.get('mobile_no3') or None if request.POST.get('mobile_no3', '').isdigit() else None
+
+        mobile_user4 = request.POST.get('mobile_user4') or None
+        mobile_no4 = request.POST.get('mobile_no4') or None if request.POST.get('mobile_no4', '').isdigit() else None
+
+        mobile_user5 = request.POST.get('mobile_user5') or None
+        mobile_no5 = request.POST.get('mobile_no5') or None if request.POST.get('mobile_no5', '').isdigit() else None
+
+        mobile_user6 = request.POST.get('mobile_user6') or None
+        mobile_no6 = request.POST.get('mobile_no6') or None if request.POST.get('mobile_no6', '').isdigit() else None
+
+        mobile_user7 = request.POST.get('mobile_user7') or None
+        mobile_no7 = request.POST.get('mobile_no7') or None if request.POST.get('mobile_no7', '').isdigit() else None
+
+        mobile_user8 = request.POST.get('mobile_user8') or None
+        mobile_no8 = request.POST.get('mobile_no8') or None if request.POST.get('mobile_no8', '').isdigit() else None
+
+        mobile_user9 = request.POST.get('mobile_user9') or None
+        mobile_no9 = request.POST.get('mobile_no9') or None if request.POST.get('mobile_no9', '').isdigit() else None
+
+        mobile_user10 = request.POST.get('mobile_user10') or None
+        mobile_no10 = request.POST.get('mobile_no10') or None if request.POST.get('mobile_no10', '').isdigit() else None
         sms_alert = True if sms_status == 'Enable' else False
         comm_group = CommGroup.objects.get(CommGroup_code=commgroup_name)
         
@@ -668,14 +677,13 @@ def department(request):
 
         )
         new_department.save()
-
-        # Log the add event
         UserActivityLog.objects.create(
             user=emp_user,
             log_date=timezone.localtime(timezone.now()).date(),
             log_time=timezone.localtime(timezone.now()).time(),
             event_name=f"Added new department {department_name} details"
         )
+        messages.success(request, 'Department Saved Successfully!')
 
         return redirect('department')
     
@@ -705,7 +713,7 @@ def edit_department(request, department_id):
         email_address_2 = request.POST.get('edit_email_address_2')
         email_address_3 = request.POST.get('edit_email_address_3')
         email_address_4 = request.POST.get('edit_email_address_4')
-        email_address_5 = request.POST.get('edit_email_address_5')
+        email_address_5 = request.POST.get('edit_email_address_5')  
         email_address_6 = request.POST.get('edit_email_address_6')
         email_address_7 = request.POST.get('edit_email_address_7')
         email_address_8 = request.POST.get('edit_email_address_8')
@@ -714,28 +722,30 @@ def edit_department(request, department_id):
         sms_status=request.POST.get('edit_sms_status')
         sms_delay=request.POST.get('edit_sms_delay')
         sms_time=request.POST.get('edit_sms_time')
-        mobile_user1=request.POST.get('edit_mobile_user1')
-        mobile_no1=request.POST.get('edit_mobile_no1')
-        mobile_user2=request.POST.get('edit_mobile_user2')
-        mobile_no2=request.POST.get('edit_mobile_no2')
-        mobile_user3=request.POST.get('edit_mobile_user3')
-        mobile_no3=request.POST.get('edit_mobile_no3')
-        mobile_user4=request.POST.get('edit_mobile_user4')
-        mobile_no4=request.POST.get('edit_mobile_no4')
-        mobile_user5=request.POST.get('edit_mobile_user5')
-        mobile_no5=request.POST.get('edit_mobile_no5')
-        mobile_user6=request.POST.get('edit_mobile_user6')
-        mobile_no6=request.POST.get('edit_mobile_no6')
-        mobile_user7=request.POST.get('edit_mobile_user7')
-        mobile_no7=request.POST.get('edit_mobile_no7')
-        mobile_user8=request.POST.get('edit_mobile_user8')
-        mobile_no8=request.POST.get('edit_mobile_no8')
-        mobile_user9=request.POST.get('edit_mobile_user9')
-        mobile_no9=request.POST.get('edit_mobile_no9')
-        mobile_user10=request.POST.get('edit_mobile_user10')
-        mobile_no10=request.POST.get('edit_mobile_no10')
+        mobile_user1 = request.POST.get('edit_mobile_user1') or None
+        mobile_no1 = request.POST.get('edit_mobile_no1') or None if request.POST.get('edit_mobile_no1').isdigit() else None
+        mobile_user2 = request.POST.get('edit_mobile_user2') or None
+        mobile_no2 = request.POST.get('edit_mobile_no2') or None if request.POST.get('edit_mobile_no2').isdigit() else None
+        mobile_user3 = request.POST.get('edit_mobile_user3') or None
+        mobile_no3 = request.POST.get('edit_mobile_no3') or None if request.POST.get('edit_mobile_no3').isdigit() else None
+        mobile_user4 = request.POST.get('edit_mobile_user4') or None
+        mobile_no4 = request.POST.get('edit_mobile_no4') or None if request.POST.get('edit_mobile_no4').isdigit() else None
+        mobile_user5 = request.POST.get('edit_mobile_user5') or None
+        mobile_no5 = request.POST.get('edit_mobile_no5') or None if request.POST.get('edit_mobile_no5').isdigit() else None
+        mobile_user6 = request.POST.get('edit_mobile_user6') or None
+        mobile_no6 = request.POST.get('edit_mobile_no6') or None if request.POST.get('edit_mobile_no6').isdigit() else None
+        mobile_user7 = request.POST.get('edit_mobile_user7') or None
+        mobile_no7 = request.POST.get('edit_mobile_no7') or None if request.POST.get('edit_mobile_no7').isdigit() else None
+        mobile_user8 = request.POST.get('edit_mobile_user8') or None
+        mobile_no8 = request.POST.get('edit_mobile_no8') or None if request.POST.get('edit_mobile_no8').isdigit() else None
+        mobile_user9 = request.POST.get('edit_mobile_user9') or None
+        mobile_no9 = request.POST.get('edit_mobile_no9') or None if request.POST.get('edit_mobile_no9').isdigit() else None
+        mobile_user10 = request.POST.get('edit_mobile_user10') or None
+        mobile_no10 = request.POST.get('edit_mobile_no10') or None if request.POST.get('edit_mobile_no10').isdigit() else None
         sms_alert = True if sms_status == 'Enable' else False
         print(sms_alert)
+        email_time = parse_time(email_time) if email_time else None
+        sms_time = parse_time(sms_time) if sms_time else None
         if not department_name:
             # Handle the missing department name error
             return render(request, 'Management/department.html', {
@@ -808,25 +818,27 @@ def edit_department(request, department_id):
 
     return render(request, 'Management/department.html', context)
 
-def users(request):
+from django.contrib import messages
+from django.utils import timezone
+from datetime import timedelta
 
+def users(request):
     emp_user = request.session.get('username', None)
     try:
-        data = User.objects.get(username = emp_user)
+        data = User.objects.get(username=emp_user)
     except:
         data = SuperAdmin.objects.get(username=emp_user)
     organization = Organization.objects.first()
-    
+
     try:
-        acc_db = user_access_db.objects.get(role = data.role)
+        acc_db = user_access_db.objects.get(role=data.role)
     except:
         acc_db = None
-    
+
     try:
         role_data = User_role.objects.all()
     except:
         role_data = None
-
 
     if request.method == 'POST':
         username = request.POST.get('userName')
@@ -839,9 +851,15 @@ def users(request):
         status = request.POST.get('status')
         accessible_departments = request.POST.getlist('accessibleDepartment')
 
+        # Check if the user already exists
+        if User.objects.filter(username=username).exists():
+            messages.error(request, f"The username '{username}' already exists. Please choose a different username.")
+            return redirect('users')
+
         commgroup = CommGroup.objects.get(CommGroup_code=comm_group)
         department = Department.objects.get(id=departmentname)
 
+        # Create a new user
         newuser = User(
             username=username,
             login_name=login_name,
@@ -851,7 +869,7 @@ def users(request):
             commGroup=commgroup,
             department=department,
             status=status,
-            created_at = timezone.now() + timedelta(hours=5, minutes=30)
+            created_at=timezone.now() + timedelta(hours=5, minutes=30)
         )
         newuser.save()
 
@@ -862,13 +880,13 @@ def users(request):
         # Handle password history
         password_history = PasswordHistory.objects.filter(user=newuser).order_by('created_at')
         if password_history.count() >= 3:
-            # If there are already 3 entries, replace the oldest entry
+            # Replace the oldest entry if there are already 3 entries
             oldest_entry = password_history.first()
             oldest_entry.password = password
             oldest_entry.created_at = timezone.now()
             oldest_entry.save()
         else:
-            # If fewer than 3 entries, create a new entry
+            # Create a new entry if fewer than 3 entries
             PasswordHistory.objects.create(user=newuser, password=password)
 
         # Log the add event
@@ -879,6 +897,7 @@ def users(request):
             event_name=f"Added new user {username} details"
         )
 
+        messages.success(request, f"User '{username}' added successfully!")
         return redirect('users')
 
     users = User.objects.all()
@@ -888,9 +907,13 @@ def users(request):
         'departments': departments,
         'groups': groups,
         'users': users,
-        'organization': organization, 'data':data, 'acc_db':acc_db, 'role_data':role_data
+        'organization': organization,
+        'data': data,
+        'acc_db': acc_db,
+        'role_data': role_data
     }
     return render(request, 'Management/user.html', context)
+
 
 def edit_user(request, user_id):
 
@@ -1043,10 +1066,10 @@ def role_permission(request):
 
         success_msg = 'Role is added successfully.'
         return redirect('role_permission')
-
+    
     return render(request, 'Management/role_permission.html', {'organization': organization, 'data':data, 'acc_db':acc_db, 'role_data':role_data})
 
-def edit_role(request, role_id):
+def edit_role(request, id):
     emp_user = request.session.get('username', None)
     try:
         data = User.objects.get(username = emp_user)
@@ -1064,24 +1087,15 @@ def edit_role(request, role_id):
     except:
         role_data = None
 
-    role_instance = get_object_or_404(User_role, id=role_id)
+    role_instance = get_object_or_404(User_role, id=id)
+    print(id)
 
     if request.method == 'POST':
+        role_instance = get_object_or_404(User_role, id=id)
+        print(role_instance.id)
 
         role_name = request.POST.get('role')
         description = request.POST.get('description')
-
-        if User_role.objects.filter(role=role_name).exclude(id=role_id).exists():
-            error_msg = f'The role {role_name} already exists.'
-            return render(request, 'Management/edit_role.html', {
-                'role_instance': role_instance, 
-                'organization': organization, 
-                'data': data, 
-                'acc_db': acc_db, 
-                'role_data': role_data, 
-                'error_msg': error_msg
-            })
-
 
         role_instance.role = role_name
         role_instance.description = description
@@ -1107,14 +1121,7 @@ def edit_role(request, role_id):
 
         success_msg = 'Role updated successfully.'
         return redirect('role_permission')
-    context={
-                'role_instance': role_instance, 
-                'organization': organization, 
-                'data': data, 
-                'acc_db': acc_db, 
-                'role_data': role_data
-            }
-    return render(request, 'Management/edit_role.html', context)
+    
 
 def user_access(request):
 
@@ -1335,9 +1342,9 @@ def user_access(request):
             )
 
             success_msg = 'Roles and permissions are added.'
-            return render(request, 'Management/user_group.html', {'organization': organization, 'data': data, 'acc_db': acc_db, 'role_dt':role_dt, 'success_msg': success_msg})
-
-    return render(request, 'Management/user_group.html', {'organization': organization, 'data':data, 'acc_db':acc_db, 'role_dt':role_dt,})
+            return render(request, 'Management/user_group.html', {'organization': organization, 'data': data, 'acc_db': acc_db, 'role_dt':role_dt, 'success_msg': success_msg, 'role':role})
+    
+    return render(request, 'Management/user_group.html', {'organization': organization, 'data':data, 'acc_db':acc_db, 'role_dt':role_dt, 'role':role})
 
 def app_settings(request):
 
@@ -1484,73 +1491,94 @@ import serial
 import time
 from django.shortcuts import redirect
 from django.contrib import messages
+import serial
+import threading
+import time
+from datetime import datetime
+from django.shortcuts import redirect
+from django.contrib import messages
+from .models import AppSettings  # Adjust this import based on your actual model location
+
+def setup_modem(ser):
+    commands = [
+        b'AT\r',
+        b'AT+CSQ\r',
+        b'AT+IPR?\r',
+        b'AT+COPS?\r',
+        b'AT+CMGF=1\r'
+    ]
+    for cmd in commands:
+        ser.write(cmd)
+        time.sleep(1)
+        response = ser.read_all().decode('utf-8', errors='ignore').strip()
+        # Assuming logging to console or file for now
+        print(f"Setup command {cmd.decode().strip()} response: {response}")
 
 def send_sms(ser, number, message, lock):
     with lock:
         try:
             ser.write(f'AT+CMGS="{number}"\r'.encode())
             ser.flush()
-            time.sleep(1)  # Give a little time for the modem to respond
-            if ser.read_until(b'>').decode(errors="ignore").strip().endswith('>'):
-                ser.write((message + '\x1A').encode())  # Message followed by Ctrl+Z to send
+            time.sleep(1)  # Allow time for the modem to respond with '>'
+            prompt = ser.read_until(b'>').decode(errors="ignore").strip()
+            if prompt.endswith('>'):
+                ser.write((message + '\x1A').encode())  # End with Ctrl+Z
                 ser.flush()
-                time.sleep(5)  # Wait for the message to be sent
-                final_response = ser.read(1000).decode(errors="ignore").strip()
-                if "+CMGS" in final_response:
-                    print(f"SMS successfully sent to {number}")
-                else:
-                    print(f"Failed to send SMS to {number}: {final_response}")
+                time.sleep(5)  # Wait for message to be sent
+                final_response = ser.read_all().decode(errors="ignore").strip()
+                return "+CMGS" in final_response
             else:
-                print(f"Modem did not prompt for message input for {number}.")
+                return False
         except Exception as e:
             print(f"Error sending SMS to {number}: {str(e)}")
+            return False
 
 def send_test_sms(request):
     if request.method == 'POST':
         numbers_list = [
-            '8073550399', '8904411103', '8861347024', '9901220724', '9133121164', 
+            '8296061293', '8904411103', '8861347024', '9901220724', '9133121164',
             '9177951549', '9113949421', '8999001805', '9381407314', '6361909004'
         ]
-
         sms_settings = AppSettings.objects.first()
         if not sms_settings:
             messages.error(request, "SMS settings not configured.")
             return redirect('app_sms_settings')
 
         start_time = time.time()
+        successful_sends = 0
 
         try:
             ser = serial.Serial(
-                port="COM7",
-                baudrate=int(sms_settings.baud_rate),
+                port=sms_settings.port,  # Ensure your model has 'port' or replace as needed
+                baudrate=sms_settings.baud_rate,
                 bytesize=serial.EIGHTBITS,
-                parity=serial.PARITY_NONE if sms_settings.parity == 'None' else sms_settings.parity.upper()[0],
-                stopbits=serial.STOPBITS_ONE if sms_settings.stop_bits == 1 else serial.STOPBITS_TWO,
+                parity=serial.PARITY_NONE if sms_settings.parity == 'None' else sms_settings.parity,
+                stopbits=serial.STOPBITS_ONE,
                 timeout=2
             )
+            setup_modem(ser)
 
-            threads = []
             lock = threading.Lock()
+            threads = []
+            results = []
 
             for number in numbers_list:
-                thread = threading.Thread(target=send_sms, args=(ser, number, "Welcome to Sunwell", lock))
+                thread = threading.Thread(target=lambda n=number: results.append((n, send_sms(ser, n, "Welcome to Sunwell", lock))))
                 threads.append(thread)
                 thread.start()
 
             for thread in threads:
                 thread.join()
 
+            successful_sends = sum(1 for _, success in results if success)
             ser.close()
-
         except Exception as e:
             messages.error(request, f"Error in SMS sending process: {str(e)}")
             return redirect('app_sms_settings')
 
         total_time = time.time() - start_time
-        print(f"Total time taken to send SMS to all numbers: {total_time:.2f} seconds")  # Debugging print statement
-        messages.info(request, f"Total time taken to send SMS to all numbers: {total_time:.2f} seconds")
+        messages.success(request, f"Successfully sent {successful_sends} out of {len(numbers_list)} SMS messages in {total_time:.2f} seconds.")
         return redirect('app_sms_settings')
-
     else:
         messages.error(request, "Invalid request method.")
         return redirect('app_sms_settings')
@@ -1562,79 +1590,369 @@ def send_test_sms(request):
 
 
 
+
 def send_test_email(request):
     if request.method == 'POST':
         recipient_email = request.POST.get('testemail')
-        email_time = request.POST.get('testemailtime')
         
-        # Fetch the email settings dynamically
+   
         email_settings = get_email_settings(request)
         if not email_settings:
             return HttpResponse("Email settings are not configured.", status=500)
-        
-        subject = 'Sun Well'
-        message = 'Welcome to Sun Well'
 
-        # Set the dynamic email settings
+        alarm=alarm_logs.objects.first()
+
+        subject = 'Sun Well Alarm Alerts'
+        equipment_id = alarm.equipment.equip_name
+        alarm_code = alarm.alarm_code.code
+        alarm_description = alarm.alarm_code.alarm_log
+        date_field = alarm.date
+        time_field = alarm.time
+        combined_datetime = datetime.combine(date_field, time_field)
+        formatted_datetime = combined_datetime.strftime('%Y-%m-%d %H:%M:%S')
+        current_datetime = formatted_datetime
+        message = f"""Equipment ID: {equipment_id}
+Alarm Code: {alarm_code}
+Alarm Description: {alarm_description}
+Date and Time: {current_datetime}"""
+        email_list = ['prasannasgkumar@gmail.com', 'darshanmurs11@gmail.com', 'rajushanigarapu1997@gmail.com', 'sureshsm226@gmail.com', 'sunwelltechno@gmail.com', 'svreddy@sunwell-techno.com', 'venkat06022@gmail.com']
+
+
         settings.EMAIL_HOST = email_settings['EMAIL_HOST']
         settings.EMAIL_HOST_USER = email_settings['EMAIL_HOST_USER']
         settings.EMAIL_HOST_PASSWORD = email_settings['EMAIL_HOST_PASSWORD']
         settings.EMAIL_PORT = email_settings['EMAIL_PORT']
 
-        # Function to send the email
-        def send_email():
+
+        start_time = time.time()
+
+       
+        for email in email_list:
             send_mail(
                 subject=subject,
                 message=message,
                 from_email=email_settings['EMAIL_HOST_USER'],
-                recipient_list=[recipient_email],
+                recipient_list=[email],
                 fail_silently=False,
             )
 
-        # Calculate delay if time is provided
-        if email_time:
-            try:
-                # Parse the provided time
-                email_datetime = datetime.strptime(email_time, "%H:%M").time()
-                now = datetime.now().time()
-                
-                # Combine the date with the time for full datetime comparison
-                today_date = date.today()
-                email_datetime_full = datetime.combine(today_date, email_datetime)
-                now_full = datetime.combine(today_date, now)
-                
-                # Calculate delay in seconds
-                delay = (email_datetime_full - now_full).total_seconds()
+     
+        end_time = time.time()
+        duration = end_time - start_time
 
-                # If delay is negative, schedule the email for the next day
-                if delay < 0:
-                    email_datetime_full += timedelta(days=1)
-                    delay = (email_datetime_full - now_full).total_seconds()
+        print(f"Time taken to send emails: {duration:.2f} seconds")
 
-                # Schedule email with delay
-                threading.Timer(delay, send_email).start()
-            except ValueError:
-                return HttpResponse("Invalid time format. Please use HH:MM.", status=400)
-        else:
-            # Send email immediately if no time is provided
-            send_email()
-
+       
         return redirect('app_settings')
     else:
         return HttpResponse("Invalid request method.", status=405)
+
+
     
+
+# def perform_backup():
+#     backup_setting = BackupSettings.objects.last()
+#     if not backup_setting:
+#         print("No backup settings found.")
+#         return "failure", "No backup settings found."
+
+#     current_time = datetime.now().strftime("%d%m%Y_%H%M")
+#     backup_filename = f"ESTDAS_{current_time}.bak"
+
+#     local_backup_file_path = os.path.join(backup_setting.local_path, backup_filename)
+#     remote_backup_file_path = os.path.join(backup_setting.remote_path, backup_filename) if backup_setting.remote_path else None
+
+#     # Remove all existing .bak files in the local path
+#     for file_name in os.listdir(backup_setting.local_path):
+#         if file_name.endswith(".bak"):
+#             os.remove(os.path.join(backup_setting.local_path, file_name))
+
+#     # Remove all existing .bak files in the remote path if it exists
+#     if backup_setting.remote_path:
+#         for file_name in os.listdir(backup_setting.remote_path):
+#             if file_name.endswith(".bak"):
+#                 os.remove(os.path.join(backup_setting.remote_path, file_name))
+
+#     db_settings = settings.DATABASES['default']
+#     db_name = db_settings['NAME']
+#     db_user = db_settings['USER']
+#     db_password = db_settings['PASSWORD']
+#     db_host = db_settings['HOST']
+
+#     local_backup_command = (
+#         f"sqlcmd -S {db_host} -U {db_user} -P {db_password} "
+#         f"-Q \"BACKUP DATABASE [{db_name}] TO DISK = N'{local_backup_file_path}'\""
+#     )
+    
+#     try:
+#         subprocess.run(local_backup_command, check=True, shell=True)
+#         print("Local backup successful")
+
+#         if backup_setting.remote_path:
+#             remote_backup_command = (
+#                 f"sqlcmd -S {db_host} -U {db_user} -P {db_password} "
+#                 f"-Q \"BACKUP DATABASE [{db_name}] TO DISK = N'{remote_backup_file_path}'\""
+#             )
+#             subprocess.run(remote_backup_command, check=True, shell=True)
+#             print("Remote backup successful")
+            
+#         return "success", "Backup successful"
+#     except subprocess.CalledProcessError as e:
+#         print(f"Backup failed: {str(e)}")
+#         return "failure", f"Backup failed: {str(e)}"
+
+# def download_backup(request):
+#     emp_user = request.session.get('username', None)
+#     try:
+#         data = User.objects.get(username = emp_user)
+#     except:
+#         data = SuperAdmin.objects.get(username=emp_user)
+#     status, message = perform_backup()
+    
+#     UserActivityLog.objects.create(
+#         user=emp_user,
+#         log_date=timezone.localtime(timezone.now()).date(),
+#         log_time=timezone.localtime(timezone.now()).time(),
+#         event_name=f"Downloaded database backup"
+#     )
+#     return JsonResponse({"status": status, "message": message})
+
+# def backup(request):
+
+#     emp_user = request.session.get('username', None)
+#     try:
+#         data = User.objects.get(username = emp_user)
+#     except:
+#         data = SuperAdmin.objects.get(username=emp_user)
+    
+#     try:
+#         acc_db = user_access_db.objects.get(role = data.role)
+#     except:
+#         acc_db = None
+
+
+#     if request.method == 'POST':
+#         local_path = request.POST.get('backup-local-path')
+#         remote_path = request.POST.get('backup-remote-path')
+#         backup_time = request.POST.get('backup-time')
+
+#         # Create or update the backup settings
+#         backup_setting= BackupSettings(
+#             local_path=local_path,
+#                 remote_path = remote_path,
+#                 backup_time= backup_time
+#         )
+#         backup_setting.save()
+
+#         # Log the backup settings update
+#         UserActivityLog.objects.create(
+#             user=emp_user,
+#             log_date=timezone.localtime(timezone.now()).date(),
+#             log_time=timezone.localtime(timezone.now()).time(),
+#             event_name="Added backup settings"
+#         )
+
+#         messages.success(request, 'Backup settings saved successfully!')
+#         return redirect('backup')
+    
+#     backup_setting = BackupSettings.objects.first()
+#     context={
+        
+#         'data':data,
+#         'acc_db':acc_db,
+#         'backup_setting': backup_setting
+#     }
+#       # Get the first or handle appropriately
+    
+#     return render(request, 'Management/backup.html', context)
+
+# def edit_backup(request, id):
+
+#     emp_user = request.session.get('username', None)
+#     try:
+#         data = User.objects.get(username = emp_user)
+#     except:
+#         data = SuperAdmin.objects.get(username=emp_user)
+    
+#     try:
+#         acc_db = user_access_db.objects.get(role = data.role)
+#     except:
+#         acc_db = None
+
+#     backup_setting = BackupSettings.objects.first()
+#     if request.method == 'POST':
+        
+#         backup_setting.local_path = request.POST.get('backup-local-path')
+#         backup_setting.remote_path = request.POST.get('backup-remote-path')
+#         backup_setting.backup_time = request.POST.get('backup-time')
+
+#         backup_setting.save()
+
+#         # Log the backup settings update
+#         UserActivityLog.objects.create(
+#             user=emp_user,
+#             log_date=timezone.localtime(timezone.now()).date(),
+#             log_time=timezone.localtime(timezone.now()).time(),
+#             event_name="Updated backup settings"
+#         )
+
+#         messages.success(request, 'Updated Backup settings successfully!')
+#         return redirect('backup')
+    
+#     context={
+#         'backup_setting':backup_setting, 'data':data, 'acc_db':acc_db
+#     }
+
+#     # Fetch the existing backup settings (if any)
+#       # Get the first or handle appropriately
+#     return render(request, 'Management/edit_backup.html', context)
+
+
+# def schedule_daily_backup():
+#     print("Scheduler thread started")
+#     backup_setting = BackupSettings.objects.last()
+#     if backup_setting and backup_setting.backup_time:
+        
+#         backup_time_str = backup_setting.backup_time.strftime("%H:%M")
+#         print(f"Scheduling daily backup at {backup_time_str}")
+
+#         # Schedule backup at the specified time
+#         schedule.every().day.at(backup_time_str).do(perform_backup)
+
+#         while True:
+#             schedule.run_pending()
+#             time.sleep(1)
+
+# def start_backup_scheduler():
+#     print("Starting backup scheduler")
+#     backup_thread = threading.Thread(target=schedule_daily_backup, daemon=True)
+#     backup_thread.start()
+
+# start_backup_scheduler()
+def backup(request):
+    emp_user = request.session.get('username', None)
+
+    try:
+        data = User.objects.get(username=emp_user)
+    except User.DoesNotExist:
+        data = SuperAdmin.objects.get(username=emp_user)
+    
+    try:
+        acc_db = user_access_db.objects.get(role=data.role)
+    except user_access_db.DoesNotExist:
+        acc_db = None
+
+    if request.method == 'POST':
+        local_path = request.POST.get('backup-local-path')
+        remote_path = request.POST.get('backup-remote-path')
+        backup_time = request.POST.get('backup-time')
+
+        # Create or update the backup settings
+        backup_setting, created = BackupSettings.objects.update_or_create(
+            defaults={
+                'local_path': local_path,
+                'remote_path': remote_path,
+                'backup_time': backup_time,
+            }
+        )
+
+        # Log the backup settings update
+        UserActivityLog.objects.create(
+            user=emp_user,
+            log_date=timezone.localtime(timezone.now()).date(),
+            log_time=timezone.localtime(timezone.now()).time(),
+            event_name="Added or updated backup settings"
+        )
+
+        messages.success(request, 'Backup settings saved successfully!')
+        return redirect('backup')
+
+    # Fetch the first backup settings record if it exists
+    backup_setting = BackupSettings.objects.first()
+    context = {
+        'data': data,
+        'acc_db': acc_db,
+        'backup_setting': backup_setting,
+    }
+
+    return render(request, 'Management/backup.html', context)
+
+def edit_backup(request, id):
+    emp_user = request.session.get('username', None)
+
+    try:
+        data = User.objects.get(username=emp_user)
+    except User.DoesNotExist:
+        data = SuperAdmin.objects.get(username=emp_user)
+    
+    try:
+        acc_db = user_access_db.objects.get(role=data.role)
+    except user_access_db.DoesNotExist:
+        acc_db = None
+
+    # Fetch the existing backup settings or create a new one
+    backup_setting, created = BackupSettings.objects.get_or_create()
+
+    if request.method == 'POST':
+        # Update backup settings
+        backup_setting.local_path = request.POST.get('backup-local-path')
+        backup_setting.remote_path = request.POST.get('backup-remote-path')
+        backup_setting.backup_time = request.POST.get('backup-time')
+        backup_setting.save()
+
+        # Log the backup settings update
+        UserActivityLog.objects.create(
+            user=emp_user,
+            log_date=timezone.localtime(timezone.now()).date(),
+            log_time=timezone.localtime(timezone.now()).time(),
+            event_name="Updated backup settings"
+        )
+
+        messages.success(request, 'Updated Backup settings successfully!')
+        return redirect('backup')
+
+    context = {
+        'backup_setting': backup_setting,
+        'data': data,
+        'acc_db': acc_db,
+    }
+
+    return render(request, 'Management/edit_backup.html', context)
+
+
+def download_backup(request):
+    emp_user = request.session.get('username', None)
+    try:
+        data = User.objects.get(username=emp_user)
+    except:
+        data = SuperAdmin.objects.get(username=emp_user)
+
+    status, message = perform_backup()
+
+    # Log the download event
+    UserActivityLog.objects.create(
+        user=emp_user,
+        log_date=timezone.localtime(timezone.now()).date(),
+        log_time=timezone.localtime(timezone.now()).time(),
+        event_name=f"Downloaded database backup"
+    )
+    return JsonResponse({"status": status, "message": message})
+
 
 def perform_backup():
     backup_setting = BackupSettings.objects.last()
     if not backup_setting:
-        print("No backup settings found.")
         return "failure", "No backup settings found."
 
     current_time = datetime.now().strftime("%d%m%Y_%H%M")
     backup_filename = f"ESTDAS_{current_time}.bak"
 
     local_backup_file_path = os.path.join(backup_setting.local_path, backup_filename)
-    remote_backup_file_path = os.path.join(backup_setting.remote_path, backup_filename) if backup_setting.remote_path else None
+    remote_backup_file_path = (
+        os.path.join(backup_setting.remote_path, backup_filename)
+        if backup_setting.remote_path
+        else None
+    )
 
     # Remove all existing .bak files in the local path
     for file_name in os.listdir(backup_setting.local_path):
@@ -1660,149 +1978,42 @@ def perform_backup():
     
     try:
         subprocess.run(local_backup_command, check=True, shell=True)
-        print("Local backup successful")
-
         if backup_setting.remote_path:
             remote_backup_command = (
                 f"sqlcmd -S {db_host} -U {db_user} -P {db_password} "
                 f"-Q \"BACKUP DATABASE [{db_name}] TO DISK = N'{remote_backup_file_path}'\""
             )
             subprocess.run(remote_backup_command, check=True, shell=True)
-            print("Remote backup successful")
             
-        return "success", "Backup successful"
     except subprocess.CalledProcessError as e:
-        print(f"Backup failed: {str(e)}")
         return "failure", f"Backup failed: {str(e)}"
 
-def download_backup(request):
-    emp_user = request.session.get('username', None)
-    try:
-        data = User.objects.get(username = emp_user)
-    except:
-        data = SuperAdmin.objects.get(username=emp_user)
-    status, message = perform_backup()
-    
-    UserActivityLog.objects.create(
-        user=emp_user,
-        log_date=timezone.localtime(timezone.now()).date(),
-        log_time=timezone.localtime(timezone.now()).time(),
-        event_name=f"Downloaded database backup"
-    )
-    return JsonResponse({"status": status, "message": message})
 
-def backup(request):
+# Initialize the scheduler
+scheduler = BackgroundScheduler()
 
-    emp_user = request.session.get('username', None)
-    try:
-        data = User.objects.get(username = emp_user)
-    except:
-        data = SuperAdmin.objects.get(username=emp_user)
-    
-    try:
-        acc_db = user_access_db.objects.get(role = data.role)
-    except:
-        acc_db = None
+def schedule_backup(backup_time):
+    scheduler.remove_all_jobs()  # Clear any existing jobs
 
+    if backup_time:
+        trigger = CronTrigger(hour=backup_time.hour, minute=backup_time.minute)
+        scheduler.add_job(perform_backup, trigger, id="daily_backup")
 
-    if request.method == 'POST':
-        local_path = request.POST.get('backup-local-path')
-        remote_path = request.POST.get('backup-remote-path')
-        backup_time = request.POST.get('backup-time')
-
-        # Create or update the backup settings
-        backup_setting= BackupSettings(
-            local_path=local_path,
-                remote_path = remote_path,
-                backup_time= backup_time
-        )
-        backup_setting.save()
-
-        # Log the backup settings update
-        UserActivityLog.objects.create(
-            user=emp_user,
-            log_date=timezone.localtime(timezone.now()).date(),
-            log_time=timezone.localtime(timezone.now()).time(),
-            event_name="Added backup settings"
-        )
-
-        messages.success(request, 'Backup settings saved successfully!')
-        return redirect('backup')
-    
-    backup_setting = BackupSettings.objects.first()
-    context={
-        
-        'data':data,
-        'acc_db':acc_db,
-        'backup_setting': backup_setting
-    }
-      # Get the first or handle appropriately
-    
-    return render(request, 'Management/backup.html', context)
-
-def edit_backup(request, id):
-
-    emp_user = request.session.get('username', None)
-    try:
-        data = User.objects.get(username = emp_user)
-    except:
-        data = SuperAdmin.objects.get(username=emp_user)
-    
-    try:
-        acc_db = user_access_db.objects.get(role = data.role)
-    except:
-        acc_db = None
-
-    backup_setting = BackupSettings.objects.first()
-    if request.method == 'POST':
-        
-        backup_setting.local_path = request.POST.get('backup-local-path')
-        backup_setting.remote_path = request.POST.get('backup-remote-path')
-        backup_setting.backup_time = request.POST.get('backup-time')
-
-        backup_setting.save()
-
-        # Log the backup settings update
-        UserActivityLog.objects.create(
-            user=emp_user,
-            log_date=timezone.localtime(timezone.now()).date(),
-            log_time=timezone.localtime(timezone.now()).time(),
-            event_name="Updated backup settings"
-        )
-
-        messages.success(request, 'Updated Backup settings successfully!')
-        return redirect('backup')
-    
-    context={
-        'backup_setting':backup_setting, 'data':data, 'acc_db':acc_db
-    }
-
-    # Fetch the existing backup settings (if any)
-      # Get the first or handle appropriately
-    return render(request, 'Management/edit_backup.html', context)
-
-
-def schedule_daily_backup():
-    print("Scheduler thread started")
-    backup_setting = BackupSettings.objects.last()
-    if backup_setting and backup_setting.backup_time:
-        
-        backup_time_str = backup_setting.backup_time.strftime("%H:%M")
-        print(f"Scheduling daily backup at {backup_time_str}")
-
-        # Schedule backup at the specified time
-        schedule.every().day.at(backup_time_str).do(perform_backup)
-
-        while True:
-            schedule.run_pending()
-            time.sleep(1)
+def monitor_backup_settings():
+    while True:
+        backup_setting = BackupSettings.objects.last()
+        if backup_setting and backup_setting.backup_time:
+            schedule_backup(backup_setting.backup_time)
+        time.sleep(10)  # Check for updates every 10 seconds
 
 def start_backup_scheduler():
-    print("Starting backup scheduler")
-    backup_thread = threading.Thread(target=schedule_daily_backup, daemon=True)
-    backup_thread.start()
+    scheduler.start()
+
+    monitor_thread = threading.Thread(target=monitor_backup_settings, daemon=True)
+    monitor_thread.start()
 
 start_backup_scheduler()
+
 
 
 def restore(request):
@@ -2591,19 +2802,17 @@ def equipment_configure_view(request):
         equip_name = request.POST.get('equipname')
         status = request.POST.get('equipStatus')
         ip_address = request.POST.get('ipaddress')
-        department_id = request.POST.get('selected_department')
         interval = request.POST.get('interval')
         equipment_type = request.POST.get('equiptype')
         door_access_type = request.POST.get('dooracctype')
-        print("Status", status)
-        print("Acess Dept", department_id)
-        # Save equipment details
+        department=request.POST.get('hiddenFieldName')
+        dept=Department.objects.get(department_name=department)
         equipment = Equipment(
             equip_name=equip_name,
             status=status,
             ip_address=ip_address,
             interval=interval,
-            department_id=department_id,
+            department=dept,
             equipment_type=equipment_type,
             door_access_type=door_access_type
         )
@@ -2667,7 +2876,7 @@ def equipment_configure_view(request):
             print(f"Error during PLC connection or interval update: {str(e)}")  # Debugging any connection-related errors
             messages.error(request, f"Error during PLC connection: {str(e)}")
 
-        messages.success(request, 'Equipment added successfully!')
+        messages.success(request, 'Equipment saved successfully!')
         return redirect('equipment_configure')
 
     equipment_list = Equipment.objects.all()
@@ -2742,7 +2951,7 @@ def equipment_edit(request, equipment_id):
         return redirect('equipment_configure')
 
 
-def equipment_setting(request):
+def equipment_setting(request, id):
 
     emp_user = request.session.get('username', None)
     try:
@@ -2753,10 +2962,12 @@ def equipment_setting(request):
     
     try:
         acc_db = user_access_db.objects.get(role = data.role)
+        equipment=Equipment.objects.get(id=id)
     except:
         acc_db = None
-
-    return render(request, 'Equip_Settings/equip_settings.html', {'organization': organization, 'data':data, 'acc_db':acc_db})
+    equipment=Equipment.objects.get(id=id)
+    logs=Alarm_codes.objects.all()
+    return render(request, 'Equip_Settings/equip_settings.html', {'organization': organization, 'data':data, 'acc_db':acc_db, 'equipment':equipment, 'logs':logs})
 
 
 # DATA Analysis
@@ -3569,7 +3780,7 @@ def alaram_log(request):
     except:
         acc_db = None
     equipments = Equipment.objects.all()
-    alarm_logs_data = alarm_logs.objects.filter(acknowledge=True)
+    alarm_logs_data = alarm_logs.objects.filter(acknowledge=False)
  
     alarm_codes = Alarm_codes.objects.all()
     return render(request, 'Data_Analysis/alaram_log.html', {'organization': organization, 'data':data, 'acc_db':acc_db, 'equipments': equipments,
@@ -3904,136 +4115,138 @@ def alaram_Audit_log(request):
     except ObjectDoesNotExist:
         
         data = SuperAdmin.objects.get(username=emp_user)
-
-    if hasattr(data, 'role') and data.role == 'Admin':
-        
-        equipment = Equipment.objects.all()
-    else:
-        
-        equipment = Equipment.objects.filter(department=data.department)
-    print(equipment)
     try:
         acc_db = user_access_db.objects.get(role=data.role)
     except ObjectDoesNotExist:
         acc_db = None
 
-    return render(request, 'auditlog/alaram_audit.html', {
+    equipments = Equipment.objects.all()
+
+    current_date = now()
+    from_date_parsed = current_date.replace(day=1).date()
+    to_date_parsed = current_date.date()
+    from_time_parsed = datetime_time(0, 0, 0)
+    to_time_parsed = datetime_time(23, 59, 59)
+
+
+    format_type=request.GET.get('formats')
+    from_date=request.GET.get('from_date')
+    to_date=request.GET.get('to_date')
+    from_time=request.GET.get('from_time')
+    to_time=request.GET.get('to_time')
+    user_list=request.GET.get('user_list')
+    equipment_list=request.GET.get('equipment_list')
+    event_name=request.GET.get('event_name')
+    
+    print("HTML", format_type, equipment_list)
+    filter_kwargs = Q()
+    if format_type == 'Date Wise':
+        if from_date and to_date:
+            from_date_parsed = parse_date(from_date)
+            to_date_parsed = parse_date(to_date)
+            a=alarm_logs.objects.first()
+            from_time_parsed = parse_time(from_time) if from_time else datetime_time(0, 0, 0)
+            to_time_parsed = parse_time(to_time) if to_time else datetime_time(23, 59, 59)
+
+            # Combine date and time into datetime objects for accurate filtering
+            from_datetime = make_aware(datetime.combine(from_date_parsed, from_time_parsed))
+            to_datetime = make_aware(datetime.combine(to_date_parsed, to_time_parsed))
+
+            # Apply the datetime filter to the combined datetime field
+            filter_kwargs &= Q(date__gte=from_date_parsed) & Q(date__lte=to_date_parsed)
+            # filter_kwargs &= Q(time__gte=from_time_parsed) & Q(time__lte=to_time_parsed)
+            if equipment_list:
+                user_names = Equipment.objects.filter(id=equipment_list).values_list('equip_name', flat=True)
+                
+                filter_kwargs &= Q(equipment__equip_name__in=user_names)
+
+        else:
+            return HttpResponse("From Date and To Date are mandatory for Date Wise format.", status=400)
+
+    elif format_type == 'User Wise':
+        if user_list:
+            user_names = User.objects.filter(id__in=user_list).values_list('username', flat=True)
+            filter_kwargs &= Q(user__in=user_names)
+            a=alarm_logs.objects.first()
+            current_date = now()
+            from_date_parsed = parse_date(from_date) if from_date else current_date.replace(day=1).date()
+            to_date_parsed = parse_date(to_date) if to_date else current_date.date()
+
+            from_time_parsed = parse_time(from_time) if from_time else datetime_time(0, 0, 0)
+            to_time_parsed = parse_time(to_time) if to_time else datetime_time(23, 59, 59)
+
+            # Combine date and time into datetime objects for accurate filtering
+            from_datetime = make_aware(datetime.combine(from_date_parsed, from_time_parsed))
+            to_datetime = make_aware(datetime.combine(to_date_parsed, to_time_parsed))
+
+            filter_kwargs &= Q(date__gte=from_date_parsed) & Q(date__lte=to_date_parsed)
+            # filter_kwargs &= Q(time__gte=from_time_parsed) & Q(time__lte=to_time_parsed)
+        else:
+            return HttpResponse("User List is mandatory for User-wise format.", status=400)
+
+    elif format_type=='Equipment-wise':
+        if equipment_list:
+            user_names = Equipment.objects.filter(id=equipment_list).values_list('equip_name', flat=True)
+            filter_kwargs &= Q(equipment__equip_name__in=user_names)
+            current_date = now()
+            from_date_parsed = parse_date(from_date) if from_date else current_date.replace(day=1).date()
+            to_date_parsed = parse_date(to_date) if to_date else current_date.date()
+
+            from_time_parsed = parse_time(from_time) if from_time else datetime_time(0, 0, 0)
+            to_time_parsed = parse_time(to_time) if to_time else datetime_time(23, 59, 59)
+
+            # Combine date and time into datetime objects for accurate filtering
+            from_datetime = make_aware(datetime.combine(from_date_parsed, from_time_parsed))
+            to_datetime = make_aware(datetime.combine(to_date_parsed, to_time_parsed))
+
+            filter_kwargs &= Q(date__gte=from_date_parsed) & Q(date__lte=to_date_parsed)
+            # filter_kwargs &= Q(time__gte=from_time_parsed) & Q(time__lte=to_time_parsed)
+        else:
+            return HttpResponse("Equipment List is mandatory for User-wise format.", status=400)
+
+    if event_name:
+            filter_kwargs &= Q(event_name__icontains=event_name)
+
+    alarm_log = alarm_logs.objects.filter(filter_kwargs, acknowledge=True)
+
+    if 'generate_pdf' in request.GET:
+        if not from_date:
+            from_date = now().replace(day=1).strftime('%Y-%m-%d')
+        if not to_date:
+            to_date = now().strftime('%Y-%m-%d')
+
+        return generate_audit_alaram_log_pdf(
+            request,
+            alarm_log,
+            from_date_parsed.strftime('%d-%m-%Y'),
+            to_date_parsed.strftime('%d-%m-%Y'),
+            from_time_parsed.strftime('%H:%M'),
+            to_time_parsed.strftime('%H:%M'),
+            organization,
+            data.department,
+            data.username,
+            equipment_list,
+            format_type
+        )
+
+    context = {
         'organization': organization,
         'data': data,
         'acc_db': acc_db,
         'users': users,
-        'equipments': equipment  
-    })
+        'equipments': equipments,  
+    }
+    return render(request, 'auditlog/alaram_audit.html', context )
 
 
-def view_audit_alarm_logs(request):
-    if request.method=='POST':
-        emp_user = request.session.get('username', None)
-        users = User.objects.all()
-        organization = Organization.objects.first()
 
-        try:
-            data = User.objects.get(username=emp_user)
-        except ObjectDoesNotExist:
-            data = SuperAdmin.objects.get(username=emp_user)
-        
-        
-        format=request.POST.get('formats')
-        from_date=request.POST.get('from_date')
-        to_date=request.POST.get('to_date')
-        from_time=request.POST.get('from_time')
-        to_time=request.POST.get('to_time')
-        user_list=request.POST.get('user_list')
-        equipment_list=request.POST.get('equipment_list')
-        event_name=request.POST.get('event_name')
-        
-        filter_kwargs = Q()
-        if format == 'Date Wise':
-            if from_date and to_date:
-                from_date_parsed = parse_date(from_date)
-                to_date_parsed = parse_date(to_date)
+   
 
-                from_time_parsed = parse_time(from_time) if from_time else datetime_time(0, 0, 0)
-                to_time_parsed = parse_time(to_time) if to_time else datetime_time(23, 59, 59)
-
-                # Combine date and time into datetime objects for accurate filtering
-                from_datetime = make_aware(datetime.combine(from_date_parsed, from_time_parsed))
-                to_datetime = make_aware(datetime.combine(to_date_parsed, to_time_parsed))
-
-                # Apply the datetime filter to the combined datetime field
-                filter_kwargs &= Q(ack_date__gte=from_date_parsed) & Q(ack_date__gte=to_date_parsed)
-                # filter_kwargs &= Q(log_time__gte=from_time_parsed) & Q(log_time__lte=to_time_parsed)
-            else:
-                return HttpResponse("From Date and To Date are mandatory for Date Wise format.", status=400)
-
-        elif format == 'User Wise':
-            if user_list:
-                user_names = User.objects.filter(id__in=user_list).values_list('username', flat=True)
-                filter_kwargs &= Q(user__in=user_names)
-
-                current_date = now()
-                from_date_parsed = parse_date(from_date) if from_date else current_date.replace(day=1).date()
-                to_date_parsed = parse_date(to_date) if to_date else current_date.date()
-
-                from_time_parsed = parse_time(from_time) if from_time else datetime_time(0, 0, 0)
-                to_time_parsed = parse_time(to_time) if to_time else datetime_time(23, 59, 59)
-
-                # Combine date and time into datetime objects for accurate filtering
-                from_datetime = make_aware(datetime.combine(from_date_parsed, from_time_parsed))
-                to_datetime = make_aware(datetime.combine(to_date_parsed, to_time_parsed))
-
-                filter_kwargs &= Q(ack_date__gte=from_date_parsed) & Q(ack_date__gte=to_date_parsed)
-                # filter_kwargs &= Q(log_time__gte=from_time_parsed) & Q(log_time__lte=to_time_parsed)
-            else:
-                return HttpResponse("User List is mandatory for User-wise format.", status=400)
-
-            if event_name:
-                filter_kwargs &= Q(event_name__icontains=event_name)
-        elif format=='Equipment-wise':
-            if equipment_list:
-                print(equipment_list)
-                user_names = Equipment.objects.filter(id=equipment_list).values_list('equip_name', flat=True)
-                print(user_names)
-                filter_kwargs &= Q(equipment__equip_name__in=user_names)
-                current_date = now()
-                from_date_parsed = parse_date(from_date) if from_date else current_date.replace(day=1).date()
-                to_date_parsed = parse_date(to_date) if to_date else current_date.date()
-
-                from_time_parsed = parse_time(from_time) if from_time else datetime_time(0, 0, 0)
-                to_time_parsed = parse_time(to_time) if to_time else datetime_time(23, 59, 59)
-
-                # Combine date and time into datetime objects for accurate filtering
-                from_datetime = make_aware(datetime.combine(from_date_parsed, from_time_parsed))
-                to_datetime = make_aware(datetime.combine(to_date_parsed, to_time_parsed))
-
-                filter_kwargs &= Q(ack_date__gte=from_date_parsed) & Q(ack_date__lte=to_date_parsed)
-                # filter_kwargs &= Q(time__gte=from_time_parsed) & Q(time__lte=to_time_parsed)
-            else:
-                return HttpResponse("Equipment List is mandatory for User-wise format.", status=400)
-        # print(filter_kwargs)
-        alarm_log = alarm_logs.objects.filter(filter_kwargs, acknowledge=True)
-        return generate_audit_alaram_log_pdf(
-        request,
-        alarm_log,
-        from_date_parsed.strftime('%d-%m-%Y'),
-        to_date_parsed.strftime('%d-%m-%Y'),
-        from_time_parsed.strftime('%H:%M'),
-        to_time_parsed.strftime('%H:%M'),
-        organization,
-        data.department,
-        data.username,
-        equipment_list
-    )
-
-    else:
-        return redirect('alaram_Audit_log')
-
-
-def generate_audit_alaram_log_pdf(request, records, from_date, to_date, from_time, to_time, organization, department, username, selected_equipment):
+def generate_audit_alaram_log_pdf(request, records, from_date, to_date, from_time, to_time, organization, department, username, selected_equipment, format_type):
     response = HttpResponse(content_type='application/pdf')
-    response['Content-Disposition'] = 'inline; filename="Alaram_logs.pdf"'
+    response['Content-Disposition'] = 'inline; filename="Alaram_Audit_logs.pdf"'
 
-    doc = SimpleDocTemplate(response, pagesize=A4, rightMargin=30, leftMargin=30, topMargin=160, bottomMargin=60)
+    doc = SimpleDocTemplate(response, pagesize=landscape(A4), rightMargin=30, leftMargin=30, topMargin=160, bottomMargin=60)
     styles = getSampleStyleSheet()
 
     if records.exists():
@@ -4054,88 +4267,96 @@ def generate_audit_alaram_log_pdf(request, records, from_date, to_date, from_tim
         page_num = canvas.getPageNumber()
         total_pages = doc.page
         current_time = localtime().strftime('%d-%m-%Y %H:%M')
-        # Header
+        
         canvas.setFont("Helvetica-Bold", 14)
         canvas.setFillColor(colors.blue)
-        canvas.drawCentredString(300, 800, organization.name)
-        
+        canvas.drawString(30, 570, organization.name)
+
         canvas.setFillColor(colors.black)
         canvas.setFont("Helvetica", 12)
-        canvas.drawCentredString(300, 780, department.header_note)
+
+        canvas.drawString(30, 550, "Department Name: " + department.department_name)
+
 
         logo_path = organization.logo.path
-        canvas.drawImage(logo_path, 470, 780, width=80, height=30)
+        canvas.drawImage(logo_path, 730, 550, width=80, height=30)
 
-        # Draw the separator line under the header
         canvas.setLineWidth(0.5)
-        canvas.line(30, 770, 570, 770)
-        
-        
-        # Add the filters and records info
+        canvas.line(13, 540, 830, 540)
+
         canvas.setFont("Helvetica-Bold", 12)
-        canvas.drawString(250, 750, "Alarm Log Report")
+        print("Type:", format_type)
+        if format_type == 'Date Wise':
+            canvas.drawString(320, 500, "Alarm Audit Trail Date Wise Report")
+        elif format_type == 'User Wise':
+            canvas.drawString(320, 500, "Alarm Audit Trail User Wise Report")
+        elif format_type == 'Equipment-wise':
+            canvas.drawString(320, 500, "Alarm Audit Trail Equipment Wise Report")
 
         canvas.setFont("Helvetica-Bold", 10)
         equipment=Equipment.objects.get(id=selected_equipment)
+        print(equipment)
         equipment_display = f"Equipment Name: {equipment.equip_name}" 
-        canvas.drawString(30, 730, equipment_display)
-        
+        canvas.drawString(30, 480, equipment_display)
+
+
         canvas.setFont("Helvetica-Bold", 10)
-        # canvas.drawString(30, 730, f"Equipment Name: {selected_equipment}")
-        canvas.drawString(30, 710, f"Filter From: {from_date} {from_time}")
-        canvas.drawString(400, 710, f"Filter To: {to_date} {to_time}")
-        canvas.drawString(30, 690, f"Records From: {records_from_date} {records_from_time}")
-        canvas.drawString(400, 690, f"Records To: {records_to_date} {records_to_time}")
+        canvas.drawString(30, 460, f"Filter From: {from_date} {from_time}")
+        canvas.drawString(670, 460, f"Filter To: {to_date} {to_time}")
+
+        canvas.drawString(30, 445, f"Records From: {records_from_date} {records_from_time}")
+        canvas.drawString(670, 445, f"Records To: {records_to_date} {records_to_time}")
 
         # Draw separator line above the new table
         canvas.setLineWidth(0.5)
-        canvas.line(30, 670, 570, 670)  # Line above the new table
+        canvas.line(30, 60, 820, 60)  # Line above the new table
       
-
         # Add a line above the footer
         canvas.setLineWidth(1)
-        canvas.line(30, 60, 570, 60)  # Line just above the footer
+        canvas.line(30, 60, 820, 60)  # Line just above the footer
 
 
         # Add footer with page number
-        footer_left_top = "Sunwell"
-        footer_left_bottom = "ESTDAS v1.0"
-        footer_center = f"Printed By - {username} on {current_time}"
-        footer_right_top = department.footer_note
-        footer_right_bottom = f"Page {page_num} of {total_pages}"
+        footer_text_left_top = "Sunwell"
+        footer_text_left_bottom = "ESTDAS v1.0"
+        footer_text_center = f"Printed By - {username} on {datetime.now().strftime('%d-%m-%Y %H:%M')}"  # Centered dynamic text
+        footer_text_right_top = department.footer_note
+        footer_text_right = f"Page {page_num}"
         
         # Draw footer at the bottom of the page
         canvas.setFont("Helvetica", 10)
-        canvas.drawString(30, 45, footer_left_top)
-        canvas.drawString(30, 35, footer_left_bottom)
-        canvas.drawCentredString(300, 40, footer_center)
-        canvas.drawRightString(570, 45, footer_right_top)
-        canvas.drawRightString(570, 35, footer_right_bottom)  
+        canvas.drawString(30, 45, footer_text_left_top)  # Draw "Sunwell"
+        canvas.drawString(30, 35, footer_text_left_bottom)  # Draw "ESTDAS v1.0" below "Sunwell"
+        canvas.drawCentredString(420, 40, footer_text_center)  # Centered
+        canvas.drawRightString(800, 45, footer_text_right_top)
+        canvas.drawRightString(800, 35, footer_text_right)  
 
     # Main function to generate PDF
-    def alaram_log_table():
+    def alaram_audit_log_table():
         data = [
-            ['Sr No', 'Log Date', 'Log Time', 'Alarm Description', 'Acknowledge Date', 'Acknowledge User'],
+            ['Sr No', 'Log Date', 'Log Time', 'Alarm Description', 'Ack Date', 'Ack Time', 'Acknowledge By', 'Ack Comments'],
         ]
 
         # Populate the table rows dynamically from records
         for idx, record in enumerate(records, start=1):
-            alarm_description = str(record.alarm_code.alarm_log) if record.alarm_code else "N/A"  # Convert to string
+            alarm_description = str(record.alarm_code.alarm_log) if record.alarm_code else ""  # Convert to string
             data.append([
                 str(idx),
-                record.date.strftime('%d-%m-%Y') if record.date else "N/A",
-                record.time.strftime('%H:%M:%S') if record.time else "N/A",
+                record.date.strftime('%d-%m-%Y') if record.date else "",
+                record.time.strftime('%H:%M:%S') if record.time else "",
                 Paragraph(alarm_description, styles['Normal']),
-                record.ack_date.strftime('%d-%m-%Y') if record.ack_date else "N/A",
-                record.ack_user
+                record.ack_date.strftime('%d-%m-%Y') if record.ack_date else "",
+                record.ack_time.strftime('%H:%M') if record.ack_time else "",
+                record.ack_user or "",
+                Paragraph(record.comments or "", styles['Normal'])
             ])
 
         # Table style
         table_style = TableStyle([
             ('BACKGROUND', (0, 0), (-1, 0), colors.lightgrey),
             ('TEXTCOLOR', (0, 0), (-1, 0), colors.black),
-            ('ALIGN', (0, 0), (4, -1), 'CENTER'),
-            ('ALIGN', (3, 1), (3, -1), 'CENTER'),
+            ('ALIGN', (0, 0), (3, -1), 'CENTER'),
+            ('ALIGN', (4, 1), (4, -1), 'LEFT'),
             ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
             ('FONTSIZE', (0, 0), (-1, 0), 10),
             ('BOTTOMPADDING', (0, 0), (-1, 0), 12),
@@ -4144,14 +4365,14 @@ def generate_audit_alaram_log_pdf(request, records, from_date, to_date, from_tim
         ])
 
         # Define the table
-        table = Table(data, colWidths=[50, 90, 90, 120, 120, 120], repeatRows=1) # repeatRows=1 to repeat the first row
+        table = Table(data, colWidths=[35, 80, 60, 160,  80, 70, 100, 180])
         table.setStyle(table_style)
     
         return table
     
     content = [
         Spacer(1, 0.2 * inch),
-        alaram_log_table(),
+        alaram_audit_log_table(),
 
     ]
     

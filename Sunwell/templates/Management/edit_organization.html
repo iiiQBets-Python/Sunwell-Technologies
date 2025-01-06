@@ -26,6 +26,40 @@
         top: 20px;
         right: 20px;
     }
+    @media (width: 768px) {
+            .content {
+                height: 85vh !important;
+            }
+        }
+        @media (max-width: 767px) {
+            .content {
+                height: 75vh !important;
+            }
+            .edit-button {
+                position: absolute;
+                top: 0px;
+                right: 20px;
+            }
+            .header {
+                text-align: left;
+                color: #000d1d;
+            }
+
+        }
+        @media (max-width: 576px) {
+            .content {
+                height: 75vh !important;
+            }
+            .edit-button {
+                position: absolute;
+                top: 0px;
+                right: 20px;
+            }
+            .header {
+                text-align: left;
+                color: #000d1d;
+            }
+        }
 </style>
 <div class="container mt-0">
     <h1 class="text-center header">Edit Company Profile</h1>
@@ -33,7 +67,7 @@
     <form method="post" enctype="multipart/form-data">
         {% csrf_token %}
         <div class="row">
-            <div class="col-md-3">
+            <div class="col-lg-3">
                 <div class="text-center">
                     {% if organization.logo %}
                         <img src="{{ organization.logo.url }}" class="img-thumbnail square-img mt-5" alt="Company Logo">
@@ -45,7 +79,7 @@
                 </div>
             </div>
             
-            <div class="col-md-9 mt-4">
+            <div class="col-lg-9 mt-4">
                 <div class="mb-3 row">
                     <label for="name" class="col-lg-3 col-form-label"><strong>Company Name:</strong></label>
                     <div class="col-lg-9">

@@ -6,28 +6,102 @@
 {% block styles %}
     {{ block.super }}
     <link rel="stylesheet" href="{% static 'css/Management/user_group.css' %}">
+    <style>
+        /* Add responsive styles */
+        @media (width: 768px) {
+            .d-flex.justify-content-between.align-items-center.mt-3 {
+                flex-direction: row; 
+                align-items: center !important; 
+            }
+
+            .content {
+                height: 85vh !important;
+            }
+        }
+        @media (max-width: 767px) {
+            .entries-info,
+            .pagination {
+                justify-content: center !important;
+                /* margin-top: 10px; */
+            }
+            
+            .row.align-items-center > div {
+                text-align: center;
+            }
+            .content {
+                height: 75vh !important;
+            }
+            .table-wrapper {
+                overflow-x: auto;
+            }
+            .entries-info {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            .pagination {
+                margin-top: 10px;
+            }
+            .d-flex.justify-content-between.align-items-center.mt-3 > div {
+                text-align: center;
+                margin: 5px 0;
+            }
+            #adminUserModal .modal-dialog {
+                max-width: 95%;
+                margin: 1.75rem auto;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .custom-label {
+                flex-direction: column !important;
+                align-items: center;
+            }
+            .content {
+                height: 75vh !important;
+            }
+            .entries-info, .pagination {
+                justify-content: center;
+                margin-top: 10px;
+            }
+            #adminUserModal .modal-dialog {
+                margin: 0.5rem;
+            }
+            .d-flex.justify-content-end.align-items-center {
+                /* flex-direction: column; */
+                align-items: stretch !important;
+            }
+            
+            /* .d-flex.input-group {
+                width: 100% !important;
+                margin-bottom: 10px;
+            } */
+            
+            .btn-primary {
+                width: 100%;
+            }   
+        }
+    </style>
 {% endblock styles %}
 
 {% block content %} 
 <div class="container mt-2 table-container fade-in">
-    {% comment %} <div class="d-flex justify-content-end mb-2">
-      <div class="ms-auto">
-          <div class="dropdown dept-filter">
-              <button class="btn btn-outline-secondary dropdown-toggle" type="button" id="deptFilterDropdown" data-bs-toggle="dropdown" aria-expanded="false">
-                  Select Departments
-              </button>
-              <ul class="dropdown-menu" aria-labelledby="deptFilterDropdown">
-                  <li><a class="dropdown-item" href="#" data-value="all">All Departments <span class="option-count">3</span></a></li>
-                  <li><a class="dropdown-item" href="#" data-value="qc">QC <span class="option-count">1</span></a></li>
-                  <li><a class="dropdown-item" href="#" data-value="it">IT <span class="option-count">1</span></a></li>
-                  <li><a class="dropdown-item" href="#" data-value="hr">HR <span class="option-count">1</span></a></li>
-              </ul>
-          </div>
-      </div>  
-    </div> {% endcomment %}
-    <div class="d-flex justify-content-between align-items-center custom-label mt-5 mb-2" style="font-weight: bold; padding: 5px 10px; background-color: rgb(235, 235, 235);">
+    <div class="d-flex justify-content-end mb-2">
+        <div class="ms-auto">
+            <div class="dropdown dept-filter">
+                <button class="btn btn-outline-secondary dropdown-toggle" type="button" id="roleFilterDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                    Select Status
+                </button>
+                <ul class="dropdown-menu" aria-labelledby="roleFilterDropdown">
+                    <li><a class="dropdown-item" onchange="updateTable()" href="#" data-value="all">All Status<span class="option-count">3</span></a></li>
+                    <li><a class="dropdown-item" onchange="updateTable()" href="#" data-value="Active">Active <span class="option-count">1</span></a></li>
+                    <li><a class="dropdown-item" onchange="updateTable()" href="#" data-value="Inactive">Inactive <span class="option-count">1</span></a></li>
+                </ul>
+            </div>
+        </div>  
+    </div>
+    <div class="d-flex justify-content-between align-items-center custom-label mt-0 mb-2" style="font-weight: bold; padding: 5px 10px; background-color: rgb(235, 235, 235);">
         <section class="d-block custom-label mb-2" style="background-color: rgb(235, 235, 235);text-align: center;font-weight: bold; padding: 5px 0px">
-             Users <span id="records-info">(Records Found: 0, Selected: 0)</span>
+            Users <span id="records-info">(Records Found: 0, Selected: 0)</span>
         </section>
         <div class="d-flex justify-content-end align-items-center">
             <div class="d-flex input-group me-3" style="width: 200px;">
@@ -43,69 +117,75 @@
             </div>
         </div> 
     </div>
-  <div class="table-wrapper">
-      <table class="table table-bordered">
-          <thead>
-              <tr>
-                  <th><input type="checkbox" id="selectAll"></th>
-                  <th scope="col">User Name</th>
-                  <th scope="col">Comm. Group</th>
-                  <th scope="col">Department Name</th>
-                  <th scope="col">Role</th>
-                  <th scope="col">Status</th>
-                  {% if data.role == 'Super Admin' or acc_db.user_e %}
-                  <th scope="col">Actions</th>
-                  {% endif %}
-              </tr>
-          </thead>
-          <tbody id="form-data-table">
-            {% for user in users %}
-            <tr data-department-id="{{ user.department.id }}">
-                <td><input type="checkbox" class="row-checkbox" name="user_checkbox"></td>
-                <td>{{ user.username }}</td>
-                <td>{{ user.commGroup }}</td>
-                <td>{{ user.department }}</td>
-                <td>{{ user.role }}</td>
-                <td>{{ user.status }}</td>
-                {% if data.role == 'Super Admin' or acc_db.user_e %}
-                <td>
-                    <div class="dropdown">
-                        <a class="dropdown-item btn-edit" data-bs-toggle="edit_modal" data-bs-target="#editUserModal-{{ user.id }}">
-                            <i class="fas fa-edit"></i>
-                        </a>
-                    </div>
-                </td>
-                {% endif %}
-            </tr>
-            {% endfor %}
-        </tbody>
-      </table>
+    <div class="table-wrapper">
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th><input type="checkbox" id="selectAll"></th>
+                    <th scope="col">User Name</th>
+                    <th scope="col">Comm. Group</th>
+                    <th scope="col">Department Name</th>
+                    <th scope="col">Role</th>
+                    <th scope="col">Status</th>
+                    {% if data.role == 'Super Admin' or acc_db.user_e %}
+                    <th scope="col">Actions</th>
+                    {% endif %}
+                </tr>
+            </thead>
+            <tbody id="form-data-table">
+                {% for user in users %}
+                <tr data-department-id="{{ user.department.id }}">
+                    <td><input type="checkbox" class="row-checkbox" name="user_checkbox"></td>
+                    <td>{{ user.username }}</td>
+                    <td>{{ user.commGroup }}</td>
+                    <td>{{ user.department }}</td>
+                    <td>{{ user.role }}</td>
+                    <td>{{ user.status }}</td>
+                    {% if data.role == 'Super Admin' or acc_db.user_e %}
+                    <td>
+                        <div class="dropdown">
+                            <a class="dropdown-item btn-edit" data-bs-toggle="edit_modal" data-bs-target="#editUserModal-{{ user.id }}">
+                                <i class="fas fa-edit"></i>
+                            </a>
+                        </div>
+                    </td>
+                    {% endif %}
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
     </div>
-      <div class="d-flex justify-content-between mb-2">
-        <div class="entries-info d-flex align-items-center">
-          <span>Show</span>
-          <select id="entriesPerPage" class="form-select d-inline-block mx-2 entriesPerPage">
-              <option value="10" selected>10</option>
-              <option value="15">15</option>
-              <option value="25">25</option>
-              <option value="50">50</option>
-              <option value="100">100</option>
-          </select>
-          <span>entries per page</span>
-      </div>
-        <div class="entries-info d-flex align-items-center">
+    <div class="row align-items-center mt-3 mb-2">
+        <!-- Entries Per Page Dropdown -->
+        <div class="col-12 col-md-5 justify-content-start align-items-center mb-2 mb-md-0 entries-info">
+            <span>Show</span>
+            <select id="entriesPerPage" class="form-select d-inline-block mx-2 entriesPerPage">
+                <option value="10" selected>10</option>
+                <option value="15">15</option>
+                <option value="25">25</option>
+                <option value="50">50</option>
+                <option value="100">100</option>
+            </select>
+            <span>entries per page</span>
+        </div>
+        <!-- Showing Entries Info -->
+        <div class="col-12 col-md-3 d-flex justify-content-center align-items-center mb-2 mb-md-0">
             <small>Showing <span id="visible-entries">0</span> of <span id="total-entries">0</span> entries</small>
         </div>
-        <nav aria-label="Page navigation" class="d-flex justify-content-end">
-            <ul class="pagination mb-0">
-                <li class="page-item" id="prev-page"><a class="page-link" href="#">Previous</a></li>
-                <li class="page-item"><a class="page-link" href="#">1</a></li>
-                <li class="page-item"><a class="page-link" href="#">2</a></li>
-                <li class="page-item" id="next-page"><a class="page-link" href="#">Next</a></li>
-            </ul>
-        </nav>
+        <!-- Pagination -->
+        <div class="col-12 col-md-4 d-flex justify-content-md-end justify-content-center">
+            <nav aria-label="Page navigation">
+                <ul class="pagination mb-0">
+                    <li class="page-item" id="prev-page"><a class="page-link" href="#">Previous</a></li>
+                    <li class="page-item"><a class="page-link" href="#">1</a></li>
+                    <li class="page-item"><a class="page-link" href="#">2</a></li>
+                    <li class="page-item"><a class="page-link" href="#">3</a></li>
+                    <li class="page-item" id="next-page"><a class="page-link" href="#">Next</a></li>
+                </ul>
+            </nav>
+        </div>
     </div>
-  </div>
+</div>
   
 
  <!-- The Modal -->
@@ -125,8 +205,9 @@
           {% csrf_token %}
           <div class="row">
             <div class="col-md-6 form-group">
-              <input type="text" class="form-control" id="userName" name="userName" autocomplete="username" maxlength="15" placeholder=" " required>
+              <input type="text" class="form-control" id="userName" name="userName" autocomplete="username" maxlength="15" placeholder=" " required onblur="checkUsernameAvailability()">
               <label for="userName" class="form-label">User Name*</label>
+              <div id="usernameError" class="text-danger"></div>
             </div>
             <div class="col-md-6 form-group">
               <input type="text" class="form-control" id="loginName" name="loginName" placeholder=" " required>
@@ -204,7 +285,7 @@
           </div>
           <div class="modal-footer">
             <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Close</button>
-            <button type="submit" class="btn btn-success">Save</button>
+            <button type="submit" id="submitform" class="btn btn-success">Save</button>
           </div>
         </form>
       </div>
@@ -320,6 +401,36 @@
 
 {% endfor %}
 
+<script>
+  function getExistingUsernames() {
+      const tableRows = document.querySelectorAll('#form-data-table tr');
+      const usernames = [];
+      tableRows.forEach(row => {
+          const usernameCell = row.querySelector('td:nth-child(2)'); 
+          if (usernameCell) {
+              usernames.push(usernameCell.textContent.trim());
+          }
+      });
+
+      return usernames;
+  }
+
+  function checkUsernameAvailability() {
+     
+      const inputUsername = document.getElementById('userName').value;
+      const usernameErrorDiv = document.getElementById('usernameError');
+      const existingUsernames = getExistingUsernames();
+      const saveButton=document.getElementById('submitform')
+
+      if (existingUsernames.includes(inputUsername)) {
+          usernameErrorDiv.textContent = 'This username is already taken.';
+          saveButton.disabled = true;
+      } else {
+          usernameErrorDiv.textContent = '';
+          saveButton.disabled = false; 
+      }
+  }
+</script>
 
 <script>
     document.querySelectorAll('.btn-edit').forEach(button => {

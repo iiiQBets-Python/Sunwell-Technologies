@@ -5,567 +5,679 @@
     {{ block.super }}
     <style>
         .table-container {
-             height:95%;
-             background-color: #f9f9f9;
-             border-radius: 10px;
-             padding: 20px;
-             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-         }
-         .table th {
-             text-align: center;
-             vertical-align: middle;
-         }
-         .table thead th {
-             position: sticky;
-             top: 0;
-             z-index: 1;
-             padding: 15px;
-             font-weight:600;
-             border-bottom: 2px solid #dee2e6;
-             background-color: #ededed;
-             color: rgb(0, 0, 0);
-         }
-         @keyframes fadeIn {
-             from {
-                 opacity: 0;
-             }
-             to {
-                 opacity: 1;
-             }
-         }
-         .main-row td {
-             background-color: #e4e4e4;
-         }
-         .sub-row td {
-             background-color: #f8f5f5;
-         }
-         .super-sub-row td {
-             background-color: #fafafa;
-         }
-         h4 {
-             vertical-align: center;
-             padding-left: 10px;
-             font-size: small;
-             font-weight: 700;
-         }
+            background-color: #f9f9f9;
+            border-radius: 10px;
+            padding: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            max-width: 100%;
+            overflow-x: auto;
+            display: flex;
+            flex-direction: column;
+            height: 87vh;
+        }
+        .table-wrapper {
+            flex: 1;
+            overflow: auto;
+            /* Hide scrollbar for WebKit browsers */
+            -webkit-overflow-scrolling: touch;
+        }
+        .table-wrapper::-webkit-scrollbar {
+            width: 0;
+            height: 0;
+        }
+        /* Hide scrollbar for Firefox */
+        .table-wrapper {
+            scrollbar-width: none;
+        }
+        /* Hide scrollbar for Internet Explorer, Edge */
+        .table-wrapper {
+            -ms-overflow-style: none;
+        }
+        .table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .table th,
+        .table tr {
+            /* text-align: center; */
+            vertical-align: middle;
+        }
+        .table thead th {
+            position: sticky;
+            top: 0;
+            z-index: 1;
+            padding: 15px;
+            /* text-align: center; */
+            font-weight: 600;
+            border-bottom: 2px solid #dee2e6;
+            background-color: #eaeaea;
+            color: rgb(52, 52, 52);
+            box-shadow: 0 2px 2px -1px rgba(0, 0, 0, 0.4);
+        }
+        .table tbody tr:hover td {
+            cursor: pointer;
+            background-color: #f3f3f3;
+            transition: background-color 0.3s ease-in-out, color 0.3s ease-in-out;
+        }
+        .table th {
+            position: sticky;
+            top: 0;
+            background-color: #f8f9fa;
+        }
+        .table td {
+            padding: 8px;
+            vertical-align: middle;
+        }
+
+        .table .dropdown-menu {
+            min-width: 150px;
+        }
+
+        .custom-label {
+            font-weight: 500;
+        }
+        .scrollable-tbody {
+            max-height: 50vh;
+            overflow-y: auto;
+        }
+        .custom-label {
+            background-color: rgb(235, 235, 235);
+            text-align: center;
+            font-weight: bold; 
+            padding: 5px 0px;
+        }
+        .secrow{
+            background-color: #f9f9f9;
+            text-align: center;
+            font-weight: bold;
+            padding: 0px 5px;
+        }
+        .table th {
+            text-align: center;
+            vertical-align: middle;
+        }
+        /* .table thead th {
+            position: sticky;
+            top: 0;
+            z-index: 1;
+            padding: 15px;
+            font-weight:600;
+            border-bottom: 2px solid #dee2e6;
+            background-color: #ededed;
+            color: rgb(0, 0, 0);
+            box-shadow: 0 2px 2px -1px rgba(0, 0, 0, 0.4);
+        } */
+        /* .table td {
+            padding: 8px;
+            vertical-align: middle;
+        } */
+        /* .table tbody tr:hover td {
+            background-color: #f3f3f3;
+            transition: background-color 0.3s ease-in-out, color 0.3s ease-in-out;
+        } */
+        tbody {
+            /* display: block; */
+            max-height: 430px;
+            overflow-y: auto;
+        }
+        /* thead, tbody tr {
+            display: table;
+            width: 100%;
+            table-layout: fixed;
+        } */
+        .checkbox-cell {
+            padding-left: 10px;
+            text-align: center; 
+        }
+        h4 {
+            vertical-align: center;
+            padding-left: 10px;
+            font-size: small;
+            font-weight: 700;
+        }
  
-         h5 {
-             vertical-align: center;
-             padding-left: 30px;
-             font-size: small;
-             font-weight: 500;
-         }
-         h6 {
-             vertical-align: center;
-             padding-left: 60px;
-             font-size: small;
-             font-weight: 400;
-         }
-         tbody {
-             display: block;
-             max-height: 500px;
-             overflow-y: auto;
-         }
-         thead, tbody tr {
-             display: table;
-             width: 100%;
-             table-layout: fixed;
-         }
-         .checkbox-cell {
-             padding-left: 10px;
-             text-align: center; 
-         }
+        h5 {
+            vertical-align: center;
+            padding-left: 30px;
+            font-size: small;
+            font-weight: 500;
+        }
+        h6 {
+            vertical-align: center;
+            padding-left: 60px;
+            font-size: small;
+            font-weight: 400;
+        }
+        .main-row td {
+            background-color: #e4e4e4;
+        }
+        .sub-row td {
+            background-color: #f8f5f5;
+        }
+        .super-sub-row td {
+            background-color: #fafafa;
+        }
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        } 
+        @media (max-width: 992px) {
+            .content {
+                height: 89vh !important;
+            }
+        }
+        @media (width: 768px) {
+            .content {
+                height: 85vh !important;
+            }
+        }
+        @media (max-width: 767px) {
+            .content {
+                height: 75vh !important;
+            }
+        }
      </style>
 {% endblock styles %}
 
 {% block content %}
 <div class="container table-container fade-in">
-    <section class=" d-block custom-label mb-2" style="background-color: rgb(235, 235, 235);text-align: center;font-weight: bold; padding: 5px 0px">
-        All Rights Select/Diselect all <input type="checkbox" id="select-all">
+    <section class=" d-block custom-label mb-2">
+        <label class="align-middle">
+            All Rights Select/Diselect all 
+            <input type="checkbox" id="select-all" class="ms-2 align-middle">
+        </label>
     </section>
-
-    
-    <form  method="post">
+    <form  method="post" >
         {% csrf_token %}
-        {% if data.role == 'Super Admin' or acc_db.role_e %}
-            {% if data.role == 'Admin' and  role_dt.role == 'Admin' %}
-                
+            <div class="secrow d-flex justify-content-between align-items-center">
+            {% if data.role == 'Super Admin' or acc_db.role_e %}
+                <label>Role = {{ role }}</label>
+                <button type="submit" class="btn btn-primary btn-sm mb-2">Save Changes</button>
+            </div> 
+            <!-- {% if data.role == 'Admin' and  role_dt.role == 'Admin' %}
             {% else %}
-            <button type="submit" class="btn btn-primary btn-sm">Save Changes</button>
-            {% endif %}
+            {% endif %} -->
+            
         {% endif %}
-        <table class="table">
-            <thead>
-                <tr>
-                    <th>Menu Name</th>
-                    <th>View</th>
-                    <th>Add</th>
-                    <th>Edit</th>
-                    <th>Delete</th>
-                    <th>Print</th>
-                </tr>
-            </thead>
-            <tbody id="form-data-table">
-                <tr class="main-row">
-                    <td><h4>Management</h4></td>
-                    <td class="checkbox-cell"><input type="checkbox"></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                </tr>
-                
-                <tr class="sub-row">
-                    <td><h5>Organization</h5></td>
-                    <td class="checkbox-cell"><input type="checkbox" name="org_v" {% if role_dt and role_dt.org_v %} checked {% endif %} ></td>
-                    <td class="checkbox-cell"><input type="checkbox" name="org_a" {% if role_dt and role_dt.org_a %} checked {% endif %}></td>
-                    <td class="checkbox-cell"><input type="checkbox" name="org_e" {% if role_dt and role_dt.org_e %} checked {% endif %}></td>
-                    <td class="checkbox-cell"><input type="checkbox" name="org_d" {% if role_dt and role_dt.org_d %} checked {% endif %}></td>
-                    <td class="checkbox-cell"><input type="checkbox" name="org_p" {% if role_dt and role_dt.org_p %} checked {% endif %}></td>
-                </tr>
-                <tr class="sub-row">
-                    <td><h5>Comm. Group</h5></td>
-                    <td class="checkbox-cell"><input type="checkbox" name="c_group_v" {% if role_dt and role_dt.c_group_v %} checked {% endif %}></td>
-                    <td class="checkbox-cell"><input type="checkbox" name="c_group_a" {% if role_dt and role_dt.c_group_a %} checked {% endif %}></td>
-                    <td class="checkbox-cell"><input type="checkbox" name="c_group_e" {% if role_dt and role_dt.c_group_e %} checked {% endif %}></td>
-                    <td class="checkbox-cell"><input type="checkbox" name="c_group_d" {% if role_dt and role_dt.c_group_d %} checked {% endif %}></td>
-                    <td class="checkbox-cell"><input type="checkbox" name="c_group_p" {% if role_dt and role_dt.c_group_p %} checked {% endif %}></td>
-                </tr>
-                <tr class="sub-row">
-                    <td><h5>Departments</h5></td>
-                    <td class="checkbox-cell"><input type="checkbox" name="dep_v" {% if role_dt and role_dt.dep_v %} checked {% endif %}></td>
-                    <td class="checkbox-cell"><input type="checkbox" name="dep_a" {% if role_dt and role_dt.dep_a %} checked {% endif %}></td>
-                    <td class="checkbox-cell"><input type="checkbox" name="dep_e" {% if role_dt and role_dt.dep_e %} checked {% endif %}></td>
-                    <td class="checkbox-cell"><input type="checkbox" name="dep_d" {% if role_dt and role_dt.dep_d %} checked {% endif %}></td>
-                    <td class="checkbox-cell"><input type="checkbox" name="dep_p" {% if role_dt and role_dt.dep_p %} checked {% endif %}></td>
-                </tr>
-                <tr class="sub-row">
-                    <td><h5>Roles and Permissions</h5></td>
-                    <td class="checkbox-cell"><input type="checkbox" name="role_v" {% if role_dt and role_dt.role_v %} checked {% endif %}></td>
-                    <td class="checkbox-cell"><input type="checkbox" name="role_a" {% if role_dt and role_dt.role_a %} checked {% endif %}></td>
-                    <td class="checkbox-cell"><input type="checkbox" name="role_e" {% if role_dt and role_dt.role_e %} checked {% endif %}></td>
-                    <td class="checkbox-cell"><input type="checkbox" name="role_d" {% if role_dt and role_dt.role_d %} checked {% endif %}></td>
-                    <td class="checkbox-cell"><input type="checkbox" name="role_p" {% if role_dt and role_dt.role_p %} checked {% endif %}></td>
-                </tr>
-                <tr class="sub-row">
-                    <td><h5>Users</h5></td>
-                    <td class="checkbox-cell"><input type="checkbox" name="user_v" {% if role_dt and role_dt.user_v %} checked {% endif %}></td>
-                    <td class="checkbox-cell"><input type="checkbox" name="user_a" {% if role_dt and role_dt.user_a %} checked {% endif %}></td>
-                    <td class="checkbox-cell"><input type="checkbox" name="user_e" {% if role_dt and role_dt.user_e %} checked {% endif %}></td>
-                    <td class="checkbox-cell"><input type="checkbox" name="user_d" {% if role_dt and role_dt.user_d %} checked {% endif %}></td>
-                    <td class="checkbox-cell"><input type="checkbox" name="user_p" {% if role_dt and role_dt.user_p %} checked {% endif %}></td>
-                </tr>
-                <tr class="sub-row">
-                    <td><h5>App Settings</h5></td>
-                    <td class="checkbox-cell"><input type="checkbox" name="app_v" {% if role_dt and role_dt.app_v %} checked {% endif %}></td>
-                    <td class="checkbox-cell"><input type="checkbox" name="app_a" {% if role_dt and role_dt.app_a %} checked {% endif %}></td>
-                    <td class="checkbox-cell"><input type="checkbox" name="app_e" {% if role_dt and role_dt.app_e %} checked {% endif %}></td>
-                    <td class="checkbox-cell"><input type="checkbox" name="app_d" {% if role_dt and role_dt.app_d %} checked {% endif %}></td>
-                    <td class="checkbox-cell"><input type="checkbox" name="app_p" {% if role_dt and role_dt.app_p %} checked {% endif %}></td>
-                </tr>
-                <tr class="sub-row">
-                    <td><h5>Backup</h5></td>
-                    <td class="checkbox-cell"><input type="checkbox" name="back_v" {% if role_dt and role_dt.back_v %} checked {% endif %}></td>
-                    <td class="checkbox-cell"><input type="checkbox" name="back_a" {% if role_dt and role_dt.back_a %} checked {% endif %}></td>
-                    <td class="checkbox-cell"><input type="checkbox" name="back_e" {% if role_dt and role_dt.back_e %} checked {% endif %}></td>
-                    <td class="checkbox-cell"><input type="checkbox" name="back_d" {% if role_dt and role_dt.back_d %} checked {% endif %}></td>
-                    <td class="checkbox-cell"><input type="checkbox" name="back_p" {% if role_dt and role_dt.back_p %} checked {% endif %}></td>
-                </tr>
-                <tr class="sub-row">
-                    <td><h5>System Diagnosis</h5></td>
-                    <td class="checkbox-cell"><input type="checkbox" name="sys_v" {% if role_dt and role_dt.sys_v %} checked {% endif %}></td>
-                    <td class="checkbox-cell"><input type="checkbox" name="sys_a" {% if role_dt and role_dt.sys_a %} checked {% endif %}></td>
-                    <td class="checkbox-cell"><input type="checkbox" name="sys_e" {% if role_dt and role_dt.sys_e %} checked {% endif %}></td>
-                    <td class="checkbox-cell"><input type="checkbox" name="sys_d" {% if role_dt and role_dt.sys_d %} checked {% endif %}></td>
-                    <td class="checkbox-cell"><input type="checkbox" name="sys_p" {% if role_dt and role_dt.sys_p %} checked {% endif %}></td>
-                </tr>
-                <tr class="sub-row">
-                    <td><h5>Restore</h5></td>
-                    <td class="checkbox-cell"><input type="checkbox" name="res_v" {% if role_dt and role_dt.res_v %} checked {% endif %}></td>
-                    <td class="checkbox-cell"><input type="checkbox" name="res_a" {% if role_dt and role_dt.res_a %} checked {% endif %}></td>
-                    <td class="checkbox-cell"><input type="checkbox" name="res_e" {% if role_dt and role_dt.res_e %} checked {% endif %}></td>
-                    <td class="checkbox-cell"><input type="checkbox" name="res_d" {% if role_dt and role_dt.res_d %} checked {% endif %}></td>
-                    <td class="checkbox-cell"><input type="checkbox" name="res_p" {% if role_dt and role_dt.res_p %} checked {% endif %}></td>
-                </tr>
+        <div class="table-wrapper">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Menu Name</th>
+                        <th>View</th>
+                        <th>Add</th>
+                        <th>Edit</th>
+                        <th>Delete</th>
+                        <th>Print</th>
+                    </tr>
+                </thead>
+                <tbody id="form-data-table">
+                    <tr class="main-row" data-group="management">
+                        <td><h4>Management</h4></td>
+                        <td class="checkbox-cell"><input type="checkbox"></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                    </tr>
+                    
+                    <tr class="sub-row management">
+                        <td><h5>Organization</h5></td>
+                        <td class="checkbox-cell"><input type="checkbox" name="org_v" {% if role_dt and role_dt.org_v %} checked {% endif %} ></td>
+                        <td class="checkbox-cell"><input type="checkbox" name="org_a" {% if role_dt and role_dt.org_a %} checked {% endif %}></td>
+                        <td class="checkbox-cell"><input type="checkbox" name="org_e" {% if role_dt and role_dt.org_e %} checked {% endif %}></td>
+                        <td class="checkbox-cell"><input type="checkbox" name="org_d" {% if role_dt and role_dt.org_d %} checked {% endif %}></td>
+                        <td class="checkbox-cell"><input type="checkbox" name="org_p" {% if role_dt and role_dt.org_p %} checked {% endif %}></td>
+                    </tr>
+                    <tr class="sub-row management">
+                        <td><h5>Comm. Group</h5></td>
+                        <td class="checkbox-cell"><input type="checkbox" name="c_group_v" {% if role_dt and role_dt.c_group_v %} checked {% endif %}></td>
+                        <td class="checkbox-cell"><input type="checkbox" name="c_group_a" {% if role_dt and role_dt.c_group_a %} checked {% endif %}></td>
+                        <td class="checkbox-cell"><input type="checkbox" name="c_group_e" {% if role_dt and role_dt.c_group_e %} checked {% endif %}></td>
+                        <td class="checkbox-cell"><input type="checkbox" name="c_group_d" {% if role_dt and role_dt.c_group_d %} checked {% endif %}></td>
+                        <td class="checkbox-cell"><input type="checkbox" name="c_group_p" {% if role_dt and role_dt.c_group_p %} checked {% endif %}></td>
+                    </tr>
+                    <tr class="sub-row management">
+                        <td><h5>Departments</h5></td>
+                        <td class="checkbox-cell"><input type="checkbox" name="dep_v" {% if role_dt and role_dt.dep_v %} checked {% endif %}></td>
+                        <td class="checkbox-cell"><input type="checkbox" name="dep_a" {% if role_dt and role_dt.dep_a %} checked {% endif %}></td>
+                        <td class="checkbox-cell"><input type="checkbox" name="dep_e" {% if role_dt and role_dt.dep_e %} checked {% endif %}></td>
+                        <td class="checkbox-cell"><input type="checkbox" name="dep_d" {% if role_dt and role_dt.dep_d %} checked {% endif %}></td>
+                        <td class="checkbox-cell"><input type="checkbox" name="dep_p" {% if role_dt and role_dt.dep_p %} checked {% endif %}></td>
+                    </tr>
+                    <tr class="sub-row management">
+                        <td><h5>Roles and Permissions</h5></td>
+                        <td class="checkbox-cell"><input type="checkbox" name="role_v" {% if role_dt and role_dt.role_v %} checked {% endif %}></td>
+                        <td class="checkbox-cell"><input type="checkbox" name="role_a" {% if role_dt and role_dt.role_a %} checked {% endif %}></td>
+                        <td class="checkbox-cell"><input type="checkbox" name="role_e" {% if role_dt and role_dt.role_e %} checked {% endif %}></td>
+                        <td class="checkbox-cell"><input type="checkbox" name="role_d" {% if role_dt and role_dt.role_d %} checked {% endif %}></td>
+                        <td class="checkbox-cell"><input type="checkbox" name="role_p" {% if role_dt and role_dt.role_p %} checked {% endif %}></td>
+                    </tr>
+                    <tr class="sub-row management">
+                        <td><h5>Users</h5></td>
+                        <td class="checkbox-cell"><input type="checkbox" name="user_v" {% if role_dt and role_dt.user_v %} checked {% endif %}></td>
+                        <td class="checkbox-cell"><input type="checkbox" name="user_a" {% if role_dt and role_dt.user_a %} checked {% endif %}></td>
+                        <td class="checkbox-cell"><input type="checkbox" name="user_e" {% if role_dt and role_dt.user_e %} checked {% endif %}></td>
+                        <td class="checkbox-cell"><input type="checkbox" name="user_d" {% if role_dt and role_dt.user_d %} checked {% endif %}></td>
+                        <td class="checkbox-cell"><input type="checkbox" name="user_p" {% if role_dt and role_dt.user_p %} checked {% endif %}></td>
+                    </tr>
+                    <tr class="sub-row management">
+                        <td><h5>App Settings</h5></td>
+                        <td class="checkbox-cell"><input type="checkbox" name="app_v" {% if role_dt and role_dt.app_v %} checked {% endif %}></td>
+                        <td class="checkbox-cell"><input type="checkbox" name="app_a" {% if role_dt and role_dt.app_a %} checked {% endif %}></td>
+                        <td class="checkbox-cell"><input type="checkbox" name="app_e" {% if role_dt and role_dt.app_e %} checked {% endif %}></td>
+                        <td class="checkbox-cell"><input type="checkbox" name="app_d" {% if role_dt and role_dt.app_d %} checked {% endif %}></td>
+                        <td class="checkbox-cell"><input type="checkbox" name="app_p" {% if role_dt and role_dt.app_p %} checked {% endif %}></td>
+                    </tr>
+                    <tr class="sub-row management">
+                        <td><h5>Backup</h5></td>
+                        <td class="checkbox-cell"><input type="checkbox" name="back_v" {% if role_dt and role_dt.back_v %} checked {% endif %}></td>
+                        <td class="checkbox-cell"><input type="checkbox" name="back_a" {% if role_dt and role_dt.back_a %} checked {% endif %}></td>
+                        <td class="checkbox-cell"><input type="checkbox" name="back_e" {% if role_dt and role_dt.back_e %} checked {% endif %}></td>
+                        <td class="checkbox-cell"><input type="checkbox" name="back_d" {% if role_dt and role_dt.back_d %} checked {% endif %}></td>
+                        <td class="checkbox-cell"><input type="checkbox" name="back_p" {% if role_dt and role_dt.back_p %} checked {% endif %}></td>
+                    </tr>
+                    <tr class="sub-row management">
+                        <td><h5>System Diagnosis</h5></td>
+                        <td class="checkbox-cell"><input type="checkbox" name="sys_v" {% if role_dt and role_dt.sys_v %} checked {% endif %}></td>
+                        <td class="checkbox-cell"><input type="checkbox" name="sys_a" {% if role_dt and role_dt.sys_a %} checked {% endif %}></td>
+                        <td class="checkbox-cell"><input type="checkbox" name="sys_e" {% if role_dt and role_dt.sys_e %} checked {% endif %}></td>
+                        <td class="checkbox-cell"><input type="checkbox" name="sys_d" {% if role_dt and role_dt.sys_d %} checked {% endif %}></td>
+                        <td class="checkbox-cell"><input type="checkbox" name="sys_p" {% if role_dt and role_dt.sys_p %} checked {% endif %}></td>
+                    </tr>
+                    <tr class="sub-row management">
+                        <td><h5>Restore</h5></td>
+                        <td class="checkbox-cell"><input type="checkbox" name="res_v" {% if role_dt and role_dt.res_v %} checked {% endif %}></td>
+                        <td class="checkbox-cell"><input type="checkbox" name="res_a" {% if role_dt and role_dt.res_a %} checked {% endif %}></td>
+                        <td class="checkbox-cell"><input type="checkbox" name="res_e" {% if role_dt and role_dt.res_e %} checked {% endif %}></td>
+                        <td class="checkbox-cell"><input type="checkbox" name="res_d" {% if role_dt and role_dt.res_d %} checked {% endif %}></td>
+                        <td class="checkbox-cell"><input type="checkbox" name="res_p" {% if role_dt and role_dt.res_p %} checked {% endif %}></td>
+                    </tr>
 
-                <tr class="main-row">
-                    <td><h4>Configuration</h4></td>
-                    <td class="checkbox-cell"><input type="checkbox"></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                </tr>
-                <tr class="sub-row">
-                    <td><h5>Equipment Config</h5></td>
-                    <td class="checkbox-cell"><input type="checkbox"></td>
-                    <td class="checkbox-cell"><input type="checkbox"></td>
-                    <td class="checkbox-cell"><input type="checkbox"></td>
-                    <td class="checkbox-cell"><input type="checkbox"></td>
-                    <td class="checkbox-cell"><input type="checkbox"></td>
-                </tr>
-                <tr class="sub-row">
-                    <td><h5>Equipment Settings</h5></td>
-                    <td class="checkbox-cell"><input type="checkbox"></td>
-                    <td class="checkbox-cell"><input type="checkbox"></td>
-                    <td class="checkbox-cell"><input type="checkbox"></td>
-                    <td class="checkbox-cell"><input type="checkbox"></td>
-                    <td class="checkbox-cell"><input type="checkbox"></td>
-                </tr>
-                <tr class="sub-row">
-                    <td><h5>Equipment Status</h5></td>
-                    <td class="checkbox-cell"><input type="checkbox"></td>
-                    <td class="checkbox-cell"><input type="checkbox"></td>
-                    <td class="checkbox-cell"><input type="checkbox"></td>
-                    <td class="checkbox-cell"><input type="checkbox"></td>
-                    <td class="checkbox-cell"><input type="checkbox"></td>
-                </tr>
-                <tr class="sub-row">
-                    <td><h5>Synchronize RTC</h5></td>
-                    <td class="checkbox-cell"><input type="checkbox"></td>
-                    <td class="checkbox-cell"><input type="checkbox"></td>
-                    <td class="checkbox-cell"><input type="checkbox"></td>
-                    <td class="checkbox-cell"><input type="checkbox"></td>
-                    <td class="checkbox-cell"><input type="checkbox"></td>
-                </tr>
-                <tr class="sub-row">
-                    <td><h5>Email and SMS Alert</h5></td>
-                    <td class="checkbox-cell"><input type="checkbox"></td>
-                    <td class="checkbox-cell"><input type="checkbox"></td>
-                    <td class="checkbox-cell"><input type="checkbox"></td>
-                    <td class="checkbox-cell"><input type="checkbox"></td>
-                    <td class="checkbox-cell"><input type="checkbox"></td>
-                </tr>
-                <tr class="sub-row">
-                    <td><h5>Biometric RTC</h5></td>
-                    <td class="checkbox-cell"><input type="checkbox"></td>
-                    <td class="checkbox-cell"><input type="checkbox"></td>
-                    <td class="checkbox-cell"><input type="checkbox"></td>
-                    <td class="checkbox-cell"><input type="checkbox"></td>
-                    <td class="checkbox-cell"><input type="checkbox"></td>
-                </tr>
-                <tr class="sub-row">
-                    <td><h5>Timer Reset</h5></td>
-                    <td class="checkbox-cell"><input type="checkbox"></td>
-                    <td class="checkbox-cell"><input type="checkbox"></td>
-                    <td class="checkbox-cell"><input type="checkbox"></td>
-                    <td class="checkbox-cell"><input type="checkbox"></td>
-                    <td class="checkbox-cell"><input type="checkbox"></td>
-                </tr>
-                <tr class="sub-row">
-                    <td><h5>Lux/UV Timer</h5></td>
-                    <td class="checkbox-cell"><input type="checkbox"></td>
-                    <td class="checkbox-cell"><input type="checkbox"></td>
-                    <td class="checkbox-cell"><input type="checkbox"></td>
-                    <td class="checkbox-cell"><input type="checkbox"></td>
-                    <td class="checkbox-cell"><input type="checkbox"></td>
-                </tr>
-                <tr class="sub-row">
-                    <td><h5>Thaw Timer</h5></td>
-                    <td class="checkbox-cell"><input type="checkbox"></td>
-                    <td class="checkbox-cell"><input type="checkbox"></td>
-                    <td class="checkbox-cell"><input type="checkbox"></td>
-                    <td class="checkbox-cell"><input type="checkbox"></td>
-                    <td class="checkbox-cell"><input type="checkbox"></td>
-                </tr>
-                <tr class="main-row">
-                    <td><h4>Real Time</h4></td>
-                    <td class="checkbox-cell"><input type="checkbox"></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                </tr>
-                <tr class="sub-row">
-                    <td><h5>Real Time Summary</h5></td>
-                    <td class="checkbox-cell"><input type="checkbox"></td>
-                    <td class="checkbox-cell"><input type="checkbox"></td>
-                    <td class="checkbox-cell"><input type="checkbox"></td>
-                    <td class="checkbox-cell"><input type="checkbox"></td>
-                    <td class="checkbox-cell"><input type="checkbox"></td>
-                </tr>
-                <tr class="sub-row">
-                    <td><h5>Real Time Display</h5></td>
-                    <td class="checkbox-cell"><input type="checkbox"></td>
-                    <td class="checkbox-cell"><input type="checkbox"></td>
-                    <td class="checkbox-cell"><input type="checkbox"></td>
-                    <td class="checkbox-cell"><input type="checkbox"></td>
-                    <td class="checkbox-cell"><input type="checkbox"></td>
-                </tr>
-                <tr class="sub-row">
-                    <td class="sub-row"><h5>IO Status</h5></td>
-                    <td class="checkbox-cell"><input type="checkbox"></td>
-                    <td class="checkbox-cell"><input type="checkbox"></td>
-                    <td class="checkbox-cell"><input type="checkbox"></td>
-                    <td class="checkbox-cell"><input type="checkbox"></td>
-                    <td class="checkbox-cell"><input type="checkbox"></td>
-                </tr>
-                <tr class="sub-row">
-                    <td><h5>Running Hours</h5></td>
-                    <td class="checkbox-cell"><input type="checkbox"></td>
-                    <td class="checkbox-cell"><input type="checkbox"></td>
-                    <td class="checkbox-cell"><input type="checkbox"></td>
-                    <td class="checkbox-cell"><input type="checkbox"></td>
-                    <td class="checkbox-cell"><input type="checkbox"></td>>
-                </tr>
-                <tr class="main-row">
-                    <td><h4>Data Log Analysis</h4></td>
-                    <td class="checkbox-cell"><input type="checkbox"></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                </tr>
-                <tr class="sub-row">
-                    <td><h5>Manage Data Log</h5></td>
-                    <td class="checkbox-cell"><input type="checkbox"></td>
-                    <td class="checkbox-cell"><input type="checkbox"></td>
-                    <td class="checkbox-cell"><input type="checkbox"></td>
-                    <td class="checkbox-cell"><input type="checkbox"></td>
-                    <td class="checkbox-cell"><input type="checkbox"></td>
-                </tr>
-                <tr class="super-sub-row">
-                    <td><h6>Review Data Log</h6></td>
-                    <td class="checkbox-cell"><input type="checkbox"></td>
-                    <td class="checkbox-cell"><input type="checkbox"></td>
-                    <td class="checkbox-cell"><input type="checkbox"></td>
-                    <td class="checkbox-cell"><input type="checkbox"></td>
-                    <td class="checkbox-cell"><input type="checkbox"></td>
-                </tr>
-                <tr class="super-sub-row">
-                    <td><h6>Approve Data Log</h6></td>
-                    <td class="checkbox-cell"><input type="checkbox"></td>
-                    <td class="checkbox-cell"><input type="checkbox"></td>
-                    <td class="checkbox-cell"><input type="checkbox"></td>
-                    <td class="checkbox-cell"><input type="checkbox"></td>
-                    <td class="checkbox-cell"><input type="checkbox"></td>
-                </tr>
-                <tr class="super-sub-row">
-                    <td><h6>View Data Log</h6></td>
-                    <td class="checkbox-cell"><input type="checkbox"></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td class="checkbox-cell"><input type="checkbox"></td>
-                </tr>
-                <tr class="super-sub-row">
-                    <td><h6>View Reviewed Data</h6></td>
-                    <td class="checkbox-cell"><input type="checkbox"></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td class="checkbox-cell"><input type="checkbox"></td>
-                </tr>
-                <tr class="super-sub-row">
-                    <td><h6>View Approved Data</h6></td>
-                    <td class="checkbox-cell"><input type="checkbox"></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td class="checkbox-cell"><input type="checkbox"></td>
-                </tr>
-                <tr class="super-sub-row">
-                    <td><h6>MKT Analysis</h6></td>
-                    <td class="checkbox-cell"><input type="checkbox"></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td class="checkbox-cell"><input type="checkbox"></td>
-                </tr>
-                <tr class="super-sub-row">
-                    <td><h6>Alarm Log</h6></td>
-                    <td class="checkbox-cell"><input type="checkbox"></td>
-                    <td class="checkbox-cell"><input type="checkbox"></td>
-                    <td class="checkbox-cell"><input type="checkbox"></td>
-                    <td class="checkbox-cell"><input type="checkbox"></td>
-                    <td class="checkbox-cell"><input type="checkbox"></td>
-                </tr>
-                <tr class="super-sub-row">
-                    <td><h6>Moving Average</h6></td>
-                    <td class="checkbox-cell"><input type="checkbox"></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td class="checkbox-cell"><input type="checkbox"></td>
-                </tr>
-                <tr class="sub-row">
-                    <td><h5>Audit Trails</h5></td>
-                    <td class="checkbox-cell"><input type="checkbox"></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                </tr>
-                <tr class="super-sub-row">
-                    <td><h6>Alarm Audit Trails </h6></td>
-                    <td class="checkbox-cell"><input type="checkbox"></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td class="checkbox-cell"><input type="checkbox"></td>
-                </tr>
-                <tr class="super-sub-row">
-                    <td><h6>Equipment Audit Trails </h6></td>
-                    <td class="checkbox-cell"><input type="checkbox"></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td class="checkbox-cell"><input type="checkbox"></td>
-                </tr>
-                <tr class="super-sub-row">
-                    <td><h6>User Audit Trails</h6></td>
-                    <td class="checkbox-cell"><input type="checkbox"></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td class="checkbox-cell"><input type="checkbox"></td>
-                </tr>
-                <tr class="super-sub-row">
-                    <td><h6>Email Audit Trails</h6></td>
-                    <td class="checkbox-cell"><input type="checkbox"></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td class="checkbox-cell"><input type="checkbox"></td>
-                </tr>
-                <tr class="super-sub-row">
-                    <td><h6>SMS Audit Trails</h6></td>
-                    <td class="checkbox-cell"><input type="checkbox"></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td class="checkbox-cell"><input type="checkbox"></td>
-                </tr>
-                <tr class="super-sub-row">
-                    <td><h6>Review/Approved Audit Trails</h6></td>
-                    <td class="checkbox-cell"><input type="checkbox"></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td class="checkbox-cell"><input type="checkbox"></td>
-                </tr>
-                <tr class="main-row">
-                    <td><h4>Archive Analysis</h4></td>
-                    <td class="checkbox-cell"><input type="checkbox"></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                </tr>
-                <tr class="sub-row">
-                    <td><h5>Data Log Analysis</h5></td>
-                    <td class="checkbox-cell"><input type="checkbox"></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                </tr>
-                <tr class="super-sub-row">
-                    <td><h6>View Data Log</h6></td>
-                    <td class="checkbox-cell"><input type="checkbox"></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td class="checkbox-cell"><input type="checkbox"></td>
-                </tr>
-                <tr class="super-sub-row">
-                    <td><h6>View Reviwed Data Log</h6></td>
-                    <td class="checkbox-cell"><input type="checkbox"></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td class="checkbox-cell"><input type="checkbox"></td>
-                </tr>
-                <tr class="super-sub-row">
-                    <td><h6>View Aprroved Data Log</h6></td>
-                    <td class="checkbox-cell"><input type="checkbox"></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td class="checkbox-cell"><input type="checkbox"></td>
-                </tr>
-                <tr class="super-sub-row">
-                    <td><h6>MKT Analysis</h6></td>
-                    <td class="checkbox-cell"><input type="checkbox"></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td class="checkbox-cell"><input type="checkbox"></td>
-                </tr>
-                <tr class="super-sub-row">
-                    <td><h6>Alarm Log</h6></td>
-                    <td class="checkbox-cell"><input type="checkbox"></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td class="checkbox-cell"><input type="checkbox"></td>
-                </tr>
-                <tr class="super-sub-row">
-                    <td><h6>Moving Average</h6></td>
-                    <td class="checkbox-cell"><input type="checkbox"></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td class="checkbox-cell"><input type="checkbox"></td>
-                </tr>
-                <tr class="sub-row">
-                    <td><h5>Audit Trails Analysis  </h5></td>
-                    <td class="checkbox-cell"><input type="checkbox"></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                </tr>
-                <tr class="super-sub-row">
-                    <td><h6>Alarm Audit Trail </h6></td>
-                    <td class="checkbox-cell"><input type="checkbox"></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td class="checkbox-cell"><input type="checkbox"></td>
-                </tr>
-                <tr class="super-sub-row">
-                    <td><h6>Equipment Audit Trail </h6></td>
-                    <td class="checkbox-cell"><input type="checkbox"></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td class="checkbox-cell"><input type="checkbox"></td>
-                </tr>
-                <tr class="super-sub-row">
-                    <td><h6>User Audit Trail</h6></td>
-                    <td class="checkbox-cell"><input type="checkbox"></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td class="checkbox-cell"><input type="checkbox"></td>
-                </tr>
-                <tr class="super-sub-row">
-                    <td><h6>Email Audit Trail</h6></td>
-                    <td class="checkbox-cell"><input type="checkbox"></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td class="checkbox-cell"><input type="checkbox"></td>
-                </tr>
-                <tr class="super-sub-row">
-                    <td><h6>SMS Audit Trail</h6></td>
-                    <td class="checkbox-cell"><input type="checkbox"></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td class="checkbox-cell"><input type="checkbox"></td>
-                </tr>
-                <tr class="super-sub-row">
-                    <td><h6>Review/Approved Audit Trail</h6></td>
-                    <td class="checkbox-cell"><input type="checkbox"></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td class="checkbox-cell"><input type="checkbox"></td>
-                </tr>
-            </tbody>
-        </table>
+                    <tr class="main-row" data-group="config">
+                        <td><h4>Configuration</h4></td>
+                        <td class="checkbox-cell"><input type="checkbox"></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                    </tr>
+                    <tr class="sub-row config">
+                        <td><h5>Equipment Config</h5></td>
+                        <td class="checkbox-cell"><input type="checkbox"></td>
+                        <td class="checkbox-cell"><input type="checkbox"></td>
+                        <td class="checkbox-cell"><input type="checkbox"></td>
+                        <td class="checkbox-cell"><input type="checkbox"></td>
+                        <td class="checkbox-cell"><input type="checkbox"></td>
+                    </tr>
+                    <tr class="sub-row config">
+                        <td><h5>Equipment Settings</h5></td>
+                        <td class="checkbox-cell"><input type="checkbox"></td>
+                        <td class="checkbox-cell"><input type="checkbox"></td>
+                        <td class="checkbox-cell"><input type="checkbox"></td>
+                        <td class="checkbox-cell"><input type="checkbox"></td>
+                        <td class="checkbox-cell"><input type="checkbox"></td>
+                    </tr>
+                    <tr class="sub-row config">
+                        <td><h5>Equipment Status</h5></td>
+                        <td class="checkbox-cell"><input type="checkbox"></td>
+                        <td class="checkbox-cell"><input type="checkbox"></td>
+                        <td class="checkbox-cell"><input type="checkbox"></td>
+                        <td class="checkbox-cell"><input type="checkbox"></td>
+                        <td class="checkbox-cell"><input type="checkbox"></td>
+                    </tr>
+                    <tr class="sub-row config">
+                        <td><h5>Synchronize RTC</h5></td>
+                        <td class="checkbox-cell"><input type="checkbox"></td>
+                        <td class="checkbox-cell"><input type="checkbox"></td>
+                        <td class="checkbox-cell"><input type="checkbox"></td>
+                        <td class="checkbox-cell"><input type="checkbox"></td>
+                        <td class="checkbox-cell"><input type="checkbox"></td>
+                    </tr>
+                    <tr class="sub-row config">
+                        <td><h5>Email and SMS Alert</h5></td>
+                        <td class="checkbox-cell"><input type="checkbox"></td>
+                        <td class="checkbox-cell"><input type="checkbox"></td>
+                        <td class="checkbox-cell"><input type="checkbox"></td>
+                        <td class="checkbox-cell"><input type="checkbox"></td>
+                        <td class="checkbox-cell"><input type="checkbox"></td>
+                    </tr>
+                    <tr class="sub-row config">
+                        <td><h5>Biometric RTC</h5></td>
+                        <td class="checkbox-cell"><input type="checkbox"></td>
+                        <td class="checkbox-cell"><input type="checkbox"></td>
+                        <td class="checkbox-cell"><input type="checkbox"></td>
+                        <td class="checkbox-cell"><input type="checkbox"></td>
+                        <td class="checkbox-cell"><input type="checkbox"></td>
+                    </tr>
+                    <tr class="sub-row config">
+                        <td><h5>Timer Reset</h5></td>
+                        <td class="checkbox-cell"><input type="checkbox"></td>
+                        <td class="checkbox-cell"><input type="checkbox"></td>
+                        <td class="checkbox-cell"><input type="checkbox"></td>
+                        <td class="checkbox-cell"><input type="checkbox"></td>
+                        <td class="checkbox-cell"><input type="checkbox"></td>
+                    </tr>
+                    <tr class="sub-row config">
+                        <td><h5>Lux/UV Timer</h5></td>
+                        <td class="checkbox-cell"><input type="checkbox"></td>
+                        <td class="checkbox-cell"><input type="checkbox"></td>
+                        <td class="checkbox-cell"><input type="checkbox"></td>
+                        <td class="checkbox-cell"><input type="checkbox"></td>
+                        <td class="checkbox-cell"><input type="checkbox"></td>
+                    </tr>
+                    <tr class="sub-row config">
+                        <td><h5>Thaw Timer</h5></td>
+                        <td class="checkbox-cell"><input type="checkbox"></td>
+                        <td class="checkbox-cell"><input type="checkbox"></td>
+                        <td class="checkbox-cell"><input type="checkbox"></td>
+                        <td class="checkbox-cell"><input type="checkbox"></td>
+                        <td class="checkbox-cell"><input type="checkbox"></td>
+                    </tr>
+                    <tr class="main-row" data-group="realtime">
+                        <td><h4>Real Time</h4></td>
+                        <td class="checkbox-cell"><input type="checkbox"></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                    </tr>
+                    <tr class="sub-row realtime">
+                        <td><h5>Real Time Summary</h5></td>
+                        <td class="checkbox-cell"><input type="checkbox"></td>
+                        <td class="checkbox-cell"><input type="checkbox"></td>
+                        <td class="checkbox-cell"><input type="checkbox"></td>
+                        <td class="checkbox-cell"><input type="checkbox"></td>
+                        <td class="checkbox-cell"><input type="checkbox"></td>
+                    </tr>
+                    <tr class="sub-row realtime">
+                        <td><h5>Real Time Display</h5></td>
+                        <td class="checkbox-cell"><input type="checkbox"></td>
+                        <td class="checkbox-cell"><input type="checkbox"></td>
+                        <td class="checkbox-cell"><input type="checkbox"></td>
+                        <td class="checkbox-cell"><input type="checkbox"></td>
+                        <td class="checkbox-cell"><input type="checkbox"></td>
+                    </tr>
+                    <tr class="sub-row realtime">
+                        <td class="sub-row"><h5>IO Status</h5></td>
+                        <td class="checkbox-cell"><input type="checkbox"></td>
+                        <td class="checkbox-cell"><input type="checkbox"></td>
+                        <td class="checkbox-cell"><input type="checkbox"></td>
+                        <td class="checkbox-cell"><input type="checkbox"></td>
+                        <td class="checkbox-cell"><input type="checkbox"></td>
+                    </tr>
+                    <tr class="sub-row realtime">
+                        <td><h5>Running Hours</h5></td>
+                        <td class="checkbox-cell"><input type="checkbox"></td>
+                        <td class="checkbox-cell"><input type="checkbox"></td>
+                        <td class="checkbox-cell"><input type="checkbox"></td>
+                        <td class="checkbox-cell"><input type="checkbox"></td>
+                        <td class="checkbox-cell"><input type="checkbox"></td>
+                    </tr>
+                    <tr class="main-row" data-group="data_log">
+                        <td><h4>Data Log Analysis</h4></td>
+                        <td class="checkbox-cell"><input type="checkbox"></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                    </tr>
+                    <tr class="sub-row data_log">
+                        <td><h5>Manage Data Log</h5></td>
+                        <td class="checkbox-cell"><input type="checkbox"></td>
+                        <td class="checkbox-cell"><input type="checkbox"></td>
+                        <td class="checkbox-cell"><input type="checkbox"></td>
+                        <td class="checkbox-cell"><input type="checkbox"></td>
+                        <td class="checkbox-cell"><input type="checkbox"></td>
+                    </tr>
+                    <tr class="super-sub-row data_log">
+                        <td><h6>Review Data Log</h6></td>
+                        <td class="checkbox-cell"><input type="checkbox"></td>
+                        <td class="checkbox-cell"><input type="checkbox"></td>
+                        <td class="checkbox-cell"><input type="checkbox"></td>
+                        <td class="checkbox-cell"><input type="checkbox"></td>
+                        <td class="checkbox-cell"><input type="checkbox"></td>
+                    </tr>
+                    <tr class="super-sub-row data_log">
+                        <td><h6>Approve Data Log</h6></td>
+                        <td class="checkbox-cell"><input type="checkbox"></td>
+                        <td class="checkbox-cell"><input type="checkbox"></td>
+                        <td class="checkbox-cell"><input type="checkbox"></td>
+                        <td class="checkbox-cell"><input type="checkbox"></td>
+                        <td class="checkbox-cell"><input type="checkbox"></td>
+                    </tr>
+                    <tr class="super-sub-row data_log">
+                        <td><h6>View Data Log</h6></td>
+                        <td class="checkbox-cell"><input type="checkbox"></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td class="checkbox-cell"><input type="checkbox"></td>
+                    </tr>
+                    <tr class="super-sub-row data_log">
+                        <td><h6>View Reviewed Data</h6></td>
+                        <td class="checkbox-cell"><input type="checkbox"></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td class="checkbox-cell"><input type="checkbox"></td>
+                    </tr>
+                    <tr class="super-sub-row data_log">
+                        <td><h6>View Approved Data</h6></td>
+                        <td class="checkbox-cell"><input type="checkbox"></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td class="checkbox-cell"><input type="checkbox"></td>
+                    </tr>
+                    <tr class="super-sub-row data_log">
+                        <td><h6>MKT Analysis</h6></td>
+                        <td class="checkbox-cell"><input type="checkbox"></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td class="checkbox-cell"><input type="checkbox"></td>
+                    </tr>
+                    <tr class="super-sub-row data_log">
+                        <td><h6>Alarm Log</h6></td>
+                        <td class="checkbox-cell"><input type="checkbox"></td>
+                        <td class="checkbox-cell"><input type="checkbox"></td>
+                        <td class="checkbox-cell"><input type="checkbox"></td>
+                        <td class="checkbox-cell"><input type="checkbox"></td>
+                        <td class="checkbox-cell"><input type="checkbox"></td>
+                    </tr>
+                    <tr class="super-sub-row data_log">
+                        <td><h6>Moving Average</h6></td>
+                        <td class="checkbox-cell"><input type="checkbox"></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td class="checkbox-cell"><input type="checkbox"></td>
+                    </tr>
+                    <tr class="sub-row data_log">
+                        <td><h5>Audit Trails</h5></td>
+                        <td class="checkbox-cell"><input type="checkbox"></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                    </tr>
+                    <tr class="super-sub-row data_log">
+                        <td><h6>Alarm Audit Trails </h6></td>
+                        <td class="checkbox-cell"><input type="checkbox"></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td class="checkbox-cell"><input type="checkbox"></td>
+                    </tr>
+                    <tr class="super-sub-row data_log">
+                        <td><h6>Equipment Audit Trails </h6></td>
+                        <td class="checkbox-cell"><input type="checkbox"></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td class="checkbox-cell"><input type="checkbox"></td>
+                    </tr>
+                    <tr class="super-sub-row data_log">
+                        <td><h6>User Audit Trails</h6></td>
+                        <td class="checkbox-cell"><input type="checkbox"></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td class="checkbox-cell"><input type="checkbox"></td>
+                    </tr>
+                    <tr class="super-sub-row data_log">
+                        <td><h6>Email Audit Trails</h6></td>
+                        <td class="checkbox-cell"><input type="checkbox"></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td class="checkbox-cell"><input type="checkbox"></td>
+                    </tr>
+                    <tr class="super-sub-row data_log">
+                        <td><h6>SMS Audit Trails</h6></td>
+                        <td class="checkbox-cell"><input type="checkbox"></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td class="checkbox-cell"><input type="checkbox"></td>
+                    </tr>
+                    <tr class="super-sub-row data_log">
+                        <td><h6>Review/Approved Audit Trails</h6></td>
+                        <td class="checkbox-cell"><input type="checkbox"></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td class="checkbox-cell"><input type="checkbox"></td>
+                    </tr>
+                    <tr class="main-row" data-group="archive">
+                        <td><h4>Archive Analysis</h4></td>
+                        <td class="checkbox-cell"><input type="checkbox"></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                    </tr>
+                    <tr class="sub-row archive">
+                        <td><h5>Data Log Analysis</h5></td>
+                        <td class="checkbox-cell"><input type="checkbox"></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                    </tr>
+                    <tr class="super-sub-row archive">
+                        <td><h6>View Data Log</h6></td>
+                        <td class="checkbox-cell"><input type="checkbox"></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td class="checkbox-cell"><input type="checkbox"></td>
+                    </tr>
+                    <tr class="super-sub-row archive">
+                        <td><h6>View Reviwed Data Log</h6></td>
+                        <td class="checkbox-cell"><input type="checkbox"></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td class="checkbox-cell"><input type="checkbox"></td>
+                    </tr>
+                    <tr class="super-sub-row archive">
+                        <td><h6>View Aprroved Data Log</h6></td>
+                        <td class="checkbox-cell"><input type="checkbox"></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td class="checkbox-cell"><input type="checkbox"></td>
+                    </tr>
+                    <tr class="super-sub-row archive">
+                        <td><h6>MKT Analysis</h6></td>
+                        <td class="checkbox-cell"><input type="checkbox"></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td class="checkbox-cell"><input type="checkbox"></td>
+                    </tr>
+                    <tr class="super-sub-row archive">
+                        <td><h6>Alarm Log</h6></td>
+                        <td class="checkbox-cell"><input type="checkbox"></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td class="checkbox-cell"><input type="checkbox"></td>
+                    </tr>
+                    <tr class="super-sub-row archive">
+                        <td><h6>Moving Average</h6></td>
+                        <td class="checkbox-cell"><input type="checkbox"></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td class="checkbox-cell"><input type="checkbox"></td>
+                    </tr>
+                    <tr class="sub-row archive">
+                        <td><h5>Audit Trails Analysis  </h5></td>
+                        <td class="checkbox-cell"><input type="checkbox"></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                    </tr>
+                    <tr class="super-sub-row archive">
+                        <td><h6>Alarm Audit Trail </h6></td>
+                        <td class="checkbox-cell"><input type="checkbox"></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td class="checkbox-cell"><input type="checkbox"></td>
+                    </tr>
+                    <tr class="super-sub-row archive">
+                        <td><h6>Equipment Audit Trail </h6></td>
+                        <td class="checkbox-cell"><input type="checkbox"></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td class="checkbox-cell"><input type="checkbox"></td>
+                    </tr>
+                    <tr class="super-sub-row archive">
+                        <td><h6>User Audit Trail</h6></td>
+                        <td class="checkbox-cell"><input type="checkbox"></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td class="checkbox-cell"><input type="checkbox"></td>
+                    </tr>
+                    <tr class="super-sub-row archive">
+                        <td><h6>Email Audit Trail</h6></td>
+                        <td class="checkbox-cell"><input type="checkbox"></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td class="checkbox-cell"><input type="checkbox"></td>
+                    </tr>
+                    <tr class="super-sub-row archive">
+                        <td><h6>SMS Audit Trail</h6></td>
+                        <td class="checkbox-cell"><input type="checkbox"></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td class="checkbox-cell"><input type="checkbox"></td>
+                    </tr>
+                    <tr class="super-sub-row archive">
+                        <td><h6>Review/Approved Audit Trail</h6></td>
+                        <td class="checkbox-cell"><input type="checkbox"></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td class="checkbox-cell"><input type="checkbox"></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
     </form>
 </div>
 
@@ -590,7 +702,27 @@
         }
     });
 </script>
+
+<script>
+    // Add event listeners for each main row checkbox
+    document.querySelectorAll('.main-row input[type="checkbox"]').forEach(function(mainCheckbox) {
+        mainCheckbox.addEventListener('change', function() {
+
+            const group = mainCheckbox.closest('.main-row').getAttribute('data-group');
+            
+            const subRows = document.querySelectorAll(`.sub-row.${group} input[type="checkbox"], .super-sub-row.${group} input[type="checkbox"]`);
+            
+            subRows.forEach(function(subRowCheckbox) {
+                subRowCheckbox.checked = mainCheckbox.checked;
+            });
+        });
+    });
+
+</script>
   {% endblock %}
 {% endblock content %}
+
+
+
 
 

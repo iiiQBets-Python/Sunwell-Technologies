@@ -48,14 +48,41 @@ from apscheduler.triggers.cron import CronTrigger
 def base(request):
     return render(request, 'Base/base.html', )
 
+from datetime import timedelta
+from django.utils import timezone
+from django.contrib.auth.hashers import check_password
+from django.contrib import messages
+from django.shortcuts import render, redirect
+
 def user_login(request):
     if request.method == 'POST':
         username = request.POST.get('username')
         password = request.POST.get('password')
+        app_settings = AppSettings.objects.first()
+        max_attempts = 3  # Maximum allowed login attempts
+        
+        if 'failed_attempts' not in request.session:
+            request.session['failed_attempts'] = {}
+
+        user_attempts = request.session['failed_attempts'].get(username, {'count': 0, 'locked_until': None})
+
+        # Check if account is locked
+        if user_attempts['locked_until'] and timezone.now() < user_attempts['locked_until']:
+            messages.error(
+                request, 
+                f'Account is locked until {user_attempts["locked_until"].strftime("%Y-%m-%d %H:%M:%S")}.'
+            )
+            return render(request, 'Base/login.html')
 
         try:
+            # SuperAdmin login without restrictions
             super_admin = SuperAdmin.objects.get(username__iexact=username)
             if check_password(password, super_admin.password):
+                # Clear failed attempts for this username
+                if username in request.session['failed_attempts']:
+                    del request.session['failed_attempts'][username]
+                request.session.modified = True
+
                 request.session['username'] = super_admin.username
                 messages.success(request, 'Login Successful!')
 
@@ -65,52 +92,69 @@ def user_login(request):
                     log_time=timezone.localtime(timezone.now()).time(),
                     event_name=f"SuperAdmin {super_admin.username} logged in"
                 )
-
                 return redirect('dashboard')
             else:
                 messages.error(request, 'Invalid Username or Password!')
+
         except SuperAdmin.DoesNotExist:
-            try:                
-                user = None
-                for u in User.objects.all():
-                    if u.check_login_name(username):  
-                        user = u
-                        break
+            try:
+                user = User.objects.get(username__iexact=username)
 
+                if user.account_lock:
+                    messages.error(request, 'Your account has been locked. Please contact support.')
+                    return render(request, 'Base/login.html')
 
-                if user and check_password(password, user.password):
+                if user.status == 'Inactive':
+                    messages.error(request, 'Your account is inactive. Please contact support.')
+                    return render(request, 'Base/login.html')
 
-                    password_expiry_date = user.created_at + timedelta(days=user.password_duration)
-                    current_time = timezone.now()
-             
-                    if current_time > password_expiry_date:
-                        success_msg = 'Your password has expired. Please change it.'
-                        return render(request, 'Base/login.html', {'success_msg': success_msg})
+                # Check if password has expired
+                password_age = (timezone.now() - user.last_password_change).days
+                if password_age > app_settings.passwordchange:
+                    messages.warning(request, 'Your password has expired. Please change your password.')
+                    show_change_password_modal = True
+                    return render(request, 'Base/login.html', {'show_change_password_modal': show_change_password_modal})
 
-                    if user.pass_change == False:
-                        success_msg = 'Please set a new password.'
-                        return render(request, 'Base/login.html', {'success_msg': success_msg})
-                    
+                if check_password(password, user.password):
+                    # Clear failed attempts for this username
+                    if username in request.session['failed_attempts']:
+                        del request.session['failed_attempts'][username]
+                    request.session.modified = True
+                    request.session.flush()
                     request.session['username'] = user.username
                     messages.success(request, 'Login Successful!')
-                    
-                                    
-                    # Log the login event for User
+
                     UserActivityLog.objects.create(
                         user=user,
                         log_date=timezone.localtime(timezone.now()).date(),
                         log_time=timezone.localtime(timezone.now()).time(),
                         event_name=f"User {user.username} logged in"
                     )
-                    return redirect('dashboard')              
-                else:   
-                    messages.error(request, 'Invalid Username or Password!')
+                    return redirect('dashboard')
+                else:
+                    # Increment failed attempts
+                    user_attempts['count'] += 1
+                    attempts_left = max_attempts - user_attempts['count']
+                    if user_attempts['count'] >= max_attempts:
+                        user.account_lock = True
+                        user.save()
+                        user_attempts['locked_until'] = timezone.now() + timedelta(minutes=15)
+                        messages.error(request, 'Your account has been locked due to multiple failed login attempts.')
+                    else:
+                        if attempts_left < 2:
+                            messages.warning(request, f'Warning: You have only {attempts_left} attempt(s) left.')
+                        else:
+                            messages.error(request, f'Invalid Username or Password! You have {attempts_left} attempt(s) left.')
+
+                    request.session['failed_attempts'][username] = user_attempts
+                    request.session.modified = True
             except User.DoesNotExist:
                 messages.error(request, 'User does not exist!')
 
         return render(request, 'Base/login.html')
     else:
         return render(request, 'Base/login.html')
+
 
 def change_pass(request): 
     # username = request.session.get('username') 
@@ -141,6 +185,7 @@ def change_pass(request):
             data.password = make_password(new_pass)
             data.pass_change = True
             data.created_at = timezone.now() + timedelta(hours=5, minutes=30)
+            data.last_password_change=now()
             data.save()
 
 
@@ -192,6 +237,7 @@ def change_pass_2(request):
             data.password = make_password(new_pass)
             data.pass_change = True
             data.created_at = timezone.now() + timedelta(hours=5, minutes=30)
+            data.last_password_change=now()
             data.save()
 
             # Log the password change
@@ -222,6 +268,7 @@ def change_pass_2(request):
         else:
             return JsonResponse({'message': 'Please enter valid credentials.'})    
 
+    emp_user = request.session.get('username', None)
 def forgot_password(request):
     if request.method == 'POST':
         login_name = request.POST.get('forgot_username')
@@ -229,24 +276,20 @@ def forgot_password(request):
         new_password = request.POST.get('forgot_new_password')
         confirm_password = request.POST.get('forgot_confirm_password')
 
-        # Check if a user with the given login name exists
+        
         for user in User.objects.all():
             if check_password(login_name, user.login_name):
                 user = user
                 break
 
-        # Fetch the last 3 passwords from PasswordHistory
         password_history = PasswordHistory.objects.filter(user=user).order_by('-created_at')[:3]
 
-        # Check if old_password matches any of the last 3 passwords
         if not any(history.check_password(old_password) for history in password_history):
             return JsonResponse({'message': 'The old password does not match any of the last 3 passwords.'}, status=403)
 
-        # Validate new password and confirm password match
         if new_password != confirm_password:
             return JsonResponse({'message': 'New password and confirm password do not match.'}, status=400)
 
-        # Check if new password is not among the last 3 passwords
         if any(history.check_password(new_password) for history in password_history):
             return JsonResponse({'message': 'New password cannot be the same as any of the last 3 passwords.'}, status=400)
 
@@ -255,6 +298,7 @@ def forgot_password(request):
         user.password = hashed_new_password
         user.pass_change = True
         user.created_at = timezone.now()
+        user.last_password_change=now()
         user.save()
 
         # Update password history
@@ -298,32 +342,61 @@ def user_logout(request):
 
 # dashboard
 def dashboard(request):
-
     emp_user = request.session.get('username', None)
+
+    if not emp_user:
+        return redirect('login')
     try:
-        data = User.objects.get(username = emp_user)
-    except:
+        data = User.objects.get(username=emp_user)
+    except User.DoesNotExist:
         data = SuperAdmin.objects.get(username=emp_user)
+
     organization = Organization.objects.first()
     equipment_data = []
 
-    # Loop through all equipment and prepare data for the dashboard
-    for eqp in Equipment.objects.all():
-        alarms = alarm_logs.objects.filter(equipment=eqp, acknowledge=False)
+    status = request.GET.get('status')
+
+    if status == 'online':
+        equipment_queryset = Equipment.objects.filter(status='active')
+    elif status == 'offline':
+        equipment_queryset = Equipment.objects.filter(status='inactive')
+    else: 
+        equipment_queryset = Equipment.objects.all()
+
+   
+    for eqp in equipment_queryset:
+        alarms = Alarm_logs.objects.filter(equipment=eqp, acknowledge=False)
         pending_review_count = alarms.count()
+
+        try:
+            online=connect_to_plc(eqp.ip_address)
+            if online:
+                eqp.online=True
+            else:
+                eqp.online=False
+        except Exception as e:
+            eqp.online=False
+            
 
         equipment_data.append({
             'id': eqp.id,
             'name': eqp.equip_name,
-            'status': 'Online' if eqp.status == 'active' else 'Offline',
+            'status': 'Online' if eqp.online == True else 'Offline',
             'pending_review': pending_review_count,
         })
-    
+
     try:
-        acc_db = user_access_db.objects.get(role = data.role)
-    except:
+        acc_db = user_access_db.objects.get(role=data.role)
+    except user_access_db.DoesNotExist:
         acc_db = None
-    return render(request, 'Dashboard/Dashboard.html', {'organization': organization, 'data':data, 'acc_db':acc_db, 'equipment_data':equipment_data})
+
+    return render(request, 'Dashboard/Dashboard.html', {
+        'organization': organization,
+        'data': data,
+        'acc_db': acc_db,
+        'equipment_data': equipment_data
+    })
+
 
 
 
@@ -331,6 +404,8 @@ def dashboard(request):
 def organization(request):
 
     emp_user = request.session.get('username', None)
+    if not emp_user:
+        return redirect('login')
     try:
         data = User.objects.get(username = emp_user)
     except:
@@ -377,6 +452,9 @@ def organization(request):
 def edit_organization(request, organization_id):
 
     emp_user = request.session.get('username', None)
+
+    if not emp_user:
+        return redirect('login')
     try:
         data = User.objects.get(username = emp_user)
     except:
@@ -418,6 +496,8 @@ def edit_organization(request, organization_id):
 
 def comm_group(request):
     emp_user = request.session.get('username', None)
+    if not emp_user:
+        return redirect('login')
     try:
         data = User.objects.get(username=emp_user)
     except:
@@ -440,11 +520,10 @@ def comm_group(request):
 
         # Calculate the new total devices and save it to Organization’s nod
         current_nod = organization.get_nod()
-        print("Cnod", current_nod)
+        
         total_devices = current_nod + device_count
         organization.set_nod(total_devices)
         organization.save()
-        print("td", organization.get_nod())
 
         new_commgroup = CommGroup(
             CommGroup_name=comm_name,
@@ -476,6 +555,8 @@ def comm_group(request):
 def validate_activation_key(request):
     if request.method == 'POST':
         emp_user = request.session.get('username', None)
+        if not emp_user:
+            return redirect('login')
         try:
             data = User.objects.get(username=emp_user)
         except:
@@ -521,6 +602,8 @@ def validate_activation_key(request):
 def edit_comm_group(request, comm_code):
 
     emp_user = request.session.get('username', None)
+    if not emp_user:
+        return redirect('login')
     try:
         data = User.objects.get(username = emp_user)
     except:
@@ -560,6 +643,8 @@ def edit_comm_group(request, comm_code):
 def department(request):
 
     emp_user = request.session.get('username', None)
+    if not emp_user:
+        return redirect('login')
     try:
         data = User.objects.get(username = emp_user)
     except:
@@ -743,7 +828,6 @@ def edit_department(request, department_id):
         mobile_user10 = request.POST.get('edit_mobile_user10') or None
         mobile_no10 = request.POST.get('edit_mobile_no10') or None if request.POST.get('edit_mobile_no10').isdigit() else None
         sms_alert = True if sms_status == 'Enable' else False
-        print(sms_alert)
         email_time = parse_time(email_time) if email_time else None
         sms_time = parse_time(sms_time) if sms_time else None
         if not department_name:
@@ -824,6 +908,8 @@ from datetime import timedelta
 
 def users(request):
     emp_user = request.session.get('username', None)
+    if not emp_user:
+        return redirect('login')
     try:
         data = User.objects.get(username=emp_user)
     except:
@@ -839,6 +925,11 @@ def users(request):
         role_data = User_role.objects.all()
     except:
         role_data = None
+        
+    
+    app_settings = AppSettings.objects.first()
+    password_duration = app_settings.passwordchange if app_settings else None
+
 
     if request.method == 'POST':
         username = request.POST.get('userName')
@@ -900,9 +991,39 @@ def users(request):
         messages.success(request, f"User '{username}' added successfully!")
         return redirect('users')
 
+    # Get the status and department filters from the query parameters
+    status_filter = request.GET.get('status', 'Active')  # Default to "Active"
+    department_filter = request.GET.get('department', 'all')  # Default to "all"
+
+    # Convert "all" to "All Status" for display
+    if status_filter == "all":
+        status_filter = "All Status"
+
+    # Filter users based on status and department
     users = User.objects.all()
+
+    if status_filter != "All Status":
+        users = users.filter(status=status_filter)
+
+    if department_filter != "all":
+        users = users.filter(department_id=department_filter)
+
+    # Count active, inactive, and total users for the current department filter
+    active_count = User.objects.filter(status="Active", department_id=department_filter).count() if department_filter != "all" else User.objects.filter(status="Active").count()
+    inactive_count = User.objects.filter(status="Inactive", department_id=department_filter).count() if department_filter != "all" else User.objects.filter(status="Inactive").count()
+    total_count = User.objects.filter(department_id=department_filter).count() if department_filter != "all" else User.objects.count()
+
+    # Precompute the count for the current filter
+    current_count = total_count if status_filter == "All Status" else (
+        active_count if status_filter == "Active" else inactive_count
+    )
+
     departments = Department.objects.all()
     groups = CommGroup.objects.all()
+
+    app_settings = AppSettings.objects.first()
+    password_duration = app_settings.passwordchange if app_settings else None
+
     context = {
         'departments': departments,
         'groups': groups,
@@ -910,7 +1031,14 @@ def users(request):
         'organization': organization,
         'data': data,
         'acc_db': acc_db,
-        'role_data': role_data
+        'role_data': role_data,
+        'active_count': active_count,
+        'password_duration': password_duration,
+        'inactive_count': inactive_count,
+        'total_count': total_count,
+        'current_count': current_count,  # Pass the current count for the selected filter
+        'status_filter': status_filter,
+        'department_filter': department_filter,  # Pass the current department filter to the template
     }
     return render(request, 'Management/user.html', context)
 
@@ -918,6 +1046,8 @@ def users(request):
 def edit_user(request, user_id):
 
     emp_user = request.session.get('username', None)
+    if not emp_user:
+        return redirect('login')
     try:
         data = User.objects.get(username = emp_user)
     except:
@@ -948,6 +1078,8 @@ def edit_user(request, user_id):
         department_id = request.POST.get('editdepartmentName')
         status = request.POST.get('editstatus')
         accessible_departments = request.POST.getlist('editaccessibleDepartment')
+        accountlock=request.POST.get('editAccountLock')
+        
 
 
         comm_group = get_object_or_404(CommGroup, CommGroup_code=comm_group_code)
@@ -961,8 +1093,8 @@ def edit_user(request, user_id):
         user.commGroup = comm_group
         user.department = department
         user.status = status
+        user.account_lock=accountlock
         user.save() 
-
 
         if accessible_departments:
             selected_departments = Department.objects.filter(id__in=accessible_departments)
@@ -1002,7 +1134,10 @@ def edit_user(request, user_id):
         'user': user,
         'departments': departments,
         'groups': groups,
-        'organization': organization, 'data':data, 'acc_db':acc_db, 'role_data':role_data
+        'organization': organization, 
+        'data':data, 
+        'acc_db':acc_db, 
+        'role_data':role_data
     }
 
 
@@ -1071,6 +1206,8 @@ def role_permission(request):
 
 def edit_role(request, id):
     emp_user = request.session.get('username', None)
+    if not emp_user:
+        return redirect('login')
     try:
         data = User.objects.get(username = emp_user)
     except:
@@ -1088,11 +1225,9 @@ def edit_role(request, id):
         role_data = None
 
     role_instance = get_object_or_404(User_role, id=id)
-    print(id)
 
     if request.method == 'POST':
         role_instance = get_object_or_404(User_role, id=id)
-        print(role_instance.id)
 
         role_name = request.POST.get('role')
         description = request.POST.get('description')
@@ -1126,6 +1261,8 @@ def edit_role(request, id):
 def user_access(request):
 
     emp_user = request.session.get('username', None)
+    if not emp_user:
+        return redirect('login')
     try:
         data = User.objects.get(username = emp_user)
     except:
@@ -1145,7 +1282,6 @@ def user_access(request):
         role_dt = None
 
 
-    print(role)
     if request.method == 'POST':
 
 
@@ -1349,6 +1485,8 @@ def user_access(request):
 def app_settings(request):
 
     emp_user = request.session.get('username', None)
+    if not emp_user:
+        return redirect('login')
     try:
         data = User.objects.get(username=emp_user)
     except User.DoesNotExist:
@@ -1407,6 +1545,8 @@ def app_settings(request):
 
 def app_sms_settings(request):
     emp_user = request.session.get('username', None)
+    if not emp_user:
+        return redirect('login')
 
     try:
         data = User.objects.get(username=emp_user)
@@ -1424,7 +1564,9 @@ def app_sms_settings(request):
         data_bits = request.POST.get('databits')
         stop_bits = request.POST.get('stopbits')
         flow_control = request.POST.get('flowcontrol')
-
+        passwordchange=request.POST.get('password_change')
+        autologout=request.POST.get('system_auto_logout')
+        lock=request.POST.get('user_access_lock')
         # Update or Create
         app_sms_settings, created = AppSettings.objects.update_or_create(
             id=1,  # Assuming a single settings instance
@@ -1435,7 +1577,10 @@ def app_sms_settings(request):
                 'baud_rate': baud_rate,
                 'data_bits': data_bits,
                 'stop_bits': stop_bits,
-                'flow_control': flow_control
+                'flow_control': flow_control,
+                'passwordchange':passwordchange,
+                'autologouttime':autologout,
+                'lockcount':lock
             }
         )
 
@@ -1460,6 +1605,57 @@ def app_sms_settings(request):
     }
 
     return render(request, 'Management/app_settings.html', context)
+
+from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_protect
+from .models import AppSettings
+import json
+
+@csrf_protect
+def save_app_settings(request):
+    if request.method == 'POST':
+        settings_data = json.loads(request.body)
+       
+        
+        tab_name = settings_data.get('tab_name')
+        
+        try:
+          
+            app_settings, created = AppSettings.objects.get_or_create(id=1)  
+
+            if tab_name == "App Settings":
+                app_settings.passwordchange = settings_data.get('password_change')
+                app_settings.lockcount = settings_data.get('user_access_lock')
+                app_settings.autologouttime = settings_data.get('system_auto_logout')
+
+            elif tab_name == "Email Settings":
+                app_settings.email_sys_set = settings_data.get('email_sys_set')
+                app_settings.email_host = settings_data.get('smpthost')
+                app_settings.email_host_user = settings_data.get('smptemail')
+                app_settings.email_host_password = settings_data.get('smptpass')
+                app_settings.email_port = settings_data.get('smtpPort')
+                app_settings.email_signature = settings_data.get('emailsignature')
+
+            elif tab_name == "SMS Settings":
+                app_settings.sms_sys_set = settings_data.get('sms_setting_status')
+                app_settings.comm_port = settings_data.get('commport')
+                app_settings.baud_rate = settings_data.get('baudrate')
+                app_settings.data_bits = settings_data.get('databits')
+                app_settings.stop_bits = settings_data.get('stopbits')
+                app_settings.parity = settings_data.get('parity')
+                app_settings.flow_control = settings_data.get('flowcontrol')
+
+            app_settings.save()
+
+            return JsonResponse({'status': 'success', 'message': f'Settings for {tab_name} updated successfully'})
+
+        except Exception as e:
+            return JsonResponse({'status': 'error', 'message': 'An error occurred while updating settings'}, status=500)
+
+    return JsonResponse({'status': 'error', 'message': 'Invalid request'}, status=400)
+
+
+
 
 import serial
 import time
@@ -1511,8 +1707,6 @@ def setup_modem(ser):
         ser.write(cmd)
         time.sleep(1)
         response = ser.read_all().decode('utf-8', errors='ignore').strip()
-        # Assuming logging to console or file for now
-        print(f"Setup command {cmd.decode().strip()} response: {response}")
 
 def send_sms(ser, number, message, lock):
     with lock:
@@ -1530,122 +1724,207 @@ def send_sms(ser, number, message, lock):
             else:
                 return False
         except Exception as e:
-            print(f"Error sending SMS to {number}: {str(e)}")
             return False
 
 def send_test_sms(request):
     if request.method == 'POST':
-        numbers_list = [
-            '8296061293', '8904411103', '8861347024', '9901220724', '9133121164',
-            '9177951549', '9113949421', '8999001805', '9381407314', '6361909004'
-        ]
+        # Get the test phone number and time from the POST request
+        test_sms_number = request.POST.get('testsms')
+        test_sms_time = request.POST.get('testsmstime')  # Expected format: HH:MM
+        if not test_sms_number:
+            messages.error(request, "Please provide a valid phone number.")
+            return redirect('app_sms_settings')
+
+        # Fetch SMS settings from the database
         sms_settings = AppSettings.objects.first()
         if not sms_settings:
             messages.error(request, "SMS settings not configured.")
             return redirect('app_sms_settings')
 
-        start_time = time.time()
-        successful_sends = 0
+        # Function to send SMS
+        def send_sms():
+            try:
+                # Define the send_command function inside send_sms
+                def send_command(command, wait_for_response=True, delay=2):
+                    ser.write((command + '\r').encode())
+                    ser.flush()
+                    time.sleep(delay)
+                    if wait_for_response:
+                        response = ser.read(1000).decode(errors="ignore").strip()
+                        return response
+                    return ""
 
-        try:
-            ser = serial.Serial(
-                port=sms_settings.port,  # Ensure your model has 'port' or replace as needed
-                baudrate=sms_settings.baud_rate,
-                bytesize=serial.EIGHTBITS,
-                parity=serial.PARITY_NONE if sms_settings.parity == 'None' else sms_settings.parity,
-                stopbits=serial.STOPBITS_ONE,
-                timeout=2
-            )
-            setup_modem(ser)
+                # Modem Configuration
+                ser = serial.Serial(
+                    port=sms_settings.comm_port,
+                    baudrate=int(sms_settings.baud_rate),
+                    bytesize=serial.EIGHTBITS,
+                    parity=serial.PARITY_NONE if sms_settings.parity == 'None' else sms_settings.parity.upper()[0],
+                    stopbits=serial.STOPBITS_ONE if sms_settings.stop_bits == 1 else serial.STOPBITS_TWO,
+                    timeout=1
+                )
 
-            lock = threading.Lock()
-            threads = []
-            results = []
+                # Test modem connection
+                if "OK" not in send_command("AT"):
+                    messages.error(request, "Modem not responding. Check connection.")
+                    ser.close()
+                    return
 
-            for number in numbers_list:
-                thread = threading.Thread(target=lambda n=number: results.append((n, send_sms(ser, n, "Welcome to Sunwell", lock))))
-                threads.append(thread)
-                thread.start()
+                # Set SMS mode to text
+                if "OK" not in send_command("AT+CMGF=1"):
+                    messages.error(request, "Failed to set SMS mode to text.")
+                    ser.close()
+                    return
 
-            for thread in threads:
-                thread.join()
+                # Send SMS command
+                response = send_command(f'AT+CMGS="{test_sms_number}"')
+                if ">" not in response:
+                    messages.error(request, "Modem did not prompt for message input.")
+                    ser.close()
+                    return
 
-            successful_sends = sum(1 for _, success in results if success)
-            ser.close()
-        except Exception as e:
-            messages.error(request, f"Error in SMS sending process: {str(e)}")
-            return redirect('app_sms_settings')
+                message = "This is test SMS from ESTDAS application"
+                ser.write((message + '\r').encode())
+                ser.flush()
+                time.sleep(1)
+                ser.write(b"\x1A")  # Ctrl+Z
+                ser.flush()
 
-        total_time = time.time() - start_time
-        messages.success(request, f"Successfully sent {successful_sends} out of {len(numbers_list)} SMS messages in {total_time:.2f} seconds.")
+                response = ser.read(1000).decode(errors="ignore").strip()
+
+                # Updated Response Handling Logic
+                if "+CMGS" in response or "OK" in response:
+                    messages.success(request, f"Test SMS sent successfully to {test_sms_number}.")
+                else:
+                    messages.warning(request, f"SMS sent, but response was unexpected: {response}")
+
+                ser.close()
+                
+            except Exception as e:
+                messages.error(request, f"Error while sending SMS: {str(e)}")
+
+
+
+
+
+        # Check if a time is provided
+        if test_sms_time:
+            try:
+                # Parse the provided time
+                sms_datetime = datetime.strptime(test_sms_time, "%H:%M").time()
+                now = datetime.now().time()
+
+                # Combine the date with the time for full datetime comparison
+                today_date = date.today()
+                sms_datetime_full = datetime.combine(today_date, sms_datetime)
+                now_full = datetime.combine(today_date, now)
+
+                # Calculate delay in seconds
+                delay = (sms_datetime_full - now_full).total_seconds()
+
+                # If delay is negative, schedule the SMS for the next day
+                if delay < 0:
+                    sms_datetime_full += timedelta(days=1)
+                    delay = (sms_datetime_full - now_full).total_seconds()
+
+                # Schedule SMS with delay
+                threading.Timer(delay, send_sms).start()
+                messages.success(request, f"SMS scheduled to {test_sms_number} at {test_sms_time}.")
+            except ValueError:
+                messages.error(request, "Invalid time format. Please use HH:MM.")
+                return redirect('app_sms_settings')
+        else:
+            # Send SMS immediately if no time is provided
+            send_sms()
+
+        # Redirect back to settings page after execution
         return redirect('app_sms_settings')
     else:
         messages.error(request, "Invalid request method.")
         return redirect('app_sms_settings')
 
 
-
-
-
-
-
-
-
 def send_test_email(request):
     if request.method == 'POST':
         recipient_email = request.POST.get('testemail')
+        email_time = request.POST.get('testemailtime')
         
-   
+        # Fetch the email settings dynamically
         email_settings = get_email_settings(request)
         if not email_settings:
             return HttpResponse("Email settings are not configured.", status=500)
+        
+        subject = 'ESTDAS Test Email'
+        message = 'This is test email from ESTDAS application'
 
-        alarm=alarm_logs.objects.first()
-
-        subject = 'Sun Well Alarm Alerts'
-        equipment_id = alarm.equipment.equip_name
-        alarm_code = alarm.alarm_code.code
-        alarm_description = alarm.alarm_code.alarm_log
-        date_field = alarm.date
-        time_field = alarm.time
-        combined_datetime = datetime.combine(date_field, time_field)
-        formatted_datetime = combined_datetime.strftime('%Y-%m-%d %H:%M:%S')
-        current_datetime = formatted_datetime
-        message = f"""Equipment ID: {equipment_id}
-Alarm Code: {alarm_code}
-Alarm Description: {alarm_description}
-Date and Time: {current_datetime}"""
-        email_list = ['prasannasgkumar@gmail.com', 'darshanmurs11@gmail.com', 'rajushanigarapu1997@gmail.com', 'sureshsm226@gmail.com', 'sunwelltechno@gmail.com', 'svreddy@sunwell-techno.com', 'venkat06022@gmail.com']
-
-
+        # Set the dynamic email settings
         settings.EMAIL_HOST = email_settings['EMAIL_HOST']
         settings.EMAIL_HOST_USER = email_settings['EMAIL_HOST_USER']
         settings.EMAIL_HOST_PASSWORD = email_settings['EMAIL_HOST_PASSWORD']
         settings.EMAIL_PORT = email_settings['EMAIL_PORT']
 
+        # Function to send the email
+        def send_email():
+            try:
+                send_mail(
+                    subject=subject,
+                    message=message,
+                    from_email=email_settings['EMAIL_HOST_USER'],
+                    recipient_list=[recipient_email],
+                    fail_silently=False,
+                )
+                # Log successful email attempt
+                Email_logs.objects.create(
+                    equipment=None,  # Assuming None is set for no specific equipment
+                    sys_mail=True,
+                    to_email=recipient_email,
+                    email_sub=subject,
+                    email_body=message,
+                    status='Sent'
+                )
+            except Exception as e:
+                # Log failed email attempt
+                Email_logs.objects.create(
+                    equipment=None,  # Assuming None is set for no specific equipment
+                    sys_mail=True,
+                    to_email=recipient_email,
+                    email_sub=subject,
+                    email_body=message,
+                    status='Failed'
+                )
 
-        start_time = time.time()
+        # Calculate delay if time is provided
+        if email_time:
+            try:
+                # Parse the provided time
+                email_datetime = datetime.strptime(email_time, "%H:%M").time()
+                now = datetime.now().time()
+                
+                # Combine the date with the time for full datetime comparison
+                today_date = date.today()
+                email_datetime_full = datetime.combine(today_date, email_datetime)
+                now_full = datetime.combine(today_date, now)
+                
+                # Calculate delay in seconds
+                delay = (email_datetime_full - now_full).total_seconds()
 
-       
-        for email in email_list:
-            send_mail(
-                subject=subject,
-                message=message,
-                from_email=email_settings['EMAIL_HOST_USER'],
-                recipient_list=[email],
-                fail_silently=False,
-            )
+                # If delay is negative, schedule the email for the next day
+                if delay < 0:
+                    email_datetime_full += timedelta(days=1)
+                    delay = (email_datetime_full - now_full).total_seconds()
 
-     
-        end_time = time.time()
-        duration = end_time - start_time
+                # Schedule email with delay
+                threading.Timer(delay, send_email).start()
+            except ValueError:
+                return HttpResponse("Invalid time format. Please use HH:MM.", status=400)
+        else:
+            # Send email immediately if no time is provided
+            send_email()
 
-        print(f"Time taken to send emails: {duration:.2f} seconds")
-
-       
         return redirect('app_settings')
     else:
         return HttpResponse("Invalid request method.", status=405)
+
 
 
     
@@ -1653,7 +1932,6 @@ Date and Time: {current_datetime}"""
 # def perform_backup():
 #     backup_setting = BackupSettings.objects.last()
 #     if not backup_setting:
-#         print("No backup settings found.")
 #         return "failure", "No backup settings found."
 
 #     current_time = datetime.now().strftime("%d%m%Y_%H%M")
@@ -1686,7 +1964,6 @@ Date and Time: {current_datetime}"""
     
 #     try:
 #         subprocess.run(local_backup_command, check=True, shell=True)
-#         print("Local backup successful")
 
 #         if backup_setting.remote_path:
 #             remote_backup_command = (
@@ -1694,15 +1971,15 @@ Date and Time: {current_datetime}"""
 #                 f"-Q \"BACKUP DATABASE [{db_name}] TO DISK = N'{remote_backup_file_path}'\""
 #             )
 #             subprocess.run(remote_backup_command, check=True, shell=True)
-#             print("Remote backup successful")
             
 #         return "success", "Backup successful"
 #     except subprocess.CalledProcessError as e:
-#         print(f"Backup failed: {str(e)}")
 #         return "failure", f"Backup failed: {str(e)}"
 
 # def download_backup(request):
 #     emp_user = request.session.get('username', None)
+        # if not emp_user:
+        #         return redirect('login')
 #     try:
 #         data = User.objects.get(username = emp_user)
 #     except:
@@ -1769,6 +2046,8 @@ Date and Time: {current_datetime}"""
 # def edit_backup(request, id):
 
 #     emp_user = request.session.get('username', None)
+        # if not emp_user:
+        # return redirect('login')
 #     try:
 #         data = User.objects.get(username = emp_user)
 #     except:
@@ -1809,12 +2088,12 @@ Date and Time: {current_datetime}"""
 
 
 # def schedule_daily_backup():
-#     print("Scheduler thread started")
+
 #     backup_setting = BackupSettings.objects.last()
 #     if backup_setting and backup_setting.backup_time:
         
 #         backup_time_str = backup_setting.backup_time.strftime("%H:%M")
-#         print(f"Scheduling daily backup at {backup_time_str}")
+
 
 #         # Schedule backup at the specified time
 #         schedule.every().day.at(backup_time_str).do(perform_backup)
@@ -1824,13 +2103,15 @@ Date and Time: {current_datetime}"""
 #             time.sleep(1)
 
 # def start_backup_scheduler():
-#     print("Starting backup scheduler")
+
 #     backup_thread = threading.Thread(target=schedule_daily_backup, daemon=True)
 #     backup_thread.start()
 
 # start_backup_scheduler()
 def backup(request):
     emp_user = request.session.get('username', None)
+    if not emp_user:
+        return redirect('login')
 
     try:
         data = User.objects.get(username=emp_user)
@@ -1879,6 +2160,8 @@ def backup(request):
 
 def edit_backup(request, id):
     emp_user = request.session.get('username', None)
+    if not emp_user:
+        return redirect('login')
 
     try:
         data = User.objects.get(username=emp_user)
@@ -1922,6 +2205,8 @@ def edit_backup(request, id):
 
 def download_backup(request):
     emp_user = request.session.get('username', None)
+    if not emp_user:
+        return redirect('login')
     try:
         data = User.objects.get(username=emp_user)
     except:
@@ -2019,6 +2304,8 @@ start_backup_scheduler()
 def restore(request):
 
     emp_user = request.session.get('username', None)
+    if not emp_user:
+        return redirect('login')
     try:
         data = User.objects.get(username = emp_user)
     except:
@@ -2064,7 +2351,7 @@ def connect_to_plc(ip_address):
         plc.connect(ip_address, PLC_RACK, PLC_SLOT)
         return plc
     except Exception as e:
-        print(f"Error connecting to PLC at {ip_address}: {e}")
+        print("ABCD",e)
         raise e
 
 def write_interval_to_plc(plc, interval):
@@ -2076,36 +2363,45 @@ def write_interval_to_plc(plc, interval):
 
         
         plc.db_write(DB_NUMBER_LIMITS, OFFSETS_LIMITS["INTERVAL"], interval_data)
-        print(f"[INFO] Interval {interval} written to PLC.")
+
 
         
         read_interval_data = plc.db_read(DB_NUMBER_LIMITS, OFFSETS_LIMITS["INTERVAL"], 4)
         read_interval = snap7.util.get_int(read_interval_data, 0)
-        print(f"[INFO] Read back interval from PLC: {read_interval_data}")
 
-        if read_interval ==int(interval):
-            print(f"[INFO] Interval {interval} successfully updated on PLC.")
-        else:
-            print(f"[ERROR] Interval update failed. Expected {interval}, but got {read_interval}.")
+
     except Exception as e:
-        print(f"Error writing interval to PLC: {e}")
         raise e
 
+import re
 
+def extract_number_of_sensors(equipment_type_description):
+   
+    match = re.search(r'\b(\d+)\b', equipment_type_description)
+    if match:
+        return int(match.group(1)) 
+    else:
+        return None
+
+from snap7.util import *
 def plc_connect(request):
     if request.method == 'POST':
         ip_address = request.POST.get('ipaddress')
-        print(f"Attempting to connect to PLC at IP address: {ip_address}")
+        
 
         try:
             plc = connect_to_plc(ip_address)
             if plc.get_connected():
                 interval = read_data(plc, DB_NUMBER_LIMITS, OFFSETS_LIMITS["INTERVAL"]) 
                 data=plc.db_read(DB_NUMBER_LIMITS, OFFSETS_LIMITS["INTERVAL"], 4)
-                print(data)
+               
                 read_interval = snap7.util.get_int(data, 0)
-                print("Interval from PLC:", read_interval)
+                
+                
                 equipment_type = plc.db_read(DB_NUMBER_LIMITS, OFFSETS_LIMITS["EQUIPMENT"], 2) 
+                data = read_plc_data(plc, 4, 4, 4)
+                pv = snap7.util.get_real(data, 0)
+                
                 equipment_mapping = {
                             11: "Temperature only - No of Sensor 1",
                             12: "Temperature only - No of Sensor 2",
@@ -2138,42 +2434,41 @@ def plc_connect(request):
                 }
                 code = snap7.util.get_word(equipment_type, 0) 
                 equipment_type = equipment_mapping.get(code, "Unknown Equipment Type") 
+                equ=extract_number_of_sensors(equipment_type)
+
                 try:
                     equipment = Equipment.objects.get(ip_address=ip_address)
                     equipment.is_connected = True  
                     equipment.save()  
                     
                 except Equipment.DoesNotExist:
-                   
-                    print(f"No equipment found with IP address {ip_address}.")
+                   pass
                 return JsonResponse({
                     'status': 'connected',
                     'interval': read_interval,
-                    'equiptype': equipment_type
+                    'equiptype': equipment_type,
+                    'sensors':equ
                 })
             else:
                 return JsonResponse({'status': 'failed', 'error': 'Failed to connect to PLC.'})
         except Exception as e:
-            print(f"Error connecting to PLC: {str(e)}")
             return JsonResponse({'status': 'failed', 'error': str(e)})
 
     return JsonResponse({'status': 'failed', 'error': 'Invalid request method.'})
 
-def set_interval(plc, interval):
-    """
-    Sends the updated interval value to the PLC.
-    """
-    try:
-        # Assuming the PLC API has a method to set the interval value
-        write_data(plc, DB_NUMBER_LIMITS, OFFSETS_LIMITS["INTERVAL"], interval)  # Update interval on the PLC
-        print(f"Interval updated to {interval} on PLC.")
-    except Exception as e:
-        print(f"Error updating interval on PLC: {str(e)}")
+# def set_interval(plc, interval):
+#     """
+#     Sends the updated interval value to the PLC.
+#     """
+#     try:
+#         # Assuming the PLC API has a method to set the interval value
+#         write_data(plc, DB_NUMBER_LIMITS, OFFSETS_LIMITS["INTERVAL"], interval)  # Update interval on the PLC
+#     except Exception as e:
+#         pass
 
 def plc_disconnect(request):
     if request.method == 'POST':
         ip_address = request.POST.get('ipaddress')
-        print(f"[DEBUG] Attempting to disconnect PLC at IP address: {ip_address}")
         
         try:
             equipment = Equipment.objects.filter(ip_address=ip_address).first()
@@ -2186,35 +2481,32 @@ def plc_disconnect(request):
                 # Trigger the stop event for this equipment's background task
                 stop_event = stop_flags.get(equipment.id)
                 if stop_event:
-                    print(f"[DEBUG] Stop event found for equipment {equipment.equip_name}. Triggering stop event.")
                     stop_event.set() 
                     time.sleep(2)
                     if stop_event.is_set():
-                        print(f"[DEBUG] Stop event successfully triggered for {equipment.equip_name}.")
+                        pass
 
                     del stop_flags[equipment.id]  
-                    print(f"[DEBUG] Stop flag removed for equipment {equipment.equip_name}.")
 
                     
                     plc = connect_to_plc(ip_address)  
                     if plc.get_connected():  
                         plc.disconnect()
-                        print(f"[DEBUG] PLC at {ip_address} disconnected successfully.")
                     else:
-                        print(f"[DEBUG] PLC was not connected.")
+                        pass
                     
                     return JsonResponse({'status': 'disconnected'})
                 else:
-                    print(f"[DEBUG] No background task found for equipment {equipment.equip_name}.")
+                    
                     return JsonResponse({'status': 'failed', 'error': 'No background task found.'})
             else:
-                print(f"[DEBUG] Equipment was not connected. No action needed.")
+                
                 return JsonResponse({'status': 'disconnected', 'message': 'PLC was already disconnected.'})
         except Exception as e:
-            print(f"[DEBUG] Error during PLC disconnect: {str(e)}")
+            
             return JsonResponse({'status': 'failed', 'error': str(e)})
     
-    print(f"[DEBUG] Invalid request method. Only POST requests are allowed.")
+    
     return JsonResponse({'status': 'failed', 'error': 'Invalid request method.'})
 
 
@@ -2228,124 +2520,122 @@ def read_data(plc, db_number, offset):
             return round(value, 2)
         return None
     except Exception as e:
-        print(f"Snap7 exception while reading from DB {db_number} at offset {offset}: {e}")
         return None
     except Exception as e:
-        print(f"General error while reading from DB {db_number} at offset {offset}: {e}")
         return None
 
-def read_temperatures_dynamically(plc):
-    temperatures = {}
-    offset = 4  
-    sensor_number = 1 
+# def read_temperatures_dynamically(plc):
+#     temperatures = {}
+#     offset = 4  
+#     sensor_number = 1 
     
-    while True:
-        temp_value = read_data(plc, DB_NUMBER_TEMPS, offset)
+#     while True:
+#         temp_value = read_data(plc, DB_NUMBER_TEMPS, offset)
         
        
-        if temp_value is None:
-            break
+#         if temp_value is None:
+#             break
 
         
-        temp_key = f"tmp_{sensor_number}"
-        temperatures[temp_key] = temp_value
+#         temp_key = f"tmp_{sensor_number}"
+#         temperatures[temp_key] = temp_value
 
         
-        offset += 4
-        sensor_number += 1
+#         offset += 4
+#         sensor_number += 1
 
        
-        if sensor_number > 10:
-            break
+#         if sensor_number > 10:
+#             break
     
-    for i in range(sensor_number, 11):
-        temperatures[f"tmp_{i}"] = 0
+#     for i in range(sensor_number, 11):
+#         temperatures[f"tmp_{i}"] = 0
 
-    return temperatures
+#     return temperatures
 
-def stop_plc_data_reading(equipment):
-    print(f"Stopping data reading task for equipment {equipment.equip_name}")
-    stop_event = stop_flags.get(equipment.id)
-    if stop_event:
-        stop_event.set()  
-        print(f"Stop event triggered for equipment {equipment.equip_name}")
-    else:
-        print(f"No active stop event found for equipment {equipment.equip_name}")
+# def stop_plc_data_reading(equipment):
+#     
+#     stop_event = stop_flags.get(equipment.id)
+#     if stop_event:
+#         stop_event.set()  
+#         
+#     else:
+#         pass
 
-def store_temperature_data(equipment, plc, ip_address, interval):
-    print(f"[DEBUG] Starting data collection for equipment {equipment.equip_name} at {datetime.datetime.now()}")
-    printed_once = False
+# def store_temperature_data(equipment, plc, ip_address, interval):
+#     
+#     printed_once = False
 
-    while True:
-        try:
+#     while True:
+#         try:
             
-            stop_event = stop_flags.get(equipment.id)
-            if stop_event and stop_event.is_set():
-                print(f"[DEBUG] Stop event detected in store_temperature_data for {equipment.equip_name}, exiting.")
-                break
+#             stop_event = stop_flags.get(equipment.id)
+#             if stop_event and stop_event.is_set():
+#                 pass
+#                 break
 
            
-            if not Equipment.objects.filter(pk=equipment.pk).exists():
-                if not printed_once:
-                    print(f"[DEBUG] Equipment {equipment.equip_name} no longer exists. Stopping data collection.")
-                    printed_once = True
-                break
+#             if not Equipment.objects.filter(pk=equipment.pk).exists():
+#                 if not printed_once:
+#                     pass
+#                     printed_once = True
+#                 break
 
-            if not plc.get_connected():
-                print(f"[DEBUG] PLC connection lost for {equipment.equip_name}, attempting to reconnect.")
-                plc = connect_to_plc(ip_address)
-                if not plc.get_connected():
-                    raise ConnectionError(f"[DEBUG] Could not reconnect to PLC at {ip_address}")
+#             if not plc.get_connected():
+#                 
+#                 plc = connect_to_plc(ip_address)
+#                 if not plc.get_connected():
+#                     raise ConnectionError(f"[DEBUG] Could not reconnect to PLC at {ip_address}")
 
-            timestamp = datetime.datetime.now()
+#             timestamp = datetime.datetime.now()
 
-            data = {
-                "set_temp": read_data(plc, DB_NUMBER_LIMITS, OFFSETS_LIMITS["SET_TEMP"]),
-                "t_low_alarm": read_data(plc, DB_NUMBER_LIMITS, OFFSETS_LIMITS["LOW_ALARM_LIMIT"]),
-                "t_high_alarm": read_data(plc, DB_NUMBER_LIMITS, OFFSETS_LIMITS["HIGH_ALARM_LIMIT"]),
-            }
+#             data = {
+#                 "set_temp": read_data(plc, DB_NUMBER_LIMITS, OFFSETS_LIMITS["SET_TEMP"]),
+#                 "t_low_alarm": read_data(plc, DB_NUMBER_LIMITS, OFFSETS_LIMITS["LOW_ALARM_LIMIT"]),
+#                 "t_high_alarm": read_data(plc, DB_NUMBER_LIMITS, OFFSETS_LIMITS["HIGH_ALARM_LIMIT"]),
+#             }
 
-            temperature_data = read_temperatures_dynamically(plc)
-            print(f"[DEBUG] Collected temperature data: {temperature_data}")
-            data.update(temperature_data)
+#             temperature_data = read_temperatures_dynamically(plc)
+#             
+#             data.update(temperature_data)
 
-            try:
+#             try:
                 
-                record = TemperatureHumidityRecord(
-                    equip_name=equipment,
-                    date=timestamp.date(),
-                    time=timestamp.time(),
-                    set_temp=data["set_temp"],
-                    t_low_alarm=data["t_low_alarm"],
-                    t_high_alarm=data["t_high_alarm"],
-                    tmp_1=data.get("tmp_1", 0),
-                    tmp_2=data.get("tmp_2", 0),
-                    tmp_3=data.get("tmp_3", 0),
-                    tmp_4=data.get("tmp_4", 0),
-                    tmp_5=data.get("tmp_5", 0),
-                    tmp_6=data.get("tmp_6", 0),
-                    tmp_7=data.get("tmp_7", 0),
-                    tmp_8=data.get("tmp_8", 0),
-                    tmp_9=data.get("tmp_9", 0),
-                    tmp_10=data.get("tmp_10", 0),
-                )
-                record.save()
-                print(f"[DEBUG] Data saved at {timestamp}")
+#                 record = TemperatureHumidityRecord(
+#                     equip_name=equipment,
+#                     date=timestamp.date(),
+#                     time=timestamp.time(),
+#                     set_temp=data["set_temp"],
+#                     t_low_alarm=data["t_low_alarm"],
+#                     t_high_alarm=data["t_high_alarm"],
+#                     tmp_1=data.get("tmp_1", 0),
+#                     tmp_2=data.get("tmp_2", 0),
+#                     tmp_3=data.get("tmp_3", 0),
+#                     tmp_4=data.get("tmp_4", 0),
+#                     tmp_5=data.get("tmp_5", 0),
+#                     tmp_6=data.get("tmp_6", 0),
+#                     tmp_7=data.get("tmp_7", 0),
+#                     tmp_8=data.get("tmp_8", 0),
+#                     tmp_9=data.get("tmp_9", 0),
+#                     tmp_10=data.get("tmp_10", 0),
+#                 )
+#                 record.save()
+#                 
 
-            except IntegrityError as e:
-                print(f"[DEBUG] IntegrityError while saving data: {e}")
-                break
+#             except IntegrityError as e:
+#                 
+#                 break
             
             
-            break 
+#             break 
 
-        except Exception as e:
-            print(f"[DEBUG] Error during data collection: {e}")
-            try:
-                plc.disconnect()
-            except:
-                pass
-            plc = connect_to_plc(ip_address)
+#         except Exception as e:
+#             
+#             try:
+#                 plc.disconnect()
+#             except:
+#                 pass
+#             plc = connect_to_plc(ip_address)
 
            
 import threading
@@ -2355,83 +2645,84 @@ from .models import Equipment
 stop_event = threading.Event()  # Shared stop event for the background task
 
 def background_task_for_all_equipment(interval):
+    print("background_task_for_all_equipment")
     """
     Periodically checks all active equipment and downloads their data logs.
     """
     while not stop_event.is_set():  # If stop_event is not set, keep running
         try:
-            print("[INFO] Starting data fetching for all active equipment...")
+            
             
             # Fetch all active equipment
             active_equipments = Equipment.objects.filter(status='active')
             for equipment in active_equipments:
                 try:
-                    print(f"[INFO] Processing equipment: {equipment.equip_name} (ID: {equipment.id})")
+                    
                     # Call the function to download logs for each equipment
                     download_process_logs(equipment.ip_address, equipment.id)
                     
                 except Exception as e:
-                    print(f"[ERROR] Error processing equipment {equipment.equip_name}: {e}")
+                    pass
             
-            print("[INFO] Data fetching completed. Sleeping until the next interval...")
+            
             # Sleep for the interval duration
             time.sleep(interval * 60)  # Convert minutes to seconds
 
         except Exception as e:
-            print(f"[ERROR] Error in background task: {e}")
+            
             break
 
     print("[INFO] Background task stopped.")
 
 
-import threading
-import time
-stop_flags = {}  
+# import threading
+# import time
+# stop_flags = {}  
 
-def background_task(equipment, plc, ip_address, interval, stop_event):
-    print(f"[DEBUG] Background task started for equipment {equipment.equip_name} with interval {interval} minutes.")
+# def background_task(equipment, plc, ip_address, interval, stop_event):
+    
 
-    while not stop_event.is_set():
-        try:
+#     while not stop_event.is_set():
+#         try:
             
-            if stop_event.is_set():
-                print(f"[DEBUG] Stop event detected at the start of the task for equipment {equipment.equip_name}. Exiting background task.")
-                break
+#             if stop_event.is_set():
+                
+#                 break
 
             
-            equipment.refresh_from_db()
-            if not equipment.is_connected:
-                print(f"[DEBUG] Equipment {equipment.equip_name} has been marked as disconnected in the database.")
-                break  
-            print(f"[DEBUG] Reading data from equipment {equipment.equip_name} at {datetime.datetime.now()}")
-            store_temperature_data(equipment, plc, ip_address, interval)
+#             equipment.refresh_from_db()
+#             if not equipment.is_connected:
+                
+#                 break  
+            
+#             # store_temperature_data(equipment, plc, ip_address, interval)
 
-        except Exception as e:
-            print(f"[DEBUG] Error during data collection for {equipment.equip_name}: {e}")
-            time.sleep(10)  # Wait for 10 seconds before retrying
+#         except Exception as e:
+            
+#             time.sleep(10)  # Wait for 10 seconds before retrying
 
-            # Reconnection logic
-            try:
-                plc = connect_to_plc(ip_address)
-                if not plc.get_connected():
-                    print(f"[DEBUG] Reconnection failed for {equipment.equip_name}, retrying...")
-                    continue  # Keep retrying
-            except Exception as reconnect_error:
-                print(f"[DEBUG] Reconnection attempt failed: {reconnect_error}")
-                time.sleep(60)  # Wait before next reconnection attempt
+#             # Reconnection logic
+#             try:
+#                 plc = connect_to_plc(ip_address)
+#                 if not plc.get_connected():
+                    
+#                     continue  # Keep retrying
+#             except Exception as reconnect_error:
+                
+#                 time.sleep(60)  # Wait before next reconnection attempt
 
 
-        # Sleep for the specified interval, but check the stop_event frequently
-        print(f"[DEBUG] Sleeping for {interval} minutes, checking stop_event every second.")
-        sleep_time = int(interval * 60)  # Convert interval to seconds
+#         # Sleep for the specified interval, but check the stop_event frequently
+        
+#         sleep_time = int(interval * 60)  # Convert interval to seconds
 
-        # Instead of sleeping for the full interval at once, check stop_event frequently (every second)
-        for i in range(sleep_time):
-            if stop_event.is_set():
-                print(f"[DEBUG] Stop event detected during sleep for equipment {equipment.equip_name}, exiting background task.")
-                return  # Stop the thread immediately
-            time.sleep(1)  # Sleep for 1 second and then check stop_event again
-    print(f"[DEBUG] Data collection stopped for equipment {equipment.equip_name}. Exiting thread.")
+#         # Instead of sleeping for the full interval at once, check stop_event frequently (every second)
+#         for i in range(sleep_time):
+#             if stop_event.is_set():
+                
+#                 return  # Stop the thread immediately
+#             time.sleep(1)  # Sleep for 1 second and then check stop_event again
+    
 
 # Log downloads and savings
 
@@ -2452,7 +2743,9 @@ from datetime import datetime
 from django.core.exceptions import ObjectDoesNotExist
 
 def download_process_logs(ip_address, equipment_id):
+   
     results = {}
+    print("download")
 
     try:
         headers = {
@@ -2468,7 +2761,7 @@ def download_process_logs(ip_address, equipment_id):
         }
 
         for log_type, url in log_urls.items():
-            print(f"[DEBUG] Downloading {log_type} logs from: {url}")
+            
 
             response = requests.get(url, headers=headers, stream=True, timeout=120)
 
@@ -2476,7 +2769,7 @@ def download_process_logs(ip_address, equipment_id):
                 try:
                     eqp = Equipment.objects.get(ip_address=ip_address)
                 except ObjectDoesNotExist:
-                    print(f"[DEBUG] Equipment with IP {ip_address} not found.")
+                    
                     results[log_type] = f"Equipment with IP {ip_address} not found."
                     continue
 
@@ -2492,7 +2785,7 @@ def download_process_logs(ip_address, equipment_id):
                     for chunk in response.iter_content(chunk_size=8192):
                         log_file.write(chunk)
 
-                print(f"[DEBUG] {log_type.capitalize()} logs downloaded successfully: {file_name}")
+                
                 results[log_type] = f"{log_type.capitalize()} logs downloaded successfully: {file_name}"
 
                 # Process the downloaded log files
@@ -2501,17 +2794,16 @@ def download_process_logs(ip_address, equipment_id):
                 elif log_type == "data":
                     results["data_processing"] = process_data_logs(file_path, equipment_id)
 
-                # Clear logs on the PLC (assuming the `clear_csv_logs` function works as expected)
                 results[f"{log_type}_clear"] = clear_csv_logs(ip_address, log_type)
 
             else:
-                print(f"[DEBUG] Failed to download {log_type} logs. Status code: {response.status_code}")
+                
                 results[log_type] = f"Failed to download {log_type} logs. Status code: {response.status_code}"
 
         return results
 
     except Exception as e:
-        print(f"[DEBUG] Error during log download or processing: {e}")
+        
         return {"status": False, "message": f"Error: {e}"}
 
 
@@ -2523,233 +2815,561 @@ import csv
 from datetime import datetime
 import csv
 
+download_lock = threading.Lock()
 def process_data_logs(file_path, equipment_id):
-    try:
-        with open(file_path, "r") as csv_file:
-            csv_reader = csv.DictReader(csv_file)
-            saved_records = 0
+    with download_lock:
+        try:
+            with open(file_path, "r") as csv_file:
+                csv_reader = csv.DictReader(csv_file)
+                saved_records = 0
 
-            for row in csv_reader:
-                try:
-                    print(f"[DEBUG] Row data: {row}")
-
-                    # Parsing the date field
+                for row in csv_reader:
                     try:
-                        date = datetime.strptime(row["DATE"].strip(), "%Y-%m-%d").date()
-                    except ValueError as e:
-                        print(f"[DEBUG] Invalid DATE format: {row['DATE']} - {e}. Skipping this row.")
-                        continue
-                    print(f"[DEBUG] Parsed date: {date}")
-
-                    # Parsing and normalizing the time field
-                    try:
-                        time_raw = row[" TIME"].strip()  # Strip leading/trailing spaces
-                        if not time_raw:
-                            print(f"[DEBUG] Missing or empty TIME field for row: {row}. Skipping this row.")
-                            continue
-
-                        if len(time_raw) == 5: 
-                            time_raw = f"{time_raw}:00"  
-                        elif len(time_raw) == 8: 
-                            pass 
-                        elif len(time_raw) > 8:  
-                           
-                            if '.' in time_raw:
-                                time_raw = time_raw[:7]  
-                            else:
-                                print(f"[DEBUG] Invalid TIME format with milliseconds: {time_raw}. Skipping this row.")
-                                continue
-                        else:
-                            print(f"[DEBUG] Invalid TIME format: {time_raw}. Skipping this row.")
-                            continue
-
-                        # Try to parse the time in any valid format
-                        try:
-                            # First, try to parse as HH:MM:SS (seconds)
-                            datetime.strptime(time_raw, "%H:%M:%S")
-                        except ValueError:
-                            # If that fails, it must be HH:MM:SS.mmm (milliseconds), append milliseconds handling
-                            try:
-                                datetime.strptime(time_raw, "%H:%M:%S.%f")
-                            except ValueError as e:
-                                print(f"[DEBUG] Invalid time format: {time_raw} - {e}. Skipping this row.")
-                                continue
-                        print(f"[DEBUG] Parsed TIME: {time_raw}")
-                    except KeyError as e:
-                        print(f"[DEBUG] Missing TIME field: {e}. Skipping this row.")
-                        continue
-
-                    # Prepare data for saving
-                    record_data = {
-                        "equip_name_id": equipment_id,
-                        "date": date,
-                        "time": time_raw,  # Use raw TIME with corrected format
-                        "t_low_alarm": float(row[" LOW_ALARM_LIMIT"]) if row[" LOW_ALARM_LIMIT"] else None,
-                        "set_temp": float(row[" SET_TEMP"]) if row[" SET_TEMP"] else None,
-                        "t_high_alarm": float(row[" HIGH_ALARM_LIMIT"]) if row[" HIGH_ALARM_LIMIT"] else None,
-                        "tmp_1": float(row[" TEMP_1"]) if row[" TEMP_1"] else None,
-                        "tmp_2": float(row[" TEMP_2"]) if row[" TEMP_2"] else None,
-                        "tmp_3": float(row[" TEMP_3"]) if row[" TEMP_3"] else None,
-                        "tmp_4": float(row[" TEMP_4"]) if row[" TEMP_4"] else None,
-                        "tmp_5": float(row["TEMP_5"]) if row["TEMP_5"] else None,
-                        "tmp_6": float(row[" TEMP_6"]) if row[" TEMP_6"] else None,
-                        "tmp_7": float(row.get(" TEMP_7", None)) if row.get(" TEMP_7") else None,
-                        "tmp_8": float(row.get(" TEMP_8", None)) if row.get(" TEMP_8") else None,
-                        "tmp_9": float(row.get(" TEMP_9", None)) if row.get(" TEMP_9") else None,
-                        "tmp_10": float(row.get("TEMP_10", None)) if row.get(" TEMP_10") else None,
-                        "rh_1": float(row.get("RH_1", None)) if row.get("RH_1") else None,
-                        "rh_2": float(row.get("RH_2", None)) if row.get("RH_2") else None,
-                        "rh_3": float(row.get("RH_3", None)) if row.get("RH_3") else None,
-                        "rh_4": float(row.get("RH_4", None)) if row.get("RH_4") else None,
-                        "rh_5": float(row.get("RH_5", None)) if row.get("RH_5") else None,
-                        "rh_6": float(row.get("RH_6", None)) if row.get("RH_6") else None,
-                        "rh_7": float(row.get("RH_7", None)) if row.get("RH_7") else None,
-                        "rh_8": float(row.get("RH_8", None)) if row.get("RH_8") else None,
-                        "rh_9": float(row.get("RH_9", None)) if row.get("RH_9") else None,
-                        "rh_10": float(row.get("RH_10", None)) if row.get("RH_10") else None,
-                    }
-
-                    # Save record to the database
-                    TemperatureHumidityRecord.objects.create(**record_data)
-                    saved_records += 1
-                    print(f"[DEBUG] Record saved: Date={date}, Time={time_raw}")
-
-                except IntegrityError as e:
-                    print(f"[DEBUG] Integrity error saving record: {e}")
-                except Exception as e:
-                    print(f"[DEBUG] Error saving record: {e}")
-
-        return f"Data logs processed successfully. Total records saved: {saved_records}"
-
-    except Exception as e:
-        print(f"[DEBUG] Error processing Data Logs: {e}")
-        return f"Error processing Data Logs: {e}"
-
+                        print(f"[DEBUG] Row data: {row}")
 
                         
-              
+                        try:
+                            date = datetime.strptime(row["DATE"].strip(), "%Y-%m-%d").date()
+                        except ValueError as e:
+                            print(f"[DEBUG] Invalid DATE format: {row['DATE']} - {e}. Skipping this row.")
+                            continue
+                        print(f"[DEBUG] Parsed date: {date}")
 
+                    
+                        try:
+                            time_raw = row[" TIME"].strip()  # Strip leading/trailing spaces
+                            if not time_raw:
+                                print(f"[DEBUG] Missing or empty TIME field for row: {row}. Skipping this row.")
+                                continue
 
+                            if len(time_raw) == 5: 
+                                time_raw = f"{time_raw}:00"  
+                            elif len(time_raw) == 8: 
+                                pass 
+                            elif len(time_raw) > 8:  
+                            
+                                if '.' in time_raw:
+                                    time_raw = time_raw[:7]  
+                                else:
+                                    print(f"[DEBUG] Invalid TIME format with milliseconds: {time_raw}. Skipping this row.")
+                                    continue
+                            else:
+                                print(f"[DEBUG] Invalid TIME format: {time_raw}. Skipping this row.")
+                                continue
 
+                            # Try to parse the time in any valid format
+                            try:
+                                # First, try to parse as HH:MM:SS (seconds)
+                                datetime.strptime(time_raw, "%H:%M:%S")
+                            except ValueError:
+                                # If that fails, it must be HH:MM:SS.mmm (milliseconds), append milliseconds handling
+                                try:
+                                    datetime.strptime(time_raw, "%H:%M:%S.%f")
+                                except ValueError as e:
+                                    print(f"[DEBUG] Invalid time format: {time_raw} - {e}. Skipping this row.")
+                                    continue
+                            print(f"[DEBUG] Parsed TIME: {time_raw}")
+                        except KeyError as e:
+                            print(f"[DEBUG] Missing TIME field: {e}. Skipping this row.")
+                            continue
+                        def safe_float(value):
+                            try:
+                                return float(value.strip()) if value and value.strip() else None
+                            except ValueError:
+                                return None
+                        # Prepare data for saving
+                        record_data = {
+                            "equip_name_id": equipment_id,
+                            "date": date,
+                            "time": time_raw,
+                            "t_low_alarm": safe_float(row.get(" LOW_ALARM_LIMIT")),
+                            "set_temp": safe_float(row.get(" SET_TEMP")),
+                            "t_high_alarm": safe_float(row.get(" HIGH_ALARM_LIMIT")),
+                            "tmp_1": safe_float(row.get(" TEMP_1")),
+                            "tmp_2": safe_float(row.get(" TEMP_2")),
+                            "tmp_3": safe_float(row.get(" TEMP_3")),
+                            "tmp_4": safe_float(row.get(" TEMP_4")),
+                            "tmp_5": safe_float(row.get("TEMP_5")),
+                            "tmp_6": safe_float(row.get(" TEMP_6")),
+                            "tmp_7": safe_float(row.get(" TEMP_7")),
+                            "tmp_8": safe_float(row.get(" TEMP_8")),
+                            "tmp_9": safe_float(row.get(" TEMP_9")),
+                            "tmp_10": safe_float(row.get("TEMP_10")),
+                            "rh_low_alarm": safe_float(row.get(" RH_LOW_ALM_LIMIT")),
+                            "rh_high_alarm": safe_float(row.get(" RH_HIGH_ALM_LIMIT")),
+                            "set_rh": safe_float(row.get(" RH_SET")),
+                            "rh_1": safe_float(row.get(" RH_1")),
+                            "rh_2": safe_float(row.get(" RH_2")),
+                            "rh_3": safe_float(row.get(" RH_3")),
+                            "rh_4": safe_float(row.get(" RH_4")),
+                            "rh_5": safe_float(row.get(" RH_5")),
+                            "rh_6": safe_float(row.get(" RH_6")),
+                            "rh_7": safe_float(row.get(" RH_7")),
+                            "rh_8": safe_float(row.get(" RH_8")),
+                            "rh_9": safe_float(row.get(" RH_9")),
+                            "rh_10": safe_float(row.get(" RH_10")),
+                        }
 
+                        # Save record to the database
+                        TemperatureHumidityRecord.objects.update_or_create(**record_data)
+                        saved_records += 1
+                        print(f"[DEBUG] Record saved: Date={date}, Time={time_raw}")
+
+                    except IntegrityError as e:
+                        print(f"[DEBUG] Integrity error saving record: {e}")
+                    except Exception as e:
+                        print(f"[DEBUG] Error saving record: {e}")
+
+            return f"Data logs processed successfully. Total records saved: {saved_records}"
+
+        except Exception as e:
+            print(f"[DEBUG] Error processing Data Logs: {e}")
+            return f"Error processing Data Logs: {e}"
+
+download_lock = threading.Lock()
 def process_alarm_logs(file_path, equipment_id):
-  
+    with download_lock:
+        equipment = Equipment.objects.get(id=equipment_id)
+        try:
+            with open(file_path, "r") as csv_file:
+                csv_reader = csv.DictReader(csv_file)
+                saved_records = 0
 
-    equipment=Equipment.objects.get(id=equipment_id)
-    try:
-        with open(file_path, "r") as csv_file:
-            csv_reader = csv.DictReader(csv_file)
-            saved_records = 0
-
-            for row in csv_reader:
-                try:
-                    print(f"[DEBUG] Row data: {row}")
-
-                    # Parse date and time
+                for row in csv_reader:
                     try:
-                        date = datetime.strptime(row["DATE"].strip(), "%Y-%m-%d").date()
-                    except ValueError as e:
-                        print(f"[DEBUG] Invalid DATE format: {row['DATE']} - {e}. Skipping this row.")
-                        continue
+                        print(f"[DEBUG] Row data: {row}")
 
-                    try:
-                        time = datetime.strptime(row[" TIME"].strip(), "%H:%M:%S.%f").time()
-                    except ValueError as e:
-                        print(f"[DEBUG] Invalid TIME format: {row['TIME']} - {e}. Skipping this row.")
-                        continue
+                        # Parse date and time
+                        try:
+                            date = datetime.strptime(row["DATE"].strip(), "%Y-%m-%d").date()
+                        except ValueError as e:
+                            print(f"[DEBUG] Invalid DATE format: {row['DATE']} - {e}. Skipping this row.")
+                            continue
 
-                    # Validate and fetch alarm code
-                    try:
-                        alarm_code = Alarm_codes.objects.get(code=row["ALARM_CODE"].strip())
-                    except Alarm_codes.DoesNotExist:
-                        print(f"[DEBUG] Alarm code {row['ALARM_CODE']} not found. Skipping this row.")
-                        continue
+                        try:
+                            time = datetime.strptime(row[" TIME"].strip(), "%H:%M:%S.%f").time()
+                        except ValueError as e:
+                            print(f"[DEBUG] Invalid TIME format: {row[' TIME']} - {e}. Skipping this row.")
+                            continue
 
-                    # Save the alarm log
-                    alarm_logs.objects.create(
-                        equipment=equipment,
-                        alarm_code=alarm_code,
-                        date=date,
-                        time=time,
+                        
+                        try:
+                            alarm_code = Alarm_codes.objects.get(code=row["ALARM_CODE"].strip())
+                        except Alarm_codes.DoesNotExist:
+                            print(f"[DEBUG] Alarm code {row['ALARM_CODE']} not found. Skipping this row.")
+                            continue
+
+                        # Save the alarm log
+                        try:
+                            alarm_log, created = alarm_logs.objects.update_or_create(
+                                equipment=equipment,
+                                alarm_code=alarm_code,
+                                date=date,
+                                time=time,
+                            )
+                            if created:
+                                
+                                saved_records += 1
+                                dept=Department.objects.get(id=equipment.department.id)
+                                email_fields = [
+                                    dept.alert_email_address_1,
+                                    dept.alert_email_address_2,
+                                    dept.alert_email_address_3,
+                                    dept.alert_email_address_4,
+                                    dept.alert_email_address_5,
+                                    dept.alert_email_address_6,
+                                    dept.alert_email_address_7,
+                                    dept.alert_email_address_8,
+                                    dept.alert_email_address_9,
+                                    dept.alert_email_address_10,
+                                ]
+
+                                numbers_list = ['8296061293', '8904411103']
+                                email_list = [email for email in email_fields if email]
+
+                                # Threads for sending alerts
+                                thread_email = threading.Thread(target=send_alert_email, args=(alarm_log.id, email_list))
+                                thread_sms = threading.Thread(target=send_alert_messages, args=(numbers_list, alarm_log.id))
+                                thread_email.start()
+                                thread_sms.start()
+                                thread_email.join()
+                                thread_sms.join()
+                            
+
+                            print(f"[DEBUG] Alarm log saved: Date={date}, Time={time}, Code={row['ALARM_CODE']}")
+
+                        except IntegrityError as e:
+                            print(f"[DEBUG] Integrity error saving alarm record: {e}")
+                        except Exception as e:
+                            print(f"[DEBUG] Error saving alarm record: {e}")
+
+                    except Exception as e:
+                        print(f"[DEBUG] Error processing row: {e}")
+
+            return f"Alarm logs processed successfully. Total records saved: {saved_records}"
+
+        except Exception as e:
+            print(f"[DEBUG] Error processing Alarm Logs: {e}")
+            return f"Error processing Alarm Logs: {e}"
+
+
+
+import serial
+import threading
+import time
+
+def setup_gsm_modem(ser):
+    commands = [
+        b'AT\r',          # Check modem is ready
+        b'AT+CSQ\r',      # Signal quality check
+        b'AT+IPR?\r',     # Query current baud rate
+        b'AT+COPS?\r',    # Query current operator
+        b'AT+CMGF=1\r'    # Set SMS text mode
+    ]
+    for cmd in commands:
+        ser.write(cmd)
+        time.sleep(1)  # Wait for command to be processed
+        response = ser.read_all().decode('utf-8', errors='ignore').strip()
+        
+
+def gsm_message(ser, number, message, lock, alarm_id):
+    alaram = Alarm_logs.objects.get(id=alarm_id)
+    with lock:
+        try:
+            ser.write(f'AT+CMGS="{number}"\r'.encode())
+            ser.flush()
+            time.sleep(1)  # Wait for the '>' prompt
+            prompt = ser.read_until(b'>').decode(errors="ignore").strip()
+            if prompt.endswith('>'):
+                ser.write((message + '\x1A').encode())  # Ctrl+Z to send
+                ser.flush()
+                time.sleep(5)  # Wait for the message to be sent
+                final_response = ser.read_all().decode(errors="ignore").strip()
+                if "+CMGS" in final_response:
+                    
+                    Sms_logs.objects.create(
+                        equipment=alaram.equipment.equip_name,
+                        time=timezone.now().time(),
+                        date=timezone.now().date(),
+                        sys_sms=False,
+                        to_num=int(number),
+                        user_name="Darshan",  
+                        msg_body=message,
+                        status="Sent"
                     )
-                    saved_records += 1
-                    print(f"[DEBUG] Alarm log saved: Date={date}, Time={time}, Code={row['ALARM_CODE']}")
+                else:
+                    
+                    Sms_logs.objects.create(
+                        equipment=alaram.equipment.equip_name,
+                        time=timezone.now().time(),
+                        date=timezone.now().date(),
+                        sys_sms=False,
+                        to_num=int(number),
+                        user_name="",  # Leave username blank
+                        msg_body=message,
+                        status="Failed"
+                    )
+            else:
+                pass
+                
+        except Exception as e:
+            
+            Sms_logs.objects.create(
+                        equipment=alaram.equipment.equip_name,
+                        time=timezone.now().time(),
+                        date=timezone.now().date(),
+                        sys_sms=False,
+                        to_num=int(number),
+                        user_name="",  
+                        msg_body=message,
+                        status="Failed"
+                    )
 
-                except IntegrityError as e:
-                    print(f"[DEBUG] Integrity error saving alarm record: {e}")
-                except Exception as e:
-                    print(f"[DEBUG] Error saving alarm record: {e}")
+def send_alert_messages(numbers_list, alarm_code):
+    print("SMS TRIGGERED")
+    alarm=Alarm_logs.objects.get(id=alarm_code)
+    equipment_id = alarm.equipment.equip_name
+    alarm_code = alarm.alarm_code.code
+    alarm_description = alarm.alarm_code.alarm_log  # Verify this field
+    date_field = alarm.date
+    time_field = alarm.time
+    combined_datetime = datetime.combine(date_field, time_field)
+    formatted_datetime = combined_datetime.strftime('%Y-%m-%d %H:%M:%S')
+    port = "COM3"
+    baud_rate = 9600
+    parity = serial.PARITY_NONE
+    stop_bits = serial.STOPBITS_ONE
+    timeout = 2
 
-        return f"Alarm logs processed successfully. Total records saved: {saved_records}"
+    try:
+        ser = serial.Serial(
+            port=port,
+            baudrate=baud_rate,
+            bytesize=serial.EIGHTBITS,
+            parity=parity,
+            stopbits=stop_bits,
+            timeout=timeout
+        )
+        setup_modem(ser)  
+
+        threads = []
+        lock = threading.Lock()
+        combined_datetime = datetime.combine(alarm.date, alarm.time)
+        alarm_codes = [code for code in range(1001, 1031)]  
+        message = ""
+
+        if alarm_code in alarm_codes:
+            ip_address = alarm.equipment.ip_address
+            plc = connect_to_plc(ip_address)
+            if plc.get_connected():
+                # Assuming the PLC read functions and snap7 utilization are correctly defined elsewhere
+                data = read_plc_data(plc, 19, 8, 4)
+                High_Temp = snap7.util.get_real(data, 0)
+                data = read_plc_data(plc, 19, 4, 4)
+                low_Temp = snap7.util.get_real(data, 0)
+                data = read_plc_data(plc, 19, 0, 4)
+                sv = snap7.util.get_real(data, 0)
+                if alarm_code in [1001, 1021, 1011]:
+                    data = read_plc_data(plc, 4, 4, 4)
+                    pv = snap7.util.get_real(data, 0)
+                    message = f"""PV: {pv:.2f}
+SV:{sv}
+LL:{low_Temp}
+HL:{High_Temp}
+Equipment ID: {equipment_id}
+Alarm Description: {alarm_description}
+Date and Time: {formatted_datetime}"""
+                elif alarm_code in [1002, 1012, 1022]: 
+                    data = read_plc_data(plc, 4, 8, 4)
+                    pv = snap7.util.get_real(data, 0)
+                    message = f"""PV: {pv:.2f}
+SV:{sv}
+LL:{low_Temp}
+HL:{High_Temp}
+Equipment ID: {equipment_id}
+Alarm Description: {alarm_description}
+Date and Time: {formatted_datetime}
+""" 
+                elif alarm_code in [1003, 1013, 1023]:
+                    data = read_plc_data(plc, 4, 12, 4)
+                    pv = snap7.util.get_real(data, 0)
+                    message = f"""PV: {pv:.2f}
+SV:{sv}
+LL:{low_Temp}
+HL:{High_Temp}
+Equipment ID: {equipment_id}
+Alarm Description: {alarm_description}
+Date and Time: {formatted_datetime}
+"""
+                elif alarm_code in [1004, 1014, 1024]:
+                    data = read_plc_data(plc, 4, 16, 4)
+                    pv = snap7.util.get_real(data, 0)
+                    message = f"""PV: {pv:.2f}
+SV:{sv}
+LL:{low_Temp}
+HL:{High_Temp}
+Equipment ID: {equipment_id}
+Alarm Description: {alarm_description}
+Date and Time: {formatted_datetime}
+"""
+                elif alarm_code in [1005, 1015, 1025]:
+                    data = read_plc_data(plc, 4, 20, 4)
+                    pv = snap7.util.get_real(data, 0)
+                    message = f"""PV: {pv:.2f}
+Sv:{sv}
+LL:{low_Temp}
+HL:{High_Temp}
+Equipment ID: {equipment_id}
+Alarm Description: {alarm_description}
+Date and Time: {formatted_datetime}
+"""
+                elif alarm_code in [1006, 1016, 1026]:
+                    data = read_plc_data(plc, 4, 24, 4)
+                    pv = snap7.util.get_real(data, 0)
+                    message = f"""
+                    PV: {pv:.2f}
+Sv:{sv}
+LL:{low_Temp}
+HL:{High_Temp}
+Equipment ID: {equipment_id}
+Alarm Description: {alarm_description}
+Date and Time: {formatted_datetime}
+"""
+
+        else:
+            message = f"""Equipment ID: {equipment_id}
+Alarm Description: {alarm_description}
+Date and Time: {formatted_datetime}"""
+
+        # message_template = f"Equipment ID: {alarm.equipment}\nAlarm Description: {alarm.alarm_code.alarm_log}\nDate and Time: {combined_datetime}"
+
+        for number in numbers_list:
+            thread = threading.Thread(target=gsm_message, args=(ser, number, message, lock, alarm_code))
+            threads.append(thread)
+            thread.start()
+
+        for thread in threads:
+            thread.join()
+
+        ser.close()
 
     except Exception as e:
-        print(f"[DEBUG] Error processing Alarm Logs: {e}")
-        return f"Error processing Alarm Logs: {e}"
+        pass
 
+
+
+def send_alert_email(alarm_id, email_list):
+    try:
+        alarm = Alarm_logs.objects.get(id=alarm_id)
+        email_settings = get_email_settings(request)
+        subject = 'Sun Well Alarm Alerts'
+        equipment_id = alarm.equipment.equip_name
+        alarm_code = alarm.alarm_code.code
+        alarm_description = alarm.alarm_code.alarm_log  # Verify this field
+        date_field = alarm.date
+        time_field = alarm.time
+        combined_datetime = datetime.combine(date_field, time_field)
+        formatted_datetime = combined_datetime.strftime('%Y-%m-%d %H:%M:%S')
+
+        settings.EMAIL_HOST = email_settings['EMAIL_HOST']
+        settings.EMAIL_HOST_USER = email_settings['EMAIL_HOST_USER']
+        settings.EMAIL_HOST_PASSWORD = email_settings['EMAIL_HOST_PASSWORD']
+        settings.EMAIL_PORT = email_settings['EMAIL_PORT']
+
+        alarm_codes = [code for code in range(1001, 1031)]  
+        message = ""
+
+        if alarm_code in alarm_codes:
+            ip_address = alarm.equipment.ip_address
+            plc = connect_to_plc(ip_address)
+            if plc.get_connected():
+                # Assuming the PLC read functions and snap7 utilization are correctly defined elsewhere
+                data = read_plc_data(plc, 19, 8, 4)
+                High_Temp = snap7.util.get_real(data, 0)
+                data = read_plc_data(plc, 19, 4, 4)
+                low_Temp = snap7.util.get_real(data, 0)
+                data = read_plc_data(plc, 19, 0, 4)
+                sv = snap7.util.get_real(data, 0)
+                if alarm_code in [1001, 1021, 1011]:
+                    data = read_plc_data(plc, 4, 4, 4)
+                    pv = snap7.util.get_real(data, 0)
+                    message = f"""PV:{pv}
+SV:{sv}
+LL:{low_Temp}
+HL:{High_Temp}
+Equipment ID: {equipment_id}
+Alarm Description: {alarm_description}
+Date and Time: {formatted_datetime}"""
+                elif alarm_code in [1002, 1012, 1022]: 
+                    data = read_plc_data(plc, 4, 8, 4)
+                    pv = snap7.util.get_real(data, 0)
+                    message = f"""Equipment ID: {equipment_id}
+Alarm Description: {alarm_description}
+Date and Time: {formatted_datetime}
+PV:{pv}
+SV:{sv}
+LL:{low_Temp}
+HL:{High_Temp}""" 
+                elif alarm_code in [1003, 1013, 1023]:
+                    data = read_plc_data(plc, 4, 12, 4)
+                    pv = snap7.util.get_real(data, 0)
+                    message = f"""Equipment ID: {equipment_id}
+Alarm Description: {alarm_description}
+Date and Time: {formatted_datetime}
+PV:{pv}
+SV:{sv}
+LL:{low_Temp}
+HL:{High_Temp}"""
+                elif alarm_code in [1004, 1014, 1024]:
+                    data = read_plc_data(plc, 4, 16, 4)
+                    pv = snap7.util.get_real(data, 0)
+                    message = f"""Equipment ID: {equipment_id}
+Alarm Description: {alarm_description}
+Date and Time: {formatted_datetime}
+PV:{pv}
+SV:{sv}
+LL:{low_Temp}
+HL:{High_Temp}"""
+                elif alarm_code in [1005, 1015, 1025]:
+                    data = read_plc_data(plc, 4, 20, 4)
+                    pv = snap7.util.get_real(data, 0)
+                    message = f"""Equipment ID: {equipment_id}
+Alarm Description: {alarm_description}
+Date and Time: {formatted_datetime}
+PV:{pv}
+Sv:{sv}
+LL:{low_Temp}
+HL:{High_Temp}"""
+                elif alarm_code in [1006, 1016, 1026]:
+                    data = read_plc_data(plc, 4, 24, 4)
+                    pv = snap7.util.get_real(data, 0)
+                    message = f"""
+Equipment ID: {equipment_id}
+Alarm Description: {alarm_description}
+Date and Time: {formatted_datetime}
+PV:{pv}
+Sv:{sv}
+LL:{low_Temp}
+HL:{High_Temp}"""
+
+        else:
+            message = f"""Equipment ID: {equipment_id}
+Alarm Description: {alarm_description}
+Date and Time: {formatted_datetime}"""
+
+        
+        
+        try:
+            start_time = time.time()
+            send_mail(
+                subject=subject,
+                message=message,
+                from_email=email_settings['EMAIL_HOST_USER'],
+                recipient_list=email_list,  # Sending to all recipients at once
+                fail_silently=False,
+            )
+            end_time = time.time()
+            duration = end_time - start_time
+
+            # Log success for each recipient
+            for recipient in email_list:
+                Email_logs.objects.create(
+                    equipment=alarm.equipment,
+                    sys_mail=False,
+                    to_email=recipient,
+                    email_sub=subject,
+                    email_body=message,
+                    status="Success"
+                )
+
+            
+            
+
+        except Exception as e:
+            # Log failure for each recipient
+            for recipient in email_list:
+                Email_logs.objects.create(
+                    equipment=alarm.equipment,
+                    sys_mail=False,
+                    to_email=recipient,
+                    email_sub=subject,
+                    email_body=message,
+                    status=f"Failed"
+                )
+            
+
+        
+    except Exception as e:
+        pass
 
 import atexit
 
 def stop_background_thread():
     stop_event.set()
-    print("[INFO] Background thread stopped gracefully.")
+    
 
 atexit.register(stop_background_thread)
 
-
-
-
-def process_alarm_logs1(file_path, equipment_id):
-   
-
-    try:
-        with open(file_path, "r") as csv_file:
-            csv_reader = csv.DictReader(csv_file)
-            saved_records = 0
-
-            for row in csv_reader:
-                try:
-                    print(f"[DEBUG] Row data: {row}")
-
-                    # Parse date and time
-                    try:
-                        date = datetime.strptime(row["DATE"].strip(), "%d-%m-%Y").date()
-                    except ValueError as e:
-                        print(f"[DEBUG] Invalid DATE format: {row['DATE']} - {e}. Skipping this row.")
-                        continue
-
-                    try:
-                        time = datetime.strptime(row["TIME"].strip(), "%H:%M:%S.%f").time()
-                    except ValueError:
-                        print(f"[DEBUG] Invalid TIME format: {row['TIME']}. Skipping this row.")
-                        continue
-
-                    # Validate and fetch alarm code
-                    try:
-                        alarm_code = Alarm_codes.objects.get(code=row["ALARM_CODE"])
-                    except Alarm_codes.DoesNotExist:
-                        print(f"[DEBUG] Alarm code {row['ALARM_CODE']} not found. Skipping this row.")
-                        continue
-
-                    # Save the alarm log
-                    alarm_logs.objects.create(
-                        equipment=equipment,
-                        alarm_code=alarm_code,
-                        date=date,
-                        time=time,
-                    )
-                    saved_records += 1
-                    print(f"[DEBUG] Alarm log saved: Date={date}, Time={time}, Code={row['ALARM_CODE']}")
-
-                except IntegrityError as e:
-                    print(f"[DEBUG] Integrity error saving alarm record: {e}")
-                except Exception as e:
-                    print(f"[DEBUG] Error saving alarm record: {e}")
-
-        return f"Alarm logs processed successfully. Total records saved: {saved_records}"
-
-    except Exception as e:
-        print(f"[DEBUG] Error processing Alarm Logs: {e}")
-        return f"Error processing Alarm Logs: {e}"
 
 
 from snap7.util import set_bool
@@ -2778,20 +3398,25 @@ def clear_csv_logs(ip_address, log_type):
         snap7.util.set_bool(data, 0, bit_index, True) 
         plc.write_area(MK_AREA, 0, byte_index, data)
 
-        print(f"[DEBUG] {log_type.capitalize()} logs cleared successfully.")
+        
         return f"{log_type.capitalize()} logs cleared successfully."
     except AttributeError as attr_err:
-        print(f"[ERROR] Attribute error during {log_type} log clearing: {attr_err}")
+        
         return f"Attribute error: {attr_err}"
     except Exception as e:
-        print(f"[ERROR] Error clearing {log_type} logs: {e}")
+        
         return f"Error clearing {log_type} logs: {e}"
     finally:
         if plc.get_connected():
             plc.disconnect()
 
+def read_plc_data(plc, db_number, start_address, size):
+    return plc.db_read(db_number, start_address, size)
+
 def equipment_configure_view(request):
     emp_user = request.session.get('username', None)
+    if not emp_user:
+        return redirect('login')
     try:
         data = User.objects.get(username=emp_user)
     except:
@@ -2806,6 +3431,8 @@ def equipment_configure_view(request):
         equipment_type = request.POST.get('equiptype')
         door_access_type = request.POST.get('dooracctype')
         department=request.POST.get('hiddenFieldName')
+        sensor= request.POST.get('sensor')
+        print(sensor)
         dept=Department.objects.get(department_name=department)
         equipment = Equipment(
             equip_name=equip_name,
@@ -2814,10 +3441,15 @@ def equipment_configure_view(request):
             interval=interval,
             department=dept,
             equipment_type=equipment_type,
-            door_access_type=door_access_type
+            door_access_type=door_access_type,
+            total_temp_sensors = sensor
+
         )
         equipment.save()
-        print("Interval", interval)
+        if "Humidity" in equipment_type:
+            equipment.total_humidity_sensors = sensor
+        else:
+            equipment.total_humidity_sensors = 0
         # Handle PLC users if PLC is selected
         if door_access_type == 'plc':
             for i in range(1, 16):
@@ -2852,11 +3484,26 @@ def equipment_configure_view(request):
         )
 
         try:
-            print(f"Attempting to connect to PLC at {ip_address}...")  # Debugging connection
+            
             plc = connect_to_plc(ip_address)
             if plc.get_connected():
-                print(f"PLC connected successfully at {ip_address}.")  # Debugging connection status
-                print(f"Calling write_interval_to_plc with interval {interval}...")
+                data = read_plc_data(plc, 19, 8, 4)
+                High_Temp = snap7.util.get_real(data, 0)
+                data1 = read_plc_data(plc, 19, 4, 4)
+                low_Temp = snap7.util.get_real(data1, 0)
+                data2 = read_plc_data(plc, 19, 0, 4)
+                sv = snap7.util.get_real(data2, 0)
+                data3 = read_plc_data(plc, 19, 64, 3)
+                cooling = snap7.util.get_bool(data3, 0, 0)
+                
+
+                # Setting values
+                equipment.set_value = sv
+                equipment.low_alarm = low_Temp
+                equipment.high_alarm = High_Temp
+                equipment.cooling = cooling
+                equipment.save()
+               
                 write_interval_to_plc(plc, interval)  # This should call the function now
                 messages.success(request, f"Interval {interval} updated on PLC and saved!")
                 success, message = download_process_logs(ip_address, equipment.id)
@@ -2869,30 +3516,48 @@ def equipment_configure_view(request):
                 
 
             else:
-                print(f"Failed to connect to PLC at {ip_address}.")  # Debugging connection failure
+                
                 messages.error(request, 'Failed to connect to PLC.')
 
         except Exception as e:
-            print(f"Error during PLC connection or interval update: {str(e)}")  # Debugging any connection-related errors
+            
             messages.error(request, f"Error during PLC connection: {str(e)}")
 
         messages.success(request, 'Equipment saved successfully!')
         return redirect('equipment_configure')
+    
+    status_filter = request.GET.get("status", "Active")
+    status_filter = str(status_filter).lower()
+    department_filter = request.GET.get('department', 'all')
 
+    
+    # Convert "all" to "All Status" for display
+    if status_filter == "all":
+        status_filter = "All Status"
+
+    # Filter users based on status and department
     equipment_list = Equipment.objects.all()
-    return render(request, 'Equip_Settings/equip_config.html', {
-        'equipment_list': equipment_list,
+    if status_filter != "All Status":
+        equipment_list = equipment_list.filter(status=status_filter)
+
+    if department_filter != "all":
+        equipment_list = equipment_list.filter(department_id=department_filter)
+    
+    context = {
+        "equipment_list": equipment_list,
+        "status_filter": status_filter,  # Pass the selected filter
         'organization': organization,
         'data': data
-    })
-
+    }
+    return render(request, 'Equip_Settings/equip_config.html', context)
+    
 def equipment_edit(request, equipment_id):
     equipment = get_object_or_404(Equipment, id=equipment_id)
     plc_users = PLCUser.objects.filter(equipment=equipment)
     biometric_users = BiometricUser.objects.filter(equipment=equipment)
 
     if request.method == 'POST':
-        print( request.POST.get('edit_connection_status'))
+        
         # Update equipment details from the form
         equipment.equip_name = request.POST.get('edit_equipname')
         equipment.ip_address = request.POST.get('edit_ipaddress')
@@ -2900,42 +3565,36 @@ def equipment_edit(request, equipment_id):
         equipment.equipment_type = request.POST.get('edit_equiptype')
         equipment.status = request.POST.get('edit_equipStatus')
         equipment.door_access_type = request.POST.get('edit_doorAccessType')
-
+    
         equipment.save()
         try:
         # Attempt to connect to the PLC
             
             plc = connect_to_plc(equipment.ip_address)  # Assuming `connect_to_plc` takes the IP address directly
             if plc.get_connected():
-                print(f"PLC connected successfully at {equipment.ip_address}.")  # Debugging connection status
+                
 
                 # Write interval to PLC
-                print(f"Calling write_interval_to_plc with interval {equipment.interval}...")
+                
                 write_interval_to_plc(plc, equipment.interval)  # Call to the function to write the interval
                 messages.success(request, f"Interval {equipment.interval} updated on PLC and saved!")
 
             else:
-                print(f"Failed to connect to PLC at {equipment.ip_address}.")
+                
                 messages.error(request, f"Could not connect to PLC at {equipment.ip_address}. Please try again.")
 
         except Exception as e:
         # Catch any unexpected errors and show an error message
-            print(f"Error: {e}")
+            
             messages.error(request, f"An error occurred while updating the PLC interval: {e}")
-        # Stop any existing background task for the equipment before starting a new one
-        stop_event = stop_flags.get(equipment.id)
-        if stop_event:
-            print(f"[DEBUG] Stopping the existing background task for {equipment.equip_name}")
-            stop_event.set()  # Stop the existing background task
-
-            # Give some time to ensure the thread stops completely
-            time.sleep(2)
+       
 
         try:
             plc = connect_to_plc(equipment.ip_address)
             if plc.get_connected():
+                
                 # Start a new background task for the edited equipment
-                print(f"[DEBUG] Starting new background task for edited equipment {equipment.equip_name}")
+                
                 stop_event = threading.Event()  # Create a new stop event
                 stop_flags[equipment.id] = stop_event  # Track stop event by equipment ID
                 thread = threading.Thread(target=background_task, args=(equipment, plc, equipment.ip_address, equipment.interval, stop_event))
@@ -2951,9 +3610,12 @@ def equipment_edit(request, equipment_id):
         return redirect('equipment_configure')
 
 
+
 def equipment_setting(request, id):
 
     emp_user = request.session.get('username', None)
+    if not emp_user:
+        return redirect('login')
     try:
         data = User.objects.get(username = emp_user)
     except:
@@ -2967,7 +3629,8 @@ def equipment_setting(request, id):
         acc_db = None
     equipment=Equipment.objects.get(id=id)
     logs=Alarm_codes.objects.all()
-    return render(request, 'Equip_Settings/equip_settings.html', {'organization': organization, 'data':data, 'acc_db':acc_db, 'equipment':equipment, 'logs':logs})
+    equipmentwrite=Equipmentwrite.objects.filter(equipment=id)
+    return render(request, 'Equip_Settings/equip_settings.html', {'organization': organization, 'data':data, 'acc_db':acc_db, 'equipment':equipment, 'logs':logs, 'equipmentwrite':equipmentwrite})
 
 
 # DATA Analysis
@@ -2975,6 +3638,8 @@ def equipment_setting(request, id):
 
 def view_log(request):
     emp_user = request.session.get('username', None)
+    if not emp_user:
+        return redirect('login')
     try:
         data = User.objects.get(username=emp_user)
     except:
@@ -2989,6 +3654,7 @@ def view_log(request):
     equipment_list = Equipment.objects.all()
 
     # Get filter parameters from the request
+    current_date = now()
     selected_equipment = request.GET.get('equipment')
     from_date = request.GET.get('from-date')
     to_date = request.GET.get('to-date')
@@ -3002,18 +3668,37 @@ def view_log(request):
         filter_kwargs &= Q(equip_name__equip_name=selected_equipment)
 
     # Handle missing dates - default to the 1st of the current month and today's date
-    current_date = now().date()
-    if not from_date:
-        from_date = current_date.replace(day=1).strftime('%Y-%m-%d')  # 1st of the current month
-    if not to_date:
-        to_date = current_date.strftime('%Y-%m-%d')  # Today's date
+    # current_date = now().date()
+    # if not from_date:
+    #     from_date = current_date.replace(day=1).strftime('%Y-%m-%d')  # 1st of the current month
+    # if not to_date:
+    #     to_date = current_date.strftime('%Y-%m-%d')  # Today's date
 
-    # Parse the from_date and to_date
-    from_date_parsed = datetime.strptime(from_date, '%Y-%m-%d').date()
-    to_date_parsed = datetime.strptime(to_date, '%Y-%m-%d').date()
+    # # Parse the from_date and to_date
+    # from_date_parsed = datetime.strptime(from_date, '%Y-%m-%d').date()
+    # to_date_parsed = datetime.strptime(to_date, '%Y-%m-%d').date()
 
-    from_time_parsed = datetime.strptime(from_time, '%H:%M').time()
-    to_time_parsed = datetime.strptime(to_time, '%H:%M').time()
+    # from_time_parsed = datetime.strptime(from_time, '%H:%M').time()
+    # to_time_parsed = datetime.strptime(to_time, '%H:%M').time()
+
+    # if from_date_parsed == to_date_parsed:
+    #     filter_kwargs &= (
+    #         Q(date=from_date_parsed) &
+    #         Q(time__gte=from_time_parsed) &
+    #         Q(time__lte=to_time_parsed)
+    #     )
+    # else:
+    #     filter_kwargs &= (
+    #         (Q(date=from_date_parsed) & Q(time__gte=from_time_parsed)) |  # from_time on from_date
+    #         (Q(date=to_date_parsed) & Q(time__lte=to_time_parsed)) |      # to_time on to_date
+    #         Q(date__gt=from_date_parsed, date__lt=to_date_parsed)         # all dates in between
+    #     )
+
+    from_date_parsed = parse_date(from_date) if from_date else current_date.replace(day=1).date()
+    to_date_parsed = parse_date(to_date) if to_date else current_date.date()
+    from_time_parsed = parse_time(from_time) if from_time else datetime_time(0, 0, 0)
+    to_time_parsed = parse_time(to_time) if to_time else datetime_time(23, 59, 59)
+
 
     if from_date_parsed == to_date_parsed:
         filter_kwargs &= (
@@ -3023,9 +3708,9 @@ def view_log(request):
         )
     else:
         filter_kwargs &= (
-            (Q(date=from_date_parsed) & Q(time__gte=from_time_parsed)) |  # from_time on from_date
-            (Q(date=to_date_parsed) & Q(time__lte=to_time_parsed)) |      # to_time on to_date
-            Q(date__gt=from_date_parsed, date__lt=to_date_parsed)         # all dates in between
+            (Q(date=from_date_parsed) & Q(time__gte=from_time_parsed)) |
+            (Q(date=to_date_parsed) & Q(time__lte=to_time_parsed)) |
+            Q(date__gt=from_date_parsed, date__lt=to_date_parsed)
         )
 
     # Fetch the filtered temperature and humidity records
@@ -3039,8 +3724,11 @@ def view_log(request):
         temperature_channels = ['tmp_1', 'tmp_2', 'tmp_3', 'tmp_4', 'tmp_5', 'tmp_6', 'tmp_7', 'tmp_8', 'tmp_9', 'tmp_10']
         humidity_channels = ['rh_1', 'rh_2', 'rh_3', 'rh_4', 'rh_5', 'rh_6', 'rh_7', 'rh_8', 'rh_9', 'rh_10']
 
-        active_temperature_channels = [channel for channel in temperature_channels if any(getattr(record, channel) is not None for record in equipment_records)]
-        active_humidity_channels = [channel for channel in humidity_channels if any(getattr(record, channel) is not None for record in equipment_records)]
+        equipment=Equipment.objects.get(equip_name=selected_equipment)
+        total_temp_sensors = int(equipment.total_temp_sensors) if equipment.total_temp_sensors else 0
+        total_humidity_sensors = int(equipment.total_humidity_sensors) if equipment.total_humidity_sensors else 0
+        active_temperature_channels = temperature_channels[:total_temp_sensors]
+        active_humidity_channels = humidity_channels[:total_humidity_sensors]
 
         # Check if both temperature and humidity columns exceed 5
         if len(active_temperature_channels) > 5 and len(active_humidity_channels) > 5:
@@ -3103,6 +3791,28 @@ def generate_log_pdf(request, records, from_date, to_date, from_time, to_time, o
         records_from_time = from_time if from_time else "00:00"
         records_to_date = to_date
         records_to_time = to_time if to_time else "23:59"
+
+    class NumberedCanvas(canvas.Canvas):
+        def __init__(self, *args, **kwargs):
+            super().__init__(*args, **kwargs)
+            self.pages = []
+
+        def showPage(self):
+            self.pages.append(dict(self.__dict__))
+            self._startPage()
+
+        def save(self):
+            total_pages = len(self.pages)
+            for i, page in enumerate(self.pages):
+                self.__dict__.update(page)
+                self.draw_page_number(i + 1, total_pages)
+                super().showPage()
+            super().save()
+
+        def draw_page_number(self, page_number, total_pages):
+            self.setFont("Helvetica", 10)
+            page_text = f"Page {page_number} of {total_pages}"
+            self.drawRightString(570, 35, page_text)
         
     def create_page(canvas, doc):
 
@@ -3113,14 +3823,17 @@ def generate_log_pdf(request, records, from_date, to_date, from_time, to_time, o
         # Set the title and logo
         canvas.setFont("Helvetica-Bold", 14)
         canvas.setFillColor(colors.blue)
-        canvas.drawCentredString(300, 800, organization.name)
+        org_name = organization.name if organization and organization.name else " "
+        canvas.drawString(30, 800, org_name)
         
         canvas.setFillColor(colors.black)
         canvas.setFont("Helvetica", 12)
-        canvas.drawCentredString(300, 780, department.header_note)
+        department_name=department.header_note if department else " "
+        canvas.drawString(30, 780, department_name)
 
-        logo_path = organization.logo.path
-        canvas.drawImage(logo_path, 470, 780, width=80, height=30)
+        logo_path = organization.logo.path if organization else " "
+        if logo_path.strip():  # Check if the path is not empty or just whitespace
+            canvas.drawImage(logo_path, 470, 780, width=80, height=30)
 
         # Draw the separator line under the header
         canvas.setLineWidth(0.5)
@@ -3154,7 +3867,7 @@ def generate_log_pdf(request, records, from_date, to_date, from_time, to_time, o
         footer_left_bottom = "ESTDAS v1.0"
         footer_center = f"Printed By - {username} on {current_time}"
         footer_right_top = department.footer_note
-        footer_right_bottom = f"Page {page_num} of {total_pages}"
+        # footer_right_bottom = f"Page {page_num} of {total_pages}"
         
         # Draw footer at the bottom of the page
         canvas.setFont("Helvetica", 10)
@@ -3162,7 +3875,7 @@ def generate_log_pdf(request, records, from_date, to_date, from_time, to_time, o
         canvas.drawString(30, 35, footer_left_bottom)
         canvas.drawCentredString(300, 40, footer_center)
         canvas.drawRightString(570, 45, footer_right_top)
-        canvas.drawRightString(570, 35, footer_right_bottom)  
+        # canvas.drawRightString(570, 35, footer_right_bottom)  
         
     def add_alarm_tables():
         equipment = TemperatureHumidityRecord.objects.filter(equip_name__equip_name=selected_equipment).first()
@@ -3225,6 +3938,10 @@ def generate_log_pdf(request, records, from_date, to_date, from_time, to_time, o
 
         base_col_widths = [130, 80, 80, 80, 80]
 
+        if not alarm_data:
+        
+            alarm_data.append(['Parameter', 'Low Alarm',  'High Alarm'])
+            
         if len(alarm_data[0]) == 3:
             col_widths = [150, 150, 150]
         else:
@@ -3250,10 +3967,14 @@ def generate_log_pdf(request, records, from_date, to_date, from_time, to_time, o
 
 
 
-    def add_temperature_table():
+    def add_temperature_table(selected_equipment):
         # Initialize lists for temperature and humidity data
-        temperature_channels = ['tmp_1', 'tmp_2', 'tmp_3', 'tmp_4', 'tmp_5', 'tmp_6', 'tmp_7', 'tmp_8', 'tmp_9', 'tmp_10']
-        humidity_channels = ['rh_1', 'rh_2', 'rh_3', 'rh_4', 'rh_5', 'rh_6', 'rh_7', 'rh_8', 'rh_9', 'rh_10']
+        selected_equipment=Equipment.objects.get(equip_name=selected_equipment)
+        total_temp_sensors = int(selected_equipment.total_temp_sensors) if selected_equipment.total_temp_sensors else 0
+        total_humidity_sensors = int(selected_equipment.total_humidity_sensors) if selected_equipment.total_humidity_sensors else 0
+       
+        temperature_channels = [f'tmp_{i+1}' for i in range(total_temp_sensors)]
+        humidity_channels = [f'rh_{i+1}' for i in range(total_humidity_sensors)]
         
         temp_data = [['Temperature (°C)', 'Minimum', 'Maximum', 'Average']]
         humidity_data = [['Humidity (% RH)', 'Minimum', 'Maximum', 'Average']]
@@ -3310,27 +4031,38 @@ def generate_log_pdf(request, records, from_date, to_date, from_time, to_time, o
     from reportlab.lib import colors
     from reportlab.platypus import Paragraph
     from reportlab.lib.styles import ParagraphStyle
-
-    def add_main_table():
+    from reportlab.lib.enums import TA_RIGHT
+    def add_main_table(selected_equipment):
         # Define styles for normal and bold text
-        normal_style = ParagraphStyle('Normal', fontName='Helvetica', fontSize=10)
-        bold_style = ParagraphStyle('Bold', fontName='Helvetica-Bold', fontSize=10)
-
+        normal_style = ParagraphStyle('Normal', fontName='Helvetica', fontSize=9, alignment=TA_RIGHT)
+        bold_style = ParagraphStyle('Bold', fontName='Helvetica-Bold', fontSize=9, alignment=TA_RIGHT)
+        equipment = Equipment.objects.get(equip_name=selected_equipment)
         temperature_channels = ['tmp_1', 'tmp_2', 'tmp_3', 'tmp_4', 'tmp_5', 'tmp_6', 'tmp_7', 'tmp_8', 'tmp_9', 'tmp_10']
         humidity_channels = ['rh_1', 'rh_2', 'rh_3', 'rh_4', 'rh_5', 'rh_6', 'rh_7', 'rh_8', 'rh_9', 'rh_10']
 
-        active_humidity_channels = [channel for channel in humidity_channels if any(getattr(record, channel) is not None for record in records)]
-        active_humidity_channels = active_humidity_channels[:5] if active_humidity_channels else []
-        active_temperature_channels = temperature_channels[:5] if active_humidity_channels else temperature_channels[:10]
+        total_temp_sensors = int(equipment.total_temp_sensors) if equipment.total_temp_sensors else 0
+        total_humidity_sensors = int(equipment.total_humidity_sensors) if equipment.total_humidity_sensors else 0
+        
 
-        temperature_header = ['T' + str(i+1) for i in range(len(active_temperature_channels))]
-        humidity_header = ['RH' + str(i+1) for i in range(5)] if active_humidity_channels else []
+        active_temperature_channels = temperature_channels[:total_temp_sensors]
+        active_humidity_channels = humidity_channels[:total_humidity_sensors]
+        
+       
+        if total_humidity_sensors== 0 or total_temp_sensors==0:
+            print(12)
+            temperature_header = ['T' + str(i+1) for i in range(10)] if active_temperature_channels else ['T' + str(i+1) for i in range(10)]
+        else:
+            temperature_header = ['T' + str(i+1) for i in range(5)] if active_temperature_channels else []
+        if total_humidity_sensors > 0:
+            humidity_header = ['RH' + str(i+1) for i in range(5)] if active_humidity_channels else []
+        else:
+            humidity_header = []
 
         if active_humidity_channels:
             data = [
                 [' ', 'Date', 'Time', 'Set'] + ['-----Temperature(°C)-----'] + [''] * (len(temperature_header) - 1) +
                 ['Set'] + ['-----Humidity(%RH)-----'] + [''] * (len(humidity_header) - 1),
-                ['Rec No', 'DD-MM-YYYY', 'HH:MM', 'TEMP'] + temperature_header + ['Rh'] + humidity_header
+                ['Rec No', 'DD-MM-YYYY', 'HH:MM', 'TEMP'] + temperature_header + ['RH'] + humidity_header
             ]
         else:
             data = [
@@ -3368,6 +4100,7 @@ def generate_log_pdf(request, records, from_date, to_date, from_time, to_time, o
                 else:
                     temp_values.append('')
 
+            temp_values += [' '] * (5 - len(temp_values))
             humidity_values = []
             for channel in active_humidity_channels:
                 value = getattr(record, channel, None)
@@ -3383,16 +4116,26 @@ def generate_log_pdf(request, records, from_date, to_date, from_time, to_time, o
                 else:
                     humidity_values.append('')
 
-            row = [
-                str(idx),
-                record.date.strftime('%d-%m-%Y'),
-                record.time.strftime('%H:%M'),
-                Paragraph(f"{record.set_temp:.1f}", normal_style) if record.set_temp is not None else ''
-            ] + temp_values + [
-                Paragraph(f"{record.set_rh:.1f}", normal_style) if record.set_rh is not None else ''
-            ] + humidity_values
+            if total_humidity_sensors>0:
+                row = [
+                    str(idx),
+                    record.date.strftime('%d-%m-%Y'),
+                    record.time.strftime('%H:%M'),
+                    Paragraph(f"{record.set_temp:.1f}", normal_style) if record.set_temp is not None else ''
+                ] + temp_values + [
+                    Paragraph(f"{record.set_rh:.1f}", normal_style) if record.set_rh is not None else ''
+                ] + humidity_values
 
-            data.append(row)
+                data.append(row)
+            else:
+                row = [
+                    str(idx),
+                    record.date.strftime('%d-%m-%Y'),
+                    record.time.strftime('%H:%M'),
+                    Paragraph(f"{record.set_temp:.1f}", normal_style) if record.set_temp is not None else ''
+                ] + temp_values
+            
+                data.append(row)
 
         main_table_style = TableStyle([
             ('SPAN', (4, 0), (3 + len(temperature_header), 0)),
@@ -3400,7 +4143,8 @@ def generate_log_pdf(request, records, from_date, to_date, from_time, to_time, o
             ('TEXTCOLOR', (0, 0), (-1, 1), colors.black),
             ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
             ('FONTNAME', (0, 0), (-1, 1), 'Helvetica-Bold'),
-            ('FONTSIZE', (0, 0), (-1, 1), 10),
+            ('FONTSIZE', (0, 0), (-1, 1), 9),
+            ('FONTSIZE', (0, 1), (3, -1), 9),
             ('BOTTOMPADDING', (0, 0), (-1, 1), 12),
             ('TOPPADDING', (0, 0), (-1, 0), 12),
         ])
@@ -3409,7 +4153,8 @@ def generate_log_pdf(request, records, from_date, to_date, from_time, to_time, o
             main_table_style.add('SPAN', (4 + len(temperature_header) + 1, 0), (3 + len(temperature_header) + len(humidity_header) + 1, 0))
 
         # return current_row
-        colWidths = [40, 70, 44, 42] + [32] * len(temperature_header) + ([32] + [32] * len(humidity_header) if active_humidity_channels else [])
+        colWidths = [35, 60, 40, 35] + [35] * len(temperature_header) + ([35] + [35] * len(humidity_header) if active_humidity_channels else [])
+        # colWidths = [40, 70, 44, 42] + [32] * len(temperature_header) + ([32] + [32] * len(humidity_header) if active_humidity_channels else [])
         main_table = Table(data, colWidths=colWidths, repeatRows=2)
         main_table.setStyle(main_table_style)
 
@@ -3420,14 +4165,13 @@ def generate_log_pdf(request, records, from_date, to_date, from_time, to_time, o
         Spacer(1, 0.2 * inch),
         add_alarm_tables(),
         Spacer(1, 0.2 * inch),
-        *add_temperature_table(),
+        *add_temperature_table(selected_equipment),
         PageBreak(),
-        add_main_table(),
+        add_main_table(selected_equipment),
     ]
 
-    doc.build(content, onFirstPage=create_page, onLaterPages=create_page)
+    doc.build(content, onFirstPage=create_page, onLaterPages=create_page, canvasmaker=NumberedCanvas)
     return response
-
 
 def generate_log_pdf_landscape(request, records, from_date, to_date, from_time, to_time, organization, department, username, selected_equipment):
     response = HttpResponse(content_type='application/pdf')
@@ -3450,7 +4194,27 @@ def generate_log_pdf_landscape(request, records, from_date, to_date, from_time, 
         records_to_date = to_date
         records_to_time = to_time if to_time else "23:59"
 
-    # c = canvas.Canvas(response, pagesize=landscape(A4))
+    class NumberedCanvas(canvas.Canvas):
+        def __init__(self, *args, **kwargs):
+            super().__init__(*args, **kwargs)
+            self.pages = []
+
+        def showPage(self):
+            self.pages.append(dict(self.__dict__))
+            self._startPage()
+
+        def save(self):
+            total_pages = len(self.pages)
+            for i, page in enumerate(self.pages):
+                self.__dict__.update(page)
+                self.draw_page_number(i + 1, total_pages)
+                super().showPage()
+            super().save()
+
+        def draw_page_number(self, page_number, total_pages):
+            self.setFont("Helvetica", 10)
+            page_text = f"Page {page_number} of {total_pages}"
+            self.drawRightString(800, 35, page_text)
 
     def create_page(canvas, doc):
 
@@ -3461,14 +4225,17 @@ def generate_log_pdf_landscape(request, records, from_date, to_date, from_time, 
         # Set the title and logo
         canvas.setFont("Helvetica-Bold", 14)
         canvas.setFillColor(colors.blue)
-        canvas.drawString(350, 570, organization.name)
+        org_name=organization.name if organization else " "
+        canvas.drawString(30, 570, org_name)
 
         canvas.setFillColor(colors.black)
         canvas.setFont("Helvetica", 12)
-        canvas.drawString(370, 550, department.header_note)
+        department_name=department.header_note if department else " "
+        canvas.drawString(30, 550, department_name)
         
-        logo_path = organization.logo.path
-        canvas.drawImage(logo_path, 730, 550, width=80, height=30)
+        logo_path = organization.logo.path if organization and organization.logo else " "
+        if logo_path.strip():  
+            canvas.drawImage(logo_path, 730, 550, width=80, height=30)
 
         # Draw the separator line under the header
         canvas.setLineWidth(0.5)
@@ -3502,7 +4269,7 @@ def generate_log_pdf_landscape(request, records, from_date, to_date, from_time, 
         footer_text_left_bottom = "ESTDAS v1.0"
         footer_text_center = f"Printed By - {username} on {datetime.now().strftime('%d-%m-%Y %H:%M')}"  # Centered dynamic text
         footer_text_right_top = department.footer_note
-        footer_text_right = f"Page {page_num}"
+        # footer_text_right = f"Page {page_num}"
         
         # Draw footer at the bottom of the page
         canvas.setFont("Helvetica", 10)
@@ -3510,7 +4277,7 @@ def generate_log_pdf_landscape(request, records, from_date, to_date, from_time, 
         canvas.drawString(30, 35, footer_text_left_bottom)  # Draw "ESTDAS v1.0" below "Sunwell"
         canvas.drawCentredString(420, 40, footer_text_center)  # Centered
         canvas.drawRightString(800, 45, footer_text_right_top)
-        canvas.drawRightString(800, 35, footer_text_right)  # Right side (page number)
+        # canvas.drawRightString(800, 35, footer_text_right)  # Right side (page number)
 
     def add_alarm_tables():
         equipment = TemperatureHumidityRecord.objects.filter(equip_name__equip_name=selected_equipment).first()
@@ -3518,8 +4285,6 @@ def generate_log_pdf_landscape(request, records, from_date, to_date, from_time, 
         # Data for Temperature and Humidity Alarms
         alarm_data = []
         
-        # Flag to check if headers have been added
-        headers_added = False
 
         # Check if alert data exists for temperature
         if equipment and (equipment.t_low_alarm is not None or equipment.t_high_alarm is not None or equipment.t_low_alert is not None or equipment.t_high_alert is not None):
@@ -3570,9 +4335,13 @@ def generate_log_pdf_landscape(request, records, from_date, to_date, from_time, 
             if equipment.rh_low_alert is None or equipment.rh_high_alert is None:
                 humidity_row = humidity_row[:3]  # Remove alert columns
             
-        alarm_data.append(humidity_row)
+            alarm_data.append(humidity_row)
 
         base_col_widths = [210, 130, 130, 130, 130]
+
+        if not alarm_data:
+        
+            alarm_data.append(['Parameter', 'Low Alarm',  'High Alarm'])
 
         if len(alarm_data[0]) == 3:
             col_widths = [322, 204, 204]
@@ -3601,12 +4370,15 @@ def generate_log_pdf_landscape(request, records, from_date, to_date, from_time, 
         return alarm_table
 
 
-    def add_temperature_table():
+    def add_temperature_table(selected_equipment):
         
         
-        # Initialize lists for temperature and humidity data
-        temperature_channels = ['tmp_1', 'tmp_2', 'tmp_3', 'tmp_4', 'tmp_5', 'tmp_6', 'tmp_7', 'tmp_8', 'tmp_9', 'tmp_10']
-        humidity_channels = ['rh_1', 'rh_2', 'rh_3', 'rh_4', 'rh_5', 'rh_6', 'rh_7', 'rh_8', 'rh_9', 'rh_10']
+        selected_equipment=Equipment.objects.get(equip_name=selected_equipment)
+        total_temp_sensors = int(selected_equipment.total_temp_sensors) if selected_equipment.total_temp_sensors else 0
+        total_humidity_sensors = int(selected_equipment.total_humidity_sensors) if selected_equipment.total_humidity_sensors else 0
+       
+        temperature_channels = [f'tmp_{i+1}' for i in range(total_temp_sensors)]
+        humidity_channels = [f'rh_{i+1}' for i in range(total_humidity_sensors)]
         
         temp_data = [['Temperature (°C)', 'Minimum', 'Maximum', 'Average']]
         humidity_data = [['Humidity (% RH)', 'Minimum', 'Maximum', 'Average']]
@@ -3660,15 +4432,23 @@ def generate_log_pdf_landscape(request, records, from_date, to_date, from_time, 
         )
 
         return combined_table
+    from reportlab.lib.enums import TA_RIGHT
 
-    def add_main_table():
+    def add_main_table(selected_equipment):
         # Define styles for normal and bold text
-        normal_style = ParagraphStyle('Normal', fontName='Helvetica', fontSize=10)
-        bold_style = ParagraphStyle('Bold', fontName='Helvetica-Bold', fontSize=10)
-
+        normal_style = ParagraphStyle('Normal', fontName='Helvetica', fontSize=9, alignment=TA_RIGHT)
+        bold_style = ParagraphStyle('Bold', fontName='Helvetica-Bold', fontSize=9, alignment=TA_RIGHT )
+        equipment = Equipment.objects.get(equip_name=selected_equipment)
 
         temperature_channels = ['tmp_1', 'tmp_2', 'tmp_3', 'tmp_4', 'tmp_5', 'tmp_6', 'tmp_7', 'tmp_8', 'tmp_9', 'tmp_10']
         humidity_channels = ['rh_1', 'rh_2', 'rh_3', 'rh_4', 'rh_5', 'rh_6', 'rh_7', 'rh_8', 'rh_9', 'rh_10']
+
+        total_temp_sensors = int(equipment.total_temp_sensors) if equipment.total_temp_sensors else 0
+        total_humidity_sensors = int(equipment.total_humidity_sensors) if equipment.total_humidity_sensors else 0
+        
+
+        temperature_channels = temperature_channels[:total_temp_sensors]
+        humidity_channels = humidity_channels[:total_humidity_sensors]
 
         equipment = records.filter(equip_name__equip_name=selected_equipment).first()
         if equipment:
@@ -3707,7 +4487,7 @@ def generate_log_pdf_landscape(request, records, from_date, to_date, from_time, 
                         temp_values.append(Paragraph(f"{value:.1f}", normal_style))
                 else:
                     temp_values.append('')
-
+            temp_values += [' '] * (10 - len(temp_values))
             humidity_values = []
             for channel in humidity_channels:
                 value = getattr(record, channel, None)
@@ -3742,9 +4522,12 @@ def generate_log_pdf_landscape(request, records, from_date, to_date, from_time, 
             ('TEXTCOLOR', (0, 0), (-1, 1), colors.black),
             ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
             ('FONTNAME', (0, 0), (-1, 1), 'Helvetica-Bold'),
-            ('FONTSIZE', (0, 0), (-1, 1), 8),
+            ('FONTSIZE', (0, 0), (-1, 1), 9),
+            ('FONTSIZE', (0, 1), (3, -1), 8),
             ('BOTTOMPADDING', (0, 0), (-1, 1), 12),
             ('TOPPADDING', (0, 0), (-1, 0), 12),
+            ('LEFTPADDING', (0, 0), (-1, -1), 2),  # Reduced padding
+            ('RIGHTPADDING', (0, 0), (-1, -1), 2),  # Reduced padding
         ])
 
         colWidths = [29, 55, 36, 32] + [32] * 10 + [32] + [32] * 10
@@ -3757,18 +4540,20 @@ def generate_log_pdf_landscape(request, records, from_date, to_date, from_time, 
         Spacer(1, 0.2 * inch),
         add_alarm_tables(),
         Spacer(1, 0.2 * inch),
-        add_temperature_table(),
+        add_temperature_table(selected_equipment),
         PageBreak(),
-        add_main_table(),
+        add_main_table(selected_equipment),
     ]
 
-    doc.build(content, onFirstPage=create_page, onLaterPages=create_page)
+    doc.build(content, onFirstPage=create_page, onLaterPages=create_page, canvasmaker=NumberedCanvas)
     return response
 
 
 def alaram_log(request):
 
     emp_user = request.session.get('username', None)
+    if not emp_user:
+        return redirect('login')
     try:
         data = User.objects.get(username = emp_user)
     except:
@@ -3780,7 +4565,7 @@ def alaram_log(request):
     except:
         acc_db = None
     equipments = Equipment.objects.all()
-    alarm_logs_data = alarm_logs.objects.filter(acknowledge=False)
+    alarm_logs_data = Alarm_logs.objects.filter(acknowledge=False)
  
     alarm_codes = Alarm_codes.objects.all()
     return render(request, 'Data_Analysis/alaram_log.html', {'organization': organization, 'data':data, 'acc_db':acc_db, 'equipments': equipments,
@@ -3818,17 +4603,18 @@ def save_alarm_logs(request):
                 return JsonResponse({"message": "Invalid password."}, status=400)
             
             
-           
+            current_time = datetime.now().time()
             for i in selected_logs:
                 alarm_id = i.get("id") if isinstance(i, dict) else i  # Get ID from dictionary or use the ID directly
                 try:
-                    alarm = alarm_logs.objects.get(id=alarm_id)
+                    alarm = Alarm_logs.objects.get(id=alarm_id)
+                    alarm.ack_time=datetime.now().time()
                     alarm.ack_date = date.today()
                     alarm.ack_user = username
                     alarm.acknowledge = True
                     alarm.comments = acknowledge
                     alarm.save()
-                except alarm_logs.DoesNotExist:
+                except Alarm_logs.DoesNotExist:
                     return JsonResponse({"message": f"Alarm log with ID {alarm_id} not found."}, status=404)
             
             return JsonResponse({"message": "Alarm logs saved successfully!"})
@@ -3847,6 +4633,8 @@ def save_alarm_logs(request):
 def livedata_summary(request):
 
     emp_user = request.session.get('username', None)
+    if not emp_user:
+        return redirect('login')
     try:
         data = User.objects.get(username = emp_user)
     except:
@@ -3885,23 +4673,21 @@ def user_activity(request):
     filter_kwargs = Q()
 
     if filter_format == 'Date Wise':
-        if from_date and to_date:
-            from_date_parsed = parse_date(from_date)
-            to_date_parsed = parse_date(to_date)
+        current_date = now()
+        from_date_parsed = parse_date(from_date) if from_date else current_date.replace(day=1)
+        to_date_parsed = parse_date(to_date) if to_date else current_date
 
-            from_time_parsed = parse_time(from_time) if from_time else datetime_time(0, 0, 0)
-            to_time_parsed = parse_time(to_time) if to_time else datetime_time(23, 59, 59)
+        from_time_parsed = parse_time(from_time) if from_time else datetime_time(0, 0, 0)
+        to_time_parsed = parse_time(to_time) if to_time else datetime_time(23, 59, 59)
 
-            # Combine date and time into datetime objects for accurate filtering
-            from_datetime = make_aware(datetime.combine(from_date_parsed, from_time_parsed))
-            to_datetime = make_aware(datetime.combine(to_date_parsed, to_time_parsed))
+        # Combine date and time into datetime objects for accurate filtering
+        from_datetime = make_aware(datetime.combine(from_date_parsed, from_time_parsed))
+        to_datetime = make_aware(datetime.combine(to_date_parsed, to_time_parsed))
 
-            # Apply the datetime filter to the combined datetime field
-            filter_kwargs &= Q(log_date__gte=from_date_parsed) & Q(log_date__lte=to_date_parsed)
-            filter_kwargs &= Q(log_time__gte=from_time_parsed) & Q(log_time__lte=to_time_parsed)
-        else:
-            return HttpResponse("From Date and To Date are mandatory for Date Wise format.", status=400)
-
+        # Apply the datetime filter to the combined datetime field
+        filter_kwargs &= Q(log_date__gte=from_date_parsed) & Q(log_date__lte=to_date_parsed)
+        filter_kwargs &= Q(log_time__gte=from_time_parsed) & Q(log_time__lte=to_time_parsed)
+    
     elif filter_format == 'User Wise':
         if users:
             user_names = User.objects.filter(id__in=users).values_list('username', flat=True)
@@ -3965,7 +4751,7 @@ def generate_userActivity_pdf(request, user_logs, from_date, to_date, from_time,
     response = HttpResponse(content_type='application/pdf')
     response['Content-Disposition'] = 'inline; filename="user_audit_report.pdf"'
 
-    doc = SimpleDocTemplate(response, pagesize=A4, rightMargin=30, leftMargin=30, topMargin=160, bottomMargin=60)
+    doc = SimpleDocTemplate(response, pagesize=A4, rightMargin=30, leftMargin=30, topMargin=140, bottomMargin=60)
     styles = getSampleStyleSheet()
 
     # Determine "Records From" and "Records To"
@@ -3985,6 +4771,28 @@ def generate_userActivity_pdf(request, user_logs, from_date, to_date, from_time,
     from_time = from_time if from_time else "00:00"
     to_time = to_time if to_time else "23:59"
 
+    class NumberedCanvas(canvas.Canvas):
+        def __init__(self, *args, **kwargs):
+            super().__init__(*args, **kwargs)
+            self.pages = []
+
+        def showPage(self):
+            self.pages.append(dict(self.__dict__))
+            self._startPage()
+
+        def save(self):
+            total_pages = len(self.pages)
+            for i, page in enumerate(self.pages):
+                self.__dict__.update(page)
+                self.draw_page_number(i + 1, total_pages)
+                super().showPage()
+            super().save()
+
+        def draw_page_number(self, page_number, total_pages):
+            self.setFont("Helvetica", 10)
+            page_text = f"Page {page_number} of {total_pages}"
+            self.drawRightString(570, 35, page_text)
+
     # PDF Header/Footer
     def header_footer(canvas, doc, from_date, to_date, from_time, to_time, department, organization, username, page_num, total_pages):
         current_time = localtime()
@@ -3995,13 +4803,16 @@ def generate_userActivity_pdf(request, user_logs, from_date, to_date, from_time,
 
         canvas.setFont("Helvetica-Bold", 14)
         canvas.setFillColor(colors.blue)
-        canvas.drawCentredString(300, 800, organization.name)
+        org_name=organization.name if organization else ""
+        canvas.drawString(30, 800, org_name)
         canvas.setFillColor(colors.black)
         canvas.setFont("Helvetica", 12)
-        canvas.drawCentredString(300, 780, department.header_note)
+        department_name=department.header_note if department else " "
+        canvas.drawString(30, 780, department_name)
 
-        logo_path = organization.logo.path
-        canvas.drawImage(logo_path, 470, 780, width=80, height=30)
+        logo_path = organization.logo.path if organization and organization.logo else " "
+        if logo_path.strip():
+            canvas.drawImage(logo_path, 470, 780, width=80, height=30)
 
         canvas.setLineWidth(0.5)
         canvas.line(30, 770, 570, 770)
@@ -4018,8 +4829,8 @@ def generate_userActivity_pdf(request, user_logs, from_date, to_date, from_time,
         canvas.drawString(420, 730, "Filter To: {} {}".format(to_date_formatted, to_time))
 
         # Display records range
-        canvas.drawString(30, 705, "Records From: {} {}".format(records_from_date, records_from_time))
-        canvas.drawString(420, 705, "Records To: {} {}".format(records_to_date, records_to_time))
+        canvas.drawString(30, 710, "Records From: {} {}".format(records_from_date, records_from_time))
+        canvas.drawString(420, 710, "Records To: {} {}".format(records_to_date, records_to_time))
 
         canvas.setLineWidth(0.5)
         canvas.line(30, 60, 570, 60)
@@ -4028,14 +4839,14 @@ def generate_userActivity_pdf(request, user_logs, from_date, to_date, from_time,
         footer_text_left_bottom = "ESTDAS v1.0"
         footer_text_center = "Printed By - {} on {}".format(username, formatted_time)
         footer_text_right_top = department.footer_note 
-        footer_text_right_bottom = f"Page {page_num} of {total_pages}"
+        # footer_text_right_bottom = f"Page {page_num} of {total_pages}"
 
         canvas.setFont("Helvetica", 10)
         canvas.drawString(30, 45, footer_text_left_top)
         canvas.drawString(30, 35, footer_text_left_bottom)
         canvas.drawCentredString(300, 40, footer_text_center)
         canvas.drawRightString(570, 45, footer_text_right_top)
-        canvas.drawRightString(570, 35, footer_text_right_bottom)
+        # canvas.drawRightString(570, 35, footer_text_right_bottom)
 
     data = [
         ['Sr No', 'Log Date', 'Log Time', 'Login Name', 'Event'],
@@ -4081,7 +4892,8 @@ def generate_userActivity_pdf(request, user_logs, from_date, to_date, from_time,
     doc.build(
         content,
         onFirstPage=first_page,
-        onLaterPages=later_pages
+        onLaterPages=later_pages,
+        canvasmaker=NumberedCanvas
     )
 
     return response
@@ -4090,6 +4902,8 @@ def generate_userActivity_pdf(request, user_logs, from_date, to_date, from_time,
 def equipment_Audit_log(request):
 
     emp_user = request.session.get('username', None)
+    if not emp_user:
+        return redirect('login')
     try:
         data = User.objects.get(username = emp_user)
     except:
@@ -4100,16 +4914,306 @@ def equipment_Audit_log(request):
         acc_db = user_access_db.objects.get(role = data.role)
     except:
         acc_db = None
-    return render(request, 'auditlog/equipment_audit.html', {'organization': organization, 'data':data, 'acc_db':acc_db})
+
+    users = User.objects.all()
+    equipments = Equipment.objects.all()
+
+    current_date = now()
+    from_date_parsed = current_date.replace(day=1).date()
+    to_date_parsed = current_date.date()
+    from_time_parsed = datetime_time(0, 0, 0)
+    to_time_parsed = datetime_time(23, 59, 59)
+
+
+    format_type=request.GET.get('formats')
+    from_date=request.GET.get('from_date')
+    to_date=request.GET.get('to_date')
+    from_time=request.GET.get('from_time')
+    to_time=request.GET.get('to_time')
+    user_list=request.GET.get('user_list')
+    equipment_list=request.GET.get('equipment_list')
+    parameter=request.GET.get('parameter')
+    
+    filter_kwargs = Q()
+    if format_type == 'Date Wise':
+        from_date_parsed = parse_date(from_date) if from_date else current_date.replace(day=1).date()
+        to_date_parsed = parse_date(to_date) if to_date else current_date.date()
+        from_time_parsed = parse_time(from_time) if from_time else datetime_time(0, 0, 0)
+        to_time_parsed = parse_time(to_time) if to_time else datetime_time(23, 59, 59)
+
+
+        if from_date_parsed == to_date_parsed:
+            filter_kwargs &= (
+                Q(date=from_date_parsed) &
+                Q(time__gte=from_time_parsed) &
+                Q(time__lte=to_time_parsed)
+            )
+        else:
+            filter_kwargs &= (
+                (Q(date=from_date_parsed) & Q(time__gte=from_time_parsed)) |
+                (Q(date=to_date_parsed) & Q(time__lte=to_time_parsed)) |
+                Q(date__gt=from_date_parsed, date__lt=to_date_parsed)
+            )
+
+
+    elif format_type == 'User Wise':
+        if user_list:
+            user_names = User.objects.filter(id__in=user_list).values_list('username', flat=True)
+            filter_kwargs &= Q(login_name__in=user_names)
+            current_date = now()
+            from_date_parsed = parse_date(from_date) if from_date else current_date.replace(day=1).date()
+            to_date_parsed = parse_date(to_date) if to_date else current_date.date()
+            from_time_parsed = parse_time(from_time) if from_time else datetime_time(0, 0, 0)
+            to_time_parsed = parse_time(to_time) if to_time else datetime_time(23, 59, 59)
+
+
+            if from_date_parsed == to_date_parsed:
+                filter_kwargs &= (
+                    Q(date=from_date_parsed) &
+                    Q(time__gte=from_time_parsed) &
+                    Q(time__lte=to_time_parsed)
+                )
+            else:
+                filter_kwargs &= (
+                    (Q(date=from_date_parsed) & Q(time__gte=from_time_parsed)) |
+                    (Q(date=to_date_parsed) & Q(time__lte=to_time_parsed)) |
+                    Q(date__gt=from_date_parsed, date__lt=to_date_parsed)
+                )
+
+            filter_kwargs &= Q(date__gte=from_date_parsed) & Q(date__lte=to_date_parsed)
+
+        if equipment_list:
+            user_names = Equipment.objects.filter(id=equipment_list).values_list('equip_name', flat=True)
+            
+            filter_kwargs &= Q(equipment__equip_name__in=user_names)
+
+    elif format_type=='Equipment-wise':
+        if equipment_list:
+            user_names = Equipment.objects.filter(id=equipment_list).values_list('equip_name', flat=True)
+            filter_kwargs &= Q(equipment__equip_name__in=user_names)
+            current_date = now()
+            from_date_parsed = parse_date(from_date) if from_date else current_date.replace(day=1).date()
+            to_date_parsed = parse_date(to_date) if to_date else current_date.date()
+            from_time_parsed = parse_time(from_time) if from_time else datetime_time(0, 0, 0)
+            to_time_parsed = parse_time(to_time) if to_time else datetime_time(23, 59, 59)
+
+
+            if from_date_parsed == to_date_parsed:
+                filter_kwargs &= (
+                    Q(date=from_date_parsed) &
+                    Q(time__gte=from_time_parsed) &
+                    Q(time__lte=to_time_parsed)
+                )
+            else:
+                filter_kwargs &= (
+                    (Q(date=from_date_parsed) & Q(time__gte=from_time_parsed)) |
+                    (Q(date=to_date_parsed) & Q(time__lte=to_time_parsed)) |
+                    Q(date__gt=from_date_parsed, date__lt=to_date_parsed)
+                )
+
+            filter_kwargs &= Q(date__gte=from_date_parsed) & Q(date__lte=to_date_parsed)
+        if user_list:
+            user_names = User.objects.filter(id__in=user_list.split(',')).values_list('username', flat=True)
+            filter_kwargs &= Q(login_name__in=user_names)
+
+    if parameter:
+            filter_kwargs &= Q(label__icontains=parameter)
+
+    eqp_write_log = Equipmentwrite.objects.filter(filter_kwargs)
+
+    if 'generate_pdf' in request.GET:
+        if not from_date:
+            from_date = now().replace(day=1).strftime('%Y-%m-%d')
+        if not to_date:
+            to_date = now().strftime('%Y-%m-%d')
+
+        return generate_equipment_log_pdf(
+            request,
+            eqp_write_log,
+            from_date_parsed.strftime('%d-%m-%Y'),
+            to_date_parsed.strftime('%d-%m-%Y'),
+            from_time_parsed.strftime('%H:%M'),
+            to_time_parsed.strftime('%H:%M'),
+            organization,
+            data.department,
+            data.username,
+            equipment_list,
+            format_type
+        )
+
+    context = {
+        'organization': organization,
+        'data': data,
+        'acc_db': acc_db,
+        'users': users,
+        'equipments': equipments,  
+    }
+    
+    return render(request, 'auditlog/equipment_audit.html', context)
+
+def generate_equipment_log_pdf(request, records, from_date, to_date, from_time, to_time, organization, department, username, selected_equipment, format_type):
+    response = HttpResponse(content_type='application/pdf')
+    response['Content-Disposition'] = 'inline; filename="Equipment_Activity_logs.pdf"'
+
+    doc = SimpleDocTemplate(response, pagesize=landscape(A4), rightMargin=30, leftMargin=30, topMargin=130, bottomMargin=60)
+    styles = getSampleStyleSheet()
+    
+    if records.exists():
+        first_record = records.order_by('date', 'time').first()
+        last_record = records.order_by('date', 'time').last()
+        records_from_date = first_record.date.strftime('%d-%m-%Y')
+        records_from_time = first_record.time.strftime('%H:%M')
+        records_to_date = last_record.date.strftime('%d-%m-%Y')
+        records_to_time = last_record.time.strftime('%H:%M')
+    else:
+        records_from_date = from_date
+        records_from_time = from_time if from_time else "00:00"
+        records_to_date = to_date
+        records_to_time = to_time if to_time else "23:59"
+
+    class NumberedCanvas(canvas.Canvas):
+        def __init__(self, *args, **kwargs):
+            super().__init__(*args, **kwargs)
+            self.pages = []
+
+        def showPage(self):
+            self.pages.append(dict(self.__dict__))
+            self._startPage()
+
+        def save(self):
+            total_pages = len(self.pages)
+            for i, page in enumerate(self.pages):
+                self.__dict__.update(page)
+                self.draw_page_number(i + 1, total_pages)
+                super().showPage()
+            super().save()
+
+        def draw_page_number(self, page_number, total_pages):
+            self.setFont("Helvetica", 10)
+            page_text = f"Page {page_number} of {total_pages}"
+            self.drawRightString(800, 35, page_text)
+
+    def create_page(canvas, doc):
+        
+        canvas.setFont("Helvetica-Bold", 14)
+        canvas.setFillColor(colors.blue)
+        org_name=organization.name if organization else " "
+        canvas.drawString(30, 570, org_name)
+
+        canvas.setFillColor(colors.black)
+        canvas.setFont("Helvetica", 12)
+        department_name=department.header_note if department else " "
+        canvas.drawString(30, 550, department_name)
+        
+        logo_path = organization.logo.path if organization and organization.logo else " "
+        if logo_path.strip():  
+            canvas.drawImage(logo_path, 730, 550, width=80, height=30)
+
+        canvas.setLineWidth(0.5)
+        canvas.line(13, 540, 830, 540)
+
+        canvas.setFont("Helvetica-Bold", 12)
+        
+        if format_type == 'Date Wise':
+            canvas.drawString(320, 520, "Equipment Audit Trail Report - Date Wise ")
+        elif format_type == 'User Wise':
+            canvas.drawString(320, 520, "Equipment Audit Trail Report -  User Wise")
+        elif format_type == 'Equipment-wise':
+            canvas.drawString(320, 520, "Equipment Audit Trail Report - Equipment Wise")
+
+        canvas.setFont("Helvetica-Bold", 10)
+        canvas.drawString(30, 500, f"Filter From: {from_date} {from_time}")
+        canvas.drawString(670, 500, f"Filter To: {to_date} {to_time}")
+
+        canvas.drawString(30, 485, f"Records From: {records_from_date} {records_from_time}")
+        canvas.drawString(670, 485, f"Records To: {records_to_date} {records_to_time}")
+
+        # Draw separator line above the new table
+        canvas.setLineWidth(0.5)
+        canvas.line(30, 60, 820, 60)  # Line above the new table
+      
+        # Add a line above the footer
+        canvas.setLineWidth(1)
+        canvas.line(30, 60, 820, 60)  # Line just above the footer
+
+
+        # Add footer with page number
+        footer_text_left_top = "Sunwell"
+        footer_text_left_bottom = "ESTDAS v1.0"
+        footer_text_center = f"Printed By - {username} on {datetime.now().strftime('%d-%m-%Y %H:%M')}"  # Centered dynamic text
+        footer_text_right_top = department.footer_note
+        # footer_text_right = f"Page {page_num}"
+        
+        # Draw footer at the bottom of the page
+        canvas.setFont("Helvetica", 10)
+        canvas.drawString(30, 45, footer_text_left_top)  # Draw "Sunwell"
+        canvas.drawString(30, 35, footer_text_left_bottom)  # Draw "ESTDAS v1.0" below "Sunwell"
+        canvas.drawCentredString(420, 40, footer_text_center)  # Centered
+        canvas.drawRightString(800, 45, footer_text_right_top)
+        # canvas.drawRightString(800, 35, footer_text_right) 
+
+    # Main function to generate PDF
+    def eqp_write_log_table():
+        data = [
+            ['Sr No', 'Log Date', 'Log Time', 'Equipment Name', 'Login Name', 'Parameter', 'Old Status', 'New Status', 'Comments'],
+        ]
+
+        # Populate the table rows dynamically from records
+        for idx, record in enumerate(records, start=1):
+            equipment_name = record.equipment.equip_name if record.equipment else "N/A"
+            data.append([
+                str(idx),
+                record.date.strftime('%d-%m-%Y') if record.date else "",
+                record.time.strftime('%H:%M:%S') if record.time else "",
+                Paragraph(equipment_name, styles['Normal']),
+                Paragraph(record.login_name or "N/A", styles['Normal']),
+                Paragraph(record.label or "N/A", styles['Normal']),
+                f"{record.old_value:.1f}" if record.old_value else "N/A",
+                f"{record.value:.1f}" if record.value else "N/A",
+                Paragraph(record.comment or "N/A", styles['Normal']),
+            ])
+
+        # Table style
+        table_style = TableStyle([
+            ('BACKGROUND', (0, 0), (-1, 0), colors.lightgrey),
+            ('TEXTCOLOR', (0, 0), (-1, 0), colors.black),
+            ('ALIGN', (0, 0), (3, -1), 'CENTER'),
+            ('ALIGN', (4, 1), (4, -1), 'LEFT'),
+            ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
+            ('FONTSIZE', (0, 0), (-1, 0), 10),
+            ('BOTTOMPADDING', (0, 0), (-1, 0), 12),
+            ('BACKGROUND', (0, 1), (-1, -1), colors.whitesmoke),
+            ('GRID', (0, 0), (-1, -1), 1, colors.black),
+        ])
+
+    # Define the table with automatic wrapping
+        table = Table(data, colWidths=[35, 75, 60, 95, 70, 180, 60, 70, 140], repeatRows=1)
+        table.setStyle(table_style)
+    
+        return table
+    
+    content = [
+        Spacer(1, 0 * inch),
+        eqp_write_log_table(),
+
+    ]
+    
+    # Build the document
+    doc.build(content, onFirstPage=create_page, onLaterPages=create_page, canvasmaker=NumberedCanvas )
+    return response
+
+
+
 
 from django.shortcuts import render
 from django.core.exceptions import ObjectDoesNotExist
 
 def alaram_Audit_log(request):
     emp_user = request.session.get('username', None)
-    users = User.objects.all()
+    if not emp_user:
+        return redirect('login')
     organization = Organization.objects.first()
-
+    
     try:
         data = User.objects.get(username=emp_user)
     except ObjectDoesNotExist:
@@ -4120,6 +5224,7 @@ def alaram_Audit_log(request):
     except ObjectDoesNotExist:
         acc_db = None
 
+    users = User.objects.all()
     equipments = Equipment.objects.all()
 
     current_date = now()
@@ -4137,52 +5242,56 @@ def alaram_Audit_log(request):
     user_list=request.GET.get('user_list')
     equipment_list=request.GET.get('equipment_list')
     event_name=request.GET.get('event_name')
+
     
-    print("HTML", format_type, equipment_list)
+    
+
     filter_kwargs = Q()
     if format_type == 'Date Wise':
-        if from_date and to_date:
-            from_date_parsed = parse_date(from_date)
-            to_date_parsed = parse_date(to_date)
-            a=alarm_logs.objects.first()
-            from_time_parsed = parse_time(from_time) if from_time else datetime_time(0, 0, 0)
-            to_time_parsed = parse_time(to_time) if to_time else datetime_time(23, 59, 59)
+        from_date_parsed = parse_date(from_date) if from_date else current_date.replace(day=1).date()
+        to_date_parsed = parse_date(to_date) if to_date else current_date.date()
+        from_time_parsed = parse_time(from_time) if from_time else datetime_time(0, 0, 0)
+        to_time_parsed = parse_time(to_time) if to_time else datetime_time(23, 59, 59)
 
-            # Combine date and time into datetime objects for accurate filtering
-            from_datetime = make_aware(datetime.combine(from_date_parsed, from_time_parsed))
-            to_datetime = make_aware(datetime.combine(to_date_parsed, to_time_parsed))
 
-            # Apply the datetime filter to the combined datetime field
-            filter_kwargs &= Q(date__gte=from_date_parsed) & Q(date__lte=to_date_parsed)
-            # filter_kwargs &= Q(time__gte=from_time_parsed) & Q(time__lte=to_time_parsed)
-            if equipment_list:
-                user_names = Equipment.objects.filter(id=equipment_list).values_list('equip_name', flat=True)
-                
-                filter_kwargs &= Q(equipment__equip_name__in=user_names)
-
+        if from_date_parsed == to_date_parsed:
+            filter_kwargs &= (
+                Q(date=from_date_parsed) &
+                Q(time__gte=from_time_parsed) &
+                Q(time__lte=to_time_parsed)
+            )
         else:
-            return HttpResponse("From Date and To Date are mandatory for Date Wise format.", status=400)
+            filter_kwargs &= (
+                (Q(date=from_date_parsed) & Q(time__gte=from_time_parsed)) |
+                (Q(date=to_date_parsed) & Q(time__lte=to_time_parsed)) |
+                Q(date__gt=from_date_parsed, date__lt=to_date_parsed)
+            )
 
     elif format_type == 'User Wise':
         if user_list:
             user_names = User.objects.filter(id__in=user_list).values_list('username', flat=True)
             filter_kwargs &= Q(user__in=user_names)
-            a=alarm_logs.objects.first()
             current_date = now()
             from_date_parsed = parse_date(from_date) if from_date else current_date.replace(day=1).date()
             to_date_parsed = parse_date(to_date) if to_date else current_date.date()
-
             from_time_parsed = parse_time(from_time) if from_time else datetime_time(0, 0, 0)
             to_time_parsed = parse_time(to_time) if to_time else datetime_time(23, 59, 59)
 
-            # Combine date and time into datetime objects for accurate filtering
-            from_datetime = make_aware(datetime.combine(from_date_parsed, from_time_parsed))
-            to_datetime = make_aware(datetime.combine(to_date_parsed, to_time_parsed))
+
+            if from_date_parsed == to_date_parsed:
+                filter_kwargs &= (
+                    Q(date=from_date_parsed) &
+                    Q(time__gte=from_time_parsed) &
+                    Q(time__lte=to_time_parsed)
+                )
+            else:
+                filter_kwargs &= (
+                    (Q(date=from_date_parsed) & Q(time__gte=from_time_parsed)) |
+                    (Q(date=to_date_parsed) & Q(time__lte=to_time_parsed)) |
+                    Q(date__gt=from_date_parsed, date__lt=to_date_parsed)
+                )
 
             filter_kwargs &= Q(date__gte=from_date_parsed) & Q(date__lte=to_date_parsed)
-            # filter_kwargs &= Q(time__gte=from_time_parsed) & Q(time__lte=to_time_parsed)
-        else:
-            return HttpResponse("User List is mandatory for User-wise format.", status=400)
 
     elif format_type=='Equipment-wise':
         if equipment_list:
@@ -4191,23 +5300,29 @@ def alaram_Audit_log(request):
             current_date = now()
             from_date_parsed = parse_date(from_date) if from_date else current_date.replace(day=1).date()
             to_date_parsed = parse_date(to_date) if to_date else current_date.date()
-
             from_time_parsed = parse_time(from_time) if from_time else datetime_time(0, 0, 0)
             to_time_parsed = parse_time(to_time) if to_time else datetime_time(23, 59, 59)
 
-            # Combine date and time into datetime objects for accurate filtering
-            from_datetime = make_aware(datetime.combine(from_date_parsed, from_time_parsed))
-            to_datetime = make_aware(datetime.combine(to_date_parsed, to_time_parsed))
+
+            if from_date_parsed == to_date_parsed:
+                filter_kwargs &= (
+                    Q(date=from_date_parsed) &
+                    Q(time__gte=from_time_parsed) &
+                    Q(time__lte=to_time_parsed)
+                )
+            else:
+                filter_kwargs &= (
+                    (Q(date=from_date_parsed) & Q(time__gte=from_time_parsed)) |
+                    (Q(date=to_date_parsed) & Q(time__lte=to_time_parsed)) |
+                    Q(date__gt=from_date_parsed, date__lt=to_date_parsed)
+                )
 
             filter_kwargs &= Q(date__gte=from_date_parsed) & Q(date__lte=to_date_parsed)
-            # filter_kwargs &= Q(time__gte=from_time_parsed) & Q(time__lte=to_time_parsed)
-        else:
-            return HttpResponse("Equipment List is mandatory for User-wise format.", status=400)
 
     if event_name:
             filter_kwargs &= Q(event_name__icontains=event_name)
 
-    alarm_log = alarm_logs.objects.filter(filter_kwargs, acknowledge=True)
+    alarm_log = Alarm_logs.objects.filter(filter_kwargs, acknowledge=True)
 
     if 'generate_pdf' in request.GET:
         if not from_date:
@@ -4246,9 +5361,9 @@ def generate_audit_alaram_log_pdf(request, records, from_date, to_date, from_tim
     response = HttpResponse(content_type='application/pdf')
     response['Content-Disposition'] = 'inline; filename="Alaram_Audit_logs.pdf"'
 
-    doc = SimpleDocTemplate(response, pagesize=landscape(A4), rightMargin=30, leftMargin=30, topMargin=160, bottomMargin=60)
+    doc = SimpleDocTemplate(response, pagesize=landscape(A4), rightMargin=20, leftMargin=20, topMargin=140, bottomMargin=60)
     styles = getSampleStyleSheet()
-
+    
     if records.exists():
         first_record = records.order_by('date', 'time').first()
         last_record = records.order_by('date', 'time').last()
@@ -4262,50 +5377,75 @@ def generate_audit_alaram_log_pdf(request, records, from_date, to_date, from_tim
         records_to_date = to_date
         records_to_time = to_time if to_time else "23:59"
 
+    class NumberedCanvas(canvas.Canvas):
+        def __init__(self, *args, **kwargs):
+            super().__init__(*args, **kwargs)
+            self.pages = []
+
+        def showPage(self):
+            self.pages.append(dict(self.__dict__))
+            self._startPage()
+
+        def save(self):
+            total_pages = len(self.pages)
+            for i, page in enumerate(self.pages):
+                self.__dict__.update(page)
+                self.draw_page_number(i + 1, total_pages)
+                super().showPage()
+            super().save()
+
+        def draw_page_number(self, page_number, total_pages):
+            self.setFont("Helvetica", 10)
+            page_text = f"Page {page_number} of {total_pages}"
+            self.drawRightString(800, 35, page_text)
+
     def create_page(canvas, doc):
 
         page_num = canvas.getPageNumber()
         total_pages = doc.page
         current_time = localtime().strftime('%d-%m-%Y %H:%M')
         
+        
         canvas.setFont("Helvetica-Bold", 14)
         canvas.setFillColor(colors.blue)
-        canvas.drawString(30, 570, organization.name)
+        org_name=organization.name if organization else " "
+        canvas.drawString(30, 570, org_name)
 
         canvas.setFillColor(colors.black)
         canvas.setFont("Helvetica", 12)
-
-        canvas.drawString(30, 550, "Department Name: " + department.department_name)
-
-
-        logo_path = organization.logo.path
-        canvas.drawImage(logo_path, 730, 550, width=80, height=30)
+        department_name=department.header_note if department else " "
+        canvas.drawString(30, 550, department_name)
+        
+        logo_path = organization.logo.path if organization and organization.logo else " "
+        if logo_path.strip():  
+            canvas.drawImage(logo_path, 730, 550, width=80, height=30)
 
         canvas.setLineWidth(0.5)
         canvas.line(13, 540, 830, 540)
 
         canvas.setFont("Helvetica-Bold", 12)
-        print("Type:", format_type)
+        
         if format_type == 'Date Wise':
-            canvas.drawString(320, 500, "Alarm Audit Trail Date Wise Report")
+            canvas.drawString(320, 520, "Alarm Audit Trail Date Wise Report")
         elif format_type == 'User Wise':
-            canvas.drawString(320, 500, "Alarm Audit Trail User Wise Report")
+            canvas.drawString(320, 520, "Alarm Audit Trail User Wise Report")
         elif format_type == 'Equipment-wise':
-            canvas.drawString(320, 500, "Alarm Audit Trail Equipment Wise Report")
+            canvas.drawString(320, 520, "Alarm Audit Trail Equipment Wise Report")
 
         canvas.setFont("Helvetica-Bold", 10)
-        equipment=Equipment.objects.get(id=selected_equipment)
-        print(equipment)
-        equipment_display = f"Equipment Name: {equipment.equip_name}" 
-        canvas.drawString(30, 480, equipment_display)
+        if selected_equipment:
+            equipment=Equipment.objects.get(id=selected_equipment)
+            
+            equipment_display = f"Equipment Name: {equipment.equip_name}" 
+            canvas.drawString(30, 500, equipment_display)
 
 
         canvas.setFont("Helvetica-Bold", 10)
-        canvas.drawString(30, 460, f"Filter From: {from_date} {from_time}")
-        canvas.drawString(670, 460, f"Filter To: {to_date} {to_time}")
+        canvas.drawString(30, 480, f"Filter From: {from_date} {from_time}")
+        canvas.drawString(670, 480, f"Filter To: {to_date} {to_time}")
 
-        canvas.drawString(30, 445, f"Records From: {records_from_date} {records_from_time}")
-        canvas.drawString(670, 445, f"Records To: {records_to_date} {records_to_time}")
+        canvas.drawString(30, 460, f"Records From: {records_from_date} {records_from_time}")
+        canvas.drawString(670, 460, f"Records To: {records_to_date} {records_to_time}")
 
         # Draw separator line above the new table
         canvas.setLineWidth(0.5)
@@ -4321,7 +5461,7 @@ def generate_audit_alaram_log_pdf(request, records, from_date, to_date, from_tim
         footer_text_left_bottom = "ESTDAS v1.0"
         footer_text_center = f"Printed By - {username} on {datetime.now().strftime('%d-%m-%Y %H:%M')}"  # Centered dynamic text
         footer_text_right_top = department.footer_note
-        footer_text_right = f"Page {page_num}"
+        # footer_text_right = f"Page {page_num}"
         
         # Draw footer at the bottom of the page
         canvas.setFont("Helvetica", 10)
@@ -4329,7 +5469,7 @@ def generate_audit_alaram_log_pdf(request, records, from_date, to_date, from_tim
         canvas.drawString(30, 35, footer_text_left_bottom)  # Draw "ESTDAS v1.0" below "Sunwell"
         canvas.drawCentredString(420, 40, footer_text_center)  # Centered
         canvas.drawRightString(800, 45, footer_text_right_top)
-        canvas.drawRightString(800, 35, footer_text_right)  
+        # canvas.drawRightString(800, 35, footer_text_right) 
 
     # Main function to generate PDF
     def alaram_audit_log_table():
@@ -4365,7 +5505,7 @@ def generate_audit_alaram_log_pdf(request, records, from_date, to_date, from_tim
         ])
 
         # Define the table
-        table = Table(data, colWidths=[35, 80, 60, 160,  80, 70, 100, 180])
+        table = Table(data, colWidths=[35, 80, 60, 170,  80, 70, 100, 200], repeatRows=1)
         table.setStyle(table_style)
     
         return table
@@ -4377,8 +5517,631 @@ def generate_audit_alaram_log_pdf(request, records, from_date, to_date, from_tim
     ]
     
     # Build the document
-    doc.build(content, onFirstPage=create_page, onLaterPages=create_page)
+    doc.build(content, onFirstPage=create_page, onLaterPages=create_page, canvasmaker=NumberedCanvas )
     return response
+
+
+def email_Audit_log(request):
+    emp_user = request.session.get('username', None)
+    if not emp_user:
+        return redirect('login')
+    try:
+        data = User.objects.get(username = emp_user)
+    except:
+        data = SuperAdmin.objects.get(username=emp_user)
+    organization = Organization.objects.first()
+    
+    try:
+        acc_db = user_access_db.objects.get(role = data.role)
+    except:
+        acc_db = None
+
+    equipments = Equipment.objects.all()
+
+    current_date = now()
+    from_date_parsed = current_date.replace(day=1).date()
+    to_date_parsed = current_date.date()
+    from_time_parsed = datetime_time(0, 0, 0)
+    to_time_parsed = datetime_time(23, 59, 59)
+
+
+    format_type=request.GET.get('formats')
+    from_date=request.GET.get('from_date')
+    to_date=request.GET.get('to_date')
+    from_time=request.GET.get('from_time')
+    to_time=request.GET.get('to_time')
+    equipment_list=request.GET.get('equipment_list')
+    email_status = request.GET.get('email_status')
+    email_message = request.GET.get('email_message')
+    email_subject = request.GET.get('email_subject')
+    to_address = request.GET.get('to_address')
+    
+    filter_kwargs = Q()
+    if format_type == 'Date Wise':
+        from_date_parsed = parse_date(from_date) if from_date else current_date.replace(day=1).date()
+        to_date_parsed = parse_date(to_date) if to_date else current_date.date()
+        from_time_parsed = parse_time(from_time) if from_time else datetime_time(0, 0, 0)
+        to_time_parsed = parse_time(to_time) if to_time else datetime_time(23, 59, 59)
+
+        if from_date_parsed == to_date_parsed:
+            filter_kwargs &= (
+                Q(date=from_date_parsed) &
+                Q(time__gte=from_time_parsed) &
+                Q(time__lte=to_time_parsed)
+            )
+        else:
+            filter_kwargs &= (
+                (Q(date=from_date_parsed) & Q(time__gte=from_time_parsed)) |
+                (Q(date=to_date_parsed) & Q(time__lte=to_time_parsed)) |
+                Q(date__gt=from_date_parsed, date__lt=to_date_parsed)
+            )
+        # filter_kwargs &= Q(time__gte=from_time_parsed) & Q(time__lte=to_time_parsed)
+
+    elif format_type=='Equipment-wise':
+        if equipment_list:
+            user_names = Equipment.objects.filter(id=equipment_list).values_list('equip_name', flat=True)
+            filter_kwargs &= Q(equipment__equip_name__in=user_names)
+            current_date = now()
+            from_date_parsed = parse_date(from_date) if from_date else current_date.replace(day=1).date()
+            to_date_parsed = parse_date(to_date) if to_date else current_date.date()
+
+            from_time_parsed = parse_time(from_time) if from_time else datetime_time(0, 0, 0)
+            to_time_parsed = parse_time(to_time) if to_time else datetime_time(23, 59, 59)
+
+            if from_date_parsed == to_date_parsed:
+                filter_kwargs &= (
+                    Q(date=from_date_parsed) &
+                    Q(time__gte=from_time_parsed) &
+                    Q(time__lte=to_time_parsed)
+                )
+            else:
+                filter_kwargs &= (
+                    (Q(date=from_date_parsed) & Q(time__gte=from_time_parsed)) |
+                    (Q(date=to_date_parsed) & Q(time__lte=to_time_parsed)) |
+                    Q(date__gt=from_date_parsed, date__lt=to_date_parsed)
+                )
+        else:
+            return HttpResponse("Equipment List is mandatory for Equipment-wise format.", status=400)
+        
+    elif format_type == 'System Email':
+        current_date = now()
+        from_date_parsed = parse_date(from_date) if from_date else current_date.replace(day=1).date()
+        to_date_parsed = parse_date(to_date) if to_date else current_date.date()
+
+        from_time_parsed = parse_time(from_time) if from_time else datetime_time(0, 0, 0)
+        to_time_parsed = parse_time(to_time) if to_time else datetime_time(23, 59, 59)
+
+        if from_date_parsed == to_date_parsed:
+            filter_kwargs &= (
+                Q(date=from_date_parsed) &
+                Q(time__gte=from_time_parsed) &
+                Q(time__lte=to_time_parsed)
+            )
+        else:
+            filter_kwargs &= (
+                (Q(date=from_date_parsed) & Q(time__gte=from_time_parsed)) |
+                (Q(date=to_date_parsed) & Q(time__lte=to_time_parsed)) |
+                Q(date__gt=from_date_parsed, date__lt=to_date_parsed)
+            )
+
+        filter_kwargs &= Q(sys_mail=True)
+
+    if equipment_list:
+        filter_kwargs &= Q(equipment_id__in=equipment_list)
+
+    if email_status and email_status != 'email_all':
+        # Correct mapping for case-sensitive status values
+        status_map = {
+            'email_pending': 'Pending',
+            'email_sent': 'Sent',
+            'email_failed': 'Failed',
+        }
+        db_status = status_map.get(email_status)
+        if db_status:
+            filter_kwargs &= Q(status=db_status)
+
+    if email_message:
+        filter_kwargs &= Q(email_body__icontains=email_message)
+
+    if email_subject:
+        filter_kwargs &= Q(email_sub__icontains=email_subject)
+
+    if to_address:
+        filter_kwargs &= Q(to_email__icontains=to_address)
+
+    email_logs = Email_logs.objects.filter(filter_kwargs).order_by('date', 'time')
+
+    if 'generate_pdf' in request.GET:
+        if not from_date:
+            from_date = now().replace(day=1).strftime('%Y-%m-%d')
+        if not to_date:
+            to_date = now().strftime('%Y-%m-%d')
+
+        return generate_email_log_pdf(
+            request,
+            email_logs,
+            from_date_parsed.strftime('%d-%m-%Y'),
+            to_date_parsed.strftime('%d-%m-%Y'),
+            from_time_parsed.strftime('%H:%M'),
+            to_time_parsed.strftime('%H:%M'),
+            organization,
+            data.department,
+            data.username,
+            equipment_list,
+            format_type
+        )
+
+    context = {
+        'organization': organization,
+        'data': data,
+        'acc_db': acc_db,
+        'equipments': equipments,  
+    }
+    return render(request, 'auditlog/email_audit.html', context)
+
+
+def generate_email_log_pdf(request, records, from_date, to_date, from_time, to_time, organization, department, username, selected_equipment, format_type):
+    response = HttpResponse(content_type='application/pdf')
+    response['Content-Disposition'] = 'inline; filename="Email_Audit_logs.pdf"'
+
+    doc = SimpleDocTemplate(response, pagesize=landscape(A4), rightMargin=30, leftMargin=30, topMargin=130, bottomMargin=60)
+    styles = getSampleStyleSheet()
+
+    if records.exists():
+        first_record = records.order_by('date', 'time').first()
+        last_record = records.order_by('date', 'time').last()
+        records_from_date = first_record.date.strftime('%d-%m-%Y')
+        records_from_time = first_record.time.strftime('%H:%M')
+        records_to_date = last_record.date.strftime('%d-%m-%Y')
+        records_to_time = last_record.time.strftime('%H:%M')
+    else:
+        records_from_date = from_date
+        records_from_time = from_time if from_time else "00:00"
+        records_to_date = to_date
+        records_to_time = to_time if to_time else "23:59"
+
+    class NumberedCanvas(canvas.Canvas):
+        def __init__(self, *args, **kwargs):
+            super().__init__(*args, **kwargs)
+            self.pages = []
+
+        def showPage(self):
+            self.pages.append(dict(self.__dict__))
+            self._startPage()
+
+        def save(self):
+            total_pages = len(self.pages)
+            for i, page in enumerate(self.pages):
+                self.__dict__.update(page)
+                self.draw_page_number(i + 1, total_pages)
+                super().showPage()
+            super().save()
+
+        def draw_page_number(self, page_number, total_pages):
+            self.setFont("Helvetica", 10)
+            page_text = f"Page {page_number} of {total_pages}"
+            self.drawRightString(800, 35, page_text)
+
+    def create_page(canvas, doc):
+
+        # page_num = canvas.getPageNumber()
+        # total_pages = doc.page
+        current_time = localtime().strftime('%d-%m-%Y %H:%M')
+        
+        canvas.setFont("Helvetica-Bold", 14)
+        canvas.setFillColor(colors.blue)
+        canvas.drawString(30, 570, organization.name)
+
+        canvas.setFillColor(colors.black)
+        canvas.setFont("Helvetica", 12)
+        canvas.drawString(30, 550, department.header_note)
+
+        logo_path = organization.logo.path
+        canvas.drawImage(logo_path, 730, 550, width=80, height=30)
+
+        canvas.setLineWidth(0.2)
+        canvas.line(30, 540, 820, 540)
+
+        canvas.setFont("Helvetica-Bold", 12)
+        if format_type == 'Date Wise':
+            canvas.drawString(320, 520, "Email Audit Trail Date Wise Report")
+        elif format_type == 'Equipment-wise':
+            canvas.drawString(320, 520, "Email Audit Trail Equipment Wise Report")
+        elif format_type == 'System Email':
+            canvas.drawString(320, 520, "Email Audit Trail System Wise Report")
+
+        canvas.setFont("Helvetica-Bold", 10)
+        canvas.drawString(30, 500, f"Filter From: {from_date} {from_time}")
+        canvas.drawString(670, 500, f"Filter To: {to_date} {to_time}")
+
+        canvas.drawString(30, 480, f"Records From: {records_from_date} {records_from_time}")
+        canvas.drawString(670, 480, f"Records To: {records_to_date} {records_to_time}")
+
+        canvas.setLineWidth(0.5)
+        canvas.line(30, 60, 820, 60)
+
+        # canvas.setLineWidth(1)
+        # canvas.line(30, 60, 820, 60)
+
+        footer_text_left_top = "Sunwell"
+        footer_text_left_bottom = "ESTDAS v1.0"
+        footer_text_center = f"Printed By - {username} on {datetime.now().strftime('%d-%m-%Y %H:%M')}"
+        footer_text_right_top = department.footer_note
+        # footer_text_right = f"Page {page_num}"
+
+        canvas.setFont("Helvetica", 10)
+        canvas.drawString(30, 45, footer_text_left_top)
+        canvas.drawString(30, 35, footer_text_left_bottom)
+        canvas.drawCentredString(425, 40, footer_text_center)
+        canvas.drawRightString(800, 45, footer_text_right_top)
+        # canvas.drawRightString(800, 35, footer_text_right)
+
+    # Main function to generate PDF
+    def Email_log_table():
+        # Table Data
+        data = [
+            ['Sl No', 'Date', 'Time', 'Equipment Name', 'Email From', 'Email To', 'Subject', 'Email Message','Status'],
+        ] 
+
+        for idx, record in enumerate(records, start=1):
+            equipment_name = str(record.equipment) if record.equipment else ""
+            settings = AppSettings.objects.first()
+            email_from = settings.email_host_user  
+            email_to = record.to_email or ""
+            email_subject = record.email_sub or ""
+            email_body = record.email_body or ""
+            status = record.status or ""
+
+            data.append([
+                str(idx),
+                record.date.strftime('%d-%m-%Y') if record.date else "",
+                record.time.strftime('%H:%M:%S') if record.time else "",
+                Paragraph(equipment_name, styles['Normal']),
+                Paragraph(email_from, styles['Normal']),
+                Paragraph(email_to, styles['Normal']),
+                Paragraph(email_subject, styles['Normal']),
+                Paragraph(email_body, styles['Normal']),
+                status,
+            ])
+        # Table style
+        table_style = TableStyle([
+            ('BACKGROUND', (0, 0), (-1, 0), colors.lightgrey),
+            ('TEXTCOLOR', (0, 0), (-1, 0), colors.black),
+            ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
+            # ('ALIGN', (4, 1), (4, -1), 'LEFT'),
+            ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
+            ('FONTSIZE', (0, 0), (-1, 0), 10),
+            ('BOTTOMPADDING', (0, 0), (-1, 0), 12),
+            ('BACKGROUND', (0, 1), (-1, -1), colors.whitesmoke),
+            ('GRID', (0, 0), (-1, -1), 1, colors.black),
+        ])
+
+        # Define the table with automatic wrapping
+        table = Table(data, colWidths=[35, 60, 45, 160, 102, 102, 101, 160,50], repeatRows=1)
+        table.setStyle(table_style)
+
+        return table
+
+
+    content = [
+        Spacer(1, 0.2 * inch),
+        Email_log_table(),
+        ]
+
+    # Build the document with customized spacer for page 1 and larger spacer for later pages
+    doc.build(content, onFirstPage=create_page, onLaterPages=create_page, canvasmaker=NumberedCanvas)
+    return response
+
+    
+
+def sms_Audit_log(request):
+    emp_user = request.session.get('username', None)
+    if not emp_user:
+        return redirect('login')
+    try:
+        data = User.objects.get(username = emp_user)
+    except:
+        data = SuperAdmin.objects.get(username=emp_user)
+    organization = Organization.objects.first()
+    
+    try:
+        acc_db = user_access_db.objects.get(role = data.role)
+    except:
+        acc_db = None
+
+    equipments = Equipment.objects.all()
+
+    current_date = now()
+    from_date_parsed = current_date.replace(day=1).date()
+    to_date_parsed = current_date.date()
+    from_time_parsed = datetime_time(0, 0, 0)
+    to_time_parsed = datetime_time(23, 59, 59)
+
+
+    format_type=request.GET.get('formats')
+    from_date=request.GET.get('from_date')
+    to_date=request.GET.get('to_date')
+    from_time=request.GET.get('from_time')
+    to_time=request.GET.get('to_time')
+    equipment_list=request.GET.get('equipment_list')
+    sms_status = request.GET.get('sms_status')
+    sms_message = request.GET.get('sms_message')
+    
+    filter_kwargs = Q()
+    if format_type == 'Date Wise':
+        from_date_parsed = parse_date(from_date) if from_date else current_date.replace(day=1).date()
+        to_date_parsed = parse_date(to_date) if to_date else current_date.date()
+        from_time_parsed = parse_time(from_time) if from_time else datetime_time(0, 0, 0)
+        to_time_parsed = parse_time(to_time) if to_time else datetime_time(23, 59, 59)
+
+
+        if from_date_parsed == to_date_parsed:
+            filter_kwargs &= (
+                Q(date=from_date_parsed) &
+                Q(time__gte=from_time_parsed) &
+                Q(time__lte=to_time_parsed)
+            )
+        else:
+            filter_kwargs &= (
+                (Q(date=from_date_parsed) & Q(time__gte=from_time_parsed)) |
+                (Q(date=to_date_parsed) & Q(time__lte=to_time_parsed)) |
+                Q(date__gt=from_date_parsed, date__lt=to_date_parsed)
+            )
+        # filter_kwargs &= Q(time__gte=from_time_parsed) & Q(time__lte=to_time_parsed)
+        if equipment_list:
+            user_names = Equipment.objects.filter(id=equipment_list).values_list('equip_name', flat=True)
+            
+            filter_kwargs &= Q(equipment__equip_name__in=user_names)
+
+
+    elif format_type=='Equipment-wise':
+        if equipment_list:
+            user_names = Equipment.objects.filter(id=equipment_list).values_list('equip_name', flat=True)
+            filter_kwargs &= Q(equipment__equip_name__in=user_names)
+            current_date = now()
+            from_date_parsed = parse_date(from_date) if from_date else current_date.replace(day=1).date()
+            to_date_parsed = parse_date(to_date) if to_date else current_date.date()
+
+            from_time_parsed = parse_time(from_time) if from_time else datetime_time(0, 0, 0)
+            to_time_parsed = parse_time(to_time) if to_time else datetime_time(23, 59, 59)
+
+            if from_date_parsed == to_date_parsed:
+                filter_kwargs &= (
+                    Q(date=from_date_parsed) &
+                    Q(time__gte=from_time_parsed) &
+                    Q(time__lte=to_time_parsed)
+                )
+            else:
+                filter_kwargs &= (
+                    (Q(date=from_date_parsed) & Q(time__gte=from_time_parsed)) |
+                    (Q(date=to_date_parsed) & Q(time__lte=to_time_parsed)) |
+                    Q(date__gt=from_date_parsed, date__lt=to_date_parsed)
+                )
+        else:
+            return HttpResponse("Equipment List is mandatory for Equipment-wise format.", status=400)
+        
+    elif format_type == 'System SMS':
+        current_date = now()
+        from_date_parsed = parse_date(from_date) if from_date else current_date.replace(day=1).date()
+        to_date_parsed = parse_date(to_date) if to_date else current_date.date()
+
+        from_time_parsed = parse_time(from_time) if from_time else datetime_time(0, 0, 0)
+        to_time_parsed = parse_time(to_time) if to_time else datetime_time(23, 59, 59)
+
+        if from_date_parsed == to_date_parsed:
+            filter_kwargs &= (
+                Q(date=from_date_parsed) &
+                Q(time__gte=from_time_parsed) &
+                Q(time__lte=to_time_parsed)
+            )
+        else:
+            filter_kwargs &= (
+                (Q(date=from_date_parsed) & Q(time__gte=from_time_parsed)) |
+                (Q(date=to_date_parsed) & Q(time__lte=to_time_parsed)) |
+                Q(date__gt=from_date_parsed, date__lt=to_date_parsed)
+            )
+        # Add sys_sms=True condition
+        filter_kwargs &= Q(sys_sms=True)
+
+
+    if sms_status and sms_status != 'sms_all':
+        # Correct mapping for SMS status values
+        status_map = {
+            'sms_pending': 'Pending',  # Matches "Pending" in the database
+            'sms_sent': 'Sent',        # Matches "Sent" in the database
+            'sms_failed': 'Failed',    # Matches "Failed" in the database
+        }
+
+        # Get the corresponding database value
+        db_status = status_map.get(sms_status)  
+        if db_status:  
+            filter_kwargs &= Q(status=db_status)
+
+    if sms_message:
+        filter_kwargs &= Q(msg_body__icontains=sms_message)
+
+    sms_logs = Sms_logs.objects.filter(filter_kwargs)
+
+    if 'generate_pdf' in request.GET:
+        if not from_date:
+            from_date = now().replace(day=1).strftime('%Y-%m-%d')
+        if not to_date:
+            to_date = now().strftime('%Y-%m-%d')
+
+        return generate_sms_log_pdf(
+            request,
+            sms_logs,
+            from_date_parsed.strftime('%d-%m-%Y'),
+            to_date_parsed.strftime('%d-%m-%Y'),
+            from_time_parsed.strftime('%H:%M'),
+            to_time_parsed.strftime('%H:%M'),
+            organization,
+            data.department,
+            data.username,
+            equipment_list,
+            format_type
+        )
+
+    context = {
+        'organization': organization,
+        'data': data,
+        'acc_db': acc_db,
+        'equipments': equipments,  
+    }
+    return render(request, 'auditlog/sms_audit.html', context)
+
+def generate_sms_log_pdf(request, records, from_date, to_date, from_time, to_time, organization, department, username, selected_equipment, format_type):
+    response = HttpResponse(content_type='application/pdf')
+    response['Content-Disposition'] = 'inline; filename="SMS_Audit_logs.pdf"'
+
+    doc = SimpleDocTemplate(response, pagesize=landscape(A4), rightMargin=30, leftMargin=30, topMargin=130, bottomMargin=60)
+    styles = getSampleStyleSheet()
+
+    if records.exists():
+        first_record = records.order_by('date', 'time').first()
+        last_record = records.order_by('date', 'time').last()
+        records_from_date = first_record.date.strftime('%d-%m-%Y')
+        records_from_time = first_record.time.strftime('%H:%M')
+        records_to_date = last_record.date.strftime('%d-%m-%Y')
+        records_to_time = last_record.time.strftime('%H:%M')
+    else:
+        records_from_date = from_date
+        records_from_time = from_time if from_time else "00:00"
+        records_to_date = to_date
+        records_to_time = to_time if to_time else "23:59"
+
+    class NumberedCanvas(canvas.Canvas):
+        def __init__(self, *args, **kwargs):
+            super().__init__(*args, **kwargs)
+            self.pages = []
+
+        def showPage(self):
+            self.pages.append(dict(self.__dict__))
+            self._startPage()
+
+        def save(self):
+            total_pages = len(self.pages)
+            for i, page in enumerate(self.pages):
+                self.__dict__.update(page)
+                self.draw_page_number(i + 1, total_pages)
+                super().showPage()
+            super().save()
+
+        def draw_page_number(self, page_number, total_pages):
+            self.setFont("Helvetica", 10)
+            page_text = f"Page {page_number} of {total_pages}"
+            self.drawRightString(800, 35, page_text)
+
+    def create_page(canvas, doc):
+
+        page_num = canvas.getPageNumber()
+        total_pages = doc.page
+        current_time = localtime().strftime('%d-%m-%Y %H:%M')
+
+        canvas.setFont("Helvetica-Bold", 14)
+        canvas.setFillColor(colors.blue)
+        canvas.drawString(30, 570, organization.name)
+
+        canvas.setFillColor(colors.black)
+        canvas.setFont("Helvetica", 12)
+        canvas.drawString(30, 550, department.header_note)
+
+        logo_path = organization.logo.path
+        canvas.drawImage(logo_path, 730, 550, width=80, height=30)
+
+        canvas.setLineWidth(0.5)
+        canvas.line(30, 540, 820, 540)
+
+        canvas.setFont("Helvetica-Bold", 12)
+        if format_type == 'Date Wise':
+            canvas.drawString(320, 520, "SMS Audit Trail Date Wise Report")
+        elif format_type == 'Equipment-wise':
+            canvas.drawString(320, 520, "SMS Audit Trail Equipment Wise Report")
+        elif format_type == 'System SMS':
+            canvas.drawString(320, 520, "SMS Audit Trail System Wise Report")
+
+        canvas.setFont("Helvetica-Bold", 10)
+        canvas.drawString(30, 500, f"Filter From: {from_date} {from_time}")
+        canvas.drawString(670, 500, f"Filter To: {to_date} {to_time}")
+
+        canvas.drawString(30, 480, f"Records From: {records_from_date} {records_from_time}")
+        canvas.drawString(670, 480, f"Records To: {records_to_date} {records_to_time}")
+
+        canvas.setLineWidth(0.5)
+        canvas.line(30, 60, 820, 60)
+
+        # canvas.setLineWidth(1)
+        # canvas.line(30, 60, 820, 60)
+
+        footer_text_left_top = "Sunwell"
+        footer_text_left_bottom = "ESTDAS v1.0"
+        footer_text_center = f"Printed By - {username} on {datetime.now().strftime('%d-%m-%Y %H:%M')}"
+        footer_text_right_top = department.footer_note
+        # footer_text_right = f"Page {page_num}"
+
+        canvas.setFont("Helvetica", 10)
+        canvas.drawString(30, 45, footer_text_left_top)
+        canvas.drawString(30, 35, footer_text_left_bottom)
+        canvas.drawCentredString(425, 40, footer_text_center)
+        canvas.drawRightString(800, 45, footer_text_right_top)
+        # canvas.drawRightString(820, 40, footer_text_right)
+
+    def SMS_log_table():
+       
+        data = [
+            ['Sl No', 'Date', 'Time', 'Equipment Name', 'Mobile User Name', 'Mobile No', 'SMS Message', 'SMS Status'],
+        ]
+
+        for idx, record in enumerate(records, start=1):
+            equipment_name = str(record.equipment) if record.equipment else "N/A"
+            user_name = record.user_name or "N/A"
+            mobile_no = record.to_num or "N/A"
+            sms_message = record.msg_body or ""
+            status = record.status or "N/A"
+
+            data.append([
+                str(idx),
+                record.date.strftime('%d-%m-%Y') if record.date else "",
+                record.time.strftime('%H:%M:%S') if record.time else "",
+                Paragraph(equipment_name, styles['Normal']),
+                Paragraph(user_name, styles['Normal']),
+                Paragraph(str(mobile_no), styles['Normal']),
+                Paragraph(sms_message, styles['Normal']),
+                status,
+            ])
+
+        # Table Style
+        table_style = TableStyle([
+            ('BACKGROUND', (0, 0), (-1, 0), colors.lightgrey),
+            ('TEXTCOLOR', (0, 0), (-1, 0), colors.black),
+            ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
+            # ('ALIGN', (4, 1), (4, -1), 'LEFT'),
+            ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
+            ('FONTSIZE', (0, 0), (-1, 0), 10),
+            ('BOTTOMPADDING', (0, 0), (-1, 0), 12),
+            ('BACKGROUND', (0, 1), (-1, -1), colors.whitesmoke),
+            ('GRID', (0, 0), (-1, -1), 1, colors.black),
+        ])
+
+        # Define the table with automatic wrapping
+        table = Table(data, colWidths=[40, 65, 50, 160, 120, 120, 160, 80], repeatRows=1)
+        table.setStyle(table_style)
+
+        return table
+
+    content = [
+        Spacer(1, 0.2 * inch),
+        SMS_log_table(),
+        ]
+
+    # Build the document with customized spacer for page 1 and larger spacer for later pages
+    doc.build(content, onFirstPage=create_page, onLaterPages=create_page, canvasmaker=NumberedCanvas)
+    return response                      
+
+
+def Mkt_analysis(request):
+    return render(request, 'Data_Analysis/Mkt.html')
+
 
 import csv
 from django.urls import reverse
@@ -4408,7 +6171,7 @@ def upload_csv(request):
             reader = csv.DictReader(f)
             for row in reader:
                 try:
-                    # Convert date from DD-MM-YYYY to YYYY-MM-DD
+                    
                     date_str = row['Date']
                     formatted_date = datetime.strptime(date_str, '%d-%m-%Y').date()
 
@@ -4460,6 +6223,8 @@ def upload_csv(request):
 
 def view_alarm_log(request):
     emp_user = request.session.get('username', None)
+    if not emp_user:
+        return redirect('login')
     try:
         data = User.objects.get(username=emp_user)
     except User.DoesNotExist:
@@ -4472,20 +6237,13 @@ def view_alarm_log(request):
     except user_access_db.DoesNotExist:
         acc_db = None
 
-    equipment_list = Equipment.objects.all()
-    print("GET Parameters:", request.GET)
     # Get filter parameters from the request
     selected_equipment = request.GET.get('equipment')
     from_date = request.GET.get('from-date')
     to_date = request.GET.get('to-date')
     from_time = request.GET.get('from-time') or '00:00'
     to_time = request.GET.get('to-time') or '23:59'
-    print("From Date", from_date)
-    print("To Date", to_date)
-    print("to Time", to_time)
-    print("from time", to_time)
     filter_kwargs = Q()
-    print(selected_equipment)
     # Filter by equipment if selected
     if selected_equipment:
         filter_kwargs &= Q(equipment__id=selected_equipment)
@@ -4518,7 +6276,7 @@ def view_alarm_log(request):
             Q(date__gt=from_date_parsed, date__lt=to_date_parsed)
         )
 
-    alaram_log = alarm_logs.objects.filter(filter_kwargs).order_by('date', 'time')
+    alaram_log = Alarm_logs.objects.filter(filter_kwargs).order_by('date', 'time')
     eqp_list = Equipment.objects.filter(status='Active')
 
     
@@ -4557,6 +6315,28 @@ def generate_alaram_log_pdf(request, records, from_date, to_date, from_time, to_
         records_to_date = to_date
         records_to_time = to_time if to_time else "23:59"
 
+    class NumberedCanvas(canvas.Canvas):
+        def __init__(self, *args, **kwargs):
+            super().__init__(*args, **kwargs)
+            self.pages = []
+
+        def showPage(self):
+            self.pages.append(dict(self.__dict__))
+            self._startPage()
+
+        def save(self):
+            total_pages = len(self.pages)
+            for i, page in enumerate(self.pages):
+                self.__dict__.update(page)
+                self.draw_page_number(i + 1, total_pages)
+                super().showPage()
+            super().save()
+
+        def draw_page_number(self, page_number, total_pages):
+            self.setFont("Helvetica", 10)
+            page_text = f"Page {page_number} of {total_pages}"
+            self.drawRightString(570, 35, page_text)
+
     def create_page(canvas, doc):
 
         page_num = canvas.getPageNumber()
@@ -4565,14 +6345,17 @@ def generate_alaram_log_pdf(request, records, from_date, to_date, from_time, to_
         # Header
         canvas.setFont("Helvetica-Bold", 14)
         canvas.setFillColor(colors.blue)
-        canvas.drawCentredString(300, 800, organization.name)
+        org_name=organization.name if organization else ""
+        canvas.drawString(30, 800, org_name)
         
         canvas.setFillColor(colors.black)
         canvas.setFont("Helvetica", 12)
-        canvas.drawCentredString(300, 780, department.header_note)
+        department_name=department.header_note if department else " "
+        canvas.drawString(30, 780, department_name)
 
-        logo_path = organization.logo.path
-        canvas.drawImage(logo_path, 470, 780, width=80, height=30)
+        logo_path = organization.logo.path if organization and organization.logo else " "
+        if logo_path.strip():
+            canvas.drawImage(logo_path, 470, 780, width=80, height=30)
 
         # Draw the separator line under the header
         canvas.setLineWidth(0.5)
@@ -4607,7 +6390,7 @@ def generate_alaram_log_pdf(request, records, from_date, to_date, from_time, to_
         footer_left_bottom = "ESTDAS v1.0"
         footer_center = f"Printed By - {username} on {current_time}"
         footer_right_top = department.footer_note
-        footer_right_bottom = f"Page {page_num} of {total_pages}"
+        # footer_right_bottom = f"Page {page_num} of {total_pages}"
         
         # Draw footer at the bottom of the page
         canvas.setFont("Helvetica", 10)
@@ -4615,7 +6398,7 @@ def generate_alaram_log_pdf(request, records, from_date, to_date, from_time, to_
         canvas.drawString(30, 35, footer_left_bottom)
         canvas.drawCentredString(300, 40, footer_center)
         canvas.drawRightString(570, 45, footer_right_top)
-        canvas.drawRightString(570, 35, footer_right_bottom)  
+        # canvas.drawRightString(570, 35, footer_right_bottom)  
 
     # Main function to generate PDF
     def alaram_log_table():
@@ -4659,5 +6442,130 @@ def generate_alaram_log_pdf(request, records, from_date, to_date, from_time, to_
     ]
     
     # Build the document
-    doc.build(content, onFirstPage=create_page, onLaterPages=create_page)
+    doc.build(content, onFirstPage=create_page, onLaterPages=create_page, canvasmaker=NumberedCanvas)
     return response
+
+
+
+
+from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
+from django.views.decorators.http import require_http_methods
+import json
+
+@csrf_exempt  
+@require_http_methods(["POST"])
+def save_equipment_settings(request):
+    data = json.loads(request.body)
+    
+    tab_name = data.get('tab_name')
+   
+    if tab_name == "settings":
+        ip = data.get('equipment_ip')
+        ip_address = Equipment.objects.get(ip_address=ip)
+        temp_set_value = float(data.get('temp_set_value', 0.0))
+        temp_low_alarm = float(data.get('temp_low_alarm', 0.0))
+        temp_high_alarm = float(data.get('temp_high_alarm', 0.0))
+        temp_sensor = float(data.get('temp_sensor', 0.0))
+        temp_high_alert = float(data.get('temp_high_alert', 0.0))
+        temp_low_alert = float(data.get('temp_low_alert', 0.0))
+        humidity_set_value = float(data.get('humidity_set_value', 0.0))
+        humidity_low_alarm = float(data.get('humidity_low_alarm', 0.0))
+        humidity_high_alarm = float(data.get('humidity_high_alarm', 0.0))
+        humidity_sensor = float(data.get('humidity_sensor', 0.0))
+        humidity_high_alert = float(data.get('humidity_high_alert', 0.0))
+        humidity_low_alert = float(data.get('humidity_low_alert', 0.0))
+
+        plc = connect_to_plc(ip)
+        
+        if plc.get_connected():
+            if ip_address.set_value != temp_set_value:
+                
+                data = bytearray(4)
+                set_real(data, 0, temp_set_value)
+                plc.db_write(19, 0, data)
+                Equipmentwrite.objects.create(
+                    equipment=ip_address,
+                    label="Temperature Set Value Updated",
+                    value=temp_set_value,
+                    status='Done'
+                )
+                ip_address.set_value = temp_set_value
+
+            if ip_address.low_alarm != temp_low_alarm:
+                
+                data = bytearray(4)
+                set_real(data, 0, temp_low_alarm)
+                plc.db_write(19, 4, data)
+                Equipmentwrite.objects.create(
+                    equipment=ip_address,
+                    label="Temperature Low Alarm Value Updated",
+                    value=temp_low_alarm,
+                    status='Done'
+                )
+                ip_address.low_alarm = temp_low_alarm
+
+            if ip_address.high_alarm != temp_high_alarm:
+                
+                data = bytearray(4)
+                set_real(data, 0, temp_high_alarm)
+                plc.db_write(19, 8, data)
+                Equipmentwrite.objects.create(
+                    equipment=ip_address,
+                    label="Temperature High Alarm Value Updated",
+                    value=temp_high_alarm,
+                    status='Done'
+                )
+                ip_address.high_alarm = temp_high_alarm
+
+            if ip_address.set_value_hum != humidity_set_value:
+                
+                data = bytearray(4)
+                set_real(data, 0, humidity_set_value)
+                plc.db_write(19, 766, data)
+                Equipmentwrite.objects.create(
+                    equipment=ip_address,
+                    label="Humidity Set Value Updated",
+                    value=humidity_set_value,
+                    status='Done'
+                )
+                ip_address.set_value_hum = humidity_set_value
+
+            if ip_address.low_alarm_hum != humidity_low_alarm:
+                
+                data = bytearray(4)
+                set_real(data, 0, humidity_low_alarm)
+                plc.db_write(19, 770, data)
+                Equipmentwrite.objects.create(
+                    equipment=ip_address,
+                    label="Humidity Low Alarm Value Updated",
+                    value=humidity_low_alarm,
+                    status='Done'
+                )
+                ip_address.low_alarm_hum = humidity_low_alarm
+
+            if ip_address.high_alarm_hum != humidity_high_alarm:
+                
+                data = bytearray(4)
+                set_real(data, 0, humidity_high_alarm)
+                plc.db_write(19, 774, data)
+                Equipmentwrite.objects.create(
+                    equipment=ip_address,
+                    label="Humidity High Alarm Value Updated",
+                    value=humidity_high_alarm,
+                    status='Done'
+                )
+                ip_address.high_alarm_hum = humidity_high_alarm
+
+        ip_address.total_temp_sensors = temp_sensor
+        ip_address.high_alert = temp_high_alert
+        ip_address.low_alert = temp_low_alert
+
+        ip_address.total_humidity_sensors = humidity_sensor
+        ip_address.high_alert_hum = humidity_high_alert
+        ip_address.low_alert_hum = humidity_low_alert
+
+        ip_address.save()
+
+    return JsonResponse({"status": "success", "message": "Data saved successfully!"})
+

@@ -11,8 +11,8 @@ urlpatterns = [
 
     #Dashboard URL's
     path('dashboard/', dashboard, name='dashboard'),
-
-
+    path('save-equipment-settings/', save_equipment_settings, name='save_equipment_settings'),
+    path('save_app_settings/', save_app_settings, name='save_app_settings'),
     #Management URL's
     path('organization/', organization, name='organization'),
     path('organization/edit/<int:organization_id>/',edit_organization, name='edit_organization'),
@@ -55,11 +55,15 @@ urlpatterns = [
     path('view_log/',view_log,name='view_log'),
     path('alaram_log/',alaram_log,name='alaram_log'),
     path('view_alarm_log', view_alarm_log, name="view_alarm_log"),
+    path('Mkt_analysis', Mkt_analysis, name="Mkt_analysis"),
 
     # audit_logs #
     path('user_activity_log/', user_activity, name="user_activity"),
     path('Equipment_Audit/', equipment_Audit_log, name="Equipment_Audit_log"),
     path('alaram_Audit_log/', alaram_Audit_log, name="alaram_Audit_log"),
+    path('email_Audit_log/', email_Audit_log, name="email_Audit_log"),
+    path('sms_Audit_log/', sms_Audit_log, name="sms_Audit_log"),
+
 
     path('upload_csv/', upload_csv, name='upload_csv'),
 

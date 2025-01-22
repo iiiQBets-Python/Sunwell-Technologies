@@ -1,3 +1,5 @@
+
+
 {% extends "Base/base.html" %}
 {% load static %}
 
@@ -51,6 +53,21 @@
         }
         .form-check {
             margin-bottom: 10px;
+        }
+        .nav-tabs {
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .tabs {
+            display: block; /* Default for small screens */
+        }
+
+        @media (min-width: 768px) {
+            /* Apply display: flex for medium and larger screens */
+            .tabs {
+                display: flex;
+            }
         }
         @media (max-width: 992px) {
             .container{
@@ -166,6 +183,66 @@
             }
             
         }
+        
+        /* Floating Label Styles Specific to Modal */
+        #authModal .form-group {
+            position: relative;
+            margin-bottom: 1.5rem;
+        }
+
+        #authModal .form-label {
+            position: absolute;
+            top: 50%;
+            left: 25px;
+            transform: translateY(-50%);
+            background: #fff;
+            padding: 0 5px;
+            color: #aaa;
+            transition: 0.2s ease all;
+            pointer-events: none;
+        }
+
+        #authModal .form-control:focus,
+        #authModal .form-control:not(:placeholder-shown) {
+            border-color: #007bff;
+            box-shadow: none;
+        }
+
+        #authModal .form-control:focus ~ .form-label,
+        #authModal .form-control:not(:placeholder-shown) ~ .form-label {
+            top: -10px;
+            transform: translateY(0%);
+            left: 10px;
+            font-size: 12px;
+            color: #007bff;
+            background: #fff;
+            padding: 0 5px;
+        }
+
+        #authModal .form-control {
+            border: 1px solid #ced4da;
+            padding: 10px;
+            border-radius: 4px;
+            width: 100%;
+            background-color: #fff;
+            transition: border-color 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+        }
+
+        #authModal .form-control:focus {
+            outline: none;
+            box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+        }
+
+        #authModal .form-control:focus ~ .form-label {
+            color: #007bff;
+            font-weight: bold;
+        }
+
+        /* Optional: Adjust modal-specific styles for better alignment */
+        #authModal .modal-footer {
+            justify-content: flex-end;
+            padding: 10px 15px;
+        }
 
     </style>
 {% endblock styles %}
@@ -181,7 +258,7 @@
         <div class="col-md-3">
             <label for="ipAddress" class="form-label">IP Address</label>
             <div class="d-flex">
-                <input type="text" class="form-control me-2" value="{{ equipment.ip_address }}">
+                <input type="text" class="form-control me-2" id="ip_address" value="{{ equipment.ip_address }}">
             </div>
         </div>
         <div class="col-md-3">
@@ -201,22 +278,32 @@
     </div>
 
     <ul class="nav nav-tabs" id="myTab" role="tablist">
-        <li class="nav-item" role="presentation">
-            <button class="nav-link active" id="parameters-tab" data-bs-toggle="tab" data-bs-target="#parameters" type="button" role="tab" aria-controls="parameters" aria-selected="true">Equipment Parameters</button>
-        </li>
-        <li class="nav-item" role="presentation">
-            <button class="nav-link" id="settings-tab" data-bs-toggle="tab" data-bs-target="#settings" type="button" role="tab" aria-controls="settings" aria-selected="false">Equipment Settings</button>
-        </li>
-        <li class="nav-item" role="presentation">
-            <button class="nav-link" id="write-event-tab" data-bs-toggle="tab" data-bs-target="#write-event" type="button" role="tab" aria-controls="write-event" aria-selected="false">Equipment Write Event</button>
-        </li>
-        <li class="nav-item" role="presentation">
-            <button class="nav-link" id="email-sms-alarm-alert-tab" data-bs-toggle="tab" data-bs-target="#emailsmsalert" type="button" role="tab" aria-controls="emailsmsalert" aria-selected="false">Email/SMS Alarm Alert</button>
-        </li>
+        <div class="tabs">
+            <li class="nav-item" role="presentation">
+                <button class="nav-link active" id="parameters-tab" data-bs-toggle="tab" data-bs-target="#parameters" type="button" role="tab" aria-controls="parameters" aria-selected="true">Equipment Parameters</button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="settings-tab" data-bs-toggle="tab" data-bs-target="#settings" type="button" role="tab" aria-controls="settings" aria-selected="false">Equipment Settings</button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="write-event-tab" data-bs-toggle="tab" data-bs-target="#write-event" type="button" role="tab" aria-controls="write-event" aria-selected="false">Equipment Write Event</button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="email-sms-alarm-alert-tab" data-bs-toggle="tab" data-bs-target="#emailsmsalert" type="button" role="tab" aria-controls="emailsmsalert" aria-selected="false">Email/SMS Alarm Alert</button>
+            </li>
+        </div>
+        <!-- <div class="d-flex justify-content-end align-items-end"> 
+            <button class="btn btn-primary edit-button me-2" onclick="editMode(this)">Edit</button>
+            <button class="btn btn-success save-button d-none" onclick="saveMode(this)">Save</button>
+        </div> -->
     </ul>
 
     <div class="tab-content" id="myTabContent">
-        <div class="tab-pane fade show active table-container" id="parameters" role="tabpanel" aria-labelledby="parameters-tab">
+        <div class="tab-pane fade show active table-container" id="parameters" role="tabpanel" aria-labelledby="parameters-tab" style="padding:15px; background:#ffff;">
+            <div class="d-flex justify-content-end align-items-end"> 
+                <button class="btn btn-primary edit-button me-2 mb-2" onclick="editMode(this)">Edit</button>
+                <button class="btn btn-success save-button me-2 mb-2 d-none" onclick="saveMode(this)">Save</button>
+            </div>
             <div class="table-wrapper">
                 <table class="table table-bordered">
                     <thead>
@@ -449,17 +536,16 @@
                         </ul>
                     </nav>
                 </div>
-            </div>  
-
-            <div class="d-flex justify-content-center align-items-center"> 
-                <button class="btn btn-secondary m-2" type="button">Cancel</button> 
-                <button class="btn btn-primary m-2" type="submit">Save</button> 
-            </div>
+            </div> 
         </div>
 
 
         <div class="tab-pane fade" id="settings" role="tabpanel" aria-labelledby="settings-tab" style="padding:15px; background:#ffff;">
             <div class="settings-wrapper fade show active" id="equipment-parameters" role="tabpanel" aria-labelledby="equipment-parameters-tab">
+                <div class="d-flex justify-content-end align-items-end"> 
+                    <button class="btn btn-primary edit-button me-2" onclick="editMode(this)">Edit</button>
+                    <button class="btn btn-success save-button d-none" onclick="saveMode(this)">Save</button>
+                </div>
                 <h5 class="section-title">Temperature</h5>
                 <div class="row">
                     <!-- First Column -->
@@ -467,25 +553,26 @@
                         <div class="mb-3 row">
                             <label class="col-sm-5 col-form-label">Set Value</label>
                             <div class="col-sm-7">
-                                <input type="text" class="form-control" value="25.0">
+                                <input type="number" class="form-control" name="temp_set_value" step="0.01" value="{{ equipment.set_value|floatformat:2 }}">
                             </div>
+                            
                         </div>
                         <div class="mb-3 row">
                             <label class="col-sm-5 col-form-label">Low Alarm</label>
                             <div class="col-sm-7">
-                                <input type="text" class="form-control" value="23.0">
+                                <input type="number" class="form-control" name="temp_low_alarm" step="0.01" value="{{ equipment.low_alarm|floatformat:2 }}">
                             </div>
                         </div>
                         <div class="mb-3 row">
                             <label class="col-sm-5 col-form-label">High Alarm</label>
                             <div class="col-sm-7">
-                                <input type="text" class="form-control" value="27.0">
+                                <input type="text" class="form-control" name="temp_high_alarm" step="0.01" value="{{ equipment.high_alarm|floatformat:2 }}">
                             </div>
                         </div>
                         <div class="mb-3 row">
                             <label class="col-sm-5 col-form-label">Total Sensor</label>
                             <div class="col-sm-7">
-                                <input type="text" class="form-control" value="4">
+                                <input type="number" class="form-control" name="temp_sensor"  value="{{ equipment.total_temp_sensors }}">
                             </div>
                         </div>
                     </div>
@@ -495,13 +582,13 @@
                         <div class="mb-3 row">
                             <label class="col-sm-5 col-form-label">High Alert</label>
                             <div class="col-sm-7">
-                                <input type="text" class="form-control" value="300">
+                                <input type="number" name="temp_high_alert" class="form-control" step="0.01" value="{{ equipment.high_alert|floatformat:2 }}">
                             </div>
                         </div>
                         <div class="mb-3 row">
                             <label class="col-sm-5 col-form-label">Low Alert</label>
                             <div class="col-sm-7">
-                                <input type="text" class="form-control" value="800">
+                                <input type="number" name="temp_low_alert" class="form-control" step="0.01" value="{{ equipment.low_alert|floatformat:2 }}">
                             </div>
                         </div>
                         <div class="mb-3 row">
@@ -514,31 +601,7 @@
                             </div>
                         </div>
                     </div>
-    
-                    <!-- Third Column -->
-                    <!-- <div class="col-md-4">
-                        <div class="mb-3 row">
-                            <label class="col-sm-5 col-form-label">PID TS</label>
-                            <div class="col-sm-7">
-                                <input type="text" class="form-control" value="0">
-                            </div>
-                        </div>
-                        <div class="mb-3 row">
-                            <label class="col-sm-5 col-form-label">PID Cycle Time</label>
-                            <div class="col-sm-7">
-                                <input type="text" class="form-control" value="20">
-                            </div>
-                        </div>
-                        <div class="mb-3 row">
-                            <label class="col-sm-5 col-form-label">PID Output Power</label>
-                            <div class="col-sm-7">
-                                <input type="text" class="form-control" value="0">
-                            </div>
-                        </div>
-                    </div> -->
                 </div>
-    
-    
     
                 <h5 class="section-title">Humidity</h5>
                 <div class="row">
@@ -547,25 +610,25 @@
                         <div class="mb-3 row">
                             <label class="col-sm-5 col-form-label">Set Value</label>
                             <div class="col-sm-7">
-                                <input type="text" class="form-control" value="60.0">
+                                <input type="number" name="humidity_set_value" step="0.01" class="form-control" value="{{ equipment.set_value_hum|floatformat:2 }}">
                             </div>
                         </div>
                         <div class="mb-3 row">
                             <label class="col-sm-5 col-form-label">Low Alarm</label>
                             <div class="col-sm-7">
-                                <input type="text" class="form-control" value="55.0">
+                                <input type="number" name="humidity_low_alarm" step="0.01" class="form-control"value="{{ equipment.low_alarm_hum|floatformat:2 }}">
                             </div>
                         </div>
                         <div class="mb-3 row">
                             <label class="col-sm-5 col-form-label">High Alarm</label>
                             <div class="col-sm-7">
-                                <input type="text" class="form-control" value="65.0">
+                                <input type="number" name="humidity_high_alarm" step="0.01" class="form-control" value="{{ equipment.high_alarm_hum|floatformat:2 }}">
                             </div>
                         </div>
                         <div class="mb-3 row">
                             <label class="col-sm-5 col-form-label">Total Sensor</label>
                             <div class="col-sm-7">
-                                <input type="text" class="form-control" value="4">
+                                <input type="number" name="humidity_sensor" class="form-control" value="{{ equipment.total_humidity_sensors }}">
                             </div>
                         </div>
                     </div>
@@ -575,13 +638,13 @@
                         <div class="mb-3 row">
                             <label class="col-sm-5 col-form-label">High Alert</label>
                             <div class="col-sm-7">
-                                <input type="text" class="form-control" value="20">
+                                <input type="number" name="humidity_high_alert" step="0.01" class="form-control" value="{{ equipment.high_alert_hum|floatformat:2 }}">
                             </div>
                         </div>
                         <div class="mb-3 row">
                             <label class="col-sm-5 col-form-label">Low Alert</label>
                             <div class="col-sm-7">
-                                <input type="text" class="form-control" value="60">
+                                <input type="number" name="humidity_low_alert" step="0.01" class="form-control" value="{{ equipment.low_alert_hum|floatformat:2 }}">
                             </div>
                         </div>
                         <div class="mb-3 row">
@@ -594,33 +657,7 @@
                             </div>
                         </div>
                     </div>
-    
-                    <!-- Third Column -->
-                    <!-- <div class="col-md-4">
-                        <div class="mb-3 row">
-                            <label class="col-sm-5 col-form-label">PID TS</label>
-                            <div class="col-sm-7">
-                                <input type="text" class="form-control" value="0">
-                            </div>
-                        </div>
-                        <div class="mb-3 row">
-                            <label class="col-sm-5 col-form-label">PID Cycle Time</label>
-                            <div class="col-sm-7">
-                                <input type="text" class="form-control" value="10">
-                            </div>
-                        </div>
-                        <div class="mb-3 row">
-                            <label class="col-sm-5 col-form-label">PID Output Power</label>
-                            <div class="col-sm-7">
-                                <input type="text" class="form-control" value="0">
-                            </div>
-                        </div>
-                    </div> -->
                 </div>
-            </div>
-            <div class="d-flex justify-content-end align-items-center"> 
-                <button class="btn btn-secondary m-2" type="button">Cancel</button> 
-                <button class="btn btn-primary m-2" type="submit">Save</button> 
             </div>
         </div>
 
@@ -631,114 +668,33 @@
                         <tr>
                             <th><input type="checkbox" id="selectAll"></th>
                             <th scope="col">Equipment Name</th>
-                            <th scope="col">Write Date time</th>
+                            <th scope="col">Write Date</th>
+                            <th scope="col">Write Time</th>
                             <th scope="col">Parameter Label</th>
                             <th scope="col">Parameter Value</th>
                             <th scope="col">Status</th>
-                            <th scope="col">Status Description</th>
                         </tr>
                     </thead>
                     <tbody id="write-event_form-data-table" class="scrollable-tbody">
-                        <tr>
-                            <td><input type="checkbox" class="row-checkbox"></td>
-                            <td>Autoclave Fo</td>
-                            <td>31-08-2024 14:59</td>
-                            <td>Temperature Set Value</td>
-                            <td>10</td>
-                            <td>Pending</td>
-                            <td></td>
-                        </tr>      
-                        <tr>
-                            <td><input type="checkbox" class="row-checkbox"></td>
-                            <td>Autoclave For</td>
-                            <td>31-08-2024 14:59</td>
-                            <td>Temperature Set Value</td>
-                            <td>10</td>
-                            <td>Pending</td>
-                            <td></td>
-                        </tr>  
-                        <tr>
-                            <td><input type="checkbox" class="row-checkbox"></td>
-                            <td>Autoclave Fo</td>
-                            <td>31-08-2024 14:59</td>
-                            <td>Temperatur Value</td>
-                            <td>111</td>
-                            <td>Pending</td>
-                            <td></td>
-                        </tr>  
-                        <tr>
-                            <td><input type="checkbox" class="row-checkbox"></td>
-                            <td>Autoclave Fo</td>
-                            <td>31-08-2024 14:59</td>
-                            <td>Temperature Set Value</td>
-                            <td>10</td>
-                            <td>Pending</td>
-                            <td></td>
-                        </tr>  
-                        <tr>
-                            <td><input type="checkbox" class="row-checkbox"></td>
-                            <td>Autoclave Fo</td>
-                            <td>31-08-2024 14:59</td>
-                            <td>Temperature Set Value</td>
-                            <td>10</td>
-                            <td>Pending</td>
-                            <td></td>
-                        </tr>  
-                        <tr>
-                            <td><input type="checkbox" class="row-checkbox"></td>
-                            <td>Autoclave Fo</td>
-                            <td>31-08-2024 14:59</td>
-                            <td>Temperature Set Value</td>
-                            <td>10</td>
-                            <td>Pending</td>
-                            <td></td>
-                        </tr>  
-                        <tr>
-                            <td><input type="checkbox" class="row-checkbox"></td>
-                            <td>Autoclave Fo</td>
-                            <td>31-08-2024 14:59</td>
-                            <td>Temperature Set Value</td>
-                            <td>10</td>
-                            <td>Pending</td>
-                            <td></td>
-                        </tr>  
-                        <tr>
-                            <td><input type="checkbox" class="row-checkbox"></td>
-                            <td>Autoclave Fo</td>
-                            <td>31-08-2024 14:59</td>
-                            <td>Temperature Set Value</td>
-                            <td>10</td>
-                            <td>Pending</td>
-                            <td></td>
-                        </tr>  
-                        <tr>
-                            <td><input type="checkbox" class="row-checkbox"></td>
-                            <td>star</td>
-                            <td>31-08-2024 14:59</td>
-                            <td>Temperature Set Value</td>
-                            <td>11</td>
-                            <td>active</td>
-                            <td></td>
-                        </tr>  
-                        <tr>
-                            <td><input type="checkbox" class="row-checkbox"></td>
-                            <td>autostart</td>
-                            <td>02-09-2024 14:59</td>
-                            <td>Temperature Set Value</td>
-                            <td>18</td>
-                            <td>active</td>
-                            <td></td>
-                        </tr> 
-                        <tr>
-                            <td><input type="checkbox" class="row-checkbox"></td>
-                            <td>adasdks kjc</td>
-                            <td>0cdcb kbfv</td>
-                            <td>TcdCdc</td>
-                            <td>18sdcsc</td>
-                            <td>acdscdsctive</td>
-                            <td>fcds</td>
-                        </tr>  
+                        {% if equipmentwrite %}
+                            {% for entry in equipmentwrite %}
+                            <tr>
+                                <td><input type="checkbox" class="row-checkbox"></td>
+                                <td>{{ entry.equipment.equip_name }}</td>
+                                <td>{{ entry.date|date:"d-m-Y" }}</td>
+                                <td>{{ entry.time|time:"H:i" }}</td>
+                                <td>{{ entry.label }}</td>
+                                <td>{{ entry.value }}</td>
+                                <td></td>
+                            </tr>
+                            {% endfor %}
+                        {% else %}
+                            <tr>
+                                <td colspan="7">No entries found</td>
+                            </tr>
+                        {% endif %}
                     </tbody>
+                    
                 </table>
             </div>
             <div class="row align-items-center mt-3 mb-2">
@@ -771,10 +727,6 @@
                             <li class="page-item" id="next-page"><a class="page-link" href="#">Next</a></li>
                         </ul>
                     </nav>
-                </div>
-                <div class="d-flex justify-content-center align-items-center"> 
-                    <button class="btn btn-secondary m-2" type="button">Cancel</button> 
-                    <button class="btn btn-primary m-2" type="submit">Save</button> 
                 </div>
             </div>  
         </div>
@@ -815,12 +767,43 @@
                     </div>
                 </div>
             </div>
-            <div class="d-flex justify-content-center align-items-center"> 
-                <button class="btn btn-secondary m-2" type="button">Cancel</button> 
-                <button class="btn btn-primary m-2" type="submit">Save</button> 
+        </div>
+    </div>
+
+    <div class="modal fade" id="authModal" tabindex="-1" aria-labelledby="authModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content container-custom">
+                <div class="modal-header">
+                    <h4 class="modal-title" id="authModalLabel">Authentication Required</h4>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="authForm">
+                        {% csrf_token %}
+                        <div class="row">
+                            <div class="col-md-12 form-group">
+                                <input type="text" class="form-control" id="username" name="username" value="{{ data.username }}" readonly>
+                                <label for="username" class="form-label">Username</label>
+                            </div>
+                            <div class="col-md-12 form-group">
+                                <input type="password" class="form-control" id="password" required>
+                                <label for="password" class="form-label">Password</label>
+                            </div>
+                            <div class="col-md-12 form-group">
+                                <input type="text" class="form-control" id="Comments" required>
+                                <label for="Comments" class="form-label">Comments</label>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Close</button>
+                                <button type="submit" class="btn btn-success" id="confirmSave">Confirm</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
             </div>
         </div>
     </div>
+    
 </div>
 
 {% block scripts %}
@@ -956,8 +939,194 @@
             checkbox.checked = this.checked;
         });
     });
-</script>
-    
-{% endblock %}
 
+    function editMode(button) {
+   
+   const formContainer = button.closest('.tab-pane');
+   formContainer.querySelectorAll('input, select').forEach(input => {
+       input.removeAttribute('readonly');
+       input.disabled = false;
+   });
+   button.classList.add('d-none'); 
+   formContainer.querySelector('.save-button').classList.remove('d-none'); 
+}
+
+function saveMode(button) {
+    // Get the parent tab-pane of the button
+    const formContainer = button.closest('.tab-pane');
+
+    // Ensure the modal is triggered only when the save button is clicked in the "settings" tab
+    if (formContainer.id !== "settings") {
+        alert("Save functionality is not enabled for this tab.");
+        return;
+    }
+
+    let inputData = {};
+    inputData['tab_name'] = formContainer.getAttribute('id');
+    inputData['equipment_ip'] = document.getElementById('ip_address').value;
+
+    formContainer.querySelectorAll('input, select').forEach(input => {
+        inputData[input.name] = input.value;
+    });
+
+    // Show the authentication modal
+    const authModal = new bootstrap.Modal(document.getElementById('authModal'), {
+        backdrop: 'static',
+        keyboard: false
+    });
+    authModal.show();
+
+    // Handle authentication form submission
+    const authForm = document.getElementById('authForm');
+    const confirmSaveButton = document.getElementById('confirmSave');
+
+    confirmSaveButton.addEventListener('click', function (event) {
+        event.preventDefault();
+
+        const username = document.getElementById('username').value;
+        const password = document.getElementById('password').value;
+        const acknowledge = document.getElementById('Comments').value;
+
+        if (!password || !acknowledge) {
+            alert('Please provide valid credentials.');
+            return;
+        }
+
+        // Include authentication data in the inputData object
+        inputData['username'] = username;
+        inputData['password'] = password;
+        inputData['acknowledge'] = acknowledge;
+
+        fetch("{% url 'save_equipment_settings' %}", {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': getCookie('csrftoken')
+            },
+            body: JSON.stringify(inputData)
+        })
+        .then(response => response.json())
+        .then(data => {
+            alert("Data Saved Successfully");
+            authModal.hide();
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('Failed to save data.');
+        });
+    });
+}
+
+
+function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+
+
+
+//     document.addEventListener("DOMContentLoaded", function () {
+//     const allowedTabs = ['parameters', 'settings']; // Define the allowed tabs
+
+//     function editMode(button) {
+//         const formContainer = button.closest('.tab-pane');
+
+//         // Check if the current tab is allowed
+//         if (!allowedTabs.includes(formContainer.id)) {
+//             alert('Edit mode is not allowed for this tab.');
+//             return;
+//         }
+
+//         // Enable all input and select elements inside the current tab
+//         formContainer.querySelectorAll('input, select').forEach(input => {
+//             input.removeAttribute('readonly');
+//             input.disabled = false;
+//         });
+
+//         // Toggle button visibility
+//         button.classList.add('d-none');
+//         formContainer.querySelector('.save-button').classList.remove('d-none');
+//     }
+
+//     function saveMode(button) {
+//         const formContainer = button.closest('.tab-pane');
+
+//         // Check if the current tab is allowed
+//         if (!allowedTabs.includes(formContainer.id)) {
+//             alert('Save mode is not allowed for this tab.');
+//             return;
+//         }
+
+//         let inputData = {};
+//         inputData['tab_name'] = formContainer.id;
+//         inputData['equipment_ip'] = document.getElementById('ip_address').value; // Example field
+
+//         // Collect input values from the current tab
+//         formContainer.querySelectorAll('input, select').forEach(input => {
+//             inputData[input.name] = input.value;
+//             input.setAttribute('readonly', true);
+//             input.disabled = true;
+//         });
+
+//         // Toggle button visibility
+//         button.classList.add('d-none');
+//         formContainer.querySelector('.edit-button').classList.remove('d-none');
+
+//         // Debugging and sending data to the server
+//         console.log('Data to save:', inputData);
+
+//         fetch("{% url 'save_equipment_settings' %}", {
+//             method: 'POST',
+//             headers: {
+//                 'Content-Type': 'application/json',
+//                 'X-CSRFToken': getCookie('csrftoken')
+//             },
+//             body: JSON.stringify(inputData)
+//         })
+//         .then(response => response.json())
+//         .then(data => {
+//             alert('Data Saved Successfully');
+//         })
+//         .catch(error => {
+//             console.error('Error:', error);
+//             alert('Failed to save data.');
+//         });
+//     }
+
+//     function getCookie(name) {
+//         let cookieValue = null;
+//         if (document.cookie && document.cookie !== '') {
+//             const cookies = document.cookie.split(';');
+//             for (let i = 0; i < cookies.length; i++) {
+//                 const cookie = cookies[i].trim();
+//                 if (cookie.substring(0, name.length + 1) === (name + '=')) {
+//                     cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+//                     break;
+//                 }
+//             }
+//         }
+//         return cookieValue;
+//     }
+
+//     // Attach functions to the global scope for inline event handlers
+//     window.editMode = editMode;
+//     window.saveMode = saveMode;
+// });
+
+    // Code for Modal Popup for equipment settings
+
+    
+    
+</script>
+{% endblock %}
 {% endblock content %}

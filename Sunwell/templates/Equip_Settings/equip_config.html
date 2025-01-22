@@ -1,3 +1,4 @@
+
 {% extends "Base/base.html" %}
 {% load static %}
 
@@ -157,15 +158,33 @@
 
     <div class="d-flex justify-content-end mb-2">
         <div class="dropdown role-filter">
-            <button class="btn btn-outline-secondary dropdown-toggle" type="button" id="roleFilterDropdown" data-bs-toggle="dropdown" aria-expanded="false">
-                Select status
+            <button
+                class="btn btn-outline-secondary dropdown-toggle"
+                type="button"
+                id="roleFilterDropdown"
+                data-bs-toggle="dropdown"
+                aria-expanded="false">
+                {{ status_filter|title }} 
             </button>
             <ul class="dropdown-menu" aria-labelledby="roleFilterDropdown">
-                <li><a class="dropdown-item" href="#" data-value="all">All Status <span class="option-count">3</span></a></li>
-                <li><a class="dropdown-item" href="#" data-value="Active">Active <span class="option-count">1</span></a></li>
-                <li><a class="dropdown-item" href="#" data-value="InActive">InActive <span class="option-count">1</span></a></li>
+                <li>
+                    <a class="dropdown-item" href="#" data-value="All Status" onclick="filterByStatus('All Status', {{ total_count }})">
+                         All {% comment %}<span class="option-count">{{ total_count }}</span> {% endcomment %}
+                    </a>
+                </li>
+                <li>
+                    <a class="dropdown-item" href="#" data-value="Active" onclick="filterByStatus('Active', {{ active_count }})">
+                         Active {% comment %}<span class="option-count">{{ active_count }}</span> {% endcomment %}
+                    </a>
+                </li>
+                <li>
+                    <a class="dropdown-item" href="#" data-value="Inactive" onclick="filterByStatus('Inactive', {{ inactive_count }})">
+                         Inactive {% comment %}<span class="option-count">{{ inactive_count }}</span> {% endcomment %}
+                    </a>
+                </li>
             </ul>
         </div>
+        
     </div>
     <div class="d-flex justify-content-between align-items-center custom-label mb-2" style="font-weight: bold; padding: 5px 10px; background-color: rgb(235, 235, 235);">
         <section class="d-block custom-label mb-2" style="background-color: rgb(235, 235, 235); text-align: center; font-weight: bold; padding: 5px 0px">
@@ -195,11 +214,11 @@
             </thead>
             <tbody id="form-data-table" class="scrollable-tbody">
                 {% for equipment in equipment_list %}
-                <tr data-department="{{ equipment.department.department_name }}">
+                <tr data-department-id="{{ equipment.department.id }}">
                     <td><input type="checkbox" class="row-checkbox" name="comm_checkbox"></td>
                     <td><a href="{% url 'equipment_setting' equipment.id %}">{{ equipment.equip_name }}</a></td>
                     <td>{{ equipment.ip_address }} </td>
-                    <td>{{ equipment.status }}</td>
+                    <td>{{ equipment.status|title }}</td>
                     <td>
                         <div class="dropdown">
                             <a class="dropdown-item btn-edit" data-id="{{ equipment.id }}" data-is-connected="{{ equipment.is_connected }}" data-bs-toggle="modal" data-bs-target="#editEquipmentModal-{{ equipment.id }}">
@@ -263,12 +282,13 @@
                     {% csrf_token %}
                     <div class="row">
                         <div class="col-md-8 form-group">
-                            <input type="text" class="form-control" id="equipname" name="equipname" placeholder=" " required>
+                            <input type="text" class="form-control" id="equipname" name="equipname" placeholder=" " required oninput="setCustomValidity('')" oninvalid="setCustomValidity('Please Enter Equipment Name')">
                             <label for="equipname" class="form-label">Equipment Name</label>
                         </div>
                         <input type="hidden" id="hiddenFieldName" name="hiddenFieldName" value="{{ data.department.department_name }}">
+                        
                         <div class="col-md-4 form-group">
-                            <select class="form-control" id="equipStatus" name="equipStatus" required>
+                            <select class="form-control" id="equipStatus" name="equipStatus" required oninput="setCustomValidity('')" oninvalid="setCustomValidity('Please Select the Status')">
                                 <option value="" disabled selected>Select Status</option>
                                 <option value="active">Active</option>
                                 <option value="inactive">Inactive</option>
@@ -277,7 +297,7 @@
                         </div>
                         
                         <div class="col-md-8 form-group">
-                            <input type="text" class="form-control" id="ipaddress" name="ipaddress" placeholder=" " required>
+                            <input type="text" class="form-control ip-address" id="ipaddress" name="ipaddress" placeholder=" " required oninput="setCustomValidity('')" oninvalid="setCustomValidity('Please Enter IP Address')">
                             <label for="ipaddress" class="form-label">IP Address</label>
                         </div>
                         <div class="col-md-4 form-group">
@@ -291,7 +311,7 @@
                         </div>                        
 
                         <div class="col-md-12 form-group">
-                            <select class="form-control" id="interval" name="interval" required>
+                            <select class="form-control" id="interval" name="interval" required oninput="setCustomValidity('')" oninvalid="setCustomValidity('Please Enter Time Interval')">
                                 <option value="" disabled selected>Select an interval</option>
                                 <option value="1">1</option>
                                 <option value="2">2</option>
@@ -306,12 +326,12 @@
                         </div>
 
                         <div class="col-md-12 form-group">
-                            <input type="text" class="form-control" id="equiptype" name="equiptype" placeholder=" " required>
+                            <input type="text" class="form-control" id="equiptype" name="equiptype" placeholder=" " required oninput="setCustomValidity('')" oninvalid="setCustomValidity('Please Enter equipment Type')">
                             <label for="equiptype" class="form-label">Equipment Type</label>
                         </div>
-
+                        <input type="hidden" name="sensor" id="sensor">
                         <div class="col-md-12 form-group">
-                            <select class="form-control" id="door-access-type" name="dooracctype" required>
+                            <select class="form-control" id="door-access-type" name="dooracctype" required oninput="setCustomValidity('')" oninvalid="setCustomValidity('Please Select the Door Access')">
                                 <option value="" disabled selected>Select Door Access Type</option>
                                 <option value="none">None</option>
                                 <option value="plc">PLC</option>
@@ -350,7 +370,7 @@
                     {% csrf_token %}
                     <div class="row">
                         <div class="col-md-8 form-group">
-                            <input type="text" class="form-control" name="edit_equipname" value="{{ equipment.equip_name }}" maxlength="50" required>
+                            <input type="text" class="form-control" name="edit_equipname" value="{{ equipment.equip_name }}" maxlength="50" required oninput="setCustomValidity('')" oninvalid="setCustomValidity('Please Enter Equipment Name')">
                             <label for="edit_equipname" class="form-label">Equipment Name</label>
                         </div>
                         <div class="col-md-4 form-group">
@@ -361,7 +381,7 @@
                             <label for="edit_equipStatus" class="form-label">Status</label>
                         </div>
                         <div class="col-md-8 form-group">
-                            <input type="text" class="form-control" name="edit_ipaddress" id="edit_ipaddress_{{ equipment.id }}" value="{{ equipment.ip_address }}" required>
+                            <input type="text" class="form-control ip-address" name="edit_ipaddress" id="edit_ipaddress_{{ equipment.id }}" value="{{ equipment.ip_address }}" required oninput="setCustomValidity('')" oninvalid="setCustomValidity('Please Enter IP Address')">
                             <label for="edit_ipaddress" class="form-label">IP Address</label>
                         </div>
                         
@@ -383,11 +403,11 @@
                             <span id="edit_plc-error-{{ equipment.id }}" class="text-danger" style="display:none;">Failed to Connect</span>
                         </div>
                         <div class="col-md-12 form-group">
-                            <input type="number" class="form-control" name="edit_interval" id="edit_interval_{{ equipment.id }}" value="{{ equipment.interval }}" required>
+                            <input type="number" class="form-control" name="edit_interval" id="edit_interval_{{ equipment.id }}" value="{{ equipment.interval }}" required oninput="setCustomValidity('')" oninvalid="setCustomValidity('Please Enter Interval Time')">
                             <label for="edit_interval_{{ equipment.id }}" class="form-label">Interval</label>
                         </div>
                         <div class="col-md-12 form-group">
-                            <input type="text" class="form-control" name="edit_equiptype" id="edit_equiptype_{{ equipment.id }}" value="{{ equipment.equipment_type }}" required>
+                            <input type="text" class="form-control" name="edit_equiptype" id="edit_equiptype_{{ equipment.id }}" value="{{ equipment.equipment_type }}" required oninput="setCustomValidity('')" oninvalid="setCustomValidity('Please Enter Equipment')">
                             <label for="edit_equiptype_{{ equipment.id }}"  class="form-label">Equipment Type</label>
                         </div>
                         
@@ -467,7 +487,7 @@
                         '<label for="biometric_banner_text" class="form-label">Biometric Banner Text</label>' +
                     '</div>' +
                     '<div class="col-md-12 form-group">' +
-                        '<input type="text" class="form-control" id="biometric_ip_address" name="biometric_ip_address" placeholder=" ">' +
+                        '<input type="text" class="form-control ip-address" id="biometric_ip_address" name="biometric_ip_address" placeholder=" ">' +
                         '<label for="biometric_ip_address" class="form-label">Biometric IP Address</label>' +
                     '</div>'
                 );
@@ -575,6 +595,7 @@
 
                 // Update the form fields with values fetched from PLC
                 document.getElementById('interval').value = response.interval;
+                document.getElementById('sensor').value=response.sensors
                 document.getElementById('equiptype').value = response.equiptype;
 
                 // Display success alert
@@ -616,6 +637,7 @@
 
             // Update the form fields with values fetched from PLC
             document.getElementById(`edit_interval_${equipmentId}`).value = response.interval;
+            document.getElementById('sensor').value=response.sensors
             document.getElementById(`edit_equiptype_${equipmentId}`).value = response.equiptype;
 
             // Display success alert
@@ -658,6 +680,7 @@
                 status: data.status,
                 interval: data.interval || 5,  // Default interval if not provided
                 equiptype: data.equiptype || 'Unknown'  // Default equipment type if not provided
+                sensors : data.sensors
             };
         })
         .catch(error => {
@@ -777,6 +800,42 @@
     {{ block.super }}
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
+
+        function filterByStatus(status, count) {
+            const dropdownButton = document.getElementById("roleFilterDropdown");
+        
+            // Update the button text with the selected status
+            dropdownButton.innerHTML = `${status}`;
+        
+            // Update the URL with the selected status
+            const url = new URL(window.location.href); // Create a URL object for the current URL
+            url.searchParams.set("status", status === "All Status" ? "all" : status); // Set the 'status' query parameter
+            window.location.href = url.toString(); // Reload the page with the updated URL
+        }
+
+        document.addEventListener("DOMContentLoaded", function () {
+            // Select only fields with the "ip-address" class
+            const ipInputs = document.querySelectorAll('.ip-address');
+
+            ipInputs.forEach(function (ipInput) {
+                ipInput.addEventListener("input", function () {
+                    const value = ipInput.value;
+                    // Allow only numbers and dots
+                    const sanitizedValue = value.replace(/[^0-9.]/g, "");
+                    ipInput.value = sanitizedValue;
+
+                    // Regular expression for a valid IPv4 address
+                    const ipPattern = /^(25[0-5]|2[0-4][0-9]|1[0-9]{2}|[1-9]?[0-9])(\.(25[0-5]|2[0-4][0-9]|1[0-9]{2}|[1-9]?[0-9])){3}$/;
+
+                    if (!ipPattern.test(sanitizedValue)) {
+                        ipInput.setCustomValidity("Please enter a valid IPv4 address (e.g., 192.168.0.1).");
+                    } else {
+                        ipInput.setCustomValidity("");
+                    }
+                });
+            });
+        });
+
         document.addEventListener("DOMContentLoaded", function() {
             const searchBar = document.getElementById('searchBar');
             const roleFilterDropdown = document.getElementById('roleFilterDropdown');
@@ -1040,6 +1099,55 @@
     });
     
 });
+
+
+///////// Filtering user values from nav bar accessible departments ////////////
+  
+document.addEventListener("DOMContentLoaded", function() {
+    const departmentSelect = document.getElementById("departmentSelect");
+
+    // Retrieve the selected department ID from localStorage; default to "all" if not set
+    let selectedDepartmentId = localStorage.getItem("selectedDepartmentId") || "all";
+
+    console.log("selected Department", selectedDepartmentId)
+
+    // Set the dropdown to the saved value
+    if (departmentSelect) {
+        departmentSelect.value = selectedDepartmentId;
+    }
+
+    // Function to filter equipment based on selected department
+    function filterEquipmentByDepartment(departmentId) {
+        const rows = document.querySelectorAll("#form-data-table tr");
+
+        let visibleRowsCount = 0;
+
+        rows.forEach(row => {
+            const rowDepartmentId = row.getAttribute("data-department-id");
+            if (departmentId === "all" || rowDepartmentId === departmentId) {
+                row.style.display = "";
+            } else {
+                row.style.display = "none";
+            }
+        });
+
+        // Update the records info based on visible rows
+        document.getElementById("records-info").textContent = `(Records Found: ${visibleRowsCount}, Selected: 0)`;
+    }
+
+    // Apply the filter based on the selected department ID from localStorage
+    filterEquipmentByDepartment(selectedDepartmentId);
+
+    // Event listener for department selection change
+    if (departmentSelect) {
+        departmentSelect.addEventListener("change", function() {
+            selectedDepartmentId = this.value;
+            localStorage.setItem("selectedDepartmentId", selectedDepartmentId); // Save selection in localStorage
+            filterEquipmentByDepartment(selectedDepartmentId); // Apply filter
+        });
+    }
+});
+
 
 
 </script>

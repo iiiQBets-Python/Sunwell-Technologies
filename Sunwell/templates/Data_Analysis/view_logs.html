@@ -174,18 +174,18 @@
             <div class="form-group col-md-4">
                 <div class="input-container">
                     <select id="plotDuration" class="form-control" name="plotDuration" placeholder="0 Minutes">
-                        <option value="" disabled selected>Minutes</option>
-                        <option value="1">1</option>
+                        <option value="" disabled selected readonly>Minutes</option>
+                        {% comment %} <option value="1">1</option>
                         <option value="5">5</option>
                         <option value="15">15</option>
                         <option value="30">30</option>
                         <option value="60">60</option>
-                        <option value="90">90</option>
+                        <option value="90">90</option> {% endcomment %}
                         <!-- Add more options as needed -->
                     </select>
                     <label for="plotDuration" class="form-label">Plotting Duration</label>
                 </div>
-                <small>If Date Diff. is more then, please use max. plot duration</small>
+                {% comment %} <small>If Date Diff. is more then, please use max. plot duration</small> {% endcomment %}
             </div>
             <div class="form-group col-md-4">
                 <div class="input-container">
@@ -199,29 +199,33 @@
                     <label for="toTime" class="form-label">To Time</label>
                 </div>
             </div>
-            
+
             <div class="form-group col-md-4">
                 <div class="input-container">
-                    <select id="parameterType" class="form-control" name="Parameter" placeholder=" " required>
-                        <option selected>Both</option>
-                        <option>Temperature</option>
-                        <option>Humidity</option>
-                        <!-- Add more options as needed -->
-                    </select>
-                    <label for="parameterType" class="form-label">Parameter Type</label>
-                </div>
-            </div>
-            <div class="form-group col-md-4">
-                <div class="input-container">
-                    <select id="reportType" class="form-control" name="Report" placeholder=" " required>
+                    <input type="text" class="form-control" name="Report" value="Data Log" placeholder=" " readonly>
+                    <label for="reportType" class="form-label">Report Type</label>
+                    {% comment %} <select id="reportType" class="form-control" name="Report" placeholder=" " required>
                         <option selected>Data Log</option>
                         <option>Type 1</option>
                         <option>Type 2</option>
                         <!-- Add more options as needed -->
                     </select>
-                    <label for="reportType" class="form-label">Report Type</label>
+                    <label for="reportType" class="form-label">Report Type</label> {% endcomment %}
                 </div>
             </div>
+            
+            <div class="form-group col-md-4">
+                <div class="input-container">
+                    {% comment %} <select id="parameterType" class="form-control" name="Parameter" placeholder=" " required>
+                        <option selected>Both</option>
+                        <option>Temperature</option>
+                        <option>Humidity</option>
+                        <!-- Add more options as needed -->
+                    </select>
+                    <label for="parameterType" class="form-label">Parameter Type</label> {% endcomment %}
+                </div>
+            </div>
+            
             <div class="form-group col-md-4 d-flex align-items-end">
                 <button type="submit" name="generate_pdf" class="btn btn-primary w-50">Print</button>
                 <button type="submit" class="btn btn-primary w-50 ms-2">Graph</button>

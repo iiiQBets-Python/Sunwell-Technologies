@@ -56,6 +56,7 @@ TEMPLATES = [
                 'django.contrib.messages.context_processors.messages',
                 'App1.context_processor.get_super_admin',
                 'App1.context_processor.get_custom_user',
+                'App1.context_processor.sys_auto_logout',
                 
             ],
         },

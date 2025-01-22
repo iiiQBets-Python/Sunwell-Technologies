@@ -1,362 +1,254 @@
 
-
 {% extends "Base/base.html" %}
 {% load static %}
 
-{% block title %} Dashboard {% endblock %}
+{% block title %} Alarm_log {% endblock %}
 
 {% block styles %}
     {{ block.super }}
+    <link rel="stylesheet" href="{% static 'css/data_analysis/alaram_log.css' %}">
     <style>
-        body {
-            background-color: #ffffff; 
-        }
-
-        .container {
-            padding: 5px !important;
-        }
-
-        .header-section {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 10px 0;
-            border-bottom: 1px solid #ddd;
-        }
-
-        .form-container {
-            padding: 20px;
-            margin-bottom: 10px;
+    /* Add responsive styles */
+      @media (max-width: 992px) {
+        .table-container {
+            background-color:#ffff;
             border-radius: 10px;
-        }
-
-        .form-group {
-            display: flex;
-            align-items: center;
-            margin-bottom: 1.5rem;
-        }
-
-        .form-label {
-            flex: 0 0 30%;
-            margin-right: 10px;
-            font-weight: bold;
-            color: #333;
-        }
-
-        .input-container {
-            flex: 1;
-            position: relative;
-            margin-left: 15px;
-        }
-
-        .input-container input.form-control,
-        .input-container select.form-select {
-            width: 100%;
             padding: 10px;
-            border-radius: 4px;
-            border: 1px solid #ced4da;
-            transition: border-color 0.3s ease, box-shadow 0.3s ease;
-        }
-
-        .left-filter .input-container {
-            margin-bottom: 8px;
-        }
-
-        .input-container input.form-control:focus,
-        .input-container select.form-select:focus {
-            border-color: #007bff;
-            box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
-        }
-
-        .input-container .floating-label {
-            position: absolute;
-            top: 50%;
-            left: 12px;
-            transform: translateY(-50%);
-            background-color: #ffffff;
-            padding: 0 4px;
-            color: #6c757d;
-            transition: all 0.2s ease-in-out;
-            pointer-events: none;
-        }
-
-        .input-container input.form-control:focus ~ .floating-label,
-        .input-container input.form-control:not(:placeholder-shown) ~ .floating-label,
-        .input-container select.form-select:focus ~ .floating-label,
-        .input-container select.form-select:not(:placeholder-shown) ~ .floating-label {
-            top: -2px;
-            left: 8px;
-            font-size: 14px;
-            font-weight: bold;
-            color: #007bff;
-            background-color: #ffffff;
-        }
-
-        .filter-section {
-            display: flex;
-            justify-content: space-between;
-            margin-top: 20px;
-            flex-wrap: wrap;
-        }
-
-        .filter-section .left-filter, .filter-section .right-filter {
+            /* box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); */
+            max-width: 100%;
             display: flex;
             flex-direction: column;
-            gap: 10px;
-            width: 100%;
-            max-width: 48%;
-            margin-bottom: 2px;
-        }
-
-        .table-section {
-            margin-top: 10px;
-        }
-
-        .table-responsive {
-            max-height: 400px;
             overflow-y: auto;
+            height: 75vh;
         }
+    
+          
+          .custom-label {
+              flex-direction: column;
+              align-items: stretch;
+          }
+          
+          .custom-label > div {
+              margin-top: 10px;
+          }
+          
+          .d-flex.justify-content-end.align-items-center {
+              flex-direction: column;
+              align-items: stretch !important;
+          }
+          
+          .d-flex.input-group {
+              width: 100% !important;
+              margin-bottom: 10px;
+          }
+          
+          .btn-primary {
+              width: 100%;
+          }
+      }
 
-        .table thead th {
-            background-color: #d3d3d3;
-            color: #333;
+      @media (max-width: 767px) { 
+          .pagination {
+              margin-top: 10px;
+          }
+           
+          .d-flex.justify-content-between.align-items-center.mt-3 {
+              flex-direction: column;
+              align-items: stretch !important;
+          }
+          
+          .d-flex.justify-content-between.align-items-center.mt-3 > div {
+              text-align: center;
+              margin: 5px 0;
+          }
+          
+          #adminUserModal .modal_departement {
+              max-width: 95%;
+              margin: 1.75rem auto;
+          }
+      }
+
+      @media (max-width: 576px) {
+        .container {
+            overflow-y: auto !important
         }
-
-        .input-container #page-size {
-            max-width: 150px;
-            padding: 8px;
+        .content {
+            flex-grow: 1;
+            height: 74vh;
+        }
+          .entries-info, .pagination {
+              justify-content: center;
+              margin-top: 10px;
+          }
+          
+          #adminUserModal .modal_departement {
+              margin: 0.5rem;
+          }
+          
+          .form-buttons {
+              flex-direction: column;
+          }
+          
+          .form-buttons .btn {
+              width: 100%;
+              margin-bottom: 10px;
+          }
+      }
+      .input-container #page-size {
+            /* max-width: 150px; */
+            /* padding: 8px; */
             display: inline-block;
         }
-
         .button-group {
-            display: flex;
-            justify-content: flex-start;
-            align-items: center;
-            padding: 0 5px;
-            margin-top: 10px;
-        }
-        
-        .button-group .btn {
-            margin-left: 10px;
-        }
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    padding: 0 5px;
+}
+.button-group .btn {
+    margin-left: 10px;
+}
+h3{
+    text-align: center;
+}
+body, input, select, button, textarea {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+}
 
-        .status-section {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-top: 10px;
-            background-color: #f0f0f0;
-            padding: 10px;
-            border-radius: 5px;
-        }
-
-        .status-section p {
-            margin: 0;
-        }
-
-        #filtered-records {
-            text-align: left;
-        }
-
-        #record-count {
-            text-align: center;
-            flex: 1;
-        }
-
-        @media (max-width: 768px) {
-            .filter-section .left-filter, .filter-section .right-filter {
-                width: 100%;
-                max-width: 100%;
-            }
-
-            .button-group {
-                justify-content: right;
-                margin-top: 20px;
-            }
-
-            .button-group .btn {
-                margin-left: 15px;
-            }
-        }
-
-        /* New media queries for better responsiveness */
-        @media (max-width: 576px) {
-            .header-section {
-                flex-direction: column;
-                align-items: flex-start;
-            }
-
-            .form-group {
-                flex-direction: column;
-                align-items: flex-start;
-            }
-
-            .form-label {
-                margin-bottom: 5px;
-            }
-
-            .input-container {
-                width: 100%;
-                margin-left: 0;
-            }
-
-            .button-group {
-                flex-wrap: wrap;
-                justify-content: center;
-            }
-
-            .button-group .btn {
-                margin: 5px;
-            }
-
-            .status-section {
-                flex-direction: column;
-                align-items: flex-start;
-            }
-
-            #filtered-records, #record-count {
-                text-align: left;
-                width: 100%;
-            }
-        }
-
-        @media (max-width: 400px) {
-            .table-responsive {
-                font-size: 14px;
-            }
-
-            .table thead th {
-                padding: 5px;
-            }
-
-            .table tbody td {
-                padding: 5px;
-            }
-        }
     </style>
 {% endblock styles %}
 
 {% block content %}
-<div class="header-section" style="background-color: #f0f0f0;">
-    <div class="header-left">
-        <h2>Alarm Log</h2>
-    </div>
-</div>
-<form action="{% url 'view_alarm_log' %}" method="GET" target="_blank">
-<div class="filter-section">
-    <div class="left-filter">
-        <div class="input-container">
-            <input type="date" id="from-date" name="from-date" class="form-control" placeholder=" ">
-            <label for="from-date" class="floating-label">From Date</label>
-        </div>
-        <div class="input-container">
-            <input type="time" id="from-time"  name="from-time" class="form-control" placeholder=" ">
-            <label for="from-time" class="floating-label">From Time</label>
-        </div>
-        <div class="input-container">
-            <select id="equipment" class="form-select" placeholder=" " name="equipment">
-                <option value="" selected disabled>Select Equipment</option>
-                {% for equipment in equipments %}
-                    <option value="{{ equipment.id }}">{{ equipment.equip_name }}</option>
-                {% empty %}
-                    <option value="" disabled>No equipment available</option>
-                {% endfor %}
-            </select>
-            <label for="equipment" class="floating-label">Equipment</label>
-        </div>
-    </div>
-
-    <div class="right-filter">
-        <div class="input-container"   style="display: flex; align-items: center;">
-            <input type="date" id="to-date" name="to-date" class="form-control" placeholder=" ">
-            <label for="to-date" class="floating-label">To Date</label>
-        </div>
-        <div class="input-container" style="display: flex; align-items: center;">
-            <input type="time" id="to-time"  name="to-time" class="form-control" placeholder=" ">
-            <label for="to-time" class="floating-label">To Time</label>
-        </div>
-        <div class="input-container" style="display: flex; align-items: center;">
-            <input type="number" id="page-size" class="form-control" placeholder=" ">
-            <label for="page-size" class="floating-label">Page Size</label>
-
-            <div class="button-group">
-                <button type="button" class="btn btn-outline-secondary mb-2" id="filter-btn">Filter</button>
-                        <button type="button" class="btn btn-outline-success mb-2" id="save-btn">Save</button>
-                        <button type="submit" name="generate_pdf" class="btn btn-outline-primary mb-2">Print</button>
-
+<div class="container mt-2 fade-in">
+    <h3 class="mb-3">Alarm Log</h3>
+    <div class="form-container">
+        <form class="row" action="{% url 'view_alarm_log' %}" method="GET" target="_blank">
+            <div class="form-group col-md-3">
+                <div class="input-container">
+                    <input type="date" class="form-control" name="from-date" id="from-date" placeholder=" ">
+                    <label for="from-date" class="form-label">From Date</label>
+                </div>
+            </div>
+            <div class="form-group col-md-3">
+                <div class="input-container">
+                    <input type="date" class="form-control" name="to-date" id="to-date" placeholder=" ">
+                    <label for="to-date" class="form-label">To Date</label>
+                </div>
+            </div>
+            <div class="form-group col-md-3">
+                <div class="input-container">
+                    <input type="time" class="form-control" name="from-time" id="from-time" placeholder=" ">
+                    <label for="from-time" class="form-label">From Time</label>
+                </div>
+            </div>
+            <div class="form-group col-md-3">
+                <div class="input-container">
+                    <input type="time" class="form-control" name="to-time" id="to-time" placeholder=" ">
+                    <label for="to-time" class="form-label">To Time</label>
+                </div>
+            </div>
+            <div class="form-group col-md-6">
+                <div class="input-container">
+                    <select id="equipment" class="form-select" name="equipment" placeholder=" " required oninput="setCustomValidity('')" oninvalid="setCustomValidity('Please Select Equipment')">
+                        <option value="" disabled selected>Select Equipment</option>
+                        {% for equipment in equipments %}
+                        <option value="{{ equipment.id }}">{{ equipment.equip_name }}</option>
+                        {% empty %}
+                        <option value="" disabled>No equipment available</option>
+                        {% endfor %}
+                    </select>
+                    <label for="equipment" class="form-label">Equipment</label>
+                </div>
+            </div>
+            <div class="form-group col-md-6">
+                <div class="input-container" style="display: flex; align-items: center;">
+                    <!-- <input type="number" id="page-size" class="form-control" placeholder=" ">
+                    <label for="page-size" class="form-label">Page Size</label> -->
+                    
+                    <div class="button-group">
+                        <button type="button" class="btn btn-outline-secondary" id="filter-btn">Filter</button>
+                        <button type="button" class="btn btn-outline-success" id="save-btn">Save</button>
+                        <button type="submit" name="generate_pdf" class="btn btn-outline-primary">Print</button>
+                    </div>
+                </div>
+            </div>
+        </form>
+        <div class="table-container">
+            <div class="table-wrapper" id="alarm-log-container" style="display: none;">
+                <table class="table table-bordered" id="alarm-log-table">
+                    <thead>
+                        <tr>
+                            <th><input type="checkbox" id="select-all"></th>
+                            <th>Log Date</th>
+                            <th>Log Time</th>
+                            <th>Alarm Description</th>
+                        </tr>
+                    </thead>
+                    <tbody id="alarm-log-table-body">
+                        {% for log in alarm_logs_data %}
+                            <tr class="alarm-log-row"
+                                data-date="{{ log.date|date:'d-m-Y' }}"
+                                data-time="{{ log.time|time:'H:i' }}"
+                                data-equipment-id="{{ log.equipment.id }}"
+                                data-equipment-name="{{ log.equipment.equip_name }}"
+                                data-alarm-code="{{ log.alarm_code.code }}"
+                                data-alarm-id="{{ log.id }}">
+                                <td><input type="checkbox" class="row-checkbox" /></td>
+                                <td>{{ log.date|date:'d-m-Y' }}</td>
+                                <td>{{ log.time|time:'H:i' }}</td>
+                                <td>{{ log.alarm_code.alarm_log }}</td>
+                            </tr>
+                        {% empty %}
+                            <tr>
+                                <td colspan="4">No logs found</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
             </div>
         </div>
     </div>
 </div>
-</form>
-<div id="alarm-log-container" style="display: none;">
-<table class="table" id="alarm-log-table">
-    <thead>
-        <tr>
-            <th><input type="checkbox" id="select-all" /></th> 
-            <th>Log Date</th>
-            <th>Log Time</th>
-            <th>Alarm Description</th>
-            
-            
-        </tr>
-    </thead>
-    <tbody id="alarm-log-table-body">
-        {% for log in alarm_logs_data %}
-            <tr class="alarm-log-row"
-                data-date="{{ log.date }}"
-                data-time="{{ log.time }}"
-                data-equipment-id="{{ log.equipment.id }}"
-                data-equipment-name="{{ log.equipment.equip_name }}"
-                data-alarm-code="{{ log.alarm_code.code }}"
-                data-alarm-id="{{ log.id }}">
-                <td><input type="checkbox" class="row-checkbox" /></td>
-                <td>{{ log.date }}</td>
-                <td>{{ log.time }}</td>
-                <td>{{ log.alarm_code.alarm_log }}</td>
-               
-                
-                
-                
-            </tr>
-        {% empty %}
-            <tr>
-                <td colspan="4">No logs found</td>
-            </tr>
-        {% endfor %}
-    </tbody>
-</table>
-</div>
+
 <div class="modal fade" id="authModal" tabindex="-1" aria-labelledby="authModalLabel" aria-hidden="true">
     <div class="modal-dialog">
-        <div class="modal-content">
+        <div class="modal-content container-custom">                    
             <div class="modal-header">
-                <h5 class="modal-title" id="authModalLabel">Authentication Required</h5>
+                <h4 class="modal-title" id="authModalLabel">Authentication Required</h4>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
+                    
             <div class="modal-body">
-                <form id="authForm">
-                    <div class="mb-3">
-                        <label for="username" class="form-label">Username</label>
-                        <input type="text" class="form-control" id="username" required />
+                <form action="" method="post" id="authForm">
+                    {% csrf_token %}
+                    <div class="row">
+                        <div class="col-md-12 form-group">                    
+                            <input type="text" class="form-control" id="username" value="{{ data.username }}" name="username" readonly >
+                            <label for="username" class="form-label">Username</label>
+                        </div>
+                        <div class="col-md-12 form-group">                
+                            <input type="password" class="form-control" id="password" required />
+                            <label for="password" class="form-label">Password</label>
+                        </div>
+                        <div class="col-md-12 form-group">                
+                            <input type="text" class="form-control" id="Acknowledge" required />
+                            <label for="Acknowledge" class="form-label">Acknowledge</label>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Close</button>
+                            <button type="submit" class="btn btn-success" id="confirmSave">Confirm</button>
+                        </div>
                     </div>
-                    <div class="mb-3">
-                        <label for="password" class="form-label">Password</label>
-                        <input type="password" class="form-control" id="password" required />
-                    </div>
-                    <div class="mb-3">
-                        <label for="Acknowledge" class="form-label">Acknowledge</label>
-                        <input type="text" class="form-control" id="Acknowledge" required />
-                    </div>
-                </form>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                <button type="button" class="btn btn-primary" id="confirmSave">Confirm</button>
+                </form>            
             </div>
         </div>
     </div>
 </div>
+            
+    
+
 
 {% endblock %}
 

@@ -1,111 +1,90 @@
+
 {% extends "Base/base.html" %}
 {% load static %}
 {% block title %} department {% endblock %}
 {% block styles %}
-    {{ block.super }}
-    <link rel="stylesheet" href="{% static 'css/Management/department.css' %}">
-    <style>
-      /* Add responsive styles */
-      @media (max-width: 992px) {
+
+{{ block.super }}
+<link rel="stylesheet" href="{% static 'css/Management/department.css' %}">
+<style>
+    /* Add responsive styles */
+    @media (max-width: 992px) {
         .table-container {
-          background-color: #f9f9f9;
-          border-radius: 10px;
-          padding: 10px;
-          box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-          max-width: 100%;
-          display: flex;
-          flex-direction: column;
-          overflow-y: auto;
-          height: 75vh;
-      }
-          .table-wrapper {
-              overflow-x: auto;
-          }
-          
-          .custom-label {
-              flex-direction: column;
-              align-items: stretch;
-          }
-          
-          .custom-label > div {
-              margin-top: 10px;
-          }
-          
-          .d-flex.justify-content-end.align-items-center {
-              flex-direction: column;
-              align-items: stretch !important;
-          }
-          
-          .d-flex.input-group {
-              width: 100% !important;
-              margin-bottom: 10px;
-          }
-          
-          .btn-primary {
-              width: 100%;
-          }
-          /* .container-custom {
+            background-color: #f9f9f9;
+            border-radius: 10px;
+            padding: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
             max-width: 100%;
-            width: 145%;
-          } */
-          /* .modal_departement {
-            margin-left: 25px;
-          } */
-      }
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto;
+            /* height: 75vh; */
+        }
+        .table-wrapper {
+            overflow-x: auto;
+        }  
+        .custom-label {
+            flex-direction: column;
+            align-items: stretch;
+        } 
+        .custom-label > div {
+            margin-top: 10px;
+        } 
+        .d-flex.justify-content-end.align-items-center {
+            flex-direction: column;
+            align-items: stretch !important;
+        }  
+        .d-flex.input-group {
+            width: 100% !important;
+            margin-bottom: 10px;
+        }  
+        .btn-primary {
+            width: 100%;
+        }
+    }
 
-      @media (max-width: 768px) {
-    
-          /* .entries-info {
-              flex-direction: column;
-              align-items: flex-start;
-          } */
-          
-          .pagination {
-              margin-top: 10px;
-          }
-          
-          .d-flex.justify-content-between.align-items-center.mt-3 {
-              flex-direction: column;
-              align-items: stretch !important;
-          }
-          
-          .d-flex.justify-content-between.align-items-center.mt-3 > div {
-              text-align: center;
-              margin: 5px 0;
-          }
-          
-          #adminUserModal .modal_departement {
-              max-width: 95%;
-              margin: 1.75rem auto;
-          }
-      }
+    @media (max-width: 768px) {
+        .pagination {
+            margin-top: 10px;
+        }
+        .d-flex.justify-content-between.align-items-center.mt-3 {
+            flex-direction: column;
+            align-items: stretch !important;
+        }  
+        .d-flex.justify-content-between.align-items-center.mt-3 > div {
+            text-align: center;
+            margin: 5px 0;
+        } 
+        #adminUserModal .modal_departement {
+            max-width: 95%;
+            margin: 1.75rem auto;
+        }
+    }
 
-      @media (max-width: 576px) {
-          .entries-info, .pagination {
-              justify-content: center;
-              margin-top: 10px;
-          }
-          
-          #adminUserModal .modal_departement {
-              margin: 0.5rem;
-          }
-          
-          .form-buttons {
-              flex-direction: column;
-          }
-          
-          .form-buttons .btn {
-              width: 100%;
-              margin-bottom: 10px;
-          }
-      }
-  </style>
+    @media (max-width: 576px) {
+        .entries-info, .pagination {
+            justify-content: center;
+            margin-top: 10px;
+        }
+        .content {
+            height: 75vh !important;
+        }  
+        #adminUserModal .modal_departement {
+            margin: 0.5rem;
+        }  
+        .form-buttons {
+            flex-direction: column;
+        } 
+        .form-buttons .btn {
+            width: 100%;
+            margin-bottom: 10px;
+        }
+    }
+</style>
 {% endblock styles %}
-
 {% block content %} 
 <div class="container mt-2 table-container fade-in">
-    <div class="d-flex justify-content-end mb-1 p-4">
-    </div>
+    <div class="d-flex justify-content-end mb-1 p-4"></div>
     <div class="d-flex justify-content-between align-items-center custom-label mb-2" style="font-weight: bold; padding: 5px 10px; background-color: rgb(235, 235, 235);">
         <section class=" d-block custom-label mb-2" style="background-color: rgb(235, 235, 235);text-align: center;font-weight: bold; padding: 5px 0px">
             Departments<span id="records-info">(Records Found: 0, Selected: 0)</span>
@@ -116,11 +95,9 @@
                 <input type="text" id="searchBar" class="form-control" placeholder="Search here..">
             </div>
             <div class="d-flex">
-              {% if data.role == 'Super Admin' or acc_db.dep_a %}
-                <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#departmentModal">
-                    Add Department
-                </button>
-              {% endif %}
+                {% if data.role == 'Super Admin' or acc_db.dep_a %}
+                <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#departmentModal">Add Department</button>
+                {% endif %}
             </div>
         </div> 
     </div>
@@ -132,7 +109,7 @@
                     <th scope="col">Department Name</th>
                     <th scope="col">Comm. Group</th>
                     {% if data.role == 'Super Admin' or acc_db.dep_e %}
-                      <th scope="col">Actions</th>
+                    <th scope="col">Actions</th>
                     {% endif %}
                 </tr>
             </thead>
@@ -145,9 +122,9 @@
                     {% if data.role == 'Super Admin' or acc_db.dep_e %}
                     <td>
                         <div class="dropdown">
-                          <a class="dropdown-item btn-edit"  data-bs-toggle="edit_modal" data-bs-target="#editDeptModal-{{ department.id }}">
-                            <i class="fas fa-edit"></i>
-                          </a>
+                            <a class="dropdown-item btn-edit"  data-bs-toggle="edit_modal" data-bs-target="#editDeptModal-{{ department.id }}">
+                                <i class="fas fa-edit"></i>
+                            </a>
                         </div>
                     </td>
                     {% endif %}
@@ -185,749 +162,810 @@
 
 <!-- The Modal -->
 <div class="modal fade" id="departmentModal" tabindex="-1" aria-labelledby="departmentModalLabel" aria-hidden="true">
-  <div class="modal-dialog modal-lg modal_departement">
-      <div class="modal-content container-custom dep_custom">
-          <!-- Modal Header -->
-          <div class="modal-header dep_head">
-              <h4 class="modal-title dep_title" id="adminUserModalLabel">Department and Settings</h4>
-              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-          </div>
-          <!-- Modal Body with Tabs -->
-          <div class="modal-body dep_body">
-            <form method="post" action="{% url 'department' %}" id="departmentForm">
-              {% csrf_token %}
-              <ul class="nav nav-tabs" id="myTab" role="tablist">
-                  <li class="nav-item">
-                      <a class="nav-link active" id="department-tab" data-bs-toggle="tab" href="#department" role="tab">Department Form</a>
-                  </li>
-                  <li class="nav-item">
-                      <a class="nav-link" id="email-tab" data-bs-toggle="tab" href="#email" role="tab">Email Form</a>
-                  </li>
-                  <li class="nav-item">
-                      <a class="nav-link" id="sms-tab" data-bs-toggle="tab" href="#sms" role="tab">SMS Form</a>
-                  </li>
-                  <li class="nav-item">
-                      <a class="nav-link" id="whatsapp-tab" data-bs-toggle="tab" href="#whatsapp" role="tab">WhatsApp Form</a>
-                  </li>
-              </ul>
-
-              <div class="tab-content mt-3" id="myTabContent">
-                  <!-- Department Form -->
-                  <div class="tab-pane fade show active" id="department" role="tabpanel">
-                      <div class="row">
-                        <div class="col-md-6 form-group">
-                          <input type="text" class="form-control" id="departmentName" name="departmentName" maxlength="15" placeholder=" " required>
-                          <label for="departmentName" class="form-label">Department Name*</label>
-                        </div>
-                        <div class="col-md-6 form-group">
-                            <select class="form-select" id="commGroup" name="commGroup" placeholder=" " required>
-                              <option value="">--Select--</option>
-                                {% for group in groups %}
-                                <option value="{{ group.CommGroup_code }}">{{ group.CommGroup_name }}</option>
-                                {% endfor %}
-                            </select>
-                            <label for="commGroup" class="form-label">Comm. Group*</label>
-                        </div>
-                        <div class="col-md-12 form-group">
-                            <input type="text" class="form-control" id="headerNote" name="headerNote" placeholder=" " >
-                            <label for="headerNote" class="form-label">Header Note*</label>
-                        </div>
-                        <div class="col-md-12 form-group">
-                            <input type="text" class="form-control" id="footerNote" name="footerNote" placeholder=" " >
-                            <label for="footerNote" class="form-label">Footer Note</label>
-                        </div>
-                        <div class="col-md-12 form-group d-flex align-items-center ">
-                          <h6 style="margin-right: 10px;">Report Date/Time Stamp:</h6>
-                          <div id="status">
-                            <div class="form-check form-check-inline">
-                              <input class="form-check-input" type="radio" name="report-datetime-stamp" id="report-datetime-stamp-yes" value="Yes" >
-                              <label class="form-check-label" for="report-datetime-stamp-yes">Yes</label>
+    <div class="modal-dialog modal-lg modal_departement">
+        <div class="modal-content container-custom dep_custom">
+            <!-- Modal Header -->
+            <div class="modal-header dep_head">
+                <h4 class="modal-title dep_title" id="adminUserModalLabel">Department and Settings</h4>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <!-- Modal Body with Tabs -->
+            <div class="modal-body dep_body">
+                <form method="post" action="{% url 'department' %}" id="departmentForm">
+                    {% csrf_token %}
+                    <ul class="nav nav-tabs" id="myTab" role="tablist">
+                        <li class="nav-item">
+                            <a class="nav-link active" id="department-tab" data-bs-toggle="tab" href="#department" role="tab">Department Form</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" id="email-tab" data-bs-toggle="tab" href="#email" role="tab">Email Form</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" id="sms-tab" data-bs-toggle="tab" href="#sms" role="tab">SMS Form</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" id="whatsapp-tab" data-bs-toggle="tab" href="#whatsapp" role="tab">WhatsApp Form</a>
+                        </li>
+                    </ul>
+                    
+                    <div class="tab-content mt-3" id="myTabContent">
+                        <!-- Department Form -->
+                        <div class="tab-pane fade show active" id="department" role="tabpanel">
+                            <div class="row">
+                                <div class="col-md-6 form-group">
+                                    <input type="text" class="form-control" id="departmentName" name="departmentName" maxlength="15" placeholder=" " required oninput="setCustomValidity('')" oninvalid="setCustomValidity('Please Enter Department Name')">
+                                    <label for="departmentName" class="form-label">Department Name*</label>
+                                </div>
+                                <div class="col-md-6 form-group">
+                                    <select class="form-select" id="commGroup" name="commGroup" placeholder=" " required oninput="setCustomValidity('')" oninvalid="setCustomValidity('Please Select CommGroup')">
+                                        <option value="">--Select--</option>
+                                        {% for group in groups %}
+                                        <option value="{{ group.CommGroup_code }}">{{ group.CommGroup_name }}</option>
+                                        {% endfor %}
+                                    </select>
+                                    <label for="commGroup" class="form-label">Comm. Group*</label>
+                                </div>
+                                <div class="col-md-12 form-group">
+                                    <input type="text" class="form-control" id="headerNote" name="headerNote" placeholder=" " required oninput="setCustomValidity('')" oninvalid="setCustomValidity('Please Enter Head Note')">
+                                    <label for="headerNote" class="form-label">Header Note*</label>
+                                </div>
+                                <div class="col-md-12 form-group">
+                                    <input type="text" class="form-control" id="footerNote" name="footerNote" placeholder=" " required oninput="setCustomValidity('')" oninvalid="setCustomValidity('Please Enter Footer Note')">
+                                    <label for="footerNote" class="form-label">Footer Note</label>
+                                </div>
+                                <div class="col-md-12 form-group d-flex align-items-center ">
+                                    <h6 style="margin-right: 10px;">Report Date/Time Stamp:</h6>
+                                    <div id="status">
+                                        <div class="form-check form-check-inline">
+                                            <input class="form-check-input" type="radio" name="report-datetime-stamp" id="report-datetime-stamp-yes" value="Yes" checked>
+                                            <label class="form-check-label" for="report-datetime-stamp-yes">Yes</label>
+                                        </div>
+                                        <div class="form-check form-check-inline">
+                                            <input class="form-check-input" type="radio" name="report-datetime-stamp" id="report-datetime-stamp-no" value="No">
+                                            <label class="form-check-label" for="report-datetime-stamp-no">No</label>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
-                            <div class="form-check form-check-inline">
-                              <input class="form-check-input" type="radio" name="report-datetime-stamp" id="report-datetime-stamp-no" value="No">
-                              <label class="form-check-label" for="report-datetime-stamp-no">No</label>
+                            <div class="form-buttons mt-3">
+                                <button class="btn btn-primary" type="button" onclick="switchTab('#email-tab')">Next</button>
                             </div>
-                          </div>
                         </div>
-                      </div>
-                      <div class="form-buttons mt-3">
-                          <button class="btn btn-primary" type="button" onclick="switchTab('#email-tab')">Next</button>
-                      </div>
-                  </div>
 
-                  <!-- Email Form -->
-                  <div class="tab-pane fade" id="email" role="tabpanel">
-                      <div class="row">
-                        <div class="col-md-6 form-group">
-                          <input type="text" class="form-control" name="email_alert" id="email_alert" value="{{ department.email_alert }}" placeholder=" ">
-                          <label for="email_alert" class="form-label">Email Alert Delay</label>
-                        </div>
-                        <div class="col-md-6 form-group">
-                          <input type="time" class="form-control" name="email_time" id="email_time" value="{{ department.email_time|date:'H:i' }}" placeholder=" ">
-                          <label for="email_time" class="form-label">Email Time</label>
-                        </div>
-                        <div class="col-md-6 form-group">
-                          <input type="email" class="form-control" name="email_address_1" id="email_address_1" value="{{ department.alert_email_address_1 }}" placeholder=" ">
-                          <label for="email_address_1" class="form-label">Alert Email Address 1*</label>
-                        </div>
-                        <div class="col-md-6 form-group">
-                          <input type="email" class="form-control" name="email_address_2" id="email_address_2" value="{{ department.alert_email_address_2 }}" placeholder=" ">
-                          <label for="email_address_2" class="form-label">Alert Email Address 2*</label>
-                        </div>
-                        <div class="col-md-6 form-group">
-                          <input type="email" class="form-control" name="email_address_3" id="email_address_3" value="{{ department.alert_email_address_3 }}" placeholder=" ">
-                          <label for="email_address_3" class="form-label">Alert Email Address 3*</label>
-                        </div>
-                        <div class="col-md-6 form-group">
-                          <input type="email" class="form-control" name="email_address_4" id="email_address_4" value="{{ department.alert_email_address_4 }}" placeholder=" ">
-                          <label for="email_address_4" class="form-label">Alert Email Address 4*</label>
-                        </div>
-                        <div class="col-md-6 form-group">
-                          <input type="email" class="form-control" name="email_address_5" id="email_address_5" value="{{ department.alert_email_address_5 }}" placeholder=" ">
-                          <label for="email_address_5" class="form-label">Alert Email Address 5*</label>
-                        </div>
-                        <div class="col-md-6 form-group">
-                          <input type="email" class="form-control" name="email_address_6" id="email_address_6" value="{{ department.alert_email_address_6 }}" placeholder=" ">
-                          <label for="email_address_6" class="form-label">Alert Email Address 6*</label>
-                        </div>
-                        <div class="col-md-6 form-group">
-                          <input type="email" class="form-control" name="email_address_7" id="email_address_7" value="{{ department.alert_email_address_7 }}" placeholder=" ">
-                          <label for="email_address_7" class="form-label">Alert Email Address 7*</label>
-                        </div>
-                        <div class="col-md-6 form-group">
-                          <input type="email" class="form-control" name="email_address_8" id="email_address_8" value="{{ department.alert_email_address_8 }}" placeholder=" ">
-                          <label for="email_address_8" class="form-label">Alert Email Address 8*</label>
-                        </div>
-                        <div class="col-md-6 form-group">
-                          <input type="email" class="form-control" name="email_address_9" id="email_address_9" value="{{ department.alert_email_address_9 }}" placeholder=" ">
-                          <label for="email_address_9" class="form-label">Alert Email Address 9*</label>
-                        </div>
-                        <div class="col-md-6 form-group">
-                          <input type="email" class="form-control" name="email_address_10" id="email_address_10" value="{{ department.alert_email_address_10 }}" placeholder=" ">
-                          <label for="email_address_10" class="form-label">Alert Email Address 10*</label>
-                        </div>
-                      </div>
-                      <div class="form-buttons mt-3">
-                          <button class="btn btn-secondary" type="button" onclick="switchTab('#department-tab')">Back</button>
-                          <button class="btn btn-primary" type="button" onclick="switchTab('#sms-tab')">Next</button>
-                      </div>
-                  </div>
-
-                  <!-- SMS Form -->
-                  <div class="tab-pane fade" id="sms" role="tabpanel">
-                      <div class="row">
-                        <div class="col-md-12 form-group d-flex align-items-center ">
-                          <h6 style="margin-right: 10px;">SMS System:</h6>
-                          <div id="status">
-                            <div class="form-check form-check-inline">
-                              <input class="form-check-input" type="radio" name="sms_status" id="sms-enable1" value="Enable" checked>
-                              <label class="form-check-label" for="sms-enable1">Enable</label>
+                        <!-- Email Form -->
+                        <div class="tab-pane fade" id="email" role="tabpanel">
+                            <div class="row">
+                                <div class="col-md-12 form-group d-flex align-items-center ">
+                                    <h6 style="margin-right: 10px;">Email System:</h6>
+                                    <div id="status">
+                                        <div class="form-check form-check-inline">
+                                            <input class="form-check-input" type="radio" name="email_status" id="email-enable1" value="Enable" checked>
+                                            <label class="form-check-label" for="email-enable1">Enable</label>
+                                        </div>
+                                        <div class="form-check form-check-inline">
+                                            <input class="form-check-input" type="radio" name="email_status" id="email-disable1" value="Disable">
+                                            <label class="form-check-label" for="email-disable1">Disable</label>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6 form-group">
+                                    <input type="text" class="form-control" name="email_alert" id="email_alert" value="{{ department.email_alert }}" placeholder=" ">
+                                    <label for="email_alert" class="form-label">Email Alert Delay</label>
+                                </div>
+                                <div class="col-md-6 form-group">
+                                    <input type="time" class="form-control" name="email_time" id="email_time" value="{{ department.email_time|date:'H:i' }}" placeholder=" ">
+                                    <label for="email_time" class="form-label">Email Time</label>
+                                </div>
+                                <div class="col-md-6 form-group">
+                                    <input type="email" class="form-control" name="email_address_1" id="email_address_1" value="{{ department.alert_email_address_1 }}" placeholder=" " title="Please enter a valid Email">
+                                    <label for="email_address_1" class="form-label">Alert Email Address 1*</label>
+                                </div>
+                                <div class="col-md-6 form-group">
+                                    <input type="email" class="form-control" name="email_address_2" id="email_address_2" value="{{ department.alert_email_address_2 }}" placeholder=" " title="Please enter a valid Email">
+                                    <label for="email_address_2" class="form-label">Alert Email Address 2*</label>
+                                </div>
+                                <div class="col-md-6 form-group">
+                                    <input type="email" class="form-control" name="email_address_3" id="email_address_3" value="{{ department.alert_email_address_3 }}" placeholder=" " title="Please enter a valid Email">
+                                    <label for="email_address_3" class="form-label">Alert Email Address 3*</label>
+                                </div>
+                                <div class="col-md-6 form-group">
+                                    <input type="email" class="form-control" name="email_address_4" id="email_address_4" value="{{ department.alert_email_address_4 }}" placeholder=" " title="Please enter a valid Email">
+                                    <label for="email_address_4" class="form-label">Alert Email Address 4*</label>
+                                </div>
+                                <div class="col-md-6 form-group">
+                                    <input type="email" class="form-control" name="email_address_5" id="email_address_5" value="{{ department.alert_email_address_5 }}" placeholder=" " title="Please enter a valid Email">
+                                    <label for="email_address_5" class="form-label">Alert Email Address 5*</label>
+                                </div>
+                                <div class="col-md-6 form-group">
+                                    <input type="email" class="form-control" name="email_address_6" id="email_address_6" value="{{ department.alert_email_address_6 }}" placeholder=" " title="Please enter a valid Email">
+                                    <label for="email_address_6" class="form-label">Alert Email Address 6*</label>
+                                </div>
+                                <div class="col-md-6 form-group">
+                                    <input type="email" class="form-control" name="email_address_7" id="email_address_7" value="{{ department.alert_email_address_7 }}" placeholder=" " title="Please enter a valid Email">
+                                    <label for="email_address_7" class="form-label">Alert Email Address 7*</label>
+                                </div>
+                                <div class="col-md-6 form-group">
+                                    <input type="email" class="form-control" name="email_address_8" id="email_address_8" value="{{ department.alert_email_address_8 }}" placeholder=" " title="Please enter a valid Email">
+                                    <label for="email_address_8" class="form-label">Alert Email Address 8*</label>
+                                </div>
+                                <div class="col-md-6 form-group">
+                                    <input type="email" class="form-control" name="email_address_9" id="email_address_9" value="{{ department.alert_email_address_9 }}" placeholder=" " title="Please enter a valid Email">
+                                    <label for="email_address_9" class="form-label">Alert Email Address 9*</label>
+                                </div>
+                                <div class="col-md-6 form-group">
+                                    <input type="email" class="form-control" name="email_address_10" id="email_address_10" value="{{ department.alert_email_address_10 }}" placeholder=" " title="Please enter a valid Email">
+                                    <label for="email_address_10" class="form-label">Alert Email Address 10*</label>
+                                </div>
                             </div>
-                            <div class="form-check form-check-inline">
-                              <input class="form-check-input" type="radio" name="sms_status" id="sms-disable1" value="Disable">
-                              <label class="form-check-label" for="sms-disable1">Disable</label>
+                            <div class="form-buttons mt-3">
+                                <button class="btn btn-secondary" type="button" onclick="switchTab('#department-tab')">Back</button>
+                                <button class="btn btn-primary" type="button" onclick="switchTab('#sms-tab')">Next</button>
                             </div>
-                          </div>
                         </div>
-                        <div class="col-md-6 form-group">
-                          <input type="text" class="form-control" name="sms_delay" id="sms_delay" placeholder=" " >
-                          <label for="sms_delay" class="form-label">SMS Alert Delay*</label>
-                        </div>
-                        <div class="col-md-6 form-group">
-                          <input type="time" class="form-control" name="sms_time" id="sms_time" placeholder=" " >
-                          <label for="sms_time" class="form-label">SMS Time</label>
-                        </div>
-                        <div class="col-md-6 form-group">
-                          <input type="text" class="form-control" name="mobile_user1" id="mobile_user1" placeholder=" " >
-                          <label for="mobile_user1" class="form-label">Mobile User Name 1</label>
-                        </div>
-                        <div class="col-md-6 form-group">
-                          <input type="text" class="form-control" name="mobile_no1" id="mobile_no1" placeholder=" ">
-                          <label for="mobile_no1" class="form-label">Mobile No 1</label>
-                        </div>
-                        <div class="col-md-6 form-group">
-                          <input type="text" class="form-control" name="mobile_user2" id="mobile_user2" placeholder=" ">
-                          <label for="mobile_user2" class="form-label">Mobile User Name 2</label>
-                        </div>
-                        <div class="col-md-6 form-group">
-                          <input type="text" class="form-control" name="mobile_no2" id="mobile_no2" placeholder=" ">
-                          <label for="mobile_no2" class="form-label">Mobile No 2</label>
-                        </div>
-                        <div class="col-md-6 form-group">
-                          <input type="text" class="form-control" name="mobile_user3" id="mobile_user3" placeholder=" ">
-                          <label for="mobile_user3" class="form-label">Mobile User Name 3</label>
-                        </div>
-                        <div class="col-md-6 form-group">
-                          <input type="text" class="form-control" name="mobile_no3" id="mobile_no3" placeholder=" ">
-                          <label for="mobile_no3" class="form-label">Mobile No 3</label>
-                        </div>
-                        <div class="col-md-6 form-group">
-                          <input type="text" class="form-control" name="mobile_user4" id="mobile_user4" placeholder=" ">
-                          <label for="mobile_user4" class="form-label">Mobile User Name 4</label>
-                        </div>
-                        <div class="col-md-6 form-group">
-                          <input type="text" class="form-control" name="mobile_no4" id="mobile_no4" placeholder=" ">
-                          <label for="mobile_no4" class="form-label">Mobile No 4</label>
-                        </div>
-                        <div class="col-md-6 form-group">
-                          <input type="text" class="form-control" name="mobile_user5" id="mobile_user5" placeholder=" ">
-                          <label for="mobile_user5" class="form-label">Mobile User Name 5</label>
-                        </div>
-                        <div class="col-md-6 form-group">
-                          <input type="text" class="form-control" name="mobile_no5" id="mobile_no5" placeholder=" ">
-                          <label for="mobile_no5" class="form-label">Mobile No 5</label>
-                        </div>
-                        <div class="col-md-6 form-group">
-                          <input type="text" class="form-control" name="mobile_user6" id="mobile_user6" placeholder=" ">
-                          <label for="mobile_user6" class="form-label">Mobile User Name 6</label>
-                        </div>
-                        <div class="col-md-6 form-group">
-                          <input type="text" class="form-control" name="mobile_no6" id="mobile_no6" placeholder=" ">
-                          <label for="mobile_no6" class="form-label">Mobile No 6</label>
-                        </div>
-                        <div class="col-md-6 form-group">
-                          <input type="text" class="form-control" name="mobile_user7" id="mobile_user7" placeholder=" ">
-                          <label for="mobile_user7" class="form-label">Mobile User Name 7</label>
-                        </div>
-                        <div class="col-md-6 form-group">
-                          <input type="text" class="form-control" name="mobile_no7" id="mobile_no7" placeholder=" ">
-                          <label for="mobile_no7" class="form-label">Mobile No 7</label>
-                        </div>
-                        <div class="col-md-6 form-group">
-                          <input type="text" class="form-control" name="mobile_user8" id="mobile_user8" placeholder=" ">
-                          <label for="mobile_user8" class="form-label">Mobile User Name 8</label>
-                        </div>
-                        <div class="col-md-6 form-group">
-                          <input type="text" class="form-control" name="mobile_no8" id="mobile_no8" placeholder=" ">
-                          <label for="mobile_no8" class="form-label">Mobile No 8</label>
-                        </div>
-                        <div class="col-md-6 form-group">
-                          <input type="text" class="form-control" name="mobile_user9" id="mobile_user9" placeholder=" ">
-                          <label for="mobile_user9" class="form-label">Mobile User Name 9</label>
-                        </div>
-                        <div class="col-md-6 form-group">
-                          <input type="text" class="form-control" name="mobile_no9" id="mobile_no9" placeholder=" ">
-                          <label for="mobile_no9" class="form-label">Mobile No9</label>
-                        </div>
-                        <div class="col-md-6 form-group">
-                          <input type="text" class="form-control" name="mobile_user10" id="mobile_user10" placeholder=" ">
-                          <label for="mobile_user10" class="form-label">Mobile User Name 10</label>
-                        </div>
-                        <div class="col-md-6 form-group">
-                          <input type="text" class="form-control" name="mobile_no10" id="mobile_no10" placeholder=" ">
-                          <label for="mobile_no10" class="form-label">Mobile No 10</label>
-                        </div>
-  
-                      </div>
-                      <div class="form-buttons mt-3">
-                          <button class="btn btn-secondary" type="button" onclick="switchTab('#email-tab')">Back</button>
-                          <button class="btn btn-primary" type="button" onclick="switchTab('#whatsapp-tab')">Next</button>
-                      </div>
-                  </div>
 
-                  <!-- WhatsApp Form -->
-                  <div class="tab-pane fade" id="whatsapp" role="tabpanel">
-                    <div class="row">
-                      <div class="col-md-12 form-group d-flex align-items-center ">
-                        <h6 style="margin-right: 10px;">Whatsapp Message System:</h6>
-                        <div id="status">
-                          <div class="form-check form-check-inline">
-                            <input class="form-check-input" type="radio" name="whatsapp_status" id="whatsapp-enable1" value="Enable" checked>
-                            <label class="form-check-label" for="whatsapp-enable1">Enable</label>
-                          </div>
-                          <div class="form-check form-check-inline">
-                            <input class="form-check-input" type="radio" name="whatsapp_status" id="whatsapp-disable1" value="Disable">
-                            <label class="form-check-label" for="whatsapp-disable1">Disable</label>
-                          </div>
+                        <!-- SMS Form -->
+                        <div class="tab-pane fade" id="sms" role="tabpanel">
+                            <div class="row">
+                                <div class="col-md-12 form-group d-flex align-items-center ">
+                                    <h6 style="margin-right: 10px;">SMS System:</h6>
+                                    <div id="status">
+                                        <div class="form-check form-check-inline">
+                                            <input class="form-check-input" type="radio" name="sms_status" id="sms-enable1" value="Enable" checked>
+                                            <label class="form-check-label" for="sms-enable1">Enable</label>
+                                        </div>
+                                        <div class="form-check form-check-inline">
+                                            <input class="form-check-input" type="radio" name="sms_status" id="sms-disable1" value="Disable">
+                                            <label class="form-check-label" for="sms-disable1">Disable</label>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6 form-group">
+                                    <input type="text" class="form-control" name="sms_delay" id="sms_delay" placeholder=" " >
+                                    <label for="sms_delay" class="form-label">SMS Alert Delay*</label>
+                                </div>
+                                <div class="col-md-6 form-group">
+                                    <input type="time" class="form-control" name="sms_time" id="sms_time" placeholder=" " >
+                                    <label for="sms_time" class="form-label">SMS Time</label>
+                                </div>
+                                <div class="col-md-6 form-group">
+                                    <input type="text" class="form-control" name="mobile_user1" id="mobile_user1" placeholder=" " >
+                                    <label for="mobile_user1" class="form-label">Mobile User Name 1</label>
+                                </div>
+                                <div class="col-md-6 form-group">
+                                    <input type="tel" class="form-control" name="mobile_no1" id="mobile_no1" maxlength="10" placeholder=" " title="Please enter a 10-digit Mobile number">
+                                    <label for="mobile_no1" class="form-label">Mobile No 1</label>
+                                </div>
+                                <div class="col-md-6 form-group">
+                                    <input type="text" class="form-control" name="mobile_user2" id="mobile_user2" placeholder=" ">
+                                    <label for="mobile_user2" class="form-label">Mobile User Name 2</label>
+                                </div>
+                                <div class="col-md-6 form-group">
+                                    <input type="tel" class="form-control" name="mobile_no2" id="mobile_no2" maxlength="10" placeholder=" " title="Please enter a 10-digit Mobile number">
+                                    <label for="mobile_no2" class="form-label">Mobile No 2</label>
+                                </div>
+                                <div class="col-md-6 form-group">
+                                    <input type="text" class="form-control" name="mobile_user3" id="mobile_user3" placeholder=" ">
+                                    <label for="mobile_user3" class="form-label">Mobile User Name 3</label>
+                                </div>
+                                <div class="col-md-6 form-group">
+                                    <input type="tel" class="form-control" name="mobile_no3" id="mobile_no3" maxlength="10" placeholder=" " title="Please enter a 10-digit Mobile number">
+                                    <label for="mobile_no3" class="form-label">Mobile No 3</label>
+                                </div>
+                                <div class="col-md-6 form-group">
+                                    <input type="text" class="form-control" name="mobile_user4" id="mobile_user4" placeholder=" ">
+                                    <label for="mobile_user4" class="form-label">Mobile User Name 4</label>
+                                </div>
+                                <div class="col-md-6 form-group">
+                                    <input type="tel" class="form-control" name="mobile_no4" id="mobile_no4" maxlength="10" placeholder=" " title="Please enter a 10-digit Mobile number">
+                                    <label for="mobile_no4" class="form-label">Mobile No 4</label>
+                                </div>
+                                <div class="col-md-6 form-group">
+                                    <input type="text" class="form-control" name="mobile_user5" id="mobile_user5" placeholder=" ">
+                                    <label for="mobile_user5" class="form-label">Mobile User Name 5</label>
+                                </div>
+                                <div class="col-md-6 form-group">
+                                    <input type="tel" class="form-control" name="mobile_no5" id="mobile_no5" maxlength="10" placeholder=" " title="Please enter a 10-digit Mobile number">
+                                    <label for="mobile_no5" class="form-label">Mobile No 5</label>
+                                </div>
+                                <div class="col-md-6 form-group">
+                                    <input type="text" class="form-control" name="mobile_user6" id="mobile_user6" placeholder=" ">
+                                    <label for="mobile_user6" class="form-label">Mobile User Name 6</label>
+                                </div>
+                                <div class="col-md-6 form-group">
+                                    <input type="tel" class="form-control" name="mobile_no6" id="mobile_no6" maxlength="10" placeholder=" " title="Please enter a 10-digit Mobile number">
+                                    <label for="mobile_no6" class="form-label">Mobile No 6</label>
+                                </div>
+                                <div class="col-md-6 form-group">
+                                    <input type="text" class="form-control" name="mobile_user7" id="mobile_user7" placeholder=" ">
+                                    <label for="mobile_user7" class="form-label">Mobile User Name 7</label>
+                                </div>
+                                <div class="col-md-6 form-group">
+                                    <input type="tel" class="form-control" name="mobile_no7" id="mobile_no7" maxlength="10" placeholder=" " title="Please enter a 10-digit Mobile number">
+                                    <label for="mobile_no7" class="form-label">Mobile No 7</label>
+                                </div>
+                                <div class="col-md-6 form-group">
+                                    <input type="text" class="form-control" name="mobile_user8" id="mobile_user8" placeholder=" ">
+                                    <label for="mobile_user8" class="form-label">Mobile User Name 8</label>
+                                </div>
+                                <div class="col-md-6 form-group">
+                                    <input type="tel" class="form-control" name="mobile_no8" id="mobile_no8" maxlength="10" placeholder=" " title="Please enter a 10-digit Mobile number">
+                                    <label for="mobile_no8" class="form-label">Mobile No 8</label>
+                                </div>
+                                <div class="col-md-6 form-group">
+                                    <input type="text" class="form-control" name="mobile_user9" id="mobile_user9" placeholder=" ">
+                                    <label for="mobile_user9" class="form-label">Mobile User Name 9</label>
+                                </div>
+                                <div class="col-md-6 form-group">
+                                    <input type="tel" class="form-control" name="mobile_no9" id="mobile_no9" maxlength="10" placeholder=" " title="Please enter a 10-digit Mobile number">
+                                    <label for="mobile_no9" class="form-label">Mobile No9</label>
+                                </div>
+                                <div class="col-md-6 form-group">
+                                    <input type="text" class="form-control" name="mobile_user10" id="mobile_user10" placeholder=" ">
+                                    <label for="mobile_user10" class="form-label">Mobile User Name 10</label>
+                                </div>
+                                <div class="col-md-6 form-group">
+                                    <input type="tel" class="form-control" name="mobile_no10" id="mobile_no10" maxlength="10" placeholder=" " title="Please enter a 10-digit Mobile number">
+                                    <label for="mobile_no10" class="form-label">Mobile No 10</label>
+                                </div>
+                            </div>
+                            <div class="form-buttons mt-3">
+                                <button class="btn btn-secondary" type="button" onclick="switchTab('#email-tab')">Back</button>
+                                <button class="btn btn-primary" type="button" onclick="switchTab('#whatsapp-tab')">Next</button>
+                            </div>
                         </div>
-                      </div>
-                      <div class="col-md-6 form-group">
-                        <input type="text" class="form-control" name="whatsapp_delay" id="whatsapp_delay" placeholder=" ">
-                        <label for="whatsapp_delay" class="form-label">WhatsApp Message Alert Delay*</label>
-                      </div>
-                      <div class="col-md-6 form-group">
-                        <input type="time" class="form-control" name="whatsapp_time" id="whatsapp_time" placeholder=" ">
-                        <label for="whatsapp_time" class="form-label">Whatsapp Message Time</label>
-                      </div>
-                      <div class="col-md-6 form-group">
-                        <input type="text" class="form-control" name="whatsapp_user1" id="whatsapp_user1" placeholder=" ">
-                        <label for="whatsapp_user1" class="form-label">Whatsapp User Name 1</label>
-                      </div>
-                      <div class="col-md-6 form-group">
-                        <input type="text" class="form-control" name="whatsapp_no1" id="whatsapp_no1" placeholder=" ">
-                        <label for="whatsapp_no1" class="form-label">Whatsapp No 1</label>
-                      </div>
-                      <div class="col-md-6 form-group">
-                        <input type="text" class="form-control" name="whatsapp_user2" id="whatsapp_user2" placeholder=" ">
-                        <label for="whatsapp_user2" class="form-label">Whatsapp User Name 2</label>
-                      </div>
-                      <div class="col-md-6 form-group">
-                        <input type="text" class="form-control" name="whatsapp_no2" id="whatsapp_no2" placeholder=" ">
-                        <label for="whatsapp_no2" class="form-label">Whatsapp No 2</label>
-                      </div>
-                      <div class="col-md-6 form-group">
-                        <input type="text" class="form-control" name="whatsapp_user3" id="whatsapp_user3" placeholder=" ">
-                        <label for="whatsapp_user3" class="form-label">Whatsapp User Name 3</label>
-                      </div>
-                      <div class="col-md-6 form-group">
-                        <input type="text" class="form-control" name="whatsapp_no3" id="whatsapp_no3" placeholder=" ">
-                        <label for="whatsapp_no3" class="form-label">Whatsapp No 3</label>
-                      </div>
-                      <div class="col-md-6 form-group">
-                        <input type="text" class="form-control" name="whatsapp_user4" id="whatsapp_user4" placeholder=" ">
-                        <label for="whatsapp_user4" class="form-label">Whatsapp User Name 4</label>
-                      </div>
-                      <div class="col-md-6 form-group">
-                        <input type="text" class="form-control" name="whatsapp_no4" id="whatsapp_no4" placeholder=" ">
-                        <label for="whatsapp_no4" class="form-label">Whatsapp No 4</label>
-                      </div>
-                      <div class="col-md-6 form-group">
-                        <input type="text" class="form-control" name="whatsapp_user5" id="whatsapp_user5" placeholder=" ">
-                        <label for="whatsapp_user5" class="form-label">Whatsapp User Name 5</label>
-                      </div>
-                      <div class="col-md-6 form-group">
-                        <input type="text" class="form-control" name="whatsapp_no5" id="whatsapp_no5" placeholder=" ">
-                        <label for="whatsapp_no5" class="form-label">whatsapp No 5</label>
-                      </div>
-                      <div class="col-md-6 form-group">
-                        <input type="text" class="form-control" name="whatsapp_user6" id="whatsapp_user6" placeholder=" ">
-                        <label for="whatsapp_user6" class="form-label">Whatsapp User Name 6</label>
-                      </div>
-                      <div class="col-md-6 form-group">
-                        <input type="text" class="form-control" name="whatsapp_no6" id="whatsapp_no6" placeholder=" ">
-                        <label for="whatsapp_no6" class="form-label">Whatsapp No 6</label>
-                      </div>
-                      <div class="col-md-6 form-group">
-                        <input type="text" class="form-control" name="whatsapp_user7" id="whatsapp_user7" placeholder=" ">
-                        <label for="whatsapp_user7" class="form-label">Whatsapp User Name 7</label>
-                      </div>
-                      <div class="col-md-6 form-group">
-                        <input type="text" class="form-control" name="whatsapp_no7" id="whatsapp_no7" placeholder=" ">
-                        <label for="whatsapp_no7" class="form-label">Whatsapp No 7</label>
-                      </div>
-                      <div class="col-md-6 form-group">
-                        <input type="text" class="form-control" name="whatsapp_user8" id="whatsapp_user8" placeholder=" ">
-                        <label for="whatsapp_user8" class="form-label">Whatsapp User Name 8</label>
-                      </div>
-                      <div class="col-md-6 form-group">
-                        <input type="text" class="form-control" name="whatsapp_no8" id="whatsapp_no8" placeholder=" ">
-                        <label for="whatsapp_no8" class="form-label">Whatsapp No 8</label>
-                      </div>
-                      <div class="col-md-6 form-group">
-                        <input type="text" class="form-control" name="whatsapp_user9" id="whatsapp_user9" placeholder=" ">
-                        <label for="whatsapp_user9" class="form-label">Whatsapp User Name 9</label>
-                      </div>
-                      <div class="col-md-6 form-group">
-                        <input type="text" class="form-control" name="whatsapp_no9" id="whatsapp_no9" placeholder=" ">
-                        <label for="whatsapp_no9" class="form-label">Whatsapp No 9</label>
-                      </div>
-                      <div class="col-md-6 form-group">
-                        <input type="text" class="form-control" name="whatsapp_user10" id="whatsapp_user10" placeholder=" ">
-                        <label for="whatsapp_user10" class="form-label">Whatsapp User Name 10</label>
-                      </div>
-                      <div class="col-md-6 form-group">
-                        <input type="text" class="form-control" name="whatsapp_no10" id="whatsapp_no10" placeholder=" ">
-                        <label for="whatsapp_no10" class="form-label">Whatsapp No 10</label>
-                      </div>
-  
+
+                        <!-- WhatsApp Form -->
+                        <div class="tab-pane fade" id="whatsapp" role="tabpanel">
+                            <div class="row">
+                                <h6 style="margin-right: 10px;">Coming soon</h6>
+                                {% comment %} <div class="col-md-12 form-group d-flex align-items-center ">
+                                    <h6 style="margin-right: 10px;">Whatsapp Message System:</h6>
+                                    <div id="status">
+                                        <div class="form-check form-check-inline">
+                                            <input class="form-check-input" type="radio" name="whatsapp_status" id="whatsapp-enable1" value="Enable" checked>
+                                            <label class="form-check-label" for="whatsapp-enable1">Enable</label>
+                                        </div>
+                                        <div class="form-check form-check-inline">
+                                            <input class="form-check-input" type="radio" name="whatsapp_status" id="whatsapp-disable1" value="Disable">
+                                            <label class="form-check-label" for="whatsapp-disable1">Disable</label>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6 form-group">
+                                    <input type="text" class="form-control" name="whatsapp_delay" id="whatsapp_delay" placeholder=" ">
+                                    <label for="whatsapp_delay" class="form-label">WhatsApp Message Alert Delay*</label>
+                                </div>
+                                <div class="col-md-6 form-group">
+                                    <input type="time" class="form-control" name="whatsapp_time" id="whatsapp_time" placeholder=" ">
+                                    <label for="whatsapp_time" class="form-label">Whatsapp Message Time</label>
+                                </div>
+                                <div class="col-md-6 form-group">
+                                    <input type="text" class="form-control" name="whatsapp_user1" id="whatsapp_user1" placeholder=" ">
+                                    <label for="whatsapp_user1" class="form-label">Whatsapp User Name 1</label>
+                                </div>
+                                <div class="col-md-6 form-group">
+                                    <input type="tel" class="form-control" name="whatsapp_no1" id="whatsapp_no1" maxlength="10" placeholder=" "title="Please enter a 10-digit Mobile number">
+                                    <label for="whatsapp_no1" class="form-label">Whatsapp No 1</label>
+                                </div>
+                                <div class="col-md-6 form-group">
+                                    <input type="text" class="form-control" name="whatsapp_user2" id="whatsapp_user2" placeholder=" ">
+                                    <label for="whatsapp_user2" class="form-label">Whatsapp User Name 2</label>
+                                </div>
+                                <div class="col-md-6 form-group">
+                                    <input type="tel" class="form-control" name="whatsapp_no2" id="whatsapp_no2" maxlength="10" placeholder=" "title="Please enter a 10-digit Mobile number">
+                                    <label for="whatsapp_no2" class="form-label">Whatsapp No 2</label>
+                                </div>
+                                <div class="col-md-6 form-group">
+                                    <input type="text" class="form-control" name="whatsapp_user3" id="whatsapp_user3" placeholder=" ">
+                                    <label for="whatsapp_user3" class="form-label">Whatsapp User Name 3</label>
+                                </div>
+                                <div class="col-md-6 form-group">
+                                    <input type="tel" class="form-control" name="whatsapp_no3" id="whatsapp_no3" maxlength="10" placeholder=" "title="Please enter a 10-digit Mobile number">
+                                    <label for="whatsapp_no3" class="form-label">Whatsapp No 3</label>
+                                </div>
+                                <div class="col-md-6 form-group">
+                                    <input type="text" class="form-control" name="whatsapp_user4" id="whatsapp_user4" placeholder=" ">
+                                    <label for="whatsapp_user4" class="form-label">Whatsapp User Name 4</label>
+                                </div>
+                                <div class="col-md-6 form-group">
+                                    <input type="tel" class="form-control" name="whatsapp_no4" id="whatsapp_no4"  maxlength="10" placeholder=" "title="Please enter a 10-digit Mobile number">
+                                    <label for="whatsapp_no4" class="form-label">Whatsapp No 4</label>
+                                </div>
+                                <div class="col-md-6 form-group">
+                                    <input type="text" class="form-control" name="whatsapp_user5" id="whatsapp_user5" placeholder=" ">
+                                    <label for="whatsapp_user5" class="form-label">Whatsapp User Name 5</label>
+                                </div>
+                                <div class="col-md-6 form-group">
+                                    <input type="tel" class="form-control" name="whatsapp_no5" id="whatsapp_no5"  maxlength="10" placeholder=" "title="Please enter a 10-digit Mobile number">
+                                    <label for="whatsapp_no5" class="form-label">whatsapp No 5</label>
+                                </div>
+                                <div class="col-md-6 form-group">
+                                    <input type="text" class="form-control" name="whatsapp_user6" id="whatsapp_user6" placeholder=" ">
+                                    <label for="whatsapp_user6" class="form-label">Whatsapp User Name 6</label>
+                                </div>
+                                <div class="col-md-6 form-group">
+                                    <input type="tel" class="form-control" name="whatsapp_no6" id="whatsapp_no6"  maxlength="10" placeholder=" "title="Please enter a 10-digit Mobile number">
+                                    <label for="whatsapp_no6" class="form-label">Whatsapp No 6</label>
+                                </div>
+                                <div class="col-md-6 form-group">
+                                    <input type="text" class="form-control" name="whatsapp_user7" id="whatsapp_user7" placeholder=" ">
+                                    <label for="whatsapp_user7" class="form-label">Whatsapp User Name 7</label>
+                                </div>
+                                <div class="col-md-6 form-group">
+                                    <input type="tel" class="form-control" name="whatsapp_no7" id="whatsapp_no7"  maxlength="10" placeholder=" "title="Please enter a 10-digit Mobile number">
+                                    <label for="whatsapp_no7" class="form-label">Whatsapp No 7</label>
+                                </div>
+                                <div class="col-md-6 form-group">
+                                    <input type="text" class="form-control" name="whatsapp_user8" id="whatsapp_user8" placeholder=" ">
+                                    <label for="whatsapp_user8" class="form-label">Whatsapp User Name 8</label>
+                                </div>
+                                <div class="col-md-6 form-group">
+                                    <input type="tel" class="form-control" name="whatsapp_no8" id="whatsapp_no8"  maxlength="10" placeholder=" "title="Please enter a 10-digit Mobile number">
+                                    <label for="whatsapp_no8" class="form-label">Whatsapp No 8</label>
+                                </div>
+                                <div class="col-md-6 form-group">
+                                    <input type="text" class="form-control" name="whatsapp_user9" id="whatsapp_user9" placeholder=" ">
+                                    <label for="whatsapp_user9" class="form-label">Whatsapp User Name 9</label>
+                                </div>
+                                <div class="col-md-6 form-group">
+                                    <input type="tel" class="form-control" name="whatsapp_no9" id="whatsapp_no9"  maxlength="10" placeholder=" "title="Please enter a 10-digit Mobile number">
+                                    <label for="whatsapp_no9" class="form-label">Whatsapp No 9</label>
+                                </div>
+                                <div class="col-md-6 form-group">
+                                    <input type="text" class="form-control" name="whatsapp_user10" id="whatsapp_user10" placeholder=" ">
+                                    <label for="whatsapp_user10" class="form-label">Whatsapp User Name 10</label>
+                                </div>
+                                <div class="col-md-6 form-group">
+                                    <input type="tel" class="form-control" name="whatsapp_no10" id="whatsapp_no10"  maxlength="10" placeholder=" "title="Please enter a 10-digit Mobile number">
+                                    <label for="whatsapp_no10" class="form-label">Whatsapp No 10</label>
+                                </div> {% endcomment %}
+                            </div>
+                            <div class="form-buttons mt-3">
+                                <button class="btn btn-secondary" type="button" onclick="switchTab('#sms-tab')">Back</button>
+                            </div>
+                        </div>
                     </div>
-                    <div class="form-buttons mt-3">
-                        <button class="btn btn-secondary" type="button" onclick="switchTab('#sms-tab')">Back</button>
+                    <div class="form-buttons mt-3 text-center">
+                        <button class="btn btn-outline-danger" data-bs-dismiss="modal">Close</button>
+                        <button class="btn btn-outline-success" type="submit">Save</button>
                     </div>
-                  </div>
-              </div>
-
-              <div class="form-buttons mt-3 text-center">
-                  <button class="btn btn-outline-danger" data-bs-dismiss="modal">Close</button>
-                  <button class="btn btn-outline-success" type="submit">Save</button>
-              </div>
-            </form>
-          </div>
-      </div>
-  </div>
+                </form>
+            </div>
+        </div>
+    </div>
 </div>
-
 <script>
-  function switchTab(tabId) {
-    const tabTrigger = new bootstrap.Tab(document.querySelector(tabId));
-    tabTrigger.show();
-  }
+    function switchTab(tabId) {
+        const tabTrigger = new bootstrap.Tab(document.querySelector(tabId));
+        tabTrigger.show();
+    }
 </script>
 
 {% for department in departments %}
 <div class="modal fade" id="editDeptModal-{{ department.id }}" tabindex="-1" aria-labelledby="editDeptModalLabel{{ department.id }}" aria-hidden="true">
-  <div class="modal-dialog modal-lg modal_departement">
-      <div class="modal-content container-custom dep_custom">
-          <div class="modal-header dep_head">
-              <h4 class="modal-title dep_title" id="editDeptModalLabel">Edit Department Form</h4>
-              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-          </div>
+    <div class="modal-dialog modal-lg modal_departement">
+        <div class="modal-content container-custom dep_custom">
+            <div class="modal-header dep_head">
+                <h4 class="modal-title dep_title" id="editDeptModalLabel">Edit Department Form</h4>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
           
-          <div class="modal-body dep_body">
-            <form id="editDepartmentForm" method="post" action="{% url 'edit_department' department.id %}">
-              {% csrf_token %}
-                <ul class="nav nav-tabs" id="myTab{{ department.id }}" role="tablist">
-                  <li class="nav-item" role="presentation">
-                      <a class="nav-link active" id="edit-department-tab-{{ department.id }}" data-bs-toggle="tab" href="#edit-department-{{ department.id }}" role="tab" aria-controls="edit-department-{{ department.id }}" aria-selected="true"> Department</a>
-                  </li>
-                  <li class="nav-item" role="presentation">
-                      <a class="nav-link" id="edit-email-tab-{{ department.id }}" data-bs-toggle="tab" href="#edit-email-{{ department.id }}" role="tab" aria-controls="edit-email-{{ department.id }}" aria-selected="false"> Email</a>
-                  </li>
-                  <li class="nav-item" role="presentation">
-                      <a class="nav-link" id="edit-sms-tab-{{ department.id }}" data-bs-toggle="tab" href="#edit-sms-{{ department.id }}" role="tab" aria-controls="edit-sms-{{ department.id }}" aria-selected="false"> SMS</a>
-                  </li>
-                  <li class="nav-item" role="presentation">
-                      <a class="nav-link" id="edit-whatsapp-tab-{{ department.id }}" data-bs-toggle="tab" href="#edit-whatsapp-{{ department.id }}" role="tab" aria-controls="edit-whatsapp-{{ department.id }}" aria-selected="false"> WhatsApp</a>
-                  </li>
-                </ul>
-
-                <div class="tab-content mt-3" id="myTabContent{{ department.id }}">
-
-                  <div class="tab-pane fade show active" id="edit-department-{{ department.id }}" role="tabpanel" aria-labelledby="edit-department-tab-{{ department.id }}">
+            <div class="modal-body dep_body">
+                <form id="editDepartmentForm" method="post" action="{% url 'edit_department' department.id %}">
+                    {% csrf_token %}
+                    <ul class="nav nav-tabs" id="myTab{{ department.id }}" role="tablist">
+                        <li class="nav-item" role="presentation">
+                            <a class="nav-link active" id="edit-department-tab-{{ department.id }}" data-bs-toggle="tab" href="#edit-department-{{ department.id }}" role="tab" aria-controls="edit-department-{{ department.id }}" aria-selected="true"> Department</a>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <a class="nav-link" id="edit-email-tab-{{ department.id }}" data-bs-toggle="tab" href="#edit-email-{{ department.id }}" role="tab" aria-controls="edit-email-{{ department.id }}" aria-selected="false"> Email</a>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <a class="nav-link" id="edit-sms-tab-{{ department.id }}" data-bs-toggle="tab" href="#edit-sms-{{ department.id }}" role="tab" aria-controls="edit-sms-{{ department.id }}" aria-selected="false"> SMS</a>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <a class="nav-link" id="edit-whatsapp-tab-{{ department.id }}" data-bs-toggle="tab" href="#edit-whatsapp-{{ department.id }}" role="tab" aria-controls="edit-whatsapp-{{ department.id }}" aria-selected="false"> WhatsApp</a>
+                        </li>
+                    </ul>
                     
-                      <div class="row">
-                          <div class="col-md-6 form-group">
-                              <input type="text" class="form-control" name="edit_dept_name" id="edit_dept_name" value="{{ department.department_name|default:'' }}" maxlength="50" required>
-                              <label for="edit_dept_name" class="form-label">Dept. Name</label>
-                          </div>
-                          <div class="col-md-6 form-group">
-                            <select class="form-select" id="edit_commGroup" value="{{ department.commGroup|default:''  }}" name="edit_commGroup" placeholder=" " required>
-                                {% for group in groups %}
-                                <option value="{{ group.CommGroup_name }}" {% if group.CommGroup_name == department.commGroup.CommGroup_name %}selected{% endif %}>{{ group.CommGroup_name }}</option>
-                                {% endfor %}
-                            </select>
-                            <label for="edit_commGroup" class="form-label">Comm. Group*</label>
-                          </div>
-                      </div>
-                      <div class="col-md-12 form-group">
-                          <input type="text" class="form-control" id="edit_headerNote" name="edit_headerNote" value="{{ department.header_note|default:'' }}" placeholder=" " required>
-                          <label for="edit_headerNote" class="form-label">Header Note*</label>
-                      </div>
-                      <div class="col-md-12 form-group">
-                          <input type="text" class="form-control" id="edit_footerNote" name="edit_footerNote" value="{{ department.footer_note|default:'' }}" placeholder=" " required>
-                          <label for="edit_footerNote" class="form-label">Footer Note</label>
-                      </div>
-                      <div class="col-md-12 form-group d-flex align-items-center ">
-                        <h6 style="margin-right: 10px;">Report Date/Time Stamp:</h6>
-                        <div id="status">
-                          <div class="form-check form-check-inline">
-                            <input class="form-check-input" type="radio" name="edit_report_datetime_stamp" id="report-datetime-stamp-yes-{{ department.id }}" value="True"
-                            {% if department.report_datetime_stamp %} checked {% endif %}>
-                            <label class="form-check-label" for="report-datetime-stamp-yes-{{ department.id }}">Yes</label>
-                          </div>
-                          <div class="form-check form-check-inline">
-                            <input class="form-check-input" type="radio" name="edit_report_datetime_stamp" id="report-datetime-stamp-no-{{ department.id }}" value="False"
-                            {% if not department.report_datetime_stamp %} checked {% endif %}>
-                            <label class="form-check-label" for="report-datetime-stamp-no-{{ department.id }}">No</label>
-                          </div>
-                        </div>
-                      </div>
-                      <div class="form-buttons mt-3">
-                        <button class="btn btn-primary" type="button" onclick="switchTab('#edit-email-tab-{{ department.id }}')">Next</button>
-                      </div>
-                  </div>
-
-                  <div class="tab-pane fade" id="edit-email-{{ department.id }}" role="tabpanel" aria-labelledby="edit-email-tab-{{ department.id }}">
-                    <div class="row">
-                      <div class="col-md-6 form-group">
-                        <input type="text" class="form-control" name="edit_email_alert" id="edit_email_alert" value="{{ department.email_alert|default:'' }}" placeholder=" " >
-                        <label for="edit_email_alert" class="form-label">Email Alert Delay</label>
-                      </div>
-                      <div class="col-md-6 form-group">
-                        <input type="time" class="form-control" name="edit_email_time" id="edit_email_time" value="{{ department.email_time|date:'H:i'|default:'' }}" placeholder=" " >
-                        <label for="edit_email_time" class="form-label">Email Time</label>
-                      </div>
-                      <div class="col-md-6 form-group">
-                        <input type="email" class="form-control" name="edit_email_address_1" id="edit_email_address_1" value="{{ department.alert_email_address_1|default:'' }}" placeholder=" " >
-                        <label for="edit_email_address_1" class="form-label">Alert Email Address 1*</label>
-                      </div>
-                      <div class="col-md-6 form-group">
-                        <input type="email" class="form-control" name="edit_email_address_2" id="edit_email_address_2" value="{{ department.alert_email_address_2|default:'' }}" placeholder=" " >
-                        <label for="edit_email_address_2" class="form-label">Alert Email Address 2*</label>
-                      </div>
-                      <div class="col-md-6 form-group">
-                        <input type="email" class="form-control" name="edit_email_address_3" id="edit_email_address_3" value="{{ department.alert_email_address_3|default:'' }}" placeholder=" " >
-                        <label for="edit_email_address_3" class="form-label">Alert Email Address 3*</label>
-                      </div>
-                      <div class="col-md-6 form-group">
-                        <input type="email" class="form-control" name="edit_email_address_4" id="edit_email_address_4" value="{{ department.alert_email_address_4|default:'' }}" placeholder=" " >
-                        <label for="edit_email_address_4" class="form-label">Alert Email Address 4*</label>
-                      </div>
-                      <div class="col-md-6 form-group">
-                        <input type="email" class="form-control" name="edit_email_address_5" id="edit_email_address_5" value="{{ department.alert_email_address_5|default:'' }}" placeholder=" " >
-                        <label for="edit_email_address_5" class="form-label">Alert Email Address 5*</label>
-                      </div>
-                      <div class="col-md-6 form-group">
-                        <input type="email" class="form-control" name="edit_email_address_6" id="edit_email_address_6" value="{{ department.alert_email_address_6|default:'' }}" placeholder=" " >
-                        <label for="edit_email_address_6" class="form-label">Alert Email Address 6*</label>
-                      </div>
-                      <div class="col-md-6 form-group">
-                        <input type="email" class="form-control" name="edit_email_address_7" id="edit_email_address_7" value="{{ department.alert_email_address_7|default:'' }}" placeholder=" " >
-                        <label for="edit_email_address_7" class="form-label">Alert Email Address 7*</label>
-                      </div>
-                      <div class="col-md-6 form-group">
-                        <input type="email" class="form-control" name="edit_email_address_8" id="edit_email_address_8" value="{{ department.alert_email_address_8|default:'' }}" placeholder=" " >
-                        <label for="edit_email_address_8" class="form-label">Alert Email Address 8*</label>
-                      </div>
-                      <div class="col-md-6 form-group">
-                        <input type="email" class="form-control" name="edit_email_address_9" id="edit_email_address_9" value="{{ department.alert_email_address_9|default:'' }}" placeholder=" " >
-                        <label for="edit_email_address_9" class="form-label">Alert Email Address 9*</label>
-                      </div>
-                      <div class="col-md-6 form-group">
-                        <input type="email" class="form-control" name="edit_email_address_10" id="edit_email_address_10" value="{{ department.alert_email_address_10|default:'' }}" placeholder=" " >
-                        <label for="edit_email_address_10" class="form-label">Alert Email Address 10*</label>
-                      </div>
-                      <div class="form-buttons mt-3">
-                        <button class="btn btn-secondary" type="button" onclick="switchTab('#edit-department-tab-{{ department.id }}')">Back</button>
-                        <button class="btn btn-primary" type="button" onclick="switchTab('#edit-sms-tab-{{ department.id }}')">Next</button>
-                      </div>
-                    </div> 
-                  </div>
-
-                  <div class="tab-pane fade" id="edit-sms-{{ department.id }}" role="tabpanel" aria-labelledby="edit-sms-tab-{{ department.id }}">
-                    <div class="row">
-                      <div class="col-md-12 form-group d-flex align-items-center ">
-                        <h6 style="margin-right: 10px;">SMS System:</h6>
-                        <div id="status">
-                          <div class="form-check form-check-inline">
-                            <input class="form-check-input" type="radio" name="edit_sms_status" id="sms-enable1" value="Enable" checked>
-                            <label class="form-check-label" for="sms-enable1">Enable</label>
-                          </div>
-                          <div class="form-check form-check-inline">
-                            <input class="form-check-input" type="radio" name="edit_sms_status" id="sms-disable1" value="Disable">
-                            <label class="form-check-label" for="sms-disable1">Disable</label>
-                          </div>
-                        </div>
-                      </div>
-                      <div class="col-md-6 form-group">
-                        <input type="text" class="form-control" name="edit_sms_delay" id="edit_sms_delay" placeholder=" ">
-                        <label for="edit_sms_delay" class="form-label">SMS Alert Delay*</label>
-                      </div>
-                      <div class="col-md-6 form-group">
-                        <input type="time" class="form-control" name="edit_sms_time" id="edit_sms_time" placeholder=" ">
-                        <label for="edit_sms_time" class="form-label">SMS Time</label>
-                      </div>
-                      <div class="col-md-6 form-group">
-                        <input type="text" class="form-control" name="edit_mobile_user1" id="edit_mobile_user1" placeholder=" " value="{{ department.user1|default:'' }}">
-                        <label for="edit_mobile_user1" class="form-label">Mobile User Name 1</label>
-                      </div>
-                      <div class="col-md-6 form-group">
-                        <input type="text" class="form-control" name="edit_mobile_no1" id="edit_mobile_no1" placeholder=" "  value="{{ department.user1_num|default:'' }}">
-                        <label for="edit_mobile_no1" class="form-label">Mobile No 1</label>
-                      </div>
-                      <div class="col-md-6 form-group">
-                        <input type="text" class="form-control" name="edit_mobile_user2" id="edit_mobile_user2" placeholder=" "  value="{{ department.user2|default:'' }}">
-                        <label for="edit_mobile_user2" class="form-label">Mobile User Name 2</label>
-                      </div>
-                      <div class="col-md-6 form-group">
-                        <input type="text" class="form-control" name="edit_mobile_no2" id="edit_mobile_no2" placeholder=" "  value="{{ department.user2_num|default:'' }}">
-                        <label for="edit_mobile_no2" class="form-label">Mobile No 2</label>
-                      </div>
-                      <div class="col-md-6 form-group">
-                        <input type="text" class="form-control" name="edit_mobile_user3" id="edit_mobile_user3" placeholder=" "  value="{{ department.user3|default:'' }}">
-                        <label for="edit_mobile_user3" class="form-label">Mobile User Name 3</label>
-                      </div>
-                      <div class="col-md-6 form-group">
-                        <input type="text" class="form-control" name="edit_mobile_no3" id="edit_mobile_no3" placeholder=" "  value="{{ department.user3_num|default:'' }}">
-                        <label for="edit_mobile_no3" class="form-label">Mobile No 3</label>
-                      </div>
-                      <div class="col-md-6 form-group">
-                        <input type="text" class="form-control" name="edit_mobile_user4" id="edit_mobile_user4" placeholder=" "  value="{{ department.user4|default:'' }}">
-                        <label for="edit_mobile_user4" class="form-label">Mobile User Name 4</label>
-                      </div>
-                      <div class="col-md-6 form-group">
-                        <input type="text" class="form-control" name="edit_mobile_no4" id="edit_mobile_no4" placeholder=" "  value="{{ department.user4_num|default:'' }}">
-                        <label for="edit_mobile_no4" class="form-label">Mobile No 4</label>
-                      </div>
-                      <div class="col-md-6 form-group">
-                        <input type="text" class="form-control" name="edit_mobile_user5" id="edit_mobile_user5" placeholder=" "  value="{{ department.user5|default:'' }}">
-                        <label for="edit_mobile_user5" class="form-label">Mobile User Name 5</label>
-                      </div>
-                      <div class="col-md-6 form-group">
-                        <input type="text" class="form-control" name="edit_mobile_no5" id="edit_mobile_no5" placeholder=" "  value="{{ department.user5_num|default:'' }}">
-                        <label for="edit_mobile_no5" class="form-label">Mobile No 5</label>
-                      </div>
-                      <div class="col-md-6 form-group">
-                        <input type="text" class="form-control" name="edit_mobile_user6" id="edit_mobile_user6" placeholder=" "  value="{{ department.user6|default:'' }}">
-                        <label for="edit_mobile_user6" class="form-label">Mobile User Name 6</label>
-                      </div>
-                      <div class="col-md-6 form-group">
-                        <input type="text" class="form-control" name="edit_mobile_no6" id="edit_mobile_no6" placeholder=" "  value="{{ department.user6_num|default:'' }}">
-                        <label for="edit_mobile_no6" class="form-label">Mobile No 6</label>
-                      </div>
-                      <div class="col-md-6 form-group">
-                        <input type="text" class="form-control" name="edit_mobile_user7" id="edit_mobile_user7" placeholder=" "  value="{{ department.user7|default:'' }}">
-                        <label for="edit_mobile_user7" class="form-label">Mobile User Name 7</label>
-                      </div>
-                      <div class="col-md-6 form-group">
-                        <input type="text" class="form-control" name="edit_mobile_no7" id="edit_mobile_no7" placeholder=" " value="{{ department.user7_num|default:'' }}">
-                        <label for="edit_mobile_no7" class="form-label">Mobile No 7</label>
-                      </div>
-                      <div class="col-md-6 form-group">
-                        <input type="text" class="form-control" name="edit_mobile_user8" id="edit_mobile_user8" placeholder=" "  value="{{ department.user8|default:'' }}">
-                        <label for="edit_mobile_user8" class="form-label">Mobile User Name 8</label>
-                      </div>
-                      <div class="col-md-6 form-group">
-                        <input type="text" class="form-control" name="edit_mobile_no8" id="edit_mobile_no8" placeholder=" " value="{{ department.user8_num|default:'' }}">
-                        <label for="edit_mobile_no8" class="form-label">Mobile No 8</label>
-                      </div>
-                      <div class="col-md-6 form-group">
-                        <input type="text" class="form-control" name="edit_mobile_user9" id="edit_mobile_user9" placeholder=" " value="{{ department.user9|default:'' }}">
-                        <label for="mobile_user9" class="form-label">Mobile User Name 9</label>
-                      </div>
-                      <div class="col-md-6 form-group">
-                        <input type="text" class="form-control" name="edit_mobile_no9" id="edit_mobile_no9" placeholder=" " value="{{ department.user9_num|default:'' }}">
-                        <label for="edit_mobile_no9" class="form-label">Mobile No9</label>
-                      </div>
-                      <div class="col-md-6 form-group">
-                        <input type="text" class="form-control" name="edit_mobile_user10" id="edit_mobile_user10" placeholder=" " value="{{ department.user10|default:'' }}">
-                        <label for="edit_mobile_user10" class="form-label">Mobile User Name 10</label>
-                      </div>
-                      <div class="col-md-6 form-group">
-                        <input type="text" class="form-control" name="edit_mobile_no10" id="edit_mobile_no10" placeholder=" "  value="{{ department.user10_num|default:'' }}">
-                        <label for="edit_mobile_no10" class="form-label">Mobile No 10</label>
-                      </div>
-                      <div class="form-buttons mt-3">
-                        <button class="btn btn-secondary" type="button" onclick="switchTab('#edit-email-tab-{{ department.id }}')">Back</button>
-                        <button class="btn btn-primary" type="button" onclick="switchTab('#edit-whatsapp-tab-{{ department.id }}')">Next</button>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div class="tab-pane fade" id="edit-whatsapp-{{ department.id }}" role="tabpanel" aria-labelledby="edit-whatsapp-tab-{{ department.id }}">
-                    <div class="container">
-                      <div class="row">
-                        <div class="col-md-12 form-group d-flex align-items-center ">
-                          <h6 style="margin-right: 10px;">Whatsapp Message System:</h6>
-                          <div id="status">
-                            <div class="form-check form-check-inline">
-                              <input class="form-check-input" type="radio" name="edit_whatsapp_status" id="edit_whatsapp-enable1" value="Enable" checked>
-                              <label class="form-check-label" for="whatsapp-enable1">Enable</label>
+                    <div class="tab-content mt-3" id="myTabContent{{ department.id }}">
+                        <div class="tab-pane fade show active" id="edit-department-{{ department.id }}" role="tabpanel" aria-labelledby="edit-department-tab-{{ department.id }}">
+                            <div class="row">
+                                <div class="col-md-6 form-group">
+                                    <input type="text" class="form-control" name="edit_dept_name" id="edit_dept_name" value="{{ department.department_name|default:'' }}" maxlength="50" required oninput="setCustomValidity('')" oninvalid="setCustomValidity('Please Enter Department Name')">
+                                    <label for="edit_dept_name" class="form-label">Dept. Name</label>
+                                </div>
+                                <div class="col-md-6 form-group">
+                                    <select class="form-select" id="edit_commGroup" value="{{ department.commGroup|default:''  }}" name="edit_commGroup" placeholder=" " required oninput="setCustomValidity('')" oninvalid="setCustomValidity('Please Select CommGroup')">
+                                        {% for group in groups %}
+                                        <option value="{{ group.CommGroup_name }}" {% if group.CommGroup_name == department.commGroup.CommGroup_name %}selected{% endif %}>{{ group.CommGroup_name }}</option>
+                                        {% endfor %}
+                                    </select>
+                                    <label for="edit_commGroup" class="form-label">Comm. Group*</label>
+                                </div>
                             </div>
-                            <div class="form-check form-check-inline">
-                              <input class="form-check-input" type="radio" name="edit_whatsapp_status" id="edit_whatsapp-disable1" value="Disable">
-                              <label class="form-check-label" for="whatsapp-disable1">Disable</label>
+                            <div class="col-md-12 form-group">
+                                <input type="text" class="form-control" id="edit_headerNote" name="edit_headerNote" value="{{ department.header_note|default:'' }}" placeholder=" " required oninput="setCustomValidity('')" oninvalid="setCustomValidity('Please Enter Head Note')">
+                                <label for="edit_headerNote" class="form-label">Header Note*</label>
                             </div>
-                          </div>
+                            <div class="col-md-12 form-group">
+                                <input type="text" class="form-control" id="edit_footerNote" name="edit_footerNote" value="{{ department.footer_note|default:'' }}" placeholder=" " required oninput="setCustomValidity('')" oninvalid="setCustomValidity('Please Enter Footer Note')">
+                                <label for="edit_footerNote" class="form-label">Footer Note</label>
+                            </div>
+                            <div class="col-md-12 form-group d-flex align-items-center ">
+                                <h6 style="margin-right: 10px;">Report Date/Time Stamp:</h6>
+                                <div id="status">
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input" type="radio" name="edit_report_datetime_stamp" id="report-datetime-stamp-yes-{{ department.id }}" value="True"
+                                        {% if department.report_datetime_stamp %} checked {% endif %}>
+                                        <label class="form-check-label" for="report-datetime-stamp-yes-{{ department.id }}">Yes</label>
+                                    </div>
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input" type="radio" name="edit_report_datetime_stamp" id="report-datetime-stamp-no-{{ department.id }}" value="False"
+                                        {% if not department.report_datetime_stamp %} checked {% endif %}>
+                                        <label class="form-check-label" for="report-datetime-stamp-no-{{ department.id }}">No</label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-buttons mt-3">
+                                <button class="btn btn-primary" type="button" onclick="switchTab('#edit-email-tab-{{ department.id }}')">Next</button>
+                            </div>
                         </div>
-                        <div class="col-md-6 form-group">
-                          <input type="text" class="form-control" name="edit_whatsapp_delay" id="edit_whatsapp_delay" placeholder=" ">
-                          <label for="edit_whatsapp_delay" class="form-label">WhatsApp Message Alert Delay*</label>
-                        </div>
-                        <div class="col-md-6 form-group">
-                          <input type="time" class="form-control" name="edit_whatsapp_time" id="edit_whatsapp_time" placeholder=" ">
-                          <label for="edit_whatsapp_time" class="form-label">Whatsapp Message Time</label>
-                        </div>
-                        <div class="col-md-6 form-group">
-                          <input type="text" class="form-control" name="edit_whatsapp_user1" id="edit_whatsapp_user1" placeholder=" ">
-                          <label for="edit_whatsapp_user1" class="form-label">Whatsapp User Name 1</label>
-                        </div>
-                        <div class="col-md-6 form-group">
-                          <input type="text" class="form-control" name="edit_whatsapp_no1" id="edit_whatsapp_no1" placeholder=" ">
-                          <label for="edit_whatsapp_no1" class="form-label">Whatsapp No 1</label>
-                        </div>
-                        <div class="col-md-6 form-group">
-                          <input type="text" class="form-control" name="edit_whatsapp_user2" id="edit_whatsapp_user2" placeholder=" ">
-                          <label for="edit_whatsapp_user2" class="form-label">Whatsapp User Name 2</label>
-                        </div>
-                        <div class="col-md-6 form-group">
-                          <input type="text" class="form-control" name="edit_whatsapp_no2" id="edit_whatsapp_no2" placeholder=" ">
-                          <label for="edit_whatsapp_no2" class="form-label">Whatsapp No 2</label>
-                        </div>
-                        <div class="col-md-6 form-group">
-                          <input type="text" class="form-control" name="edit_whatsapp_user3" id="edit_whatsapp_user3" placeholder=" ">
-                          <label for="edit_whatsapp_user3" class="form-label">Whatsapp User Name 3</label>
-                        </div>
-                        <div class="col-md-6 form-group">
-                          <input type="text" class="form-control" name="edit_whatsapp_no3" id="edit_whatsapp_no3" placeholder=" ">
-                          <label for="edit_whatsapp_no3" class="form-label">Whatsapp No 3</label>
-                        </div>
-                        <div class="col-md-6 form-group">
-                          <input type="text" class="form-control" name="edit_whatsapp_user4" id="edit_whatsapp_user4" placeholder=" ">
-                          <label for="edit_whatsapp_user4" class="form-label">Whatsapp User Name 4</label>
-                        </div>
-                        <div class="col-md-6 form-group">
-                          <input type="text" class="form-control" name="edit_whatsapp_no4" id="edit_whatsapp_no4" placeholder=" ">
-                          <label for="edit_whatsapp_no4" class="form-label">Whatsapp No 4</label>
-                        </div>
-                        <div class="col-md-6 form-group">
-                          <input type="text" class="form-control" name="whatsapp_user5" id="edit_whatsapp_user5" placeholder=" ">
-                          <label for="whatsapp_user5" class="form-label">Whatsapp User Name 5</label>
-                        </div>
-                        <div class="col-md-6 form-group">
-                          <input type="text" class="form-control" name="edit_whatsapp_no5" id="edit_whatsapp_no5" placeholder=" ">
-                          <label for="edit_whatsapp_no5" class="form-label">whatsapp No 5</label>
-                        </div>
-                        <div class="col-md-6 form-group">
-                          <input type="text" class="form-control" name="edit_whatsapp_user6" id="edit_whatsapp_user6" placeholder=" ">
-                          <label for="edit_whatsapp_user6" class="form-label">Whatsapp User Name 6</label>
-                        </div>
-                        <div class="col-md-6 form-group">
-                          <input type="text" class="form-control" name="edit_whatsapp_no6" id="edit_whatsapp_no6" placeholder=" ">
-                          <label for="edit_whatsapp_no6" class="form-label">Whatsapp No 6</label>
-                        </div>
-                        <div class="col-md-6 form-group">
-                          <input type="text" class="form-control" name="edit_whatsapp_user7" id="edit_whatsapp_user7" placeholder=" ">
-                          <label for="edit_whatsapp_user7" class="form-label">Whatsapp User Name 7</label>
-                        </div>
-                        <div class="col-md-6 form-group">
-                          <input type="text" class="form-control" name="edit_whatsapp_no7" id="edit_whatsapp_no7" placeholder=" ">
-                          <label for="edit_whatsapp_no7" class="form-label">Whatsapp No 7</label>
-                        </div>
-                        <div class="col-md-6 form-group">
-                          <input type="text" class="form-control" name="edit_whatsapp_user8" id="edit_whatsapp_user8" placeholder=" ">
-                          <label for="edit_whatsapp_user8" class="form-label">Whatsapp User Name 8</label>
-                        </div>
-                        <div class="col-md-6 form-group">
-                          <input type="text" class="form-control" name="edit_whatsapp_no8" id="edit_whatsapp_no8" placeholder=" ">
-                          <label for="edit_whatsapp_no8" class="form-label">Whatsapp No 8</label>
-                        </div>
-                        <div class="col-md-6 form-group">
-                          <input type="text" class="form-control" name="edit_whatsapp_user9" id="edit_whatsapp_user9" placeholder=" ">
-                          <label for="edit_whatsapp_user9" class="form-label">Whatsapp User Name 9</label>
-                        </div>
-                        <div class="col-md-6 form-group">
-                          <input type="text" class="form-control" name="edit_whatsapp_no9" id="edit_whatsapp_no9" placeholder=" ">
-                          <label for="edit_whatsapp_no9" class="form-label">Whatsapp No 9</label>
-                        </div>
-                        <div class="col-md-6 form-group">
-                          <input type="text" class="form-control" name="edit_whatsapp_user10" id="edit_whatsapp_user10" placeholder=" ">
-                          <label for="edit_whatsapp_user10" class="form-label">Whatsapp User Name 10</label>
-                        </div>
-                        <div class="col-md-6 form-group">
-                          <input type="text" class="form-control" name="edit_whatsapp_no10" id="edit_whatsapp_no10" placeholder=" ">
-                          <label for="edit_whatsapp_no10" class="form-label">Whatsapp No 10</label>
-                        </div>
-                        <div class="form-buttons mt-3">
-                          <button class="btn btn-secondary" type="button" onclick="switchTab('#edit-sms-tab-{{ department.id }}')">Back</button>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
 
-                <div class="form-buttons mt-3 text-center">
-                  <button class="btn btn-outline-danger" data-bs-dismiss="modal">Close</button>
-                  <button class="btn btn-outline-success" type="submit">Save</button>
-                </div>
-            </form> 
-          </div> 
-      </div>
-  </div>
+                        <div class="tab-pane fade" id="edit-email-{{ department.id }}" role="tabpanel" aria-labelledby="edit-email-tab-{{ department.id }}">
+                            <div class="row">
+                                <div class="col-md-6 form-group">
+                                    <input type="text" class="form-control" name="edit_email_alert" id="edit_email_alert" value="{{ department.email_alert|default:'' }}" placeholder=" " >
+                                    <label for="edit_email_alert" class="form-label">Email Alert Delay</label>
+                                </div>
+                                <div class="col-md-6 form-group">
+                                    <input type="time" class="form-control" name="edit_email_time" id="edit_email_time" value="{{ department.email_time|date:'H:i'|default:'' }}" placeholder=" " >
+                                    <label for="edit_email_time" class="form-label">Email Time</label>
+                                </div>
+                                <div class="col-md-6 form-group">
+                                    <input type="email" class="form-control" name="edit_email_address_1" id="edit_email_address_1" value="{{ department.alert_email_address_1|default:'' }}" placeholder=" " >
+                                    <label for="edit_email_address_1" class="form-label">Alert Email Address 1*</label>
+                                </div>
+                                <div class="col-md-6 form-group">
+                                    <input type="email" class="form-control" name="edit_email_address_2" id="edit_email_address_2" value="{{ department.alert_email_address_2|default:'' }}" placeholder=" " >
+                                    <label for="edit_email_address_2" class="form-label">Alert Email Address 2*</label>
+                                </div>
+                                <div class="col-md-6 form-group">
+                                    <input type="email" class="form-control" name="edit_email_address_3" id="edit_email_address_3" value="{{ department.alert_email_address_3|default:'' }}" placeholder=" " >
+                                    <label for="edit_email_address_3" class="form-label">Alert Email Address 3*</label>
+                                </div>
+                                <div class="col-md-6 form-group">
+                                    <input type="email" class="form-control" name="edit_email_address_4" id="edit_email_address_4" value="{{ department.alert_email_address_4|default:'' }}" placeholder=" " >
+                                    <label for="edit_email_address_4" class="form-label">Alert Email Address 4*</label>
+                                </div>
+                                <div class="col-md-6 form-group">
+                                    <input type="email" class="form-control" name="edit_email_address_5" id="edit_email_address_5" value="{{ department.alert_email_address_5|default:'' }}" placeholder=" " >
+                                    <label for="edit_email_address_5" class="form-label">Alert Email Address 5*</label>
+                                </div>
+                                <div class="col-md-6 form-group">
+                                    <input type="email" class="form-control" name="edit_email_address_6" id="edit_email_address_6" value="{{ department.alert_email_address_6|default:'' }}" placeholder=" " >
+                                    <label for="edit_email_address_6" class="form-label">Alert Email Address 6*</label>
+                                </div>
+                                <div class="col-md-6 form-group">
+                                    <input type="email" class="form-control" name="edit_email_address_7" id="edit_email_address_7" value="{{ department.alert_email_address_7|default:'' }}" placeholder=" " >
+                                    <label for="edit_email_address_7" class="form-label">Alert Email Address 7*</label>
+                                </div>
+                                <div class="col-md-6 form-group">
+                                    <input type="email" class="form-control" name="edit_email_address_8" id="edit_email_address_8" value="{{ department.alert_email_address_8|default:'' }}" placeholder=" " >
+                                    <label for="edit_email_address_8" class="form-label">Alert Email Address 8*</label>
+                                </div>
+                                <div class="col-md-6 form-group">
+                                    <input type="email" class="form-control" name="edit_email_address_9" id="edit_email_address_9" value="{{ department.alert_email_address_9|default:'' }}" placeholder=" " >
+                                    <label for="edit_email_address_9" class="form-label">Alert Email Address 9*</label>
+                                </div>
+                                <div class="col-md-6 form-group">
+                                    <input type="email" class="form-control" name="edit_email_address_10" id="edit_email_address_10" value="{{ department.alert_email_address_10|default:'' }}" placeholder=" " >
+                                    <label for="edit_email_address_10" class="form-label">Alert Email Address 10*</label>
+                                </div>
+                                <div class="form-buttons mt-3">
+                                    <button class="btn btn-secondary" type="button" onclick="switchTab('#edit-department-tab-{{ department.id }}')">Back</button>
+                                    <button class="btn btn-primary" type="button" onclick="switchTab('#edit-sms-tab-{{ department.id }}')">Next</button>
+                                </div>
+                            </div> 
+                        </div>
+
+                        <div class="tab-pane fade" id="edit-sms-{{ department.id }}" role="tabpanel" aria-labelledby="edit-sms-tab-{{ department.id }}">
+                            <div class="row">
+                                <div class="col-md-12 form-group d-flex align-items-center ">
+                                    <h6 style="margin-right: 10px;">SMS System:</h6>
+                                    <div id="status">
+                                        <div class="form-check form-check-inline">
+                                            <input class="form-check-input" type="radio" name="edit_sms_status" id="sms-enable1" value="Enable" checked>
+                                            <label class="form-check-label" for="sms-enable1">Enable</label>
+                                        </div>
+                                        <div class="form-check form-check-inline">
+                                            <input class="form-check-input" type="radio" name="edit_sms_status" id="sms-disable1" value="Disable">
+                                            <label class="form-check-label" for="sms-disable1">Disable</label>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6 form-group">
+                                    <input type="text" class="form-control" name="edit_sms_delay" id="edit_sms_delay" placeholder=" ">
+                                    <label for="edit_sms_delay" class="form-label">SMS Alert Delay*</label>
+                                </div>
+                                <div class="col-md-6 form-group">
+                                    <input type="time" class="form-control" name="edit_sms_time" id="edit_sms_time" placeholder=" ">
+                                    <label for="edit_sms_time" class="form-label">SMS Time</label>
+                                </div>
+                                <div class="col-md-6 form-group">
+                                    <input type="text" class="form-control" name="edit_mobile_user1" id="edit_mobile_user1" placeholder=" " value="{{ department.user1|default:'' }}">
+                                    <label for="edit_mobile_user1" class="form-label">Mobile User Name 1</label>
+                                </div>
+                                <div class="col-md-6 form-group">
+                                    <input type="tel" class="form-control" name="edit_mobile_no1" id="edit_mobile_no1" placeholder=" "  value="{{ department.user1_num|default:'' }}">
+                                    <label for="edit_mobile_no1" class="form-label">Mobile No 1</label>
+                                </div>
+                                <div class="col-md-6 form-group">
+                                    <input type="text" class="form-control" name="edit_mobile_user2" id="edit_mobile_user2" placeholder=" "  value="{{ department.user2|default:'' }}">
+                                    <label for="edit_mobile_user2" class="form-label">Mobile User Name 2</label>
+                                </div>
+                                <div class="col-md-6 form-group">
+                                    <input type="tel" class="form-control" name="edit_mobile_no2" id="edit_mobile_no2" placeholder=" "  value="{{ department.user2_num|default:'' }}">
+                                    <label for="edit_mobile_no2" class="form-label">Mobile No 2</label>
+                                </div>
+                                <div class="col-md-6 form-group">
+                                    <input type="text" class="form-control" name="edit_mobile_user3" id="edit_mobile_user3" placeholder=" "  value="{{ department.user3|default:'' }}">
+                                    <label for="edit_mobile_user3" class="form-label">Mobile User Name 3</label>
+                                </div>
+                                <div class="col-md-6 form-group">
+                                    <input type="tel" class="form-control" name="edit_mobile_no3" id="edit_mobile_no3" placeholder=" "  value="{{ department.user3_num|default:'' }}">
+                                    <label for="edit_mobile_no3" class="form-label">Mobile No 3</label>
+                                </div>
+                                <div class="col-md-6 form-group">
+                                    <input type="text" class="form-control" name="edit_mobile_user4" id="edit_mobile_user4" placeholder=" "  value="{{ department.user4|default:'' }}">
+                                    <label for="edit_mobile_user4" class="form-label">Mobile User Name 4</label>
+                                </div>
+                                <div class="col-md-6 form-group">
+                                    <input type="tel" class="form-control" name="edit_mobile_no4" id="edit_mobile_no4" placeholder=" "  value="{{ department.user4_num|default:'' }}">
+                                    <label for="edit_mobile_no4" class="form-label">Mobile No 4</label>
+                                </div>
+                                <div class="col-md-6 form-group">
+                                    <input type="text" class="form-control" name="edit_mobile_user5" id="edit_mobile_user5" placeholder=" "  value="{{ department.user5|default:'' }}">
+                                    <label for="edit_mobile_user5" class="form-label">Mobile User Name 5</label>
+                                </div>
+                                <div class="col-md-6 form-group">
+                                    <input type="tel" class="form-control" name="edit_mobile_no5" id="edit_mobile_no5" placeholder=" "  value="{{ department.user5_num|default:'' }}">
+                                    <label for="edit_mobile_no5" class="form-label">Mobile No 5</label>
+                                </div>
+                                <div class="col-md-6 form-group">
+                                    <input type="text" class="form-control" name="edit_mobile_user6" id="edit_mobile_user6" placeholder=" "  value="{{ department.user6|default:'' }}">
+                                    <label for="edit_mobile_user6" class="form-label">Mobile User Name 6</label>
+                                </div>
+                                <div class="col-md-6 form-group">
+                                    <input type="tel" class="form-control" name="edit_mobile_no6" id="edit_mobile_no6" placeholder=" "  value="{{ department.user6_num|default:'' }}">
+                                    <label for="edit_mobile_no6" class="form-label">Mobile No 6</label>
+                                </div>
+                                <div class="col-md-6 form-group">
+                                    <input type="text" class="form-control" name="edit_mobile_user7" id="edit_mobile_user7" placeholder=" "  value="{{ department.user7|default:'' }}">
+                                    <label for="edit_mobile_user7" class="form-label">Mobile User Name 7</label>
+                                </div>
+                                <div class="col-md-6 form-group">
+                                    <input type="tel" class="form-control" name="edit_mobile_no7" id="edit_mobile_no7" placeholder=" " value="{{ department.user7_num|default:'' }}">
+                                    <label for="edit_mobile_no7" class="form-label">Mobile No 7</label>
+                                </div>
+                                <div class="col-md-6 form-group">
+                                    <input type="text" class="form-control" name="edit_mobile_user8" id="edit_mobile_user8" placeholder=" "  value="{{ department.user8|default:'' }}">
+                                    <label for="edit_mobile_user8" class="form-label">Mobile User Name 8</label>
+                                </div>
+                                <div class="col-md-6 form-group">
+                                    <input type="tel" class="form-control" name="edit_mobile_no8" id="edit_mobile_no8" placeholder=" " value="{{ department.user8_num|default:'' }}">
+                                    <label for="edit_mobile_no8" class="form-label">Mobile No 8</label>
+                                </div>
+                                <div class="col-md-6 form-group">
+                                    <input type="text" class="form-control" name="edit_mobile_user9" id="edit_mobile_user9" placeholder=" " value="{{ department.user9|default:'' }}">
+                                    <label for="mobile_user9" class="form-label">Mobile User Name 9</label>
+                                </div>
+                                <div class="col-md-6 form-group">
+                                    <input type="tel" class="form-control" name="edit_mobile_no9" id="edit_mobile_no9" placeholder=" " value="{{ department.user9_num|default:'' }}">
+                                    <label for="edit_mobile_no9" class="form-label">Mobile No9</label>
+                                </div>
+                                <div class="col-md-6 form-group">
+                                    <input type="text" class="form-control" name="edit_mobile_user10" id="edit_mobile_user10" placeholder=" " value="{{ department.user10|default:'' }}">
+                                    <label for="edit_mobile_user10" class="form-label">Mobile User Name 10</label>
+                                </div>
+                                <div class="col-md-6 form-group">
+                                    <input type="tel" class="form-control" name="edit_mobile_no10" id="edit_mobile_no10" placeholder=" "  value="{{ department.user10_num|default:'' }}">
+                                    <label for="edit_mobile_no10" class="form-label">Mobile No 10</label>
+                                </div>
+                                <div class="form-buttons mt-3">
+                                    <button class="btn btn-secondary" type="button" onclick="switchTab('#edit-email-tab-{{ department.id }}')">Back</button>
+                                    <button class="btn btn-primary" type="button" onclick="switchTab('#edit-whatsapp-tab-{{ department.id }}')">Next</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="tab-pane fade" id="edit-whatsapp-{{ department.id }}" role="tabpanel" aria-labelledby="edit-whatsapp-tab-{{ department.id }}">
+                            <div class="container">
+                                <div class="row">
+                                    <div class="col-md-12 form-group d-flex align-items-center ">
+                                        <h6 style="margin-right: 10px;">Whatsapp Message System:</h6>
+                                        <div id="status">
+                                            <div class="form-check form-check-inline">
+                                                <input class="form-check-input" type="radio" name="edit_whatsapp_status" id="edit_whatsapp-enable1" value="Enable" checked>
+                                                <label class="form-check-label" for="whatsapp-enable1">Enable</label>
+                                            </div>
+                                            <div class="form-check form-check-inline">
+                                                <input class="form-check-input" type="radio" name="edit_whatsapp_status" id="edit_whatsapp-disable1" value="Disable">
+                                                <label class="form-check-label" for="whatsapp-disable1">Disable</label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6 form-group">
+                                        <input type="text" class="form-control" name="edit_whatsapp_delay" id="edit_whatsapp_delay" placeholder=" ">
+                                        <label for="edit_whatsapp_delay" class="form-label">WhatsApp Message Alert Delay*</label>
+                                    </div>
+                                    <div class="col-md-6 form-group">
+                                        <input type="time" class="form-control" name="edit_whatsapp_time" id="edit_whatsapp_time" placeholder=" ">
+                                        <label for="edit_whatsapp_time" class="form-label">Whatsapp Message Time</label>
+                                    </div>
+                                    <div class="col-md-6 form-group">
+                                        <input type="text" class="form-control" name="edit_whatsapp_user1" id="edit_whatsapp_user1" placeholder=" ">
+                                        <label for="edit_whatsapp_user1" class="form-label">Whatsapp User Name 1</label>
+                                    </div>
+                                    <div class="col-md-6 form-group">
+                                        <input type="tel" class="form-control" name="edit_whatsapp_no1" id="edit_whatsapp_no1" placeholder=" ">
+                                        <label for="edit_whatsapp_no1" class="form-label">Whatsapp No 1</label>
+                                    </div>
+                                    <div class="col-md-6 form-group">
+                                        <input type="text" class="form-control" name="edit_whatsapp_user2" id="edit_whatsapp_user2" placeholder=" ">
+                                        <label for="edit_whatsapp_user2" class="form-label">Whatsapp User Name 2</label>
+                                    </div>
+                                    <div class="col-md-6 form-group">
+                                        <input type="tel" class="form-control" name="edit_whatsapp_no2" id="edit_whatsapp_no2" placeholder=" ">
+                                        <label for="edit_whatsapp_no2" class="form-label">Whatsapp No 2</label>
+                                    </div>
+                                    <div class="col-md-6 form-group">
+                                        <input type="text" class="form-control" name="edit_whatsapp_user3" id="edit_whatsapp_user3" placeholder=" ">
+                                        <label for="edit_whatsapp_user3" class="form-label">Whatsapp User Name 3</label>
+                                    </div>
+                                    <div class="col-md-6 form-group">
+                                        <input type="tel" class="form-control" name="edit_whatsapp_no3" id="edit_whatsapp_no3" placeholder=" ">
+                                        <label for="edit_whatsapp_no3" class="form-label">Whatsapp No 3</label>
+                                    </div>
+                                    <div class="col-md-6 form-group">
+                                        <input type="text" class="form-control" name="edit_whatsapp_user4" id="edit_whatsapp_user4" placeholder=" ">
+                                        <label for="edit_whatsapp_user4" class="form-label">Whatsapp User Name 4</label>
+                                    </div>
+                                    <div class="col-md-6 form-group">
+                                        <input type="tel" class="form-control" name="edit_whatsapp_no4" id="edit_whatsapp_no4" placeholder=" ">
+                                        <label for="edit_whatsapp_no4" class="form-label">Whatsapp No 4</label>
+                                    </div>
+                                    <div class="col-md-6 form-group">
+                                        <input type="text" class="form-control" name="whatsapp_user5" id="edit_whatsapp_user5" placeholder=" ">
+                                        <label for="whatsapp_user5" class="form-label">Whatsapp User Name 5</label>
+                                    </div>
+                                    <div class="col-md-6 form-group">
+                                        <input type="tel" class="form-control" name="edit_whatsapp_no5" id="edit_whatsapp_no5" placeholder=" ">
+                                        <label for="edit_whatsapp_no5" class="form-label">whatsapp No 5</label>
+                                    </div>
+                                    <div class="col-md-6 form-group">
+                                        <input type="text" class="form-control" name="edit_whatsapp_user6" id="edit_whatsapp_user6" placeholder=" ">
+                                        <label for="edit_whatsapp_user6" class="form-label">Whatsapp User Name 6</label>
+                                    </div>
+                                    <div class="col-md-6 form-group">
+                                        <input type="tel" class="form-control" name="edit_whatsapp_no6" id="edit_whatsapp_no6" placeholder=" ">
+                                        <label for="edit_whatsapp_no6" class="form-label">Whatsapp No 6</label>
+                                    </div>
+                                    <div class="col-md-6 form-group">
+                                        <input type="text" class="form-control" name="edit_whatsapp_user7" id="edit_whatsapp_user7" placeholder=" ">
+                                        <label for="edit_whatsapp_user7" class="form-label">Whatsapp User Name 7</label>
+                                    </div>
+                                    <div class="col-md-6 form-group">
+                                        <input type="tel" class="form-control" name="edit_whatsapp_no7" id="edit_whatsapp_no7" placeholder=" ">
+                                        <label for="edit_whatsapp_no7" class="form-label">Whatsapp No 7</label>
+                                    </div>
+                                    <div class="col-md-6 form-group">
+                                        <input type="text" class="form-control" name="edit_whatsapp_user8" id="edit_whatsapp_user8" placeholder=" ">
+                                        <label for="edit_whatsapp_user8" class="form-label">Whatsapp User Name 8</label>
+                                    </div>
+                                    <div class="col-md-6 form-group">
+                                        <input type="tel" class="form-control" name="edit_whatsapp_no8" id="edit_whatsapp_no8" placeholder=" ">
+                                        <label for="edit_whatsapp_no8" class="form-label">Whatsapp No 8</label>
+                                    </div>
+                                    <div class="col-md-6 form-group">
+                                        <input type="text" class="form-control" name="edit_whatsapp_user9" id="edit_whatsapp_user9" placeholder=" ">
+                                        <label for="edit_whatsapp_user9" class="form-label">Whatsapp User Name 9</label>
+                                    </div>
+                                    <div class="col-md-6 form-group">
+                                        <input type="tel" class="form-control" name="edit_whatsapp_no9" id="edit_whatsapp_no9" placeholder=" ">
+                                        <label for="edit_whatsapp_no9" class="form-label">Whatsapp No 9</label>
+                                    </div>
+                                    <div class="col-md-6 form-group">
+                                        <input type="text" class="form-control" name="edit_whatsapp_user10" id="edit_whatsapp_user10" placeholder=" ">
+                                        <label for="edit_whatsapp_user10" class="form-label">Whatsapp User Name 10</label>
+                                    </div>
+                                    <div class="col-md-6 form-group">
+                                        <input type="tel" class="form-control" name="edit_whatsapp_no10" id="edit_whatsapp_no10" placeholder=" ">
+                                        <label for="edit_whatsapp_no10" class="form-label">Whatsapp No 10</label>
+                                    </div>
+                                    <div class="form-buttons mt-3">
+                                        <button class="btn btn-secondary" type="button" onclick="switchTab('#edit-sms-tab-{{ department.id }}')">Back</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-buttons mt-3 text-center">
+                        <button class="btn btn-outline-danger" data-bs-dismiss="modal">Close</button>
+                        <button class="btn btn-outline-success" type="submit">Save</button>
+                    </div>
+                </form> 
+            </div> 
+        </div>
+    </div>
 </div>
-
 {% endfor %}
-
-
 <script>
-  document.querySelectorAll('.btn-edit').forEach(button => {
-  button.addEventListener('click', function() {
-      const modalId = this.getAttribute('data-bs-target');
-      const modal = document.querySelector(modalId);
-      const modalInstance = new bootstrap.Modal(modal);
-      modalInstance.show();
-  });
-});
+    document.querySelectorAll('.btn-edit').forEach(button => {
+        button.addEventListener('click', function() {
+            const modalId = this.getAttribute('data-bs-target');
+            const modal = document.querySelector(modalId);
+            const modalInstance = new bootstrap.Modal(modal);
+            modalInstance.show();
+        });
+    });
+  
+    document.addEventListener("DOMContentLoaded", function () {
+        const departmentnameInput = document.getElementById("departmentName");
+
+        // Custom validation for Department Name
+        departmentnameInput.addEventListener("input", function () {
+            if (departmentnameInput.value.trim() === "") {
+                departmentnameInput.setCustomValidity("Please fill the Department name.");
+            } else {
+                departmentnameInput.setCustomValidity(""); // Clear custom error
+            }
+        });
+
+        // Handle form submission to check validity
+        const form = document.getElementById("departmentForm"); // Ensure the correct form ID
+        form.addEventListener("submit", function (event) {
+            if (!form.checkValidity()) {
+                event.preventDefault(); // Prevent form submission
+                form.reportValidity(); // Show validation messages
+            }
+        });
+    });
+
+
+    document.addEventListener("DOMContentLoaded", function () {
+        const phoneNumberInputs = document.querySelectorAll('input[type="tel"]');
+        const emailInputs = document.querySelectorAll('input[type="email"]');
+
+        // Phone Number Validation
+        phoneNumberInputs.forEach(function (phoneNumberInput) {
+            phoneNumberInput.addEventListener("input", function () {
+                const value = phoneNumberInput.value.replace(/[^0-9]/g, ""); // Remove non-numeric characters
+                phoneNumberInput.value = value; // Update input with numeric value only
+
+                if (value.length > 0 && value.length !== 10) {
+                    phoneNumberInput.setCustomValidity("Please enter a valid 10-digit phone number.");
+                } else {
+                    phoneNumberInput.setCustomValidity("");
+                }
+            });
+        });
+
+        // Email Validation
+        emailInputs.forEach(function (emailInput) {
+            emailInput.addEventListener("input", function () {
+                const email = emailInput.value;
+                const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+
+                if (emailPattern.test(email)) {
+                    emailInput.setCustomValidity("");
+                } else {
+                    emailInput.setCustomValidity("Please enter a valid email address.");
+                }
+            });
+        });
+    });
+
 </script>
 
 {% block scripts %}
@@ -938,17 +976,15 @@
 {% endblock %}
 {% endblock content %}
 <script>
-  
-document.getElementById('departmentModal').addEventListener('hidden.bs.modal', function (e) {
-    // Reset each form by its ID
-    document.getElementById('deptForm').reset();
-    document.getElementById('emailForm').reset();
-    document.getElementById('smsForm').reset();
-    document.getElementById('whatsappForm').reset();
-    
-    // Remove 'filled' class from inputs and selects
-    const inputs = document.querySelectorAll(".form-control, .form-select");
-    inputs.forEach(input => input.classList.remove("filled"));
-});
-
+  document.getElementById('departmentModal').addEventListener('hidden.bs.modal', function (e) {
+      // Reset each form by its ID
+      document.getElementById('deptForm').reset();
+      document.getElementById('emailForm').reset();
+      document.getElementById('smsForm').reset();
+      document.getElementById('whatsappForm').reset();
+      
+      // Remove 'filled' class from inputs and selects
+      const inputs = document.querySelectorAll(".form-control, .form-select");
+      inputs.forEach(input => input.classList.remove("filled"));
+  });
 </script>

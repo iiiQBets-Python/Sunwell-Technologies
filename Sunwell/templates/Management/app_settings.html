@@ -1,12 +1,12 @@
 
+
 {% extends "Base/base.html" %}
 {% load static %}
 {% block title %} email_sms {% endblock %}
-
 {% block styles %}
 {{ block.super }}
-    <style>
-      .floating-alert {
+<style>
+    .floating-alert {
         position: fixed;
         top: -100px; /* Start hidden above the view */
         right: 30%;
@@ -18,480 +18,453 @@
         color: white;
         box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
         transition: top 0.5s ease-in-out; /* Smooth transition for appearing */
-      }
+    }
 
-      .floating-alert.show {
-          top: 100px; /* Slide down to be visible */
-      }
-      @media (max-width: 576px) {
+    .floating-alert.show {
+        top: 100px; /* Slide down to be visible */
+    }
+    
+    @media (max-width: 576px) {
         .content {
-                height: 80vh !important;
-            }
-      }
-  </style>
+            height: 75vh !important;
+        }
+    }
+</style>
 <link rel="stylesheet" href="{% static 'css/Management/app_settings.css' %}">
 {% endblock styles %}
 
 {% block content %}
-
-  <div class="container-custom">
+<div class="container-custom">
     <h5 class="mb-3">Email, SMS, and WhatsApp Configuration</h5>
-    
     <div class="tab-content" id="myTabContent">
-
-      <div class="tab-pane fade show active" id="appsetting" role="tabpanel" aria-labelledby="appsetting-tab">
+        <div class="tab-pane fade show active" id="appsetting" role="tabpanel" aria-labelledby="appsetting-tab">
+            <!-- Tab Navigation -->
+            <ul class="nav nav-tabs" id="Tab" role="tablist">
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link active" id="appsettings-tab" data-bs-toggle="tab" data-bs-target="#app-settings" type="button" role="tab" aria-controls="app-settings" aria-selected="true">App Settings</button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="email-settings-tab" data-bs-toggle="tab" data-bs-target="#email-settings" type="button" role="tab" aria-controls="email-settings" aria-selected="false">Email Settings</button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="sms-settings-tab" data-bs-toggle="tab" data-bs-target="#sms-settings" type="button" role="tab" aria-controls="sms-settings" aria-selected="false">SMS Settings</button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="whatsapp-settings-tab" data-bs-toggle="tab" data-bs-target="#whatsapp-settings" type="button" role="tab" aria-controls="whatsapp-settings" aria-selected="false">WhatsApp Settings</button>
+                </li> 
+            </ul>
         
-        <!-- Tab Navigation -->
-        <ul class="nav nav-tabs" id="Tab" role="tablist">
-          <li class="nav-item" role="presentation">
-            <button class="nav-link active" id="appsettings-tab" data-bs-toggle="tab" data-bs-target="#app-settings"
-              type="button" role="tab" aria-controls="app-settings" aria-selected="true">App Settings</button>
-          </li>
-          <li class="nav-item" role="presentation">
-            <button class="nav-link" id="email-settings-tab" data-bs-toggle="tab" data-bs-target="#email-settings"
-              type="button" role="tab" aria-controls="email-settings" aria-selected="false">Email Settings</button>
-          </li>
-          <li class="nav-item" role="presentation">
-            <button class="nav-link" id="sms-settings-tab" data-bs-toggle="tab" data-bs-target="#sms-settings"
-              type="button" role="tab" aria-controls="sms-settings" aria-selected="false">SMS Settings</button>
-          </li>
-          <li class="nav-item" role="presentation">
-            <button class="nav-link" id="whatsapp-settings-tab" data-bs-toggle="tab" data-bs-target="#whatsapp-settings"
-              type="button" role="tab" aria-controls="whatsapp-settings" aria-selected="false">WhatsApp Settings</button>
-          </li>
-        </ul>
-
-        <!-- Tab Content -->
-        <div class="tab-content mt-3" id="TabContent">
-          
-          <!-- App Settings Tab Content -->
-          <div class="tab-pane fade show active mt-2" id="app-settings" role="tabpanel" aria-labelledby="appsettings-tab">
-
-            <div class="edit-button" style="text-align:right;" >
-              <button class="btn btn-sm btn-outline-primary">Edit</button>
-            </div>
-            
-            <form>
-              <div class="container">
-                <div class="row">
-                  <div class="form-group col-md-8">
-                    <input type="number" class="form-control" placeholder=" " id="password_change" name="password_change">
-                    <label class="form-label" for="password_change">Password Change</label>
-                  </div>
-                  <div class="form-group col-md-2">
-                    <span class="form-span">Days</span>
-                  </div>
-                  <div class="form-group col-md-8">
-                    <input type="number" class="form-control" placeholder=" " id="system_auto_logout"
-                      name="system_auto_logout">
-                    <label class="form-label" for="system_auto_logout">System Auto Logout Time</label>
-                  </div>
-                  <div class="form-group col-md-2">
-                    <span class="form-span">Minutes</span>
-                  </div>
-                  <div class="form-group col-md-8">
-                    <input type="number" class="form-control" placeholder=" " id="user_access_lock"
-                      name="user_access_lock">
-                    <label class="form-label" for="user_access_lock">User Access Lock Count</label>
-                  </div>
-                  <div class="form-group col-md-2">
-                    <span class="form-span">Attempts</span>
-                  </div>
-                  <div class="form-buttons">
-                    <button class="btn btn-outline-danger" type="button">Close</button>
-                    <button class="btn btn-outline-success">Save</button>
-                  </div>
+            <div class="tab-content mt-3" id="TabContent">
+                <!-- App Settings Tab Content -->
+                <div class="tab-pane fade show active mt-2" id="app-settings" role="tabpanel" aria-labelledby="appsettings-tab">
+                    <div class="edit-button" style="text-align:right;">
+                        <button id="appSettingsEdit" class="btn btn-sm btn-outline-primary">Edit</button>
+                    </div>
+                    <div class="container">
+                        <div class="row">
+                            <div class="form-group col-md-8">
+                                {% comment %} <input type="number" class="form-control" placeholder=" " id="password_change" name="password_change" value="{{ app_settings.passwordchange }}" disabled>
+                                <label class="form-label" for="password_change">Password Change</label> {% endcomment %}
+                                <select class="form-select" id="password_change" name="password_change"  value="{{ app_settings.passwordchange }}" disabled>
+                                    <option value="">-- Select Password Reset Duration --</option> 
+                                    <option value="30">30</option>
+                                    <option value="60">60</option>
+                                    <option value="90">90</option>
+                                    <option value="120">120</option>
+                                  </select>
+                                  <label for="passwordDuration" class="form-label">Set Password Duration in Days</label>
+                            </div>
+                            <div class="form-group col-md-2">
+                                <span class="form-span">Days</span>   
+                            </div>
+                            <div class="form-group col-md-8">
+                                <input type="number" class="form-control" placeholder=" " id="system_auto_logout" name="system_auto_logout" value="{{ app_settings.autologouttime }}"  disabled>
+                                <label class="form-label" for="system_auto_logout">System Auto Logout Time</label>
+                            </div>
+                            <div class="form-group col-md-2">
+                                <span class="form-span">Minutes</span>
+                            </div>
+                            <div class="form-group col-md-8">
+                                <select class="form-select" id="user_access_lock" name="user_access_lock" placeholder=" " required disabled>
+                                    <option value="" disabled hidden>Select</option>
+                                    <option value="1" {% if app_settings.comm_port == "1" %}selected{% endif %}>1</option>
+                                    <option value="3" {% if app_settings.comm_port == "3" %}selected{% endif %}>3</option>
+                                    <option value="5" {% if app_settings.comm_port == "5" %}selected{% endif %}>5</option>
+                                </select>
+                                {% comment %} <input type="number" class="form-control" placeholder=" " id="" name="" value="{{ app_settings.lockcount }}" disabled> {% endcomment %}
+                                <label class="form-label" for="user_access_lock">User Access Lock Count</label>
+                            </div>
+                            <div class="form-group col-md-2">
+                                <span class="form-span">Attempts</span>
+                            </div>
+                            <div class="form-buttons">
+                                <button class="btn btn-outline-danger" type="button">Close</button>
+                                <button class="btn btn-outline-success" disabled id="saveAppSettings">Save</button>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-              </div>
-            </form>
-          </div>
-
-          <!-- Email Settings Tab Content -->
-          <div class="tab-pane fade" id="email-settings" role="tabpanel" aria-labelledby="email-settings-tab">
-
-            <div class="edit-button" style="text-align:right;" >
-              <button class="btn btn-sm btn-outline-primary">Edit</button>
-            </div>
-
-            <!-- Email Settings fields -->
-            <form method="post" action="{% url 'app_settings' %}">
-              {% csrf_token %}
-                <div class="container">
-                  <div class="row">
-                    <div class="col-md-6 form-group d-flex align-items-center">
-                      <h6 style="margin-right: 10px;">Email System:</h6>
-                      <div id="status">
-                        <div class="form-check form-check-inline">
-                          <input class="form-check-input" type="radio" name="email_setting_status" id="email-enable2"
-                            value="Enable" checked>
-                          <label class="form-check-label" for="email-enable2">Enable</label>
-                        </div>
-                        <div class="form-check form-check-inline">
-                          <input class="form-check-input" type="radio" name="email_setting_status" id="email-disable2"
-                            value="Disable">
-                          <label class="form-check-label" for="email-disable2">Disable</label>
-                        </div>
-                      </div>
+        
+                <!-- Email Settings Tab Content -->
+                <div class="tab-pane fade" id="email-settings" role="tabpanel" aria-labelledby="email-settings-tab">
+                    <div class="edit-button" style="text-align:right;">
+                        <button id="emailSettingsEdit" class="btn btn-sm btn-outline-primary">Edit</button>
                     </div>
-                    <div class="col-md-6 form-group d-flex align-items-center"></div>
-                    {% comment %} <div class="col-md-6 form-group d-flex align-items-center">
-                      <h6 style="margin-right: 10px;">SMTP Authentication:</h6>
-                      <div id="status">
-                        <div class="form-check form-check-inline">
-                          <input class="form-check-input" type="radio" name="smpt_authentication" id="smpt-yes" value="Yes"
-                            checked>
-                          <label class="form-check-label" for="smpt-yes">Yes</label>
-                        </div>
-                        <div class="form-check form-check-inline">
-                          <input class="form-check-input" type="radio" name="smpt_authentication" id="smpt-no" value="No">
-                          <label class="form-check-label" for="smpt-no">No</label>
-                        </div>
-                      </div>
-                    </div> {% endcomment %}
-                    <div class="form-group col-md-6">
-                      <input type="text" class="form-control" placeholder=" " id="smpthost" name="smpthost"  value="{{ app_settings.email_host }}" disabled
-                      <!-- <label class="form-label" for="smptaddress">Email Port</label> -->
-                      <label class="form-label" for="smpthost">SMTP Host</label>
-                    </div>
-                    <div class="form-group col-md-6">
-                      <input type="number" class="form-control" placeholder=" " id="smtpPort" name="smtpPort" value="{{ app_settings.email_port }}" disabled>
-                      <label class="form-label" for="smtpPort">SMTP Port</label>
-                    </div>
-                    <div class="form-group col-md-6">
-                      <input type="text" class="form-control" placeholder=" " id="smptemail" name="smptemail" value="{{ app_settings.email_host_user }}" disabled>
-                      <!-- <label class="form-label" for="smptemail">Email Host</label> -->
-                      <label class="form-label" for="smptemail">SMTP Email</label>
-                    </div>
-
                     
-                    <div class="form-group col-md-6">
-                      <input type="password" class="form-control" placeholder=" " id="smptpass" name="smptpass" value="{{ app_settings.email_host_password }}" disabled >
-                      <label class="form-label" for="smptpass">SMTP Password</label>
-                      <!-- <label class="form-label" for="smptpass">SMTP Password</label> -->
-                    </div>
-
-                    {% comment %} <div class="form-group col-md-6">
-                      <input type="text" class="form-control" placeholder=" " id="smptuser" name="smptuser" >
-                      <label class="form-label" for="smptuser">SMTP Username</label>
-                      <!-- <label class="form-label" for="smptuser">SMTP Username</label> -->
-                    </div> {% endcomment %}
-                    
-                    
-
-                    {% comment %} <div class="col-md-6 form-group d-flex align-items-center">
-                      <h6 style="margin-right: 10px;">SMTP Socket Layers:</h6>
-                      <div id="status">
-                        <div class="form-check form-check-inline">
-                          <input class="form-check-input" type="radio" name="smpt_layer" id="smpt-enable" value="Enable"
-                            checked>
-                          <label class="form-check-label" for="smpt-enable">Enable</label>
-                        </div>
-                        <div class="form-check form-check-inline">
-                          <input class="form-check-input" type="radio" name="smpt_layer" id="smpt-disable" value="Disable" >
-                          <label class="form-check-label" for="smpt-disable">Disable</label>
-                        </div>
-                      </div>
-                    </div> {% endcomment %}
-                    <div class="form-group col-md-12">
-                      <textarea class="form-control" id="emailsign" name="emailsignature" rows="3" placeholder=" " value="{{ app_settings.email_signature }}" disabled></textarea>
-                      <label class="form-label" for="emailsignature">Email Signature</label>
-                    </div>
-
-                    <!-- Additional email settings fields -->
-                    <div class="form-buttons">
-                      <button class="btn btn-outline-danger" type="button">Close</button>
-                      <button class="btn btn-outline-success">Save</button>
-                      {% for msg in messages %}
-                      <p class="text-danger text-center mt-2 fw-bold" style="font-size: 0.9rem;">{{ msg }}</p>
-                    {% endfor %}
-                    </div>
-                  </div>
-                </div> 
-            </form>
-
-            <form method="post" action="{% url 'send_test_email' %}">
-              {% csrf_token %}
-              <div class="container">
-                <div class="row mt-3">
-                  
-                    <div class="form-group col-md-6">
-                      <input type="email" class="form-control" placeholder=" " id="testemail" name="testemail">
-                      <label class="form-label" for="testemail">Test Email ID</label>
-                    </div>
-                    <div class="form-group col-md-6">
-                      <input type="time" class="form-control" placeholder=" " id="testemailtime" name="testemailtime">
-                      <label class="form-label" for="testemailtime">Test Email Time</label>
-                    </div>
-                    <div class="form-group col-md-0 d-flex justify-content-md-end">
-                      <button class="btn btn-outline-primary">Email Test</button>
-                    </div>
-                  
-                </div>
-              </div>
-            </form>
-                
-          </div>
-          
-          <!-- SMS Settings Tab Content -->
-          <div class="tab-pane fade" id="sms-settings" role="tabpanel" aria-labelledby="sms-settings-tab">
-
-            <div class="edit-button" style="text-align:right;" >
-              <button class="btn btn-sm btn-outline-primary">Edit</button>
-            </div>
-            <!-- SMS Settings fields -->
-            <form method="post" action="{% url 'app_sms_settings' %}">
-              {% csrf_token %}
-              <div class="container">
-                <div class="row">
-                  <div class="col-md-12 form-group d-flex align-items-center ">
-                    <h6 style="margin-right: 10px;">SMS System:</h6>
+                    <h6 style="margin-right: 10px;">SMTP Authentication:</h6>
                     <div id="status">
-                      <div class="form-check form-check-inline">
-                        <input class="form-check-input" type="radio" name="sms_setting_status" id="sms-enable2" value="Enable"
-                          checked>
-                        <label class="form-check-label" for="sms-enable2">Enable</label>
-                      </div>
-                      <div class="form-check form-check-inline">
-                        <input class="form-check-input" type="radio" name="sms_setting_status" id="sms-disable2"
-                          value="Disable">
-                        <label class="form-check-label" for="sms-disable2">Disable</label>
-                      </div>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="smpt_authentication" id="smpt-yes" value="Yes" checked disabled>
+                            <label class="form-check-label" for="smpt-yes">Yes</label>
+                        </div>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="smpt_authentication" id="smpt-no" value="No" disabled>
+                            <label class="form-check-label" for="smpt-no">No</label>
+                        </div>
                     </div>
-                  </div>
-                  <div class="form-group col-md-6">
-                    <select class="form-select" id="commport" name="commport" placeholder=" " required disabled>
-                      <option value="" disabled hidden>Select a port</option>
-                      <option value="COM1" {% if app_settings.comm_port == "COM1" %}selected{% endif %}>COM1</option>
-                      <option value="COM2" {% if app_settings.comm_port == "COM2" %}selected{% endif %}>COM2</option>
-                      <option value="COM3" {% if app_settings.comm_port == "COM3" %}selected{% endif %}>COM3</option>
-                      <option value="COM4" {% if app_settings.comm_port == "COM4" %}selected{% endif %}>COM4</option>
-                    </select>
-                    <label class="form-label" for="commport">Communication Port</label>
-                  </div>
-                  
-                  
-                  <div class="col-md-6 form-group">
-                    <select class="form-select" id="baudrate" name="baudrate" placeholder=" " required disabled>
-                      <option value="" disabled hidden></option>
-                      <option value="110" {% if app_settings.baud_rate == "110" %}selected{% endif %}>110</option>
-                      <option value="300" {% if app_settings.baud_rate == "300" %}selected{% endif %}>300</option>
-                      <option value="1200" {% if app_settings.baud_rate == "1200" %}selected{% endif %}>1200</option>
-                      <option value="2400" {% if app_settings.baud_rate == "2400" %}selected{% endif %}>2400</option>
-                      <option value="4800" {% if app_settings.baud_rate == "4800" %}selected{% endif %}>4800</option>
-                      <option value="9600" {% if app_settings.baud_rate == "9600" %}selected{% endif %}>9600</option>
-                      <option value="19200" {% if app_settings.baud_rate == "19200" %}selected{% endif %}>19200</option>
-                      <option value="38400" {% if app_settings.baud_rate == "38400" %}selected{% endif %}>38400</option>
-                      <option value="57600" {% if app_settings.baud_rate == "57600" %}selected{% endif %}>57600</option>
-                      <option value="115200" {% if app_settings.baud_rate == "115200" %}selected{% endif %}>115200</option>
-                      <option value="230400" {% if app_settings.baud_rate == "230400" %}selected{% endif %}>230400</option>
-                      <option value="460800" {% if app_settings.baud_rate == "460800" %}selected{% endif %}>460800</option>
-                      <option value="921600" {% if app_settings.baud_rate == "921600" %}selected{% endif %}>921600</option>
-                    </select>
-                    <label for="baudrate" class="form-label">Baud Rate</label>
-                  </div>
-                  
-                  <div class="col-md-6 form-group">
-                    <select class="form-select" id="databits" name="databits" placeholder=" " required disabled>
-                      <option value="" disabled hidden></option>
-                      <option value="5" {% if app_settings.data_bits == "5" %}selected{% endif %}>5</option>
-                      <option value="6" {% if app_settings.data_bits == "6" %}selected{% endif %}>6</option>
-                      <option value="7" {% if app_settings.data_bits == "7" %}selected{% endif %}>7</option>
-                      <option value="8" {% if app_settings.data_bits == "8" %}selected{% endif %}>8</option>
-                    </select>
-                    <label for="databits" class="form-label">Data Bits</label>
-                  </div>
-                  
-                  <div class="col-md-6 form-group">
-                    <select class="form-select" id="parity" name="parity" placeholder=" " required disabled>
-                      <option value="" disabled hidden></option>
-                      <option value="Even" {% if app_settings.parity == "Even" %}selected{% endif %}>Even</option>
-                      <option value="Odd" {% if app_settings.parity == "Odd" %}selected{% endif %}>Odd</option>
-                      <option value="None" {% if app_settings.parity == "None" %}selected{% endif %}>None</option>
-                      <option value="Mark" {% if app_settings.parity == "Mark" %}selected{% endif %}>Mark</option>
-                      <option value="Space" {% if app_settings.parity == "Space" %}selected{% endif %}>Space</option>
-                    </select>
-                    <label for="parity" class="form-label">Parity</label>
-                  </div>
-                  
-                  <div class="col-md-6 form-group">
-                    <select class="form-select" id="stopbits" name="stopbits" placeholder=" " required disabled>
-                      <option value="" disabled hidden></option>
-                      <option value="1" {% if app_settings.stop_bits == "1" %}selected{% endif %}>1</option>
-                      <option value="1.5" {% if app_settings.stop_bits == "1.5" %}selected{% endif %}>1.5</option>
-                      <option value="2" {% if app_settings.stop_bits == "2" %}selected{% endif %}>2</option>
-                    </select>
-                    <label for="stopbits" class="form-label">Stop Data</label>
-                  </div>
-                  
-                  <div class="col-md-6 form-group">
-                    <select class="form-select" id="flowcontrol" name="flowcontrol" placeholder=" " required disabled>
-                      <option value="" disabled hidden></option>
-                      <option value="xon_xoff" {% if app_settings.flow_control == "xon_xoff" %}selected{% endif %}>Xon/Xoff</option>
-                      <option value="hardware" {% if app_settings.flow_control == "hardware" %}selected{% endif %}>Hardware</option>
-                      <option value="none" {% if app_settings.flow_control == "none" %}selected{% endif %}>None</option>
-                    </select>
-                    <label for="flowcontrol" class="form-label">Flow Control</label>
-                  </div>
-                  
-                  <!-- Additional SMS settings fields -->
-                  <div class="form-buttons">
-                    <button class="btn btn-outline-danger" type="button">Close</button>
-                    <button class="btn btn-outline-success">Save</button>
-                  </div>
-                </div>
-              </div>
-            </form>
-            <form method="post" action="{% url 'send_test_sms' %}">
-              {% csrf_token %}
-              <div class="container">
-                <div class="row mt-3">
-                  
-                  <div class="form-group col-md-6">
-                    <input type="number" class="form-control" placeholder=" " id="testsms" name="testsms">
-                    <label class="form-label" for="testsms">Test SMS Number</label>
-                  </div>
-                  <div class="form-group col-md-6">
-                    <input type="number" class="form-control" placeholder=" " id="testsmstime" name="testsmstime">
-                    <label class="form-label" for="testsmstime">Test SMS Time</label>
-                  </div>
-                  <div class="form-group col-md-0 d-flex justify-content-md-end">
-                    <button class="btn btn-outline-primary">SMS Test</button>
-                  </div>
-                  
-                </div>
-              </div>
-            </form>
-          </div>
-          
-          <!-- WhatsApp Settings Tab Content -->
-          <div class="tab-pane fade" id="whatsapp-settings" role="tabpanel" aria-labelledby="whatsapp-settings-tab">
-
-            <div class="edit-button" style="text-align:right;" >
-              <button class="btn btn-sm btn-outline-primary">Edit</button>
-            </div>
-            <!-- WhatsApp Settings fields -->
-            <form>
-              <div class="container">
-                <div class="row">
-                  <div class="col-md-12 form-group d-flex align-items-center ">
-                    <h6 style="margin-right: 10px;">Whatsapp Message System:</h6>
-                    <div id="status">
-                      <div class="form-check form-check-inline">
-                        <input class="form-check-input" type="radio" name="whatsapp_setting_status" id="whatsapp-enable2"
-                          value="Enable" checked>
-                        <label class="form-check-label" for="whatsapp-enable2">Enable</label>
-                      </div>
-                      <div class="form-check form-check-inline">
-                        <input class="form-check-input" type="radio" name="whatsapp_setting_status" id="whatsapp-disable2"
-                          value="Disable">
-                        <label class="form-check-label" for="whatsapp-disable2">Disable</label>
-                      </div>
+                    <div class="container">
+                        <div class="row">
+                            <div class="form-group col-md-6">
+                                <input type="text" class="form-control" placeholder=" " id="smpthost" name="smpthost" value="{{ app_settings.email_host }}"  disabled>
+                                <label class="form-label" for="smpthost">SMTP Host</label>
+                            </div>
+                            <div class="form-group col-md-6">
+                                <input type="number" class="form-control" placeholder=" " id="smtpPort" name="smtpPort" value="{{ app_settings.email_port }}" disabled>
+                                <label class="form-label" for="smtpPort">SMTP Port</label>
+                            </div>
+                            <div class="form-group col-md-6">
+                                <input type="text" class="form-control" placeholder=" " id="smptemail" name="smptemail" value="{{ app_settings.email_host_user }}" disabled>
+                                <label class="form-label" for="smptemail">SMTP Email</label>
+                            </div>
+                            <div class="form-group col-md-6">
+                                <input type="password" class="form-control" placeholder=" " id="smptpass" name="smptpass" value="{{ app_settings.email_host_password }}" disabled>
+                                <label class="form-label" for="smptpass">SMTP Password</label>
+                            </div>
+                            <div class="form-group col-md-12">
+                                <textarea class="form-control" id="emailsign" name="emailsignature" rows="3" placeholder=" " disabled>{{ app_settings.email_signature }}</textarea>
+                                <label class="form-label" for="emailsign">Email Signature</label>
+                            </div>
+                            <div class="form-buttons">
+                                <button class="btn btn-outline-danger" type="button">Close</button>
+                                <button class="btn btn-outline-success" disabled id="saveEmailSettings">Save</button>
+                            </div>
+                        </div>
                     </div>
-                  </div>
-                  <div class="form-group col-md-6">
-                      <input type="number" class="form-control" placeholder=" " id="commport" name="commport">
-                      <label class="form-label" for="commport">Communication Port</label>
-                  </div>
-                  <div class="col-md-6 form-group">
-                    <select class="form-select" id="parity" name="parity" placeholder=" " required>
-                        <option value="" disabled selected hidden></option>
-                        <option value="none">None</option>
-                        <option value="">ABCD</option>
-                        <option value="">XYZ</option>
-                        
-                    </select>
-                    <label for="parity" class="form-label">Parity</label>
-                  </div>
-                  <div class="col-md-6 form-group">
-                    <select class="form-select" id="baudrate" name="baudrate" placeholder=" " required>
-                        <option value="" disabled selected hidden></option>
-                        <option value="">115200</option>
-                        <option value="">115400</option>
-                        <option value="">115500</option>
-                        
-                    </select>
-                    <label for="baudrate" class="form-label">Baud Rate</label>
-                  </div>
-                  <div class="col-md-6 form-group">
-                    <select class="form-select" id="databits" name="databits" placeholder=" " required>
-                        <option value="" disabled selected hidden></option>
-                        <option value="">8</option>
-                        <option value="">16</option>
-                        <option value="">32</option>
-                        <option value="">64</option>
-                      
-                    </select>
-                    <label for="databits" class="form-label">Data Bits</label>
-                  </div>
-                  <div class="col-md-6 form-group">
-                    <select class="form-select" id="stopbits" name="stopbits" placeholder=" " required>
-                        <option value="" disabled selected hidden></option>
-                        <option value="">1</option>
-                        <option value="">2</option>
-                        <option value="">3</option>
-                        <option value="">4</option>
-                        
-                    </select>
-                    <label for="stopbits" class="form-label">Stop Data</label>
-                  </div>
+                    
+                    <form method="post" action="{% url 'send_test_email' %}">
+                        {% csrf_token %}
+                        <div class="container">
+                            <div class="row mt-3">
+                                <div class="form-group col-md-6">
+                                    <input type="email" class="form-control" placeholder=" " id="testemail" name="testemail">
+                                    <label class="form-label" for="testemail">Test Email ID</label>
+                                </div>
+                                <div class="form-group col-md-6">
+                                    <input type="time" class="form-control" placeholder=" " id="testemailtime" name="testemailtime">
+                                    <label class="form-label" for="testemailtime">Test Email Time</label>
+                                </div>
+                                <div class="form-group col-md-0 d-flex justify-content-md-end">
+                                    <button class="btn btn-outline-primary">Email Test</button>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
                 
-                  <!-- Additional SMS settings fields -->
-                  <div class="form-buttons">
-                    <button class="btn btn-outline-danger" type="button">Close</button>
-                    <button class="btn btn-outline-success">Save</button>
-                  </div>
+                <!-- SMS Settings Tab Content -->
+                <div class="tab-pane fade" id="sms-settings" role="tabpanel" aria-labelledby="sms-settings-tab">
+                    <div class="edit-button" style="text-align:right;">
+                        <button id="smsSettingsEdit" class="btn btn-sm btn-outline-primary">Edit</button>
+                    </div>
+                    <div class="container">
+                        <div class="row">
+                            <div class="col-md-12 form-group d-flex align-items-center ">
+                                <h6 style="margin-right: 10px;">SMS System:</h6>
+                                <div id="status">
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input" type="radio" name="sms_setting_status" id="sms-enable2" value="Enable" checked>
+                                        <label class="form-check-label" for="sms-enable2">Enable</label>
+                                    </div>
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input" type="radio" name="sms_setting_status" id="sms-disable2" value="Disable">
+                                        <label class="form-check-label" for="sms-disable2">Disable</label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group col-md-6">
+                                <select class="form-select" id="commport" name="commport" placeholder=" " required disabled>
+                                    <option value="" disabled hidden>Select a port</option>
+                                    <option value="COM1" {% if app_settings.comm_port == "COM1" %}selected{% endif %}>COM1</option>
+                                    <option value="COM2" {% if app_settings.comm_port == "COM2" %}selected{% endif %}>COM2</option>
+                                    <option value="COM3" {% if app_settings.comm_port == "COM3" %}selected{% endif %}>COM3</option>
+                                    <option value="COM4" {% if app_settings.comm_port == "COM4" %}selected{% endif %}>COM4</option>
+                                </select>
+                                <label class="form-label" for="commport">Communication Port</label>
+                            </div>
+                            <div class="col-md-6 form-group">
+                                <select class="form-select" id="baudrate" name="baudrate" placeholder=" " required disabled>
+                                    <option value="" disabled hidden></option>
+                                    <option value="110" {% if app_settings.baud_rate == "110" %}selected{% endif %}>110</option>
+                                    <option value="300" {% if app_settings.baud_rate == "300" %}selected{% endif %}>300</option>
+                                    <option value="1200" {% if app_settings.baud_rate == "1200" %}selected{% endif %}>1200</option>
+                                    <option value="2400" {% if app_settings.baud_rate == "2400" %}selected{% endif %}>2400</option>
+                                    <option value="4800" {% if app_settings.baud_rate == "4800" %}selected{% endif %}>4800</option>
+                                    <option value="9600" {% if app_settings.baud_rate == "9600" %}selected{% endif %}>9600</option>
+                                    <option value="19200" {% if app_settings.baud_rate == "19200" %}selected{% endif %}>19200</option>
+                                    <option value="38400" {% if app_settings.baud_rate == "38400" %}selected{% endif %}>38400</option>
+                                    <option value="57600" {% if app_settings.baud_rate == "57600" %}selected{% endif %}>57600</option>
+                                    <option value="115200" {% if app_settings.baud_rate == "115200" %}selected{% endif %}>115200</option>
+                                    <option value="230400" {% if app_settings.baud_rate == "230400" %}selected{% endif %}>230400</option>
+                                    <option value="460800" {% if app_settings.baud_rate == "460800" %}selected{% endif %}>460800</option>
+                                    <option value="921600" {% if app_settings.baud_rate == "921600" %}selected{% endif %}>921600</option>
+                                </select>
+                                <label for="baudrate" class="form-label">Baud Rate</label>
+                            </div>
+                            <div class="col-md-6 form-group">
+                                <select class="form-select" id="databits" name="databits" placeholder=" " required disabled>
+                                    <option value="" disabled hidden></option>
+                                    <option value="5" {% if app_settings.data_bits == "5" %}selected{% endif %}>5</option>
+                                    <option value="6" {% if app_settings.data_bits == "6" %}selected{% endif %}>6</option>
+                                    <option value="7" {% if app_settings.data_bits == "7" %}selected{% endif %}>7</option>
+                                    <option value="8" {% if app_settings.data_bits == "8" %}selected{% endif %}>8</option>
+                                </select>
+                                <label for="databits" class="form-label">Data Bits</label>
+                            </div>
+                            <div class="col-md-6 form-group">
+                                <select class="form-select" id="parity" name="parity" placeholder=" " required disabled>
+                                    <option value="" disabled hidden></option>
+                                    <option value="Even" {% if app_settings.parity == "Even" %}selected{% endif %}>Even</option>
+                                    <option value="Odd" {% if app_settings.parity == "Odd" %}selected{% endif %}>Odd</option>
+                                    <option value="None" {% if app_settings.parity == "None" %}selected{% endif %}>None</option>
+                                    <option value="Mark" {% if app_settings.parity == "Mark" %}selected{% endif %}>Mark</option>
+                                    <option value="Space" {% if app_settings.parity == "Space" %}selected{% endif %}>Space</option>
+                                </select>
+                                <label for="parity" class="form-label">Parity</label>
+                            </div>
+                            <div class="col-md-6 form-group">
+                                <select class="form-select" id="stopbits" name="stopbits" placeholder=" " required disabled>
+                                    <option value="" disabled hidden></option>
+                                    <option value="1" {% if app_settings.stop_bits == "1" %}selected{% endif %}>1</option>
+                                    <option value="1.5" {% if app_settings.stop_bits == "1.5" %}selected{% endif %}>1.5</option>
+                                    <option value="2" {% if app_settings.stop_bits == "2" %}selected{% endif %}>2</option>
+                                </select>
+                                <label for="stopbits" class="form-label">Stop Data</label>
+                            </div>
+                            <div class="col-md-6 form-group">
+                                <select class="form-select" id="flowcontrol" name="flowcontrol" placeholder=" " required disabled>
+                                    <option value="" disabled hidden></option>
+                                    <option value="xon_xoff" {% if app_settings.flow_control == "xon_xoff" %}selected{% endif %}>Xon/Xoff</option>
+                                    <option value="hardware" {% if app_settings.flow_control == "hardware" %}selected{% endif %}>Hardware</option>
+                                    <option value="none" {% if app_settings.flow_control == "none" %}selected{% endif %}>None</option>
+                                </select>
+                                <label for="flowcontrol" class="form-label">Flow Control</label>
+                            </div>
+                            <div class="form-buttons">
+                                <button class="btn btn-outline-danger" type="button">Close</button>
+                                <button class="btn btn-outline-success" disabled id="saveSmsSettings">Save</button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <form method="post" action="{% url 'send_test_sms' %}">
+                        {% csrf_token %}
+                        <div class="container">
+                            <div class="row mt-3">
+                                <div class="form-group col-md-6">
+                                    <input type="number" class="form-control" placeholder=" " id="testsms" name="testsms">
+                                    <label class="form-label" for="testsms">Test SMS Number</label>
+                                </div>
+                                <div class="form-group col-md-6">
+                                    <input type="time" class="form-control" placeholder=" " id="testsmstime" name="testsmstime">
+                                    <label class="form-label" for="testsmstime">Test SMS Time</label>
+                                </div>
+                                <div class="form-group col-md-0 d-flex justify-content-md-end">
+                                    <button class="btn btn-outline-primary">SMS Test</button>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
                 </div>
-              </div>
-            </form>
-            <form>
-              <div class="container">
-                <div class="row mt-3">
-                  
-                  <div class="form-group col-md-6">
-                    <input type="number" class="form-control" placeholder=" " id="testwhatsapp" name="testwhatsapp">
-                    <label class="form-label" for="testwhatsapp">Test Whatysapp Number</label>
+                <div class="tab-pane fade" id="whatsapp-settings" role="tabpanel" aria-labelledby="whatsapp-settings-tab">
+                    <h6 style="margin-right: 10px;">Coming Soon</h6>
+                    {% comment %} <div class="edit-button" style="text-align:right;" >
+                      <button class="btn btn-sm btn-outline-primary">Edit</button>
+                    </div>
+                    <!-- WhatsApp Settings fields -->
+                    <form>
+                      <div class="container">
+                        <div class="row">
+                            <h6 style="margin-right: 10px;">Coming Soon</h6>
+                          <div class="col-md-12 form-group d-flex align-items-center ">
+                            <h6 style="margin-right: 10px;">Whatsapp Message System:</h6>
+                            <div id="status">
+                              <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="radio" name="whatsapp_setting_status" id="whatsapp-enable2"
+                                  value="Enable" checked>
+                                <label class="form-check-label" for="whatsapp-enable2">Enable</label>
+                              </div>
+                              <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="radio" name="whatsapp_setting_status" id="whatsapp-disable2"
+                                  value="Disable">
+                                <label class="form-check-label" for="whatsapp-disable2">Disable</label>
+                              </div>
+                            </div>
+                          </div>
+                          <div class="form-group col-md-6">
+                              <input type="number" class="form-control" placeholder=" " id="commport" name="commport">
+                              <label class="form-label" for="commport">Communication Port</label>
+                          </div>
+                          <div class="col-md-6 form-group">
+                            <select class="form-select" id="parity" name="parity" placeholder=" " required>
+                                <option value="" disabled selected hidden></option>
+                                <option value="none">None</option>
+                                <option value="">ABCD</option>
+                                <option value="">XYZ</option>
+                                
+                            </select>
+                            <label for="parity" class="form-label">Parity</label>
+                          </div>
+                          <div class="col-md-6 form-group">
+                            <select class="form-select" id="baudrate" name="baudrate" placeholder=" " required>
+                                <option value="" disabled selected hidden></option>
+                                <option value="">115200</option>
+                                <option value="">115400</option>
+                                <option value="">115500</option>
+                                
+                            </select>
+                            <label for="baudrate" class="form-label">Baud Rate</label>
+                          </div>
+                          <div class="col-md-6 form-group">
+                            <select class="form-select" id="databits" name="databits" placeholder=" " required>
+                                <option value="" disabled selected hidden></option>
+                                <option value="">8</option>
+                                <option value="">16</option>
+                                <option value="">32</option>
+                                <option value="">64</option>
+                              
+                            </select>
+                            <label for="databits" class="form-label">Data Bits</label>
+                          </div>
+                          <div class="col-md-6 form-group">
+                            <select class="form-select" id="stopbits" name="stopbits" placeholder=" " required>
+                                <option value="" disabled selected hidden></option>
+                                <option value="">1</option>
+                                <option value="">2</option>
+                                <option value="">3</option>
+                                <option value="">4</option>
+                                
+                            </select>
+                            <label for="stopbits" class="form-label">Stop Data</label>
+                          </div> 
+                        
+                          <!-- Additional SMS settings fields -->
+                          <div class="form-buttons">
+                            <button class="btn btn-outline-danger" type="button">Close</button>
+                            <button class="btn btn-outline-success">Save</button>
+                          </div> {% endcomment %}
+                        </div>
+                      </div>
+                    </form>
+                    <form>
+                      <div class="container">
+                        <div class="row mt-3">
+                          
+                          {% comment %} <div class="form-group col-md-6">
+                            <input type="number" class="form-control" placeholder=" " id="testwhatsapp" name="testwhatsapp">
+                            <label class="form-label" for="testwhatsapp">Test Whatysapp Number</label>
+                          </div>
+                          <div class="form-group col-md-4">
+                            <input type="number" class="form-control" placeholder=" " id="testwhatsapptime" name="testwhatsapptime">
+                            <label class="form-label" for="testwhatsapptime">Test WhatsApp Time</label>
+                          </div>
+                          <div class="form-group col-md-2">
+                            <button class="btn btn-outline-primary">Whatsapp Test</button>
+                          </div> {% endcomment %}
+                          
+                        </div>
+                      </div>
+                    </form>
+        
                   </div>
-                  <div class="form-group col-md-6">
-                    <input type="number" class="form-control" placeholder=" " id="testwhatsapptime" name="testwhatsapptime">
-                    <label class="form-label" for="testwhatsapptime">Test WhatsApp Time</label>
-                  </div>
-                  <div class="form-group col-md-0 d-flex justify-content-md-end">
-                    <button class="btn btn-outline-primary">Whatsapp Test</button>
-                  </div>
-                  
-                </div>
-              </div>
-            </form>
-
-          </div>
-            
+            </div>
         </div>
-      </div>
     </div>
-  </div>
-
-
-{% block scripts %}
-{{ block.super }}
+</div>
+<!-- JavaScript -->
 <script>
-  document.addEventListener("DOMContentLoaded", function () {
-    const inputs = document.querySelectorAll(".form-control, .form-select");
-    inputs.forEach(input => {
-      input.addEventListener("blur", function () {
-        if (input.value) {
-          input.classList.add("filled");
-        } else {
-          input.classList.remove("filled");
-        }
-      });
-
-      // Initial check to handle pre-filled inputs
-      if (input.value) {
-        input.classList.add("filled");
-      }
+    function toggleFields(sectionId, buttonId, saveButtonId) {
+        const section = document.querySelector(`#${sectionId}`);
+        const inputs = section.querySelectorAll("input, select, textarea");
+        const saveButton = document.getElementById(saveButtonId);
+        
+        document.getElementById(buttonId).addEventListener("click", function () {
+            inputs.forEach((input) => {
+                input.disabled = !input.disabled;
+            });
+            saveButton.disabled = !saveButton.disabled;
+        });
+    }
+        
+    toggleFields("app-settings", "appSettingsEdit", "saveAppSettings");
+    toggleFields("email-settings", "emailSettingsEdit", "saveEmailSettings");
+    toggleFields("sms-settings", "smsSettingsEdit", "saveSmsSettings");
+    
+    function sendSettings(sectionId, tabName) {
+        const section = document.querySelector(`#${sectionId}`);
+        const inputs = section.querySelectorAll("input, select, textarea");
+        const data = { tab_name: tabName };
+        
+        inputs.forEach((input) => {
+            if (input.name) {
+                data[input.name] = input.type === "checkbox" ? input.checked : input.value;
+            }
+        });
+        
+        fetch("/save_app_settings/", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "X-CSRFToken": document.querySelector('[name=csrfmiddlewaretoken]').value,
+            },
+            body: JSON.stringify(data),
+        })
+        
+        .then((response) => {
+            if (response.ok) {
+                return response.json();
+            }
+            throw new Error("Network response was not ok");
+        })
+        .then((data) => {
+            console.log("Success:", data);
+            alert("Settings saved successfully.");
+            
+            // Disable inputs after successful save
+            inputs.forEach((input) => {
+                input.disabled = true;
+            });
+            const saveButton = section.querySelector("button[type=button].btn-outline-success");
+            if (saveButton) {
+                saveButton.disabled = true;
+            }
+        })
+        .catch((error) => {
+            console.error("Error:", error);
+            alert("An error occurred while saving settings.");
+        });
+    }
+        
+    document.getElementById("saveAppSettings").addEventListener("click", function () {
+        sendSettings("app-settings", "App Settings");
     });
-  });
+    
+    document.getElementById("saveEmailSettings").addEventListener("click", function () {
+        sendSettings("email-settings", "Email Settings");
+    });
+    document.getElementById("saveSmsSettings").addEventListener("click", function () {
+        sendSettings("sms-settings", "SMS Settings");
+    });
 </script>
+        
 {% endblock %}
 
-{% endblock content %}

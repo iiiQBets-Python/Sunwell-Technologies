@@ -1,3 +1,4 @@
+
 {% extends "Base/base.html" %}
 {% load static %}
 
@@ -87,16 +88,35 @@
 <div class="container mt-2 table-container fade-in">
     <div class="d-flex justify-content-end mb-2">
         <div class="ms-auto">
-            <div class="dropdown dept-filter">
-                <button class="btn btn-outline-secondary dropdown-toggle" type="button" id="roleFilterDropdown" data-bs-toggle="dropdown" aria-expanded="false">
-                    Select Status
-                </button>
-                <ul class="dropdown-menu" aria-labelledby="roleFilterDropdown">
-                    <li><a class="dropdown-item" onchange="updateTable()" href="#" data-value="all">All Status<span class="option-count">3</span></a></li>
-                    <li><a class="dropdown-item" onchange="updateTable()" href="#" data-value="Active">Active <span class="option-count">1</span></a></li>
-                    <li><a class="dropdown-item" onchange="updateTable()" href="#" data-value="Inactive">Inactive <span class="option-count">1</span></a></li>
-                </ul>
-            </div>
+          <div class="dropdown dept-filter">
+            <button
+                class="btn btn-outline-secondary dropdown-toggle"
+                type="button"
+                id="roleFilterDropdown"
+                data-bs-toggle="dropdown"
+                aria-expanded="false">
+                {{ status_filter|default:"Select Status" }} {% comment %}<span class="option-count">{{ current_count }}</span>{% endcomment %}
+            </button>
+            <ul class="dropdown-menu" aria-labelledby="roleFilterDropdown">
+                <li>
+                    <a class="dropdown-item" href="#" data-value="All Status" onclick="filterByStatus('All Status', {{ total_count }})">
+                        All Status {% comment %}<span class="option-count">{{ total_count }}</span>{% endcomment %}
+                    </a>
+                </li>
+                <li>
+                    <a class="dropdown-item" href="#" data-value="Active" onclick="filterByStatus('Active', {{ active_count }})">
+                         Active {% comment %}<span class="option-count">{{ active_count }}</span> {% endcomment %}
+                    </a>
+                </li>
+                <li>
+                    <a class="dropdown-item" href="#" data-value="Inactive" onclick="filterByStatus('Inactive', {{ inactive_count }})">
+                        Inactive {% comment %}<span class="option-count">{{ inactive_count }}</span>{% endcomment %}
+                    </a>
+                </li>
+            </ul>
+        </div>
+        
+               
         </div>  
     </div>
     <div class="d-flex justify-content-between align-items-center custom-label mt-0 mb-2" style="font-weight: bold; padding: 5px 10px; background-color: rgb(235, 235, 235);">
@@ -205,30 +225,31 @@
           {% csrf_token %}
           <div class="row">
             <div class="col-md-6 form-group">
-              <input type="text" class="form-control" id="userName" name="userName" autocomplete="username" maxlength="15" placeholder=" " required onblur="checkUsernameAvailability()">
+              <input type="text" class="form-control" id="userName" name="userName" autocomplete="username" maxlength="15" placeholder=" " required onblur="checkUsernameAvailability()" oninput="setCustomValidity('')" oninvalid="setCustomValidity('Please Enter User Name')">
               <label for="userName" class="form-label">User Name*</label>
               <div id="usernameError" class="text-danger"></div>
             </div>
             <div class="col-md-6 form-group">
-              <input type="text" class="form-control" id="loginName" name="loginName" placeholder=" " required>
+              <input type="text" class="form-control" id="loginName" name="loginName" placeholder=" " required oninput="setCustomValidity('')" oninvalid="setCustomValidity('Please Enter Login Name')">
               <label for="loginName" class="form-label">Login Name*</label>
             </div>
             <div class="col-md-6 form-group">
-              <input type="password" class="form-control" id="password" name="password" minlength="8" maxlength="15" placeholder=" " required>
+              <input type="password" class="form-control" id="password" name="password" minlength="8" maxlength="15" placeholder=" " required oninput="setCustomValidity('')" oninvalid="setCustomValidity('Please Enter a Valid Password (8-15 characters)')">
               <label for="password" class="form-label">Password*</label>
             </div>
             <div class="col-md-6 form-group">
-              <select class="form-select" id="passwordDuration" name="passwordDuration"  required>
+              <input type="number" class="form-control" id="passwordDuration" name="passwordDuration" value="{{ password_duration }}" placeholder=" " required readonly>
+              {% comment %} <select class="form-select" id="passwordDuration" name="passwordDuration"  required oninput="setCustomValidity('')" oninvalid="setCustomValidity('Please Select The Password Duration')">
                 <option value="">-- Select Password Reset Duration --</option> 
                 <option value="30">30 Days</option>
                 <option value="60">60 Days</option>
                 <option value="90">90 Days</option>
                 <option value="120">120 Days</option>
-              </select>
+              </select> {% endcomment %}
               <label for="passwordDuration" class="form-label">Set Password Duration in Days</label>
             </div>
             <div class="col-md-6 form-group">
-              <select class="form-select" id="role" name="role" placeholder=" " required>
+              <select class="form-select" id="role" name="role" placeholder=" " required oninput="setCustomValidity('')" oninvalid="setCustomValidity('Please Select Role')">
                 <option value="">--select--</option>
                 {% if role_data %}
                 {% for i in role_data %}
@@ -240,7 +261,7 @@
               <label for="role" class="form-label">Role*</label>
             </div>
             <div class="col-md-6 form-group">
-              <select class="form-select" id="commGroup" name="commGroup" placeholder=" " required>
+              <select class="form-select" id="commGroup" name="commGroup" placeholder=" " required oninput="setCustomValidity('')" oninvalid="setCustomValidity('Please Select CommGroup')">
                 <option value="">-- Select Comm. Group --</option> 
                 {% for group in groups %}
                     <option value="{{ group.CommGroup_code }}">{{ group.CommGroup_name }}</option>
@@ -249,7 +270,7 @@
               <label for="commGroup" class="form-label">Comm. Group*</label>
             </div>
             <div class="col-md-6 form-group">
-              <select class="form-select" id="departmentName" name="departmentName" required disabled>
+              <select class="form-select" id="departmentName" name="departmentName" required  oninput="setCustomValidity('')" oninvalid="setCustomValidity('Please Select Department')" disabled>
                 <option value="">-- Select Department --</option>
                 {% for department in departments %}
                     {% if department.commGroup %}
@@ -272,7 +293,7 @@
               </div>
             </div>
             <div class="col-md-6 form-group">
-              <select class="form-select" name="accessibleDepartment" multiple required>
+              <select class="form-select" name="accessibleDepartment" multiple required oninput="setCustomValidity('')" oninvalid="setCustomValidity('Please Select Accessible Department')">
                 {% for department in departments %}
                         <option value="{{ department.id }}" data-commgroup="{{ department.commGroup.CommGroup_code }}">
                             {{ department.department_name }}
@@ -308,24 +329,25 @@
           <input type="hidden" name="userId" value="{{ user.id }}">
           <div class="row">
             <div class="col-md-6 form-group">
-              <input type="text" class="form-control" id="editUsername-{{ user.id }}" name="editUsername" value="{{ user.username }}" maxlength="15" placeholder=" " required>
+              <input type="text" class="form-control" id="editUsername-{{ user.id }}" name="editUsername" value="{{ user.username }}" maxlength="15" placeholder=" " required oninput="setCustomValidity('')" oninvalid="setCustomValidity('Please write a User Name')">
               <label for="editUsername-{{ user.id }}" class="form-label">User Name*</label>
             </div>
             <div class="col-md-6 form-group">
-              <input type="text" class="form-control" id="editLoginName-{{ user.id }}" name="editLoginName" value="{{ user.login_name }}" placeholder=" " required>
+              <input type="text" class="form-control" id="editLoginName-{{ user.id }}" name="editLoginName" value="{{ user.login_name }}" placeholder=" " readonly>
               <label for="editLoginName-{{ user.id }}" class="form-label">Login Name*</label>
             </div>
             <div class="col-md-6 form-group">
-              <input type="password" class="form-control" id="editPassword-{{ user.id }}" name="editPassword" value="{{ user.password }}" placeholder="" minlength="8" maxlength="15">
+              <input type="password" class="form-control" id="editPassword-{{ user.id }}" name="editPassword" value="{{ user.password }}" placeholder="" minlength="8" maxlength="15" required oninput="setCustomValidity('')" oninvalid="setCustomValidity('Please write the Valide Password')">
               <label for="editPassword-{{ user.id }}" class="form-label">Password*</label>
             </div>
             <div class="col-md-6 form-group">
-              <select class="form-select" id="editpasswordDuration-{{ user.id }}" name="editpasswordDuration" required>
+              <input type="number" class="form-control" id="editpasswordDuration-{{ user.id }}" name="editpasswordDuration" value="{{ user.password_duration }}" placeholder=" " required readonly>
+              {% comment %} <select class="form-select" id="editpasswordDuration-{{ user.id }}" name="editpasswordDuration" required>
                 <option value="30" {% if user.password_duration == 30 %}selected{% endif %}>30 Days</option>
                 <option value="60" {% if user.password_duration == 60 %}selected{% endif %}>60 Days</option>
                 <option value="90" {% if user.password_duration == 90 %}selected{% endif %}>90 Days</option>
                 <option value="120" {% if user.password_duration == 120 %}selected{% endif %}>120 Days</option>
-              </select>
+              </select> {% endcomment %}
               <label for="editpasswordDuration-{{ user.id }}" class="form-label">Set Password Duration in Days</label>
             </div>
             <div class="col-md-6 form-group">
@@ -350,16 +372,18 @@
               <label for="editCommGroup-{{ user.id }}" class="form-label">Comm. Group*</label>
             </div>
             <div class="col-md-6 form-group">
-              <select class="form-select" id="editdepartmentName-{{ user.id }}" name="editdepartmentName" required>
-                <option value="">Select Department</option>
+
+              <select class="form-select" id="editdeptName-{{ user.id }}" name="editdepartmentName" required>
+                <option value="{{user.department}}">{{user.department}}</option>
                 {% for department in departments %}
-                  {% if department.commGroup %}
-                    <option value="{{ department.id }}" data-commgroup="{{ department.commGroup.CommGroup_code }}" {% if department == user.department %}selected{% endif %}>
-                      {{ department.department_name }}
+                    <option value="{{ department.id }}" 
+                            data-commgroup="{{ department.commGroup.CommGroup_code }}" 
+                            {% if department.id == user.department.id %}selected{% endif %}>
+                        {{ department.department_name }}
                     </option>
-                  {% endif %}
                 {% endfor %}
               </select>
+            
               <label for="editdepartmentName-{{ user.id }}" class="form-label">Department*</label>
             
               <h6>Status</h6>
@@ -402,6 +426,23 @@
 {% endfor %}
 
 <script>
+
+  function filterByStatus(status, count) {
+    const dropdownButton = document.getElementById("roleFilterDropdown");
+
+    // Update the button text with the selected status and count
+    dropdownButton.innerHTML = `${status} `;
+
+    // Update the URL with the selected status
+    const url = new URL(window.location.href);
+    url.searchParams.set("status", status === "All Status" ? "all" : status);
+    window.location.href = url.toString();
+}
+
+
+
+
+
   function getExistingUsernames() {
       const tableRows = document.querySelectorAll('#form-data-table tr');
       const usernames = [];
@@ -536,6 +577,28 @@
         filterUsersByDepartment(selectedDepartmentId); // Apply filter
     });
 });
+
+document.addEventListener("DOMContentLoaded", function () {
+  const form = document.getElementById("adminUserForm");
+
+  // Attach a submit event listener to the form
+  form.addEventListener("submit", function (event) {
+    const fields = form.querySelectorAll("[required]");
+    let isValid = true;
+
+    fields.forEach((field) => {
+      if (!field.checkValidity()) {
+        isValid = false;
+        field.reportValidity();
+      }
+    });
+
+    if (!isValid) {
+      event.preventDefault(); // Prevent form submission if validation fails
+    }
+  });
+});
+
 
 </script>
 

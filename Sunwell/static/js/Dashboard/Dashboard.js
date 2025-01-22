@@ -1,197 +1,130 @@
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
     const gridViewButton = document.getElementById('gridViewButton');
     const listViewButton = document.getElementById('listViewButton');
     const gridView = document.getElementById('gridView');
     const tableView = document.getElementById('tableView');
     const searchBar = document.getElementById('searchBar');
     const cards = document.querySelectorAll('.card-wrapper');
-    const tableBody = document.getElementById('form-data-table');
-    const entriesPerPageSelect = document.getElementById('entriesPerPage');
+    const tableRows = document.querySelectorAll('#form-data-table tr');
     const recordsInfo = document.getElementById('records-info');
-    const visibleEntriesSpan = document.getElementById('visible-entries');
-    const totalEntriesSpan = document.getElementById('total-entries');
+    const entriesDropdown = document.getElementById('entriesPerPage');
+    const visibleEntries = document.getElementById('visible-entries');
+    const totalEntries = document.getElementById('total-entries');
+    const dropdownButton = document.getElementById('roleFilterDropdown');
     const dropdownItems = document.querySelectorAll('.dropdown-item[data-value]');
-    const prevPageButton = document.getElementById('prev-page');
-    const nextPageButton = document.getElementById('next-page');
-    let entriesPerPage = parseInt(entriesPerPageSelect.value);
-    let currentPage = 1;
 
-    function updateGridPagination() {
-        const visibleCards = Array.from(cards).filter(card => card.style.display !== 'none');
-        const totalEntriesCount = visibleCards.length;
-        const start = (currentPage - 1) * entriesPerPage;
-        const end = start + entriesPerPage;
+    let selectedStatus = 'all'; // Default status filter
+    let selectedEntries = parseInt(entriesDropdown.value); // Default entries per page
 
-        visibleCards.forEach((card, index) => {
-            card.style.display = (index >= start && index < end) ? 'block' : 'none';
-        });
-
-        updatePaginationControls(totalEntriesCount);
-        updateRecordCount(visibleCards.length);
-    }
-
-    function updateTablePagination() {
-        const filteredData = Array.from(tableBody.getElementsByTagName('tr')).filter(row => row.style.display !== 'none');
-        const totalEntriesCount = filteredData.length;
-        const start = (currentPage - 1) * entriesPerPage;
-        const end = start + entriesPerPage;
-
-        filteredData.forEach((row, index) => {
-            row.style.display = (index >= start && index < end) ? '' : 'none';
-        });
-
-        updatePaginationControls(totalEntriesCount);
-        updateRecordCount(filteredData.length);
-    }
-
-    function updatePaginationControls(totalEntriesCount) {
-        prevPageButton.classList.toggle('disabled', currentPage === 1);
-        nextPageButton.classList.toggle('disabled', currentPage * entriesPerPage >= totalEntriesCount);
-
-        const startEntry = (currentPage - 1) * entriesPerPage + 1;
-        const endEntry = Math.min(currentPage * entriesPerPage, totalEntriesCount);
-        visibleEntriesSpan.textContent = `${startEntry} to ${endEntry}`;
-        totalEntriesSpan.textContent = totalEntriesCount;
-    }
-
-    function updateRecordCount(visibleCount) {
-        recordsInfo.textContent = `Records Found: ${visibleCount}`;
-    }
-
-    function updateDropdownCounts() {
-        let onlineCount = 0;
-        let offlineCount = 0;
-
-        cards.forEach(card => {
-            const status = card.getAttribute('data-status');
-            if (status === 'online') {
-                onlineCount++;
-            } else if (status === 'offline') {
-                offlineCount++;
-            }
-        });
-
-        document.querySelector('.dropdown-menu [data-value="online"] .option-count').textContent = onlineCount;
-        document.querySelector('.dropdown-menu [data-value="offline"] .option-count').textContent = offlineCount;
-        document.querySelector('.dropdown-menu [data-value="all"] .option-count').textContent = onlineCount + offlineCount;
-    }
-
-    function updateCardVisibility() {
+    function updateEntries() {
         const searchTerm = searchBar.value.toLowerCase();
-        const selectedValue = document.querySelector('.dropdown-item.active')?.getAttribute('data-value') || 'all';
-        let visibleCount = 0;
+        const totalDataCount = Math.max(cards.length, tableRows.length); // Total number of data items
+        let gridVisibleCount = 0;
+        let tableVisibleCount = 0;
 
-        cards.forEach(card => {
-            const titleElement = card.querySelector('.card-title');
-            const bodyText = card.querySelector('.card-body').textContent.toLowerCase();
-            const status = card.getAttribute('data-status');
-            const titleText = titleElement ? titleElement.textContent.toLowerCase() : '';
-            const matchesSearch = titleText.includes(searchTerm) || bodyText.includes(searchTerm);
-            const matchesStatus = selectedValue === 'all' || status === selectedValue;
+        totalEntries.textContent = totalDataCount; // Update total entries
 
-            if (matchesSearch && matchesStatus) {
-                card.style.display = 'block';
-                visibleCount++;
+        // Filter grid view cards
+        cards.forEach((card, index) => {
+            const cardTitle = card.querySelector('.card-title').textContent.toLowerCase();
+            const cardStatus = card.getAttribute('data-status');
+
+            if (
+                (selectedStatus === 'all' || cardStatus === selectedStatus) &&
+                cardTitle.includes(searchTerm)
+            ) {
+                if (index < selectedEntries || selectedEntries === 'all') {
+                    card.style.display = 'block';
+                    gridVisibleCount++;
+                } else {
+                    card.style.display = 'none';
+                }
             } else {
                 card.style.display = 'none';
             }
         });
 
-        updateGridPagination();
-        updateRecordCount(visibleCount);
-    }
-
-    function updateTableVisibility() {
-        const searchTerm = searchBar.value.toLowerCase();
-        const selectedValue = document.querySelector('.dropdown-item.active')?.getAttribute('data-value') || 'all';
-        let visibleCount = 0;
-
-        Array.from(tableBody.getElementsByTagName('tr')).forEach(row => {
+        // Filter table view rows
+        tableRows.forEach((row, index) => {
             const rowText = row.textContent.toLowerCase();
-            const statusText = row.cells[1].textContent.trim().toLowerCase();
-            const matchesSearch = rowText.includes(searchTerm);
-            const matchesStatus = selectedValue === 'all' || statusText.includes(selectedValue);
+            const rowStatus = row.cells[1].textContent.trim().toLowerCase();
 
-            if (matchesSearch && matchesStatus) {
-                row.style.display = '';
-                visibleCount++;
+            if (
+                (selectedStatus === 'all' || rowStatus === selectedStatus) &&
+                rowText.includes(searchTerm)
+            ) {
+                if (index < selectedEntries || selectedEntries === 'all') {
+                    row.style.display = '';
+                    tableVisibleCount++;
+                } else {
+                    row.style.display = 'none';
+                }
             } else {
                 row.style.display = 'none';
             }
         });
 
-        updateTablePagination();
-        updateRecordCount(visibleCount);
+        const visibleCount = Math.max(gridVisibleCount, tableVisibleCount);
+        visibleEntries.textContent = visibleCount; // Update visible entries
+        recordsInfo.textContent = `(Records Found: ${visibleCount})`; // Update records info
+    }
+
+    function filterByStatus(status) {
+        selectedStatus = status; // Update the selected status
+
+        // Update the dropdown button text
+        if (status === 'all') {
+            dropdownButton.innerHTML = `All Status`;
+        } else if (status === 'online') {
+            dropdownButton.innerHTML = `<i class="fa-regular fa-circle-check" style="color: #28a745;"></i> Online`;
+        } else if (status === 'offline') {
+            dropdownButton.innerHTML = `<i class="fa-regular fa-circle-stop" style="color: #d20f0f;"></i> Offline`;
+        }
+
+        updateEntries(); // Reapply the filter with the updated status
     }
 
     function switchToGridView() {
         gridView.style.display = 'flex';
         tableView.style.display = 'none';
-        updateCardVisibility();
+        updateEntries(); // Reapply filters
     }
 
     function switchToListView() {
         gridView.style.display = 'none';
         tableView.style.display = 'block';
-        updateTableVisibility();
+        updateEntries(); // Reapply filters
     }
 
+    // Event listeners
     gridViewButton.addEventListener('click', switchToGridView);
     listViewButton.addEventListener('click', switchToListView);
 
-    searchBar.addEventListener('input', function() {
-        updateCardVisibility();
-        updateTableVisibility();
-    });
-
     dropdownItems.forEach(item => {
-        item.addEventListener('click', function() {
-            dropdownItems.forEach(i => i.classList.remove('active'));
-            this.classList.add('active');
-            updateCardVisibility();
-            updateTableVisibility();
-        });
-    });
-
-    entriesPerPageSelect.addEventListener('change', function() {
-        entriesPerPage = parseInt(this.value);
-        currentPage = 1;
-        updateCardVisibility();
-        updateTableVisibility();
-    });
-
-    prevPageButton.addEventListener('click', function() {
-        if (currentPage > 1) {
-            currentPage--;
-            updateCardVisibility();
-            updateTableVisibility();
-        }
-    });
-
-    nextPageButton.addEventListener('click', function() {
-        const totalEntriesCount = gridView.style.display === 'flex' 
-            ? Array.from(cards).filter(card => card.style.display !== 'none').length 
-            : Array.from(tableBody.getElementsByTagName('tr')).filter(row => row.style.display !== 'none').length;
-
-        if (currentPage * entriesPerPage < totalEntriesCount) {
-            currentPage++;
-            updateCardVisibility();
-            updateTableVisibility();
-        }
-    });
-
-    document.querySelectorAll('.role-filter .dropdown-item').forEach(item => {
         item.addEventListener('click', function (e) {
             e.preventDefault();
-            const selectedText = this.innerHTML;
-            document.getElementById('roleFilterDropdown').innerHTML = selectedText;
+            const status = this.getAttribute('data-value');
+            filterByStatus(status);
         });
     });
 
-    updateCardVisibility();
-    updateTableVisibility();
-    updateDropdownCounts();
+    entriesDropdown.addEventListener('change', function () {
+        selectedEntries = this.value === 'all' ? 'all' : parseInt(this.value);
+        updateEntries();
+    });
+
+    searchBar.addEventListener('input', updateEntries);
+
+    // Initialize with all status
+    filterByStatus('all');
 });
+
+
+
+
+
+
+
 
 
 

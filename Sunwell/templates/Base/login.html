@@ -377,6 +377,16 @@
     </div>
 
 
+    {% if show_change_password_modal %}
+    <script>
+        window.onload = function () {
+            var modal = new bootstrap.Modal(document.getElementById('change_pass'), {});
+            modal.show();
+        };
+    </script>
+    {% endif %}
+    
+
     {% if success_msg %}
     <script>     
         window.onload = function () {

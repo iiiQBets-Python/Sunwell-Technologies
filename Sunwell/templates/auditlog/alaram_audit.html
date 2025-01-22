@@ -199,7 +199,7 @@
                     </div>
                     <div class="form-group col-md-4 mb-4">
                         <div class="input-container">
-                            <input type="text" class="form-control" id="orientation" placeholder=" " value="Potrait" readonly>
+                            <input type="text" class="form-control" id="orientation" placeholder=" " value="Landscape" readonly>
                             <label for="orientation" class="form-label">Orientation</label>
                         </div>  
                     </div>
@@ -336,5 +336,69 @@
             printButton.addEventListener("click", validateForm);
         });
         
+
+        document.addEventListener("DOMContentLoaded", function () {
+            const formatSelect = document.getElementById("formats");
+            const userList = document.getElementById("user-list");
+            const equipmentList = document.getElementById("equipment-list");
+            const printButton = document.querySelector(".btn.btn-primary");
+    
+            function toggleFieldsBasedOnFormat() {
+                if (formatSelect.value === "Date Wise") {
+                    userList.setAttribute("disabled", "disabled");
+                    equipmentList.setAttribute("disabled", "disabled");
+    
+                    // Clear selections when fields are disabled
+                    Array.from(userList.options).forEach(option => option.selected = false);
+                    Array.from(equipmentList.options).forEach(option => option.selected = false);
+                } else {
+                    userList.removeAttribute("disabled");
+                    equipmentList.removeAttribute("disabled");
+                }
+            }
+    
+            function validateForm(e) {
+                let isValid = true;
+    
+                // Clear previous custom validity messages
+                formatSelect.setCustomValidity("");
+                userList.setCustomValidity("");
+                equipmentList.setCustomValidity("");
+    
+                // Check if a format is selected
+                if (!formatSelect.value) {
+                    formatSelect.setCustomValidity("Please select a format.");
+                    formatSelect.reportValidity();
+                    formatSelect.focus();
+                    isValid = false;
+                }
+    
+                // Additional validation based on the selected format
+                if (formatSelect.value === "User-wise" && !Array.from(userList.selectedOptions).length) {
+                    userList.setCustomValidity("Please select at least one user.");
+                    userList.reportValidity();
+                    userList.focus();
+                    isValid = false;
+                } else if (formatSelect.value === "Equipment-wise" && !Array.from(equipmentList.selectedOptions).length) {
+                    equipmentList.setCustomValidity("Please select at least one equipment.");
+                    equipmentList.reportValidity();
+                    equipmentList.focus();
+                    isValid = false;
+                }
+    
+                if (!isValid) {
+                    e.preventDefault(); // Prevent form submission if validation fails
+                }
+            }
+    
+            // Attach change event listener to toggle fields
+            formatSelect.addEventListener("change", toggleFieldsBasedOnFormat);
+    
+            // Attach validation to the Print button
+            printButton.addEventListener("click", validateForm);
+    
+            // Initial toggle based on preselected format
+            toggleFieldsBasedOnFormat();
+        });
     </script>
 {% endblock content %}

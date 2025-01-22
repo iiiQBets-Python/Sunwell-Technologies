@@ -1,11 +1,19 @@
+
 {% extends "Base/base.html" %}
 {% load static %}
-
 {% block title %} Edit Organization {% endblock %}
-
 {% block content %}
-
 <style type="text/css">
+    .container {
+        padding: 20px;
+        background-color: #fff;
+        border-radius: 8px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        max-width: 100%;
+        margin: auto;
+        height: 86vh;
+        overflow-y: auto; /* Enable vertical scrolling */
+    }
     .avatar {
         margin-top: 10px;
         width: 200px;  
@@ -13,14 +21,12 @@
         object-fit: cover; 
         border-radius: 50%; 
     }
-    
     .address-input {
         height: 100px; 
     }
     .header {
         color: #000d1d;
     }
-    
     .edit-button {
         position: absolute;
         top: 20px;
@@ -83,31 +89,31 @@
                 <div class="mb-3 row">
                     <label for="name" class="col-lg-3 col-form-label"><strong>Company Name:</strong></label>
                     <div class="col-lg-9">
-                        <input type="text" class="form-control" name="name" id="name" value="{{ organization.name }}">
+                        <input type="text" class="form-control" name="name" id="name" value="{{ organization.name }}" required>
                     </div>
                 </div>
                 <div class="mb-3 row">
                     <label for="email" class="col-lg-3 col-form-label"><strong>Email:</strong></label>
                     <div class="col-lg-9">
-                        <input type="email" class="form-control" name="email" id="email" value="{{ organization.email }}">
+                        <input type="email" class="form-control" name="email" id="email" value="{{ organization.email }}" required>
                     </div>
                 </div>
                 <div class="mb-3 row">
                     <label for="phoneNo" class="col-lg-3 col-form-label"><strong>Phone Number:</strong></label>
                     <div class="col-lg-9">
-                        <input type="tel" class="form-control" name="phoneNo" id="phoneNo" value="{{ organization.phoneNo }}">
+                        <input type="tel" class="form-control" name="phoneNo" id="phoneNo" value="{{ organization.phoneNo }}" maxlength="10" required>
                     </div>
                 </div>
                 <div class="mb-3 row">
                     <label for="address" class="col-lg-3 col-form-label"><strong>Address</strong>:</label>
                     <div class="col-lg-9">
-                        <textarea class="form-control address-input" name="address" id="address">{{ organization.address }}</textarea>
+                        <textarea class="form-control address-input" name="address" id="address" required>{{ organization.address }}</textarea>
                     </div>
                 </div>
                 
                 <div class="mb-3 row">
                     <div class="col-lg-8 offset-lg-3 text-end">
-                        <button type="cancel" class="btn btn-outline-danger"> Cancel</button>
+                        <button type="button" class="btn btn-outline-danger" onclick="window.location.href='{% url 'organization' %}'">Cancel</button>
                         <button type="submit" class="btn btn-outline-success">Save</button>
                     </div>
                 </div>
@@ -115,4 +121,53 @@
         </div>
     </form>
 </div>
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const phoneNumberInput = document.getElementById("phoneNo");
+        const emailInput = document.getElementById("email");
+        const addressInput = document.getElementById("address");
+
+        // Phone Number Validation
+        phoneNumberInput.addEventListener("input", function () {
+            const value = phoneNumberInput.value.replace(/[^0-9]/g, "");
+            phoneNumberInput.value = value; // Ensure only numbers are entered
+            if (value.length !== 10) {
+                phoneNumberInput.setCustomValidity("Please enter a valid 10-digit phone number.");
+            } else {
+                phoneNumberInput.setCustomValidity("");
+            }
+        });
+
+        // Email Validation
+        emailInput.addEventListener("input", function () {
+            const email = emailInput.value;
+            const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+            
+            if (emailPattern.test(email)) {
+                emailInput.setCustomValidity("");
+            } else {
+                emailInput.setCustomValidity("Please enter a valid email address.");
+            }
+        });
+
+        // Address Validation
+        addressInput.addEventListener("input", function () {
+            if (addressInput.value.trim() === "") {
+                addressInput.setCustomValidity("Please fill the address.");
+            } else {
+                addressInput.setCustomValidity("");
+            }
+        });
+
+        // Prevent form submission without proper validation
+        const form = document.querySelector("form");
+        form.addEventListener("submit", function (event) {
+            if (!form.checkValidity()) {
+                event.preventDefault(); // Prevent form submission
+                form.reportValidity(); // Show validation messages
+            }
+        });
+    });
+</script>
+
 {% endblock content %}

@@ -1,7 +1,8 @@
+
 {% extends "Base/base.html" %}
 {% load static %}
 
-{% block title %} Dashboard {% endblock %}
+{% block title %} roles and permission {% endblock %}
 
 {% block styles %}
     {{ block.super }}
@@ -92,6 +93,9 @@
             .contentss {
                 justify-content: center !important;
             }
+            .content {
+                height: 75vh !important;
+            }  
         }
     </style>
 {% endblock styles %}
@@ -138,7 +142,6 @@
                             <i class="fas fa-edit"></i>
                         </a>
                     </div>
-                    
                 </td>
                 {% endif %}
             </tr>
@@ -195,12 +198,12 @@
                     {% csrf_token %}
                     <div class="row">
                         <div class="col-md-12 form-group">                    
-                            <input type="text" class="form-control" id="role"  name="role" maxlength="50" placeholder=" " required>
+                            <input type="text" class="form-control" id="role"  name="role" maxlength="50" placeholder=" " autocomplete="off">
                             <label for="role" class="form-label">Role</label>
                         </div>
 
                         <div class="col-md-12 form-group">                
-                            <textarea name="description" class="form-control" id="description" rows="3"></textarea>
+                            <textarea name="description" class="form-control" id="description" rows="3" autocomplete="off"></textarea>
                             <label for="description" class="form-label">Description:</label>
                         </div>
                         <div class="modal-footer">
@@ -225,17 +228,16 @@
             </div>
             <div class="modal-body">
                 <form id="edit_role_form-{{ i.id }}" method="post" action="{% url 'edit_role' i.id %}">
-
                     {% csrf_token %}
                     <input type="hidden" name="role_id" value="{{ i.id }}">
                     <div class="row">
                         <div class="col-md-12 form-group">
-                            <input type="text" class="form-control" name="role" value="{{ i.role }}" maxlength="50" required>
+                            <input type="text" class="form-control" id="role" name="role" value="{{ i.role }}" maxlength="50" autocomplete="off">
                             <label for="edit_role" class="form-label">Role</label>
                         </div>
 
                         <div class="col-md-12 form-group">
-                            <textarea name="description" class="form-control" rows="3">{{ i.description }}</textarea>
+                            <textarea name="description" class="form-control" rows="3" id="description" autocomplete="off">{{ i.description }}</textarea>
                             <label for="edit_description" class="form-label">Description:</label>
                         </div>
                     </div>
@@ -249,6 +251,70 @@
     </div>
 </div>
 {% endfor %}
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        // Select all forms on the page
+        const forms = document.querySelectorAll("form");
+
+        forms.forEach(form => {
+            const roleInput = form.querySelector("[name='role']"); // Select the Role input field
+            const descriptionInput = form.querySelector("[name='description']"); // Select the Description input field
+
+            // Add validation logic for each form
+            form.addEventListener("submit", function (event) {
+                let isValid = true;
+
+                // Validate Role input
+                if (roleInput && roleInput.value.trim() === "") {
+                    isValid = false;
+                    roleInput.setCustomValidity("Please fill the Role."); // Set custom validation message
+                    roleInput.reportValidity(); // Show the validation error
+                } else if (roleInput) {
+                    roleInput.setCustomValidity(""); // Clear any previous validation message
+                }
+
+                // Stop further validation if Role is invalid
+                if (!isValid) {
+                    event.preventDefault();
+                    return;
+                }
+
+                // Validate Description input
+                if (descriptionInput && descriptionInput.value.trim() === "") {
+                    isValid = false;
+                    descriptionInput.setCustomValidity("Please fill the Description."); // Set custom validation message
+                    descriptionInput.reportValidity(); // Show the validation error
+                } else if (descriptionInput) {
+                    descriptionInput.setCustomValidity(""); // Clear any previous validation message
+                }
+
+                // Prevent form submission if validation fails
+                if (!isValid) {
+                    event.preventDefault();
+                }
+            });
+
+            // Clear error message when the user starts typing
+            if (roleInput) {
+                roleInput.addEventListener("input", function () {
+                    if (roleInput.value.trim() !== "") {
+                        roleInput.setCustomValidity(""); // Clear the custom error message
+                    }
+                });
+            }
+
+            // Clear error message for Description when the user starts typing
+            if (descriptionInput) {
+                descriptionInput.addEventListener("input", function () {
+                    if (descriptionInput.value.trim() !== "") {
+                        descriptionInput.setCustomValidity(""); // Clear the custom error message
+                    }
+                });
+            }
+        });
+    });
+</script>
+
 <script>
     document.querySelectorAll('.btn-edit').forEach(button => {
         button.addEventListener('click', function() {

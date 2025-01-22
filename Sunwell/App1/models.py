@@ -3,7 +3,8 @@ from django.db import models
 from django.contrib.auth.hashers import make_password, check_password
 from django.utils import timezone
 import base64
-
+from django.core.validators import MaxValueValidator, MinValueValidator
+from django.utils.timezone import now
 
 class SuperAdmin(models.Model):        
     username = models.CharField(max_length=30, unique=True)    
@@ -91,25 +92,25 @@ class Department(models.Model):
     sms_alert=models.BooleanField(default=False, null=True)
     sms_time = models.TimeField(blank=True, null=True)
     user1=models.CharField(max_length=25, null=True, blank=True)
-    user1_num=models.IntegerField(null=True)
+    user1_num=models.BigIntegerField(null=True, blank=True)
     user2=models.CharField(max_length=25, null=True, blank=True)
-    user2_num=models.IntegerField(null=True)
+    user2_num=models.BigIntegerField(null=True, blank=True)
     user3=models.CharField(max_length=25, null=True, blank=True)
-    user3_num=models.IntegerField(null=True)
+    user3_num=models.BigIntegerField(null=True, blank=True)
     user4=models.CharField(max_length=25, null=True, blank=True)
-    user4_num=models.IntegerField(null=True)
+    user4_num=models.BigIntegerField(null=True, blank=True)
     user5=models.CharField(max_length=25, null=True, blank=True)
-    user5_num=models.IntegerField(null=True)
+    user5_num=models.BigIntegerField(null=True, blank=True)
     user6=models.CharField(max_length=25, null=True, blank=True)
-    user6_num=models.IntegerField(null=True)
+    user6_num=models.BigIntegerField(null=True, blank=True)
     user7=models.CharField(max_length=25, null=True, blank=True)
-    user7_num=models.IntegerField(null=True)
+    user7_num=models.BigIntegerField(null=True, blank=True)
     user8=models.CharField(max_length=25, null=True, blank=True)
-    user8_num=models.IntegerField(null=True)
+    user8_num=models.BigIntegerField(null=True, blank=True)
     user9=models.CharField(max_length=25, null=True, blank=True)
-    user9_num=models.IntegerField(null=True)
+    user9_num=models.BigIntegerField(null=True, blank=True)
     user10=models.CharField(max_length=25, null=True, blank=True)
-    user10_num=models.IntegerField(null=True)
+    user10_num=models.BigIntegerField(null=True, blank=True)
 
 
 
@@ -136,6 +137,8 @@ class User(models.Model):
     accessible_departments = models.ManyToManyField(Department, related_name='accessible_departments', blank=True)
     pass_change = models.BooleanField(default=False)
     created_at = models.DateTimeField(null=True)
+    last_password_change = models.DateTimeField(default=now)
+    account_lock=models.BooleanField(default=False)
     
     def set_password(self, raw_password):
         self.password = make_password(raw_password)
@@ -226,7 +229,7 @@ class AppSettings(models.Model):
     #App settings fields
 
     # Email settings fields
-    email_sys_set = models.CharField(max_length=100, default='Enable')
+    email_sys_set = models.CharField(max_length=100, default='Enable', null=True)
     email_host = models.CharField(max_length=100, null=True)
     email_host_user = models.EmailField(null=True)
     email_host_password = models.CharField(max_length=100, null=True)
@@ -245,7 +248,7 @@ class AppSettings(models.Model):
     #App Settings Fields
     passwordchange=models.IntegerField(null=True)
     lockcount=models.IntegerField(null=True)
-    autologouttime=models.TimeField(null=True)
+    autologouttime=models.IntegerField(null=True)
 
    #Whatsapp Settings Fields
     whatsapp_comm_port = models.CharField(max_length=10, blank=True, null=True)
@@ -299,8 +302,28 @@ class Equipment(models.Model):
     biometric_banner_text = models.CharField(max_length=255, blank=True, null=True)
     biometric_ip_address = models.GenericIPAddressField(blank=True, null=True)
 
-    def __str__(self):
-        return self.equip_name
+    # Temperature Set values
+    set_value = models.DecimalField(max_digits=3, decimal_places=1, blank=True, null=True)
+    low_alarm = models.DecimalField(max_digits=3, decimal_places=1, blank=True, null=True)
+    high_alarm = models.DecimalField(max_digits=3, decimal_places=1, blank=True, null=True)
+    high_alert= models.DecimalField(max_digits=3, decimal_places=1, blank=True, null=True)
+    low_alert= models.DecimalField(max_digits=3, decimal_places=1, blank=True, null=True)
+    cooling=models.BooleanField(null=True, default=True)
+    total_temp_sensors=models.CharField(max_length=2, blank=True, null=True)
+    # Humidity Set Values
+    set_value_hum = models.DecimalField(max_digits=3, decimal_places=1, blank=True, null=True)
+    low_alarm_hum = models.DecimalField(max_digits=3, decimal_places=1, blank=True, null=True)
+    high_alarm_hum = models.DecimalField(max_digits=3, decimal_places=1, blank=True, null=True)
+    high_alert_hum= models.DecimalField(max_digits=3, decimal_places=1, blank=True, null=True)
+    low_alert_hum= models.DecimalField(max_digits=3, decimal_places=1, blank=True, null=True)
+    cooling_hum=models.BooleanField(null=True, default=True)
+    total_humidity_sensors=models.CharField(max_length=2, blank=True, null=True)
+
+    online = models.BooleanField(null=True, default=False)
+
+
+    def __int__(self):
+        return self.id
 
 
 class PLCUser(models.Model):
@@ -399,7 +422,7 @@ class Alarm_codes(models.Model):
     code=models.IntegerField(unique=True)
     remarks=models.TextField(null=True)
 
-class alarm_logs(models.Model):
+class Alarm_logs(models.Model):
     equipment=models.ForeignKey(Equipment, on_delete=models.CASCADE, null=True)
     alarm_code=models.ForeignKey(Alarm_codes, on_delete=models.CASCADE, to_field='code')
     time=models.TimeField()
@@ -411,4 +434,48 @@ class alarm_logs(models.Model):
     ack_user=models.CharField(max_length=50, null=True)
 
 
-    
+
+
+class Email_logs(models.Model):
+    equipment=models.ForeignKey(Equipment, on_delete=models.CASCADE, null=True, blank=True)
+    time=models.TimeField(auto_now_add=True)
+    date=models.DateField(auto_now_add=True)
+    sys_mail = models.BooleanField(default=False)
+    to_email = models.EmailField()
+    email_sub = models.CharField(max_length=100, null=True)
+    email_body = models.TextField(null=True)
+    status = models.CharField(max_length=10, null=True)
+
+    def __int__(self):
+        return self.equipment
+
+class Sms_logs(models.Model):
+    equipment=models.ForeignKey(Equipment, on_delete=models.CASCADE, null=True, blank=True)
+    time=models.TimeField()
+    date=models.DateField()
+    sys_sms = models.BooleanField(default=False)
+    to_num = models.BigIntegerField(null=True, blank=True)
+    user_name = models.CharField(max_length=100, null=True)
+    msg_body = models.TextField(null=True)
+    status = models.CharField(max_length=10, null=True)
+
+    def __int__(self):
+        return self.equipment
+
+
+
+class Equipmentwrite(models.Model):
+    equipment=models.ForeignKey(Equipment, on_delete=models.CASCADE, null=True, blank=True)
+    time=models.TimeField()
+    date=models.DateField()
+    label=models.CharField(max_length=50,null=True)
+    value=models.DecimalField(decimal_places=2, max_digits=5)
+    status=models.CharField(max_length=10)
+    login_name=models.CharField(max_length=50, null=True)
+    old_value=models.DecimalField(decimal_places=2, max_digits=5, null=True)
+    comment=models.CharField(max_length=200, null=True)
+
+    def __int__(self):
+        return self.equipment
+
+# class dooraccesslog(models.Model):

@@ -1,3 +1,4 @@
+
 {% extends "Base/base.html" %}
 {% load static %}
 
@@ -99,9 +100,9 @@
                         Select Status
                     </button>
                     <ul class="dropdown-menu" aria-labelledby="roleFilterDropdown">
-                        <li><a class="dropdown-item" onchange="updateTable()" href="#" data-value="all">All Status<span class="option-count">3</span></a></li>
-                        <li><a class="dropdown-item" onchange="updateTable()" href="#" data-value="offline"><i class="fa-regular fa-circle-stop" style="color: #d20f0f;"></i>  Offline <span class="option-count">1</span></a></li>
-                        <li><a class="dropdown-item" onchange="updateTable()" href="#" data-value="online"><i class="fa-regular fa-circle-stop" style="color: #369523;"></i>Online <span class="option-count">1</span></a></li>
+                        <li><a class="dropdown-item" onchange="updateTable()" href="#" data-value="all">All Status</a></li>
+                        <li><a class="dropdown-item" onchange="updateTable()" href="#" data-value="offline"><i class="fa-regular fa-circle-stop" style="color: #d20f0f;"></i>  Offline </a></li>
+                        <li><a class="dropdown-item" onchange="updateTable()" href="#" data-value="online"><i class="fa-regular fa-circle-stop" style="color: #369523;"></i>Online </a></li>
                     </ul>
                 </div>
             </div>
@@ -109,7 +110,7 @@
     </div>
     <div class="d-flex justify-content-between align-items-center custom-label mb-2">
         <div class="alert-container">
-            Alert <span id="records-info">(Records Found: 0)</span>
+            Equipment <span id="records-info">(Records Found: 0)</span>
         </div>
         <div class="controls d-flex flex-column flex-sm-row justify-content-sm-end align-items-center">
             <div class="input-group mb-2 mb-sm-0 me-sm-3" style="width: 200px;">
@@ -123,7 +124,7 @@
         </div>
     </div>
     <div class="scrollable-container">
-        <div class="row" id="gridView">
+        <div class="row card-details" id="gridView">
             {% for equipment in equipment_data %}
             <div class="col-12 col-md-6 col-lg-3 card-wrapper" data-status="{{ equipment.status|lower }}">
                 <div class="card">
@@ -190,36 +191,24 @@
                 </table>
             </div>
         </div>
+    </div>
 
-        <div class="row align-items-center mt-3 mb-2">
-            <!-- Entries Per Page Dropdown -->
-            <div class="col-12 col-md-5 justify-content-start align-items-center mb-2 mb-md-0 entries-info">
-                <span>Show</span>
-                <select id="entriesPerPage" class="form-select d-inline-block mx-2 entriesPerPage">
-                    <option value="10" selected>10</option>
-                    <option value="15">15</option>
-                    <option value="25">25</option>
-                    <option value="50">50</option>
-                    <option value="100">100</option>
-                </select>
-                <span>entries per page</span>
-            </div>
-            <!-- Showing Entries Info -->
-            <div class="col-12 col-md-3 d-flex justify-content-center align-items-center mb-2 mb-md-0">
-                <small>Showing <span id="visible-entries">0</span> of <span id="total-entries">0</span> entries</small>
-            </div>
-            <!-- Pagination -->
-            <div class="col-12 col-md-4 d-flex justify-content-md-end justify-content-center">
-                <nav aria-label="Page navigation">
-                    <ul class="pagination mb-0">
-                        <li class="page-item" id="prev-page"><a class="page-link" href="#">Previous</a></li>
-                        <li class="page-item"><a class="page-link" href="#">1</a></li>
-                        <li class="page-item"><a class="page-link" href="#">2</a></li>
-                        <li class="page-item"><a class="page-link" href="#">3</a></li>
-                        <li class="page-item" id="next-page"><a class="page-link" href="#">Next</a></li>
-                    </ul>
-                </nav>
-            </div>
+    <div class="row align-items-center justify-content-between mt-3 mb-2 table-footer">
+        <!-- Entries Per Page Dropdown -->
+        <div class="col-12 col-md-5 justify-content-start align-items-center mb-2 mb-md-0 entries-info">
+            <span>Show</span>
+            <select id="entriesPerPage" class="form-select d-inline-block mx-2 entriesPerPage">
+                <option value="10" selected>10</option>
+                <option value="15">15</option>
+                <option value="25">25</option>
+                <option value="50">50</option>
+                <option value="100">100</option>
+                <option value="all">All</option>
+            </select>
+            <span>entries per page</span>
+        </div>
+        <div class="col-12 col-md-4 d-flex justify-content-end justify-content-center">
+            <small>Showing <span id="visible-entries">0</span> of <span id="total-entries">0</span> entries</small>
         </div>
     </div>
 </div>
@@ -249,6 +238,40 @@
             {% endfor %}
         {% endif %}
     }
+
+    
+
+
+    function filterByStatus(status) {
+    const dropdownButton = document.getElementById("roleFilterDropdown");
+    const recordsInfo = document.getElementById("records-info");
+
+    // Update the dropdown button text
+    dropdownButton.textContent = `${status.charAt(0).toUpperCase() + status.slice(1)} Status`;
+
+    // Update the URL with the selected status
+    const url = new URL(window.location.href);
+    url.searchParams.set("status", status); // Update the "status" query parameter
+    window.location.href = url.toString();
+
+    // Filter equipment cards based on status
+    const equipmentCards = document.querySelectorAll(".card-wrapper");
+    let visibleCount = 0;
+    equipmentCards.forEach(card => {
+        const cardStatus = card.getAttribute("data-status");
+        if (status === "all" || cardStatus === status) {
+            card.style.display = "block"; // Show matching cards
+            visibleCount++;
+        } else {
+            card.style.display = "none"; // Hide non-matching cards
+        }
+    });
+
+    // Update the records information
+    recordsInfo.textContent = `(Records Found: ${visibleCount})`;
+}
+
+
   </script>
   {% endblock %}
 {% endblock content %}

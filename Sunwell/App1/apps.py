@@ -16,7 +16,7 @@ class EquipSettingsConfig(AppConfig):
     def ready(self):
         print("[INFO] App is ready, starting background task.")
         from .views import background_task_for_all_equipment, stop_event
-        interval = 10  # Interval in minutes
+        interval = 2  # Interval in minutes
         thread = threading.Thread(target=background_task_for_all_equipment, args=(interval,), daemon=True)
         thread.start()
         print("[INFO] Background thread for all equipment started.")

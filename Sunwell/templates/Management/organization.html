@@ -1,3 +1,4 @@
+
 {% extends "Base/base.html" %}
 {% load static %}
 
@@ -6,9 +7,19 @@
 {% block styles %}
     {{ block.super }}
     <style type="text/css">
-        .content {
-            height: 75vh !important;
+        .container {
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            max-width: 100%;
+            margin: auto;
+            height: 86vh;
+            overflow-y: auto; /* Enable vertical scrolling */
         }
+        /* .content {
+            height: 75vh !important;
+        } */
         .content.edit-mode {
             height: 75vh !important;
         }
@@ -31,7 +42,7 @@
         
         .edit-button {
             position: absolute;
-            top: 5px;
+            /* top: 5px; */
             right: 20px;
         }
         .floating-alert {
@@ -91,7 +102,7 @@
             }
             .edit-button {
                 position: absolute;
-                top: 0px;
+                top: 20px;
                 right: 20px;
             }
             .header {
@@ -104,7 +115,7 @@
 
 {% block content %}
 {% if organization %}
-<div class="container mt-2 position-relative">
+<div class="container position-relative">
     <div id="floating-alert" class="floating-alert">
         Organization details updated successfully!
     </div>

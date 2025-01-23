@@ -1,0 +1,38 @@
+2025-01-23 10:19:44,718 - Anonymous is accessing /.
+2025-01-23 10:19:45,644 - Anonymous is accessing /.
+2025-01-23 10:19:45,919 - Anonymous is accessing /favicon.ico.
+2025-01-23 10:19:52,504 - Anonymous is accessing /.
+2025-01-23 10:19:53,357 - Darshan is created record in App1_useractivitylog.
+2025-01-23 10:19:53,363 - Darshan is created record in django_session.
+2025-01-23 10:19:53,456 - Darshan is accessing /dashboard/.
+2025-01-23 10:19:55,678 - Darshan is accessing /media/crsco.webp.
+2025-01-23 10:20:02,861 - Darshan is accessing /role_permission/.
+2025-01-23 10:20:05,383 - Darshan is accessing /user_access/.
+2025-01-23 10:27:33,162 - Darshan is accessing /equipment_configure/.
+2025-01-23 10:27:34,665 - Darshan is accessing /equipment_setting/7/.
+2025-01-23 10:44:35,509 - Darshan is accessing /dashboard/.
+2025-01-23 10:44:48,929 - Darshan is accessing /equipment_configure/.
+2025-01-23 10:44:50,271 - Darshan is accessing /equipment_setting/7/.
+2025-01-23 11:46:11,673 - Darshan is accessing /equipment_setting/7/.
+2025-01-23 11:46:41,191 - Darshan is accessing /alaram_log/.
+2025-01-23 11:47:02,835 - Darshan is accessing /save_alarm_logs/.
+2025-01-23 11:47:02,843 - Darshan is accessing /alaram_log/.
+2025-01-23 11:47:03,789 - Darshan is updated record in App1_alarm_logs.
+2025-01-23 11:47:03,889 - Darshan is updated record in App1_alarm_logs.
+2025-01-23 11:47:03,988 - Darshan is updated record in App1_alarm_logs.
+2025-01-23 11:47:04,075 - Darshan is updated record in App1_alarm_logs.
+2025-01-23 12:15:46,528 - Darshan is accessing /alaram_log/.
+2025-01-23 12:15:49,930 - Darshan is accessing /equipment_configure/.
+2025-01-23 12:15:51,318 - Darshan is accessing /equipment_setting/7/.
+2025-01-23 12:28:40,102 - Darshan is accessing /equipment_setting/7/.
+2025-01-23 12:29:00,587 - Darshan is accessing /equipment_setting/7/.
+2025-01-23 12:29:12,004 - Darshan is accessing /equipment_setting/7/.
+2025-01-23 12:29:19,474 - Darshan is accessing /equipment_setting/7/.
+2025-01-23 12:29:19,529 - Darshan is accessing /media/crsco.webp.
+2025-01-23 12:34:43,788 - Darshan is accessing /equipment_setting/7/.
+2025-01-23 12:34:46,199 - Darshan is accessing /equipment_configure/.
+2025-01-23 12:34:47,577 - Darshan is accessing /equipment_setting/7/.
+2025-01-23 13:38:19,755 - Darshan is accessing /equipment_setting/7/.
+2025-01-23 13:46:25,431 - Darshan is accessing /equipment_setting/7/.
+2025-01-23 13:48:27,321 - Darshan is accessing /equipment_setting/7/.
+2025-01-23 14:01:51,409 - Darshan is accessing /equipment_setting/7/.

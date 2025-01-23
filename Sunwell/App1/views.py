@@ -1282,6 +1282,7 @@ def user_access(request):
         role_dt = None
 
 
+    print(role)
     if request.method == 'POST':
 
 
@@ -1343,6 +1344,47 @@ def user_access(request):
         res_d = get_bool(request.POST.get('res_d'))
         res_p = get_bool(request.POST.get('res_p'))
 
+
+        e_conf_v = get_bool(request.POST.get('e_conf_v'))
+        e_conf_a = get_bool(request.POST.get('e_conf_a'))
+        e_conf_e = get_bool(request.POST.get('e_conf_e'))
+        e_conf_d = get_bool(request.POST.get('e_conf_d'))
+        
+
+        e_set_v = get_bool(request.POST.get('e_set_v'))
+        e_set_a = get_bool(request.POST.get('e_set_a'))
+        e_set_e = get_bool(request.POST.get('e_set_e'))
+        e_set_d = get_bool(request.POST.get('e_set_d'))
+        
+        v_log_v = get_bool(request.POST.get('v_log_v'))
+        v_log_p = get_bool(request.POST.get('v_log_p'))
+
+        a_log_v = get_bool(request.POST.get('a_log_v'))
+        a_log_p = get_bool(request.POST.get('a_log_p'))
+
+        mkt_v = get_bool(request.POST.get('mkt_v'))
+        mkt_p = get_bool(request.POST.get('mkt_p'))
+
+        sum_v = get_bool(request.POST.get('sum_v'))
+        dis_v = get_bool(request.POST.get('dis_v'))
+        io_v = get_bool(request.POST.get('io_v'))
+        comp_v = get_bool(request.POST.get('comp_v'))
+
+        u_act_v = get_bool(request.POST.get('u_act_v'))
+        u_act_p = get_bool(request.POST.get('u_act_p'))
+
+        u_equ_v = get_bool(request.POST.get('u_equ_v'))
+        u_equ_p = get_bool(request.POST.get('u_equ_p'))
+
+        a_act_v = get_bool(request.POST.get('a_act_v'))
+        a_act_p = get_bool(request.POST.get('a_act_p'))
+
+        e_aud_v = get_bool(request.POST.get('e_aud_v'))
+        e_aud_p = get_bool(request.POST.get('e_aud_p'))
+
+        s_act_v = get_bool(request.POST.get('s_act_v'))
+        s_act_p = get_bool(request.POST.get('s_act_p'))
+
         if role_dt:
             role_dt.org_v = org_v
             role_dt.org_a = org_a
@@ -1397,6 +1439,48 @@ def user_access(request):
             role_dt.res_e = res_e
             role_dt.res_d = res_d
             role_dt.res_p = res_p
+
+            role_dt.e_conf_v = e_conf_v
+            role_dt.e_conf_a = e_conf_a
+            role_dt.e_conf_e = e_conf_e
+            role_dt.e_conf_d = e_conf_d
+
+            role_dt.e_set_v = e_set_v
+            role_dt.e_set_a = e_set_a
+            role_dt.e_set_e = e_set_e
+            role_dt.e_set_d = e_set_d
+
+            role_dt.v_log_v = v_log_v
+            role_dt.v_log_p = v_log_p
+
+            role_dt.a_log_v = v_log_v
+            role_dt.a_log_p = a_log_p
+
+            role_dt.v_log_v = v_log_v
+            role_dt.mkt_p = mkt_p
+
+            role_dt.sum_v = sum_v
+            role_dt.dis_v = dis_v
+            role_dt.io_v = io_v
+            role_dt.comp_v = comp_v
+
+
+            role_dt.u_act_v = u_act_v
+            role_dt.u_act_p = u_act_p
+
+            role_dt.u_equ_v = u_equ_v
+            role_dt.u_equ_p = u_equ_p
+
+            role_dt.a_act_v = a_act_v
+            role_dt.a_act_p = a_act_p
+
+            role_dt.e_aud_v = e_aud_v
+            role_dt.e_aud_p = e_aud_p
+
+            role_dt.s_act_v = s_act_v
+            role_dt.s_act_p = s_act_p
+
+            
 
             role_dt.save()
 
@@ -2777,7 +2861,7 @@ def download_process_logs(ip_address, equipment_id):
                 timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")  # Example: 20241128_123456
                 unique_suffix = str(uuid.uuid4())[:8]  # Get first 8 characters of a UUID to ensure uniqueness
                 folder_name = f"{log_type}_logs"
-                file_name = f"{log_type.capitalize()}Log_{eqp.ip_address}_{timestamp}_{unique_suffix}.csv"
+                file_name = f"{log_type.capitalize()}Log_{eqp.ip_address}{timestamp}{unique_suffix}.csv"
                 file_path = os.path.join("media", "logs", folder_name, file_name)
                 os.makedirs(os.path.dirname(file_path), exist_ok=True)
 
@@ -2816,6 +2900,8 @@ from datetime import datetime
 import csv
 
 download_lock = threading.Lock()
+download_lock = threading.Lock()
+
 def process_data_logs(file_path, equipment_id):
     with download_lock:
         try:
@@ -2825,59 +2911,23 @@ def process_data_logs(file_path, equipment_id):
 
                 for row in csv_reader:
                     try:
-                        print(f"[DEBUG] Row data: {row}")
-
-                        
-                        try:
-                            date = datetime.strptime(row["DATE"].strip(), "%Y-%m-%d").date()
-                        except ValueError as e:
-                            print(f"[DEBUG] Invalid DATE format: {row['DATE']} - {e}. Skipping this row.")
+                        date = datetime.strptime(row["DATE"].strip(), "%Y-%m-%d").date()
+                        time_raw = row[" TIME"].strip()
+                        if not time_raw:
                             continue
-                        print(f"[DEBUG] Parsed date: {date}")
+                        if len(time_raw) == 5:
+                            time_raw = f"{time_raw}:00"
+                        elif len(time_raw) > 8 and '.' in time_raw:
+                            time_raw = time_raw[:8]
 
-                    
-                        try:
-                            time_raw = row[" TIME"].strip()  # Strip leading/trailing spaces
-                            if not time_raw:
-                                print(f"[DEBUG] Missing or empty TIME field for row: {row}. Skipping this row.")
-                                continue
+                        datetime.strptime(time_raw, "%H:%M:%S")  # This validates time format
 
-                            if len(time_raw) == 5: 
-                                time_raw = f"{time_raw}:00"  
-                            elif len(time_raw) == 8: 
-                                pass 
-                            elif len(time_raw) > 8:  
-                            
-                                if '.' in time_raw:
-                                    time_raw = time_raw[:7]  
-                                else:
-                                    print(f"[DEBUG] Invalid TIME format with milliseconds: {time_raw}. Skipping this row.")
-                                    continue
-                            else:
-                                print(f"[DEBUG] Invalid TIME format: {time_raw}. Skipping this row.")
-                                continue
-
-                            # Try to parse the time in any valid format
-                            try:
-                                # First, try to parse as HH:MM:SS (seconds)
-                                datetime.strptime(time_raw, "%H:%M:%S")
-                            except ValueError:
-                                # If that fails, it must be HH:MM:SS.mmm (milliseconds), append milliseconds handling
-                                try:
-                                    datetime.strptime(time_raw, "%H:%M:%S.%f")
-                                except ValueError as e:
-                                    print(f"[DEBUG] Invalid time format: {time_raw} - {e}. Skipping this row.")
-                                    continue
-                            print(f"[DEBUG] Parsed TIME: {time_raw}")
-                        except KeyError as e:
-                            print(f"[DEBUG] Missing TIME field: {e}. Skipping this row.")
-                            continue
                         def safe_float(value):
                             try:
                                 return float(value.strip()) if value and value.strip() else None
                             except ValueError:
                                 return None
-                        # Prepare data for saving
+
                         record_data = {
                             "equip_name_id": equipment_id,
                             "date": date,
@@ -2910,23 +2960,19 @@ def process_data_logs(file_path, equipment_id):
                             "rh_10": safe_float(row.get(" RH_10")),
                         }
 
-                        # Save record to the database
                         TemperatureHumidityRecord.objects.update_or_create(**record_data)
                         saved_records += 1
-                        print(f"[DEBUG] Record saved: Date={date}, Time={time_raw}")
 
-                    except IntegrityError as e:
-                        print(f"[DEBUG] Integrity error saving record: {e}")
-                    except Exception as e:
-                        print(f"[DEBUG] Error saving record: {e}")
+                    except IntegrityError:
+                        pass
+                    except Exception:
+                        pass
 
             return f"Data logs processed successfully. Total records saved: {saved_records}"
 
-        except Exception as e:
-            print(f"[DEBUG] Error processing Data Logs: {e}")
-            return f"Error processing Data Logs: {e}"
+        except Exception:
+            return f"Error processing Data Logs"
 
-download_lock = threading.Lock()
 def process_alarm_logs(file_path, equipment_id):
     with download_lock:
         equipment = Equipment.objects.get(id=equipment_id)
@@ -2937,82 +2983,45 @@ def process_alarm_logs(file_path, equipment_id):
 
                 for row in csv_reader:
                     try:
-                        print(f"[DEBUG] Row data: {row}")
+                        date = datetime.strptime(row["DATE"].strip(), "%Y-%m-%d").date()
+                        time = datetime.strptime(row[" TIME"].strip(), "%H:%M:%S.%f").time()
 
-                        # Parse date and time
-                        try:
-                            date = datetime.strptime(row["DATE"].strip(), "%Y-%m-%d").date()
-                        except ValueError as e:
-                            print(f"[DEBUG] Invalid DATE format: {row['DATE']} - {e}. Skipping this row.")
-                            continue
+                        alarm_code = Alarm_codes.objects.get(code=row["ALARM_CODE"].strip())
+                        alarm_log, created = Alarm_logs.objects.update_or_create(
+                            equipment=equipment,
+                            alarm_code=alarm_code,
+                            date=date,
+                            time=time,
+                        )
+                        if created:
+                            saved_records += 1
+                            dept = Department.objects.get(id=equipment.department.id)
+                            email_fields = [
+                                dept.alert_email_address_1, dept.alert_email_address_2,
+                                dept.alert_email_address_3, dept.alert_email_address_4,
+                                dept.alert_email_address_5, dept.alert_email_address_6,
+                                dept.alert_email_address_7, dept.alert_email_address_8,
+                                dept.alert_email_address_9, dept.alert_email_address_10,
+                            ]
+                            email_list = [email for email in email_fields if email]
 
-                        try:
-                            time = datetime.strptime(row[" TIME"].strip(), "%H:%M:%S.%f").time()
-                        except ValueError as e:
-                            print(f"[DEBUG] Invalid TIME format: {row[' TIME']} - {e}. Skipping this row.")
-                            continue
+                            numbers_list = ['8296061293', '8904411103']
+                            thread_email = threading.Thread(target=send_alert_email, args=(alarm_log.id, email_list))
+                            # thread_sms = threading.Thread(target=send_alert_messages, args=(numbers_list, alarm_log.id))
+                            thread_email.start()
+                            # thread_sms.start()
+                            thread_email.join()
+                            # thread_sms.join()
 
-                        
-                        try:
-                            alarm_code = Alarm_codes.objects.get(code=row["ALARM_CODE"].strip())
-                        except Alarm_codes.DoesNotExist:
-                            print(f"[DEBUG] Alarm code {row['ALARM_CODE']} not found. Skipping this row.")
-                            continue
-
-                        # Save the alarm log
-                        try:
-                            alarm_log, created = alarm_logs.objects.update_or_create(
-                                equipment=equipment,
-                                alarm_code=alarm_code,
-                                date=date,
-                                time=time,
-                            )
-                            if created:
-                                
-                                saved_records += 1
-                                dept=Department.objects.get(id=equipment.department.id)
-                                email_fields = [
-                                    dept.alert_email_address_1,
-                                    dept.alert_email_address_2,
-                                    dept.alert_email_address_3,
-                                    dept.alert_email_address_4,
-                                    dept.alert_email_address_5,
-                                    dept.alert_email_address_6,
-                                    dept.alert_email_address_7,
-                                    dept.alert_email_address_8,
-                                    dept.alert_email_address_9,
-                                    dept.alert_email_address_10,
-                                ]
-
-                                numbers_list = ['8296061293', '8904411103']
-                                email_list = [email for email in email_fields if email]
-
-                                # Threads for sending alerts
-                                thread_email = threading.Thread(target=send_alert_email, args=(alarm_log.id, email_list))
-                                thread_sms = threading.Thread(target=send_alert_messages, args=(numbers_list, alarm_log.id))
-                                thread_email.start()
-                                thread_sms.start()
-                                thread_email.join()
-                                thread_sms.join()
-                            
-
-                            print(f"[DEBUG] Alarm log saved: Date={date}, Time={time}, Code={row['ALARM_CODE']}")
-
-                        except IntegrityError as e:
-                            print(f"[DEBUG] Integrity error saving alarm record: {e}")
-                        except Exception as e:
-                            print(f"[DEBUG] Error saving alarm record: {e}")
-
-                    except Exception as e:
-                        print(f"[DEBUG] Error processing row: {e}")
+                    except IntegrityError:
+                        pass
+                    except Exception:
+                        pass
 
             return f"Alarm logs processed successfully. Total records saved: {saved_records}"
 
-        except Exception as e:
-            print(f"[DEBUG] Error processing Alarm Logs: {e}")
-            return f"Error processing Alarm Logs: {e}"
-
-
+        except Exception:
+            return f"Error processing Alarm Logs"
 
 import serial
 import threading
@@ -3630,6 +3639,8 @@ def equipment_setting(request, id):
     equipment=Equipment.objects.get(id=id)
     logs=Alarm_codes.objects.all()
     equipmentwrite=Equipmentwrite.objects.filter(equipment=id)
+
+    
     return render(request, 'Equip_Settings/equip_settings.html', {'organization': organization, 'data':data, 'acc_db':acc_db, 'equipment':equipment, 'logs':logs, 'equipmentwrite':equipmentwrite})
 
 

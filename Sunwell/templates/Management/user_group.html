@@ -1,4 +1,5 @@
 
+
 {% extends "Base/base.html" %}
 {% load static %}
 {% block title %} user_access {% endblock %}
@@ -327,18 +328,18 @@
                     </tr>
                     <tr class="sub-row config">
                         <td><h5>Equipment Config</h5></td>
-                        <td class="checkbox-cell"><input type="checkbox"></td>
-                        <td class="checkbox-cell"><input type="checkbox"></td>
-                        <td class="checkbox-cell"><input type="checkbox"></td>
-                        <td class="checkbox-cell"><input type="checkbox"></td>
+                        <td class="checkbox-cell"><input type="checkbox" name="e_conf_v" {% if role_dt and role_dt.e_conf_v %} checked {% endif %}></td>
+                        <td class="checkbox-cell"><input type="checkbox" name="e_conf_a" {% if role_dt and role_dt.e_conf_a %} checked {% endif %}></td>
+                        <td class="checkbox-cell"><input type="checkbox" name="e_conf_e" {% if role_dt and role_dt.e_conf_e %} checked {% endif %}></td>
+                        <td class="checkbox-cell"><input type="checkbox" name="e_conf_d" {% if role_dt and role_dt.e_conf_d %} checked {% endif %}></td>
                         <td class="checkbox-cell"></td>
                     </tr>
                     <tr class="sub-row config">
                         <td><h5>Equipment Settings</h5></td>
-                        <td class="checkbox-cell"><input type="checkbox"></td>
-                        <td class="checkbox-cell"><input type="checkbox"></td>
-                        <td class="checkbox-cell"><input type="checkbox"></td>
-                        <td class="checkbox-cell"><input type="checkbox"></td>
+                        <td class="checkbox-cell"><input type="checkbox" name="e_set_v" {% if role_dt and role_dt.e_set_v %} checked {% endif %}></td>
+                        <td class="checkbox-cell"><input type="checkbox" name="e_set_a" {% if role_dt and role_dt.e_set_a %} checked {% endif %}></td>
+                        <td class="checkbox-cell"><input type="checkbox" name="e_set_e" {% if role_dt and role_dt.e_set_e %} checked {% endif %}></td>
+                        <td class="checkbox-cell"><input type="checkbox" name="e_set_d" {% if role_dt and role_dt.e_set_d %} checked {% endif %}></td>
                         <td class="checkbox-cell"></td>
                     </tr>
                     <tr class="main-row" data-group="data_log">
@@ -351,27 +352,27 @@
                     </tr>
                     <tr class="sub-row data_log">
                         <td><h5>View Logs</h5></td>
-                        <td class="checkbox-cell"><input type="checkbox"></td>
+                        <td class="checkbox-cell"><input type="checkbox" name="v_log_v" {% if role_dt and role_dt.v_log_v %} checked {% endif %}></td>
                         <td></td>
                         <td></td>
                         <td></td>
-                        <td class="checkbox-cell"><input type="checkbox"></td>
+                        <td class="checkbox-cell"><input type="checkbox" name="v_log_p" {% if role_dt and role_dt.v_log_p %} checked {% endif %}></td>
                     </tr>
                     <tr class="sub-row data_log">
                         <td><h5>Alarm Logs</h5></td>
-                        <td class="checkbox-cell"><input type="checkbox"></td>
+                        <td class="checkbox-cell"><input type="checkbox" name="a_log_v" {% if role_dt and role_dt.a_log_v %} checked {% endif %}></td>
                         <td class="checkbox-cell"></td>
                         <td class="checkbox-cell"></td>
                         <td class="checkbox-cell"></td>
-                        <td class="checkbox-cell"><input type="checkbox"></td>
+                        <td class="checkbox-cell"><input type="checkbox" name="a_log_p" {% if role_dt and role_dt.a_log_p %} checked {% endif %}></td>
                     </tr>
                     <tr class="sub-row data_log">
                         <td><h5>MKT Analysis</h5></td>
-                        <td class="checkbox-cell"><input type="checkbox"></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td class="checkbox-cell"><input type="checkbox"></td>
+                        <td class="checkbox-cell"><input type="checkbox" name="mkt_v" {% if role_dt and role_dt.mkt_v %} checked {% endif %}></td>
+                        <td class="checkbox-cell"></td>
+                        <td class="checkbox-cell"></td>
+                        <td class="checkbox-cell"></td>
+                        <td class="checkbox-cell"><input type="checkbox" name="mkt_p" {% if role_dt and role_dt.mkt_p %} checked {% endif %}></td>
                     </tr>
                     <tr class="main-row" data-group="realtime">
                         <td><h4>Live Data</h4></td>
@@ -383,7 +384,7 @@
                     </tr>
                     <tr class="sub-row realtime">
                         <td><h5>Summary</h5></td>
-                        <td class="checkbox-cell"><input type="checkbox"></td>
+                        <td class="checkbox-cell"><input type="checkbox" name="sum_v" {% if role_dt and role_dt.sum_v %} checked {% endif %}></td>
                         <td class="checkbox-cell"></td>
                         <td class="checkbox-cell"></td>
                         <td class="checkbox-cell"></td>
@@ -391,7 +392,7 @@
                     </tr>
                     <tr class="sub-row realtime">
                         <td><h5>Display</h5></td>
-                        <td class="checkbox-cell"><input type="checkbox"></td>
+                        <td class="checkbox-cell"><input type="checkbox" name="dis_v" {% if role_dt and role_dt.dis_v %} checked {% endif %}></td>
                         <td class="checkbox-cell"></td>
                         <td class="checkbox-cell"></td>
                         <td class="checkbox-cell"></td>
@@ -399,7 +400,7 @@
                     </tr>
                     <tr class="sub-row realtime">
                         <td><h5>IO Status</h5></td>
-                        <td class="checkbox-cell"><input type="checkbox"></td>
+                        <td class="checkbox-cell"><input type="checkbox" name="io_v" {% if role_dt and role_dt.io_v %} checked {% endif %}></td>
                         <td class="checkbox-cell"></td>
                         <td class="checkbox-cell"></td>
                         <td class="checkbox-cell"></td>
@@ -407,7 +408,7 @@
                     </tr>
                     <tr class="sub-row realtime">
                         <td><h5>Component Hours</h5></td>
-                        <td class="checkbox-cell"><input type="checkbox"></td>
+                        <td class="checkbox-cell"><input type="checkbox" name="comp_v" {% if role_dt and role_dt.comp_v %} checked {% endif %}></td>
                         <td class="checkbox-cell"></td>
                         <td class="checkbox-cell"></td>
                         <td class="checkbox-cell"></td>
@@ -425,43 +426,43 @@
                     </tr>
                     <tr class="super-sub-row audit_logs">
                         <td><h5>User Activity</h5></td>
-                        <td class="checkbox-cell"><input type="checkbox"></td>
+                        <td class="checkbox-cell"><input type="checkbox" name="u_act_v" {% if role_dt and role_dt.u_act_v %} checked {% endif %}></td>
                         <td></td>
                         <td></td>
                         <td></td>
-                        <td class="checkbox-cell"><input type="checkbox"></td>
+                        <td class="checkbox-cell"><input type="checkbox" name="u_act_p" {% if role_dt and role_dt.u_act_p %} checked {% endif %}></td>
                     </tr>
                     <tr class="sub-row audit_logs">
                         <td><h5>Equipment Activity </h5></td>
-                        <td class="checkbox-cell"><input type="checkbox"></td>
+                        <td class="checkbox-cell"><input type="checkbox" name="u_equ_v" {% if role_dt and role_dt.u_equ_v %} checked {% endif %}></td>
                         <td></td>
                         <td></td>
                         <td></td>
-                        <td class="checkbox-cell"><input type="checkbox"></td>
+                        <td class="checkbox-cell"><input type="checkbox" name="u_equ_p" {% if role_dt and role_dt.u_equ_p %} checked {% endif %}></td>
                     </tr>
                     <tr class="sub-row audit_logs">
                         <td><h5>Alarm Activity </h5></td>
-                        <td class="checkbox-cell"><input type="checkbox"></td>
+                        <td class="checkbox-cell"><input type="checkbox" name="a_act_v" {% if role_dt and role_dt.a_act_v %} checked {% endif %}></td>
                         <td></td>
                         <td></td>
                         <td></td>
-                        <td class="checkbox-cell"><input type="checkbox"></td>
+                        <td class="checkbox-cell"><input type="checkbox" name="a_act_p" {% if role_dt and role_dt.a_act_p %} checked {% endif %}></td>
                     </tr>
                     <tr class="super-sub-row audit_logs">
                         <td><h5>Email Audit Trails</h5></td>
-                        <td class="checkbox-cell"><input type="checkbox"></td>
+                        <td class="checkbox-cell"><input type="checkbox" name="e_aud_v" {% if role_dt and role_dt.e_aud_v %} checked {% endif %}></td>
                         <td></td>
                         <td></td>
                         <td></td>
-                        <td class="checkbox-cell"><input type="checkbox"></td>
+                        <td class="checkbox-cell"><input type="checkbox" name="e_aud_p" {% if role_dt and role_dt.e_aud_p %} checked {% endif %}></td>
                     </tr>
                     <tr class="super-sub-row audit_logs">
                         <td><h5>SMS Audit Trails</h5></td>
-                        <td class="checkbox-cell"><input type="checkbox"></td>
+                        <td class="checkbox-cell"><input type="checkbox" name="s_act_v" {% if role_dt and role_dt.s_act_v %} checked {% endif %}></td>
                         <td></td>
                         <td></td>
                         <td></td>
-                        <td class="checkbox-cell"><input type="checkbox"></td>
+                        <td class="checkbox-cell"><input type="checkbox" name="s_act_p" {% if role_dt and role_dt.s_act_p %} checked {% endif %}></td>
                     </tr>
                 </tbody>
             </table>

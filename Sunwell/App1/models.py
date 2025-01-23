@@ -221,9 +221,50 @@ class user_access_db(models.Model):
     res_d = models.BooleanField(default=False)
     res_p = models.BooleanField(default=False)
 
-    def __str__(self):
+    e_conf_v = models.BooleanField(default=False)
+    e_conf_a = models.BooleanField(default=False)
+    e_conf_e = models.BooleanField(default=False)
+    e_conf_d = models.BooleanField(default=False)
+
+    e_set_v = models.BooleanField(default=False)
+    e_set_a = models.BooleanField(default=False)
+    e_set_e = models.BooleanField(default=False)
+    e_set_d = models.BooleanField(default=False)
+
+    v_log_v = models.BooleanField(default=False)
+    v_log_p = models.BooleanField(default=False)
+
+    a_log_v = models.BooleanField(default=False)
+    a_log_p = models.BooleanField(default=False)
+
+    mkt_v = models.BooleanField(default=False)
+    mkt_p = models.BooleanField(default=False)
+
+
+    sum_v = models.BooleanField(default=False)
+    dis_v = models.BooleanField(default=False)
+    io_v = models.BooleanField(default=False)
+    comp_v = models.BooleanField(default=False)
+
+    u_act_v = models.BooleanField(default=False)
+    u_act_p = models.BooleanField(default=False)
+
+    u_equ_v = models.BooleanField(default=False)
+    u_equ_p = models.BooleanField(default=False)
+
+    a_act_v = models.BooleanField(default=False)
+    a_act_p = models.BooleanField(default=False)
+
+    e_aud_v = models.BooleanField(default=False)
+    e_aud_p = models.BooleanField(default=False)
+
+    s_act_v = models.BooleanField(default=False)
+    s_act_p = models.BooleanField(default=False)
+
+    def _str_(self):
         return self.role
-    
+
+ 
 class AppSettings(models.Model):
 
     #App settings fields
@@ -479,3 +520,31 @@ class Equipmentwrite(models.Model):
         return self.equipment
 
 # class dooraccesslog(models.Model):
+
+
+class EquipParameter(models.Model):
+    equipment=models.ForeignKey(Equipment, on_delete=models.CASCADE, null=True, blank=True)
+    t1color = models.CharField(max_length=20, null=True, blank=True, default='black')
+    t2color = models.CharField(max_length=20, null=True, blank=True, default='black')
+    t3color = models.CharField(max_length=20, null=True, blank=True, default='black')
+    t4color = models.CharField(max_length=20, null=True, blank=True, default='black')
+    t5color = models.CharField(max_length=20, null=True, blank=True, default='black')
+    t6color = models.CharField(max_length=20, null=True, blank=True, default='black')
+    t7color = models.CharField(max_length=20, null=True, blank=True, default='black')
+    t8color = models.CharField(max_length=20, null=True, blank=True, default='black')
+    t9color = models.CharField(max_length=20, null=True, blank=True, default='black')
+    t10color = models.CharField(max_length=20, null=True, blank=True, default='black')
+
+    rh1color = models.CharField(max_length=20, null=True, blank=True, default='black')
+    rh2color = models.CharField(max_length=20, null=True, blank=True, default='black')
+    rh3color = models.CharField(max_length=20, null=True, blank=True, default='black')
+    rh4color = models.CharField(max_length=20, null=True, blank=True, default='black')
+    rh5color = models.CharField(max_length=20, null=True, blank=True, default='black')
+    rh6color = models.CharField(max_length=20, null=True, blank=True, default='black')
+    rh7color = models.CharField(max_length=20, null=True, blank=True, default='black')
+    rh8color = models.CharField(max_length=20, null=True, blank=True, default='black')
+    rh9color = models.CharField(max_length=20, null=True, blank=True, default='black')
+    rh10color = models.CharField(max_length=20, null=True, blank=True, default='black')
+
+    def __int__(self):
+        return self.equipment

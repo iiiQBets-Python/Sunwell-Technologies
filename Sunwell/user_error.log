@@ -1,0 +1,1 @@
+2025-01-24 16:18:33,039 - Darshan is getting AttributeError on accessing send_test_email: 'function' object has no attribute 'email_signature'

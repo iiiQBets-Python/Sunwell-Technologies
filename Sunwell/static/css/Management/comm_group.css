@@ -420,12 +420,18 @@ height: 34px; /* Match height with other form elements */
     border-radius: 5px;
 }
 
+
 #validationIcon {
-    position: absolute;
-    right: 20px;
-    top: 50%;
-    transform: translateY(-50%);
-    font-size: 20px;
+    display: inline-block;
+    /* font-size: 1.2em; */
+    margin-right: 8px;
+    margin-top: -5px;
+}
+
+#activationKeyMessage {
+    display: inline-block;
+    font-size: 0.9em;
+    color: red; /* Change this based on validation state */
 }
 
 .valid {

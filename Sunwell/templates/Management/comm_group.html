@@ -1,3 +1,4 @@
+
 {% extends "Base/base.html" %}
 {% load static %}
 {% block title %} comm_group {% endblock %}
@@ -209,14 +210,15 @@
                             <input type="text" class="form-control" id="softKey" name="softKey" maxlength="50" placeholder=" " required value="{{ soft_key }}" readonly>
                             <label for="softKey" class="form-label">Soft Key</label>
                         </div>
-                        <div class="col-sm-11 form-group">
+                        <div class="col-sm-12 form-group">
                             <input type="text" class="form-control" id="activationKey" name="activationKey" placeholder=" " required>
                             <label for="activationKey" class="form-label">Activation Key</label>
                         </div>
-                        <div class="col-sm-1 form-group">
+                        <!-- <div class="col-sm-1 form-group">
                             <span id="validationIcon" class="position-absolute"></span>
-                        </div>
-                        <div class="col-sm-12">
+                        </div> -->
+                        <div class="col-sm-12 d-flex align-items-center">
+                            <span id="validationIcon" class="validation-icon"></span> 
                             <span id="activationKeyMessage" class="form-text" style="margin-top: -5px; display: block;"></span>
                         </div>
                         <div class="col-sm-12 form-group d-flex align-items-center">
@@ -289,54 +291,70 @@
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
   <script src="{% static 'js/Management/comm_group.js' %}"></script>
   <script>
-    
-    
     document.getElementById('validateButton').addEventListener('click', function() {
-        var activationKey = document.getElementById('activationKey').value;
-        var softKey = document.getElementById('softKey').value;
-        var validationIcon = document.getElementById('validationIcon');
-        var activationKeyMessage = document.getElementById('activationKeyMessage');
-        var saveButton = document.getElementById('saveButton');
-        var validateButton = document.getElementById('validateButton');
-        
-        $.ajax({
-            type: 'POST',
-            url: '{% url "validate_activation_key" %}',
-            data: {
-                'activation_key': activationKey,
-                'soft_key': softKey,
-                'csrfmiddlewaretoken': '{{ csrf_token }}'
-            },
-            success: function(response) {
-                if (response.validation_icon === '✔') {
-                    validationIcon.innerHTML = '<i class="fas fa-check-circle" style="color: green;"></i>';
-                    activationKeyMessage.textContent = "Activation Key is valid";  // Set valid message
-                    activationKeyMessage.style.color = "green";  // Set color for valid message
-                    saveButton.disabled = false;
-                    validateButton.style.display = 'none';
+    var activationKey = document.getElementById('activationKey').value;
+    var softKey = document.getElementById('softKey').value;
+    var validationIcon = document.getElementById('validationIcon');
+    var activationKeyMessage = document.getElementById('activationKeyMessage');
+    var saveButton = document.getElementById('saveButton');
+    var validateButton = document.getElementById('validateButton');
     
+    $.ajax({
+        type: 'POST',
+        url: '{% url "validate_activation_key" %}',
+        data: {
+            'activation_key': activationKey,
+            'soft_key': softKey,
+            'csrfmiddlewaretoken': '{{ csrf_token }}'
+        },
+        success: function(response) {
+            if (response.valid) {
+                // For valid keys
+                validationIcon.innerHTML = '<i class="fas fa-check-circle" style="color: green;"></i>';
+                activationKeyMessage.textContent = "Activation Key is valid.";
+                activationKeyMessage.style.color = "green";
+                saveButton.disabled = false;
+                validateButton.style.display = 'none';
+
+                // Adding device count input if provided
+                if (response.device_count) {
                     var deviceCountInput = document.createElement('input');
                     deviceCountInput.type = 'hidden';
                     deviceCountInput.name = 'device_count';
                     deviceCountInput.value = response.device_count;
                     document.getElementById('adminUserForm').appendChild(deviceCountInput);
-                } else {
-                    validationIcon.innerHTML = '<i class="fa fa-times-circle" style="color: red;"></i>';
-                    activationKeyMessage.textContent = "Activation Key is Invalid or already exists!";  // Show message from response
-                    activationKeyMessage.style.color = "red";  // Set color for invalid messages
-                    saveButton.disabled = true;
-                    validateButton.style.display = 'inline-block';
                 }
-            },
-            error: function() {
-                validationIcon.innerHTML = '<i class="fa fa-times-circle" style="color: red;"></i>';
-                activationKeyMessage.textContent = "Validation failed. Please try again.";  // Fallback error message
+            } else {
+                // For invalid keys
+                validationIcon.innerHTML = '<i class="fas fa-times-circle" style="color: red;"></i>';
+                activationKeyMessage.textContent = response.message || "Activation Key is invalid or already exists!";
                 activationKeyMessage.style.color = "red";
                 saveButton.disabled = true;
                 validateButton.style.display = 'inline-block';
             }
-        });
+        },
+        error: function() {
+            // For errors like network issues
+            validationIcon.innerHTML = '<i class="fas fa-times-circle" style="color: red;"></i>';
+            activationKeyMessage.textContent = "Validation failed. Please try again.";
+            activationKeyMessage.style.color = "red";
+            saveButton.disabled = true;
+            validateButton.style.display = 'inline-block';
+        }
     });
+});
+
+// Reset the error message when the modal is closed
+document.getElementById('adminUserModal').addEventListener('hidden.bs.modal', function() {
+        var activationKeyMessage = document.getElementById('activationKeyMessage');
+        var validationIcon = document.getElementById('validationIcon');
+
+        // Clear the error message and validation icon
+        activationKeyMessage.textContent = '';
+        activationKeyMessage.style.color = '';
+        validationIcon.innerHTML = '';
+    });
+
   </script>
   {% endblock %}
 {% endblock content %}

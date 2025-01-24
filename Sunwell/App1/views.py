@@ -351,6 +351,11 @@ def dashboard(request):
     except User.DoesNotExist:
         data = SuperAdmin.objects.get(username=emp_user)
 
+    try:
+        acc_db = user_access_db.objects.get(role=data.role)
+    except user_access_db.DoesNotExist:
+        acc_db = None
+
     organization = Organization.objects.first()
     equipment_data = []
 
@@ -383,18 +388,17 @@ def dashboard(request):
             'name': eqp.equip_name,
             'status': 'Online' if eqp.online == True else 'Offline',
             'pending_review': pending_review_count,
+            'department_id': eqp.department.id if eqp.department else None,
         })
 
-    try:
-        acc_db = user_access_db.objects.get(role=data.role)
-    except user_access_db.DoesNotExist:
-        acc_db = None
+    
 
     return render(request, 'Dashboard/Dashboard.html', {
         'organization': organization,
         'data': data,
         'acc_db': acc_db,
-        'equipment_data': equipment_data
+        'equipment_data': equipment_data,
+        'status_filter': status,
     })
 
 
@@ -669,7 +673,8 @@ def department(request):
         footer_note = request.POST.get('footerNote')
         report_datetime_stamp = request.POST.get('report_datetime_stamp') == 'True'
 
-        email_alert = request.POST.get('email_alert')
+        email_sys = request.POST.get('email_status')
+        email_delay = request.POST.get('email_delay')
         email_time = request.POST.get('email_time')  or None
 
         email_address_1 = request.POST.get('email_address_1')
@@ -682,7 +687,7 @@ def department(request):
         email_address_8 = request.POST.get('email_address_8')
         email_address_9 = request.POST.get('email_address_9')
         email_address_10 = request.POST.get('email_address_10')
-        sms_status=request.POST.get('sms_status')
+        sms_sys=request.POST.get('sms_sys')
         sms_delay=request.POST.get('sms_delay')
         sms_time=request.POST.get('sms_time')
         mobile_user1 = request.POST.get('mobile_user1') or None
@@ -714,7 +719,7 @@ def department(request):
 
         mobile_user10 = request.POST.get('mobile_user10') or None
         mobile_no10 = request.POST.get('mobile_no10') or None if request.POST.get('mobile_no10', '').isdigit() else None
-        sms_alert = True if sms_status == 'Enable' else False
+        # sms_alert = True if sms_status == 'Enable' else False
         comm_group = CommGroup.objects.get(CommGroup_code=commgroup_name)
         
 
@@ -725,7 +730,8 @@ def department(request):
             footer_note=footer_note,
             report_datetime_stamp=report_datetime_stamp,
             
-            email_alert = email_alert,
+            email_sys=email_sys,
+            email_delay = email_delay,
             email_time = email_time,
             alert_email_address_1 = email_address_1,
             alert_email_address_2 = email_address_2,
@@ -737,7 +743,8 @@ def department(request):
             alert_email_address_8 = email_address_8,
             alert_email_address_9 = email_address_9,
             alert_email_address_10 = email_address_10,
-            sms_alert=sms_alert,
+            sms_sys=sms_sys,
+            sms_delay=sms_delay,
             sms_time=sms_time,
             user1=mobile_user1,
             user1_num=mobile_no1,
@@ -791,7 +798,8 @@ def edit_department(request, department_id):
         footer_note = request.POST.get('edit_footerNote')
         report_datetime_stamp = request.POST.get('edit_report_datetime_stamp') == 'True'  
 
-        email_alert = request.POST.get('edit_email_alert')
+        email_sys = request.POST.get('edit_email_status')
+        email_delay = request.POST.get('edit_email_delay')
         email_time = request.POST.get('edit_email_time')  or None
 
         email_address_1 = request.POST.get('edit_email_address_1')
@@ -804,7 +812,7 @@ def edit_department(request, department_id):
         email_address_8 = request.POST.get('edit_email_address_8')
         email_address_9 = request.POST.get('edit_email_address_9')
         email_address_10 = request.POST.get('edit_email_address_10')
-        sms_status=request.POST.get('edit_sms_status')
+        sms_sys=request.POST.get('edit_sms_sys')
         sms_delay=request.POST.get('edit_sms_delay')
         sms_time=request.POST.get('edit_sms_time')
         mobile_user1 = request.POST.get('edit_mobile_user1') or None
@@ -827,7 +835,6 @@ def edit_department(request, department_id):
         mobile_no9 = request.POST.get('edit_mobile_no9') or None if request.POST.get('edit_mobile_no9').isdigit() else None
         mobile_user10 = request.POST.get('edit_mobile_user10') or None
         mobile_no10 = request.POST.get('edit_mobile_no10') or None if request.POST.get('edit_mobile_no10').isdigit() else None
-        sms_alert = True if sms_status == 'Enable' else False
         email_time = parse_time(email_time) if email_time else None
         sms_time = parse_time(sms_time) if sms_time else None
         if not department_name:
@@ -847,7 +854,8 @@ def edit_department(request, department_id):
         departments.footer_note = footer_note
         departments.report_datetime_stamp = report_datetime_stamp
 
-        departments.email_alert = email_alert
+        departments.email_sys = email_sys
+        departments.email_delay = email_delay
         departments.email_time = email_time
         departments.alert_email_address_1 = email_address_1
         departments.alert_email_address_2 = email_address_2
@@ -859,7 +867,8 @@ def edit_department(request, department_id):
         departments.alert_email_address_8 = email_address_8
         departments.alert_email_address_9 = email_address_9
         departments.alert_email_address_10 = email_address_10
-        departments.sms_alert=sms_alert
+        departments.sms_sys=sms_sys
+        departments.sms_delay = sms_delay
         departments.sms_time=sms_time
         departments.user1=mobile_user1
         departments.user1_num=mobile_no1
@@ -1810,11 +1819,21 @@ def send_sms(ser, number, message, lock):
         except Exception as e:
             return False
 
+import threading
+import time
+import serial
+from datetime import datetime, timedelta, date
+from django.shortcuts import redirect
+from django.contrib import messages
+from .models import AppSettings, Sms_logs
+
+
 def send_test_sms(request):
     if request.method == 'POST':
-        # Get the test phone number and time from the POST request
+        # Retrieve the phone number and time from the request
         test_sms_number = request.POST.get('testsms')
-        test_sms_time = request.POST.get('testsmstime')  # Expected format: HH:MM
+        test_sms_time = request.POST.get('testsmstime')
+
         if not test_sms_number:
             messages.error(request, "Please provide a valid phone number.")
             return redirect('app_sms_settings')
@@ -1825,12 +1844,26 @@ def send_test_sms(request):
             messages.error(request, "SMS settings not configured.")
             return redirect('app_sms_settings')
 
-        # Function to send SMS
-        def send_sms():
+        lock = threading.Lock()
+
+        def send_sms(scheduled_time=None):
+            ser = None  # Initialize the variable
+            message = "This is test SMS from ESTDAS application"
+            status = "Failed"  # Default to failed; update on success
             try:
-                # Define the send_command function inside send_sms
+                # Initialize the GSM modem connection
+                ser = serial.Serial(
+                    port=sms_settings.comm_port,
+                    baudrate=int(sms_settings.baud_rate),
+                    bytesize=serial.EIGHTBITS,
+                    parity=serial.PARITY_NONE if sms_settings.parity == 'None' else sms_settings.parity.upper()[0],
+                    stopbits=serial.STOPBITS_ONE if sms_settings.stop_bits == 1 else serial.STOPBITS_TWO,
+                    timeout=2
+                )
+
                 def send_command(command, wait_for_response=True, delay=2):
-                    ser.write((command + '\r').encode())
+                    """Send a command to the GSM modem and optionally wait for a response."""
+                    ser.write(command.encode() + b'\r')
                     ser.flush()
                     time.sleep(delay)
                     if wait_for_response:
@@ -1838,81 +1871,67 @@ def send_test_sms(request):
                         return response
                     return ""
 
-                # Modem Configuration
-                ser = serial.Serial(
-                    port=sms_settings.comm_port,
-                    baudrate=int(sms_settings.baud_rate),
-                    bytesize=serial.EIGHTBITS,
-                    parity=serial.PARITY_NONE if sms_settings.parity == 'None' else sms_settings.parity.upper()[0],
-                    stopbits=serial.STOPBITS_ONE if sms_settings.stop_bits == 1 else serial.STOPBITS_TWO,
-                    timeout=1
-                )
-
-                # Test modem connection
+                # Test modem connectivity
                 if "OK" not in send_command("AT"):
-                    messages.error(request, "Modem not responding. Check connection.")
-                    ser.close()
+                    messages.error(request, "Modem not responding to 'AT' command. Check your connection.")
                     return
 
                 # Set SMS mode to text
                 if "OK" not in send_command("AT+CMGF=1"):
                     messages.error(request, "Failed to set SMS mode to text.")
-                    ser.close()
                     return
 
-                # Send SMS command
-                response = send_command(f'AT+CMGS="{test_sms_number}"')
+                # Initiate SMS sending
+                response = send_command(f'AT+CMGS="{test_sms_number}"', wait_for_response=True, delay=2)
                 if ">" not in response:
                     messages.error(request, "Modem did not prompt for message input.")
-                    ser.close()
                     return
 
-                message = "This is test SMS from ESTDAS application"
+                # Send the message and terminate with Ctrl+Z
                 ser.write((message + '\r').encode())
                 ser.flush()
-                time.sleep(1)
-                ser.write(b"\x1A")  # Ctrl+Z
+                time.sleep(1)  # Brief pause before sending Ctrl+Z
+                ser.write(b"\x1A")  # Ctrl+Z to send the SMS
                 ser.flush()
 
+                # Wait for final response
+                time.sleep(5)
                 response = ser.read(1000).decode(errors="ignore").strip()
 
-                # Updated Response Handling Logic
-                if "+CMGS" in response or "OK" in response:
+                if "+CMGS" in response and "OK" in response:
                     messages.success(request, f"Test SMS sent successfully to {test_sms_number}.")
+                    status = "Sent"  # Update status to sent
                 else:
-                    messages.warning(request, f"SMS sent, but response was unexpected: {response}")
+                    messages.error(request, f"Failed to send SMS. Detailed response: {response}")
 
-                ser.close()
-                
             except Exception as e:
-                messages.error(request, f"Error while sending SMS: {str(e)}")
+                messages.error(request, f"Error sending SMS: {str(e)}")
+            finally:
+                # Ensure the serial connection is closed
+                if ser and ser.is_open:
+                    ser.close()
 
-
-
-
+                # Log SMS details to the database
+                Sms_logs.objects.create(
+                    time=scheduled_time if scheduled_time else datetime.now().time(),
+                    date=datetime.now().date(),
+                    sys_sms=True,
+                    to_num=test_sms_number,
+                    user_name="Test SMS",
+                    msg_body=message,
+                    status=status
+                )
 
         # Check if a time is provided
         if test_sms_time:
             try:
-                # Parse the provided time
+                # Parse and calculate the delay for scheduled SMS
                 sms_datetime = datetime.strptime(test_sms_time, "%H:%M").time()
                 now = datetime.now().time()
-
-                # Combine the date with the time for full datetime comparison
-                today_date = date.today()
-                sms_datetime_full = datetime.combine(today_date, sms_datetime)
-                now_full = datetime.combine(today_date, now)
-
-                # Calculate delay in seconds
-                delay = (sms_datetime_full - now_full).total_seconds()
-
-                # If delay is negative, schedule the SMS for the next day
+                delay = (datetime.combine(date.today(), sms_datetime) - datetime.now()).total_seconds()
                 if delay < 0:
-                    sms_datetime_full += timedelta(days=1)
-                    delay = (sms_datetime_full - now_full).total_seconds()
-
-                # Schedule SMS with delay
-                threading.Timer(delay, send_sms).start()
+                    delay += 86400  # Schedule for the next day
+                threading.Timer(delay, send_sms, args=[sms_datetime]).start()
                 messages.success(request, f"SMS scheduled to {test_sms_number} at {test_sms_time}.")
             except ValueError:
                 messages.error(request, "Invalid time format. Please use HH:MM.")
@@ -1921,7 +1940,6 @@ def send_test_sms(request):
             # Send SMS immediately if no time is provided
             send_sms()
 
-        # Redirect back to settings page after execution
         return redirect('app_sms_settings')
     else:
         messages.error(request, "Invalid request method.")
@@ -1934,12 +1952,19 @@ def send_test_email(request):
         email_time = request.POST.get('testemailtime')
         
         # Fetch the email settings dynamically
+        app_settings=AppSettings.objects.first()
+        if not app_settings or app_settings.email_sys_set != 'Enable':
+            return
+    
         email_settings = get_email_settings(request)
         if not email_settings:
             return HttpResponse("Email settings are not configured.", status=500)
         
         subject = 'ESTDAS Test Email'
-        message = 'This is test email from ESTDAS application'
+        message = (
+            f"This is test email from ESTDAS application"
+            f"\n\n{app_settings.email_signature or ''}"
+        )
 
         # Set the dynamic email settings
         settings.EMAIL_HOST = email_settings['EMAIL_HOST']
@@ -2829,7 +2854,6 @@ from django.core.exceptions import ObjectDoesNotExist
 def download_process_logs(ip_address, equipment_id):
    
     results = {}
-    print("download")
 
     try:
         headers = {
@@ -3638,6 +3662,8 @@ def equipment_setting(request, id):
         acc_db = None
     equipment=Equipment.objects.get(id=id)
     logs=Alarm_codes.objects.all()
+    l=logs.count()
+    print("ABCD", l)
     equipmentwrite=Equipmentwrite.objects.filter(equipment=id)
 
     
@@ -5795,7 +5821,7 @@ def generate_email_log_pdf(request, records, from_date, to_date, from_time, to_t
         ] 
 
         for idx, record in enumerate(records, start=1):
-            equipment_name = str(record.equipment) if record.equipment else ""
+            equipment_name = str(record.equipment.equip_name) if record.equipment and record.equipment.equip_name else "System EMAIL"
             settings = AppSettings.objects.first()
             email_from = settings.email_host_user  
             email_to = record.to_email or ""
@@ -6104,7 +6130,7 @@ def generate_sms_log_pdf(request, records, from_date, to_date, from_time, to_tim
         ]
 
         for idx, record in enumerate(records, start=1):
-            equipment_name = str(record.equipment) if record.equipment else "N/A"
+            equipment_name = str(record.equipment.equip_name) if record.equipment and record.equipment.equip_name else "System SMS"
             user_name = record.user_name or "N/A"
             mobile_no = record.to_num or "N/A"
             sms_message = record.msg_body or ""

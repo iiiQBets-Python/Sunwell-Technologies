@@ -144,5 +144,10 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media/')
 
+# settings.py
+APSCHEDULER_DATETIME_FORMAT = "N j, Y, f:s a"  
+APSCHEDULER_RUN_NOW_TIMEOUT = 10  
+
+
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_USE_TLS=True

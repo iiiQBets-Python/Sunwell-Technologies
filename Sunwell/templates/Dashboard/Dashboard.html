@@ -97,14 +97,14 @@
             <div class="d-flex align-items-right">
                 <div class="dropdown role-filter">
                     <button class="btn btn-outline-secondary dropdown-toggle" type="button" id="roleFilterDropdown" data-bs-toggle="dropdown" aria-expanded="false">
-                        Select Status
+                        {{ status_filter|title }} Status
                     </button>
                     <ul class="dropdown-menu" aria-labelledby="roleFilterDropdown">
-                        <li><a class="dropdown-item" onchange="updateTable()" href="#" data-value="all">All Status</a></li>
-                        <li><a class="dropdown-item" onchange="updateTable()" href="#" data-value="offline"><i class="fa-regular fa-circle-stop" style="color: #d20f0f;"></i>  Offline </a></li>
-                        <li><a class="dropdown-item" onchange="updateTable()" href="#" data-value="online"><i class="fa-regular fa-circle-stop" style="color: #369523;"></i>Online </a></li>
+                        <li><a class="dropdown-item" href="#" data-value="all" onclick="filterByStatus('all')">All Status</a></li>
+                        <li><a class="dropdown-item" href="#" data-value="online" onclick="filterByStatus('online')">Online</a></li>
+                        <li><a class="dropdown-item" href="#" data-value="offline" onclick="filterByStatus('offline')">Offline</a></li>
                     </ul>
-                </div>
+                </div>                
             </div>
         </div>
     </div>
@@ -126,7 +126,7 @@
     <div class="scrollable-container">
         <div class="row card-details" id="gridView">
             {% for equipment in equipment_data %}
-            <div class="col-12 col-md-6 col-lg-3 card-wrapper" data-status="{{ equipment.status|lower }}">
+            <div class="col-12 col-md-6 col-lg-3 card-wrapper" data-status="{{ equipment.status|lower }}" data-department-id="{{ equipment.department_id }}">
                 <div class="card">
                     <div class="card-header">
                         <h5 class="card-title mb-0">{{ equipment.name }}</h5>
@@ -173,7 +173,7 @@
                     </thead>
                     <tbody id="form-data-table">
                         {% for equipment in equipment_data %}
-                        <tr>
+                        <tr data-status="{{ equipment.status|lower }}" data-department-id="{{ equipment.department_id }}">
                             <td>{{ equipment.name }}</td>
                             <td>
                                 {% if equipment.status == 'Online' %}
@@ -242,36 +242,125 @@
     
 
 
-    function filterByStatus(status) {
-    const dropdownButton = document.getElementById("roleFilterDropdown");
-    const recordsInfo = document.getElementById("records-info");
+    function filterByStatus(status, count) {
+        const dropdownButton = document.getElementById("roleFilterDropdown");
+    
+        // Update the button text with the selected status
+        dropdownButton.innerHTML = `${status} `;
+    
+        // Update the URL with the selected status
+        const url = new URL(window.location.href);
+        url.searchParams.set("status", status === "All Status" ? "all" : status.toLowerCase());
+        window.history.pushState({}, '', url.toString());
+    
+        // Apply filters
+        applyFilters();
+    }
+    
+    
+    
 
-    // Update the dropdown button text
-    dropdownButton.textContent = `${status.charAt(0).toUpperCase() + status.slice(1)} Status`;
-
-    // Update the URL with the selected status
-    const url = new URL(window.location.href);
-    url.searchParams.set("status", status); // Update the "status" query parameter
-    window.location.href = url.toString();
-
-    // Filter equipment cards based on status
-    const equipmentCards = document.querySelectorAll(".card-wrapper");
-    let visibleCount = 0;
-    equipmentCards.forEach(card => {
-        const cardStatus = card.getAttribute("data-status");
-        if (status === "all" || cardStatus === status) {
-            card.style.display = "block"; // Show matching cards
-            visibleCount++;
-        } else {
-            card.style.display = "none"; // Hide non-matching cards
+    /// FIlter based on accessible department
+    document.addEventListener("DOMContentLoaded", function () {
+        const departmentSelect = document.getElementById("departmentSelect");
+        const gridView = document.getElementById("gridView");
+        const tableView = document.getElementById("tableView");
+    
+        // Retrieve the selected department ID from localStorage; default to "all" if not set
+        let selectedDepartmentId = localStorage.getItem("selectedDepartmentId") || "all";
+    
+        // Set the department dropdown to the saved value
+        departmentSelect.value = selectedDepartmentId;
+    
+        // Function to apply filters based on department and status
+        function applyFilters() {
+            // Get the selected status from the URL, default to 'online'
+            const urlParams = new URLSearchParams(window.location.search);
+            const status = urlParams.get("status") || "online";
+    
+            // Update the status dropdown button text
+            const dropdownButton = document.getElementById("roleFilterDropdown");
+            dropdownButton.innerHTML = `${status.charAt(0).toUpperCase() + status.slice(1)} `;
+    
+            // Get all equipment rows (list view) and cards (grid view)
+            const rows = document.querySelectorAll("#form-data-table tr");
+            const cards = document.querySelectorAll(".card-wrapper");
+    
+            let visibleCount = 0;
+    
+            // Unified filter logic for both views
+            [rows, cards].forEach(elements => {
+                elements.forEach(element => {
+                    const itemStatus = element.getAttribute("data-status");
+                    const itemDepartmentId = element.getAttribute("data-department-id");
+    
+                    // Show only if it matches both filters
+                    if (
+                        (status === "all" || itemStatus === status) &&
+                        (selectedDepartmentId === "all" || itemDepartmentId === selectedDepartmentId)
+                    ) {
+                        element.style.display = ""; // Show
+                        visibleCount++;
+                    } else {
+                        element.style.display = "none"; // Hide
+                    }
+                });
+            });
+    
+            // Update the visible records count
+            const recordsInfo = document.getElementById("records-info");
+            recordsInfo.textContent = `(Records Found: ${visibleCount})`;
         }
+    
+        // Event listener for department dropdown change
+        departmentSelect.addEventListener("change", function () {
+            selectedDepartmentId = this.value;
+            localStorage.setItem("selectedDepartmentId", selectedDepartmentId); // Save selection in localStorage
+            applyFilters(); // Reapply filters
+        });
+    
+        // Filter by status and update the URL
+        function filterByStatus(status) {
+            const dropdownButton = document.getElementById("roleFilterDropdown");
+            dropdownButton.innerHTML = `${status.charAt(0).toUpperCase() + status.slice(1)}`;
+    
+            // Update the URL query parameter
+            const url = new URL(window.location.href);
+            url.searchParams.set("status", status.toLowerCase());
+            window.history.pushState({}, '', url.toString());
+    
+            // Reapply filters
+            applyFilters();
+        }
+    
+        // Attach the status filter function to dropdown links
+        document.querySelectorAll(".dropdown-item").forEach(item => {
+            item.addEventListener("click", function () {
+                const status = this.getAttribute("data-value");
+                filterByStatus(status);
+            });
+        });
+    
+        // Switch between grid view and list view
+        document.getElementById("gridViewButton").addEventListener("click", function () {
+            gridView.style.display = "flex";
+            tableView.style.display = "none";
+            applyFilters(); // Ensure filters are applied after switching views
+        });
+    
+        document.getElementById("listViewButton").addEventListener("click", function () {
+            gridView.style.display = "none";
+            tableView.style.display = "block";
+            applyFilters(); // Ensure filters are applied after switching views
+        });
+    
+        // Apply filters on page load
+        applyFilters();
     });
-
-    // Update the records information
-    recordsInfo.textContent = `(Records Found: ${visibleCount})`;
-}
-
-
+    
+    
+    
+    
   </script>
   {% endblock %}
 {% endblock content %}

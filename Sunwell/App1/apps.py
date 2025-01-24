@@ -20,3 +20,9 @@ class EquipSettingsConfig(AppConfig):
         thread = threading.Thread(target=background_task_for_all_equipment, args=(interval,), daemon=True)
         thread.start()
         print("[INFO] Background thread for all equipment started.")
+        if not hasattr(self, 'scheduler_started'):  # Ensure scheduler is started only once
+            print("[INFO] App is ready, starting the email scheduler...")
+            from .scheduler import daily_email_scheduler
+            daily_email_scheduler()
+            print("[INFO] Email scheduler initialized.")
+            self.scheduler_started = True

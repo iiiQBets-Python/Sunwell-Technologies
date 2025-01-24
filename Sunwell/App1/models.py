@@ -75,7 +75,8 @@ class Department(models.Model):
     header_note = models.CharField(max_length=100, null=True)
     footer_note = models.CharField(max_length=100, null=True)
     report_datetime_stamp = models.BooleanField(default=True, null=True)
-    email_alert = models.CharField(default=0, max_length=50, blank=True, null=True)
+    email_sys = models.CharField(max_length=10, default='Enable', null=True)
+    email_delay = models.CharField(default=0, max_length=50, blank=True, null=True)
     email_time = models.TimeField(blank=True, null=True)
     alert_email_address_1 = models.EmailField(blank=True, null=True)
     alert_email_address_2 = models.EmailField(blank=True, null=True)
@@ -89,7 +90,8 @@ class Department(models.Model):
     alert_email_address_10 = models.EmailField(blank=True, null=True)
 
     #sms alerts
-    sms_alert=models.BooleanField(default=False, null=True)
+    sms_sys = models.CharField(max_length=10, default='Enable', null=True)
+    sms_delay = models.CharField(default=0, max_length=50, blank=True, null=True)
     sms_time = models.TimeField(blank=True, null=True)
     user1=models.CharField(max_length=25, null=True, blank=True)
     user1_num=models.BigIntegerField(null=True, blank=True)
@@ -270,7 +272,7 @@ class AppSettings(models.Model):
     #App settings fields
 
     # Email settings fields
-    email_sys_set = models.CharField(max_length=100, default='Enable', null=True)
+    email_sys_set = models.CharField(max_length=10, default='Enable', null=True)
     email_host = models.CharField(max_length=100, null=True)
     email_host_user = models.EmailField(null=True)
     email_host_password = models.CharField(max_length=100, null=True)
@@ -278,7 +280,7 @@ class AppSettings(models.Model):
     email_signature = models.TextField(blank=True, null=True)
 
     # SMS settings fields
-    sms_sys_set = models.CharField(max_length=10, default='Enable')
+    sms_sys_set = models.CharField(max_length=10, default='Enable', null=True)
     comm_port = models.CharField(max_length=10, blank=True, null=True)
     parity = models.CharField(max_length=10, blank=True, null=True)
     baud_rate = models.CharField(max_length=10, blank=True, null=True)
@@ -308,6 +310,7 @@ class AppSettings(models.Model):
     def _str_(self):
         return f"{self.department}"
     
+
 class BackupSettings(models.Model):
     local_path = models.CharField(max_length=255)
     remote_path = models.CharField(max_length=255, blank=True, null=True)
@@ -350,7 +353,7 @@ class Equipment(models.Model):
     high_alert= models.DecimalField(max_digits=3, decimal_places=1, blank=True, null=True)
     low_alert= models.DecimalField(max_digits=3, decimal_places=1, blank=True, null=True)
     cooling=models.BooleanField(null=True, default=True)
-    total_temp_sensors=models.CharField(max_length=2, blank=True, null=True)
+    total_temp_sensors=models.IntegerField(blank=True, null=True)
     # Humidity Set Values
     set_value_hum = models.DecimalField(max_digits=3, decimal_places=1, blank=True, null=True)
     low_alarm_hum = models.DecimalField(max_digits=3, decimal_places=1, blank=True, null=True)
@@ -358,7 +361,7 @@ class Equipment(models.Model):
     high_alert_hum= models.DecimalField(max_digits=3, decimal_places=1, blank=True, null=True)
     low_alert_hum= models.DecimalField(max_digits=3, decimal_places=1, blank=True, null=True)
     cooling_hum=models.BooleanField(null=True, default=True)
-    total_humidity_sensors=models.CharField(max_length=2, blank=True, null=True)
+    total_humidity_sensors=models.IntegerField(blank=True, null=True)
 
     online = models.BooleanField(null=True, default=False)
 

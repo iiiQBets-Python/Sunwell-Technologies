@@ -239,17 +239,17 @@
                                     <h6 style="margin-right: 10px;">Email System:</h6>
                                     <div id="status">
                                         <div class="form-check form-check-inline">
-                                            <input class="form-check-input" type="radio" name="email_status" id="email-enable1" value="Enable" checked>
+                                            <input class="form-check-input" type="radio" name="email_status" id="email-enable1" value="Enable" {% if department.email_sys == "Enable" or not department.email_sys %}checked{% endif %}>
                                             <label class="form-check-label" for="email-enable1">Enable</label>
                                         </div>
                                         <div class="form-check form-check-inline">
-                                            <input class="form-check-input" type="radio" name="email_status" id="email-disable1" value="Disable">
+                                            <input class="form-check-input" type="radio" name="email_status" id="email-disable1" value="Disable" {% if department.email_sys == "Disable" %}checked{% endif %}>
                                             <label class="form-check-label" for="email-disable1">Disable</label>
                                         </div>
                                     </div>
                                 </div>
                                 <div class="col-md-6 form-group">
-                                    <input type="text" class="form-control" name="email_alert" id="email_alert" value="{{ department.email_alert }}" placeholder=" ">
+                                    <input type="text" class="form-control" name="email_delay" id="email_alert" value="{{ department.email_alert }}" placeholder=" ">
                                     <label for="email_alert" class="form-label">Email Alert Delay</label>
                                 </div>
                                 <div class="col-md-6 form-group">
@@ -310,11 +310,11 @@
                                     <h6 style="margin-right: 10px;">SMS System:</h6>
                                     <div id="status">
                                         <div class="form-check form-check-inline">
-                                            <input class="form-check-input" type="radio" name="sms_status" id="sms-enable1" value="Enable" checked>
+                                            <input class="form-check-input" type="radio" name="sms_sys" id="sms-enable1" value="Enable" {% if department.sms_sys == "Enable" or not department.email_sys %}checked{% endif %}>
                                             <label class="form-check-label" for="sms-enable1">Enable</label>
                                         </div>
                                         <div class="form-check form-check-inline">
-                                            <input class="form-check-input" type="radio" name="sms_status" id="sms-disable1" value="Disable">
+                                            <input class="form-check-input" type="radio" name="sms_sys" id="sms-disable1" value="Disable" {% if department.sms_sys == "Disable" %}checked{% endif %}>
                                             <label class="form-check-label" for="sms-disable1">Disable</label>
                                         </div>
                                     </div>
@@ -614,8 +614,21 @@
 
                         <div class="tab-pane fade" id="edit-email-{{ department.id }}" role="tabpanel" aria-labelledby="edit-email-tab-{{ department.id }}">
                             <div class="row">
+                                <div class="col-md-12 form-group d-flex align-items-center ">
+                                    <h6 style="margin-right: 10px;">Email System:</h6>
+                                    <div id="status">
+                                        <div class="form-check form-check-inline">
+                                            <input class="form-check-input" type="radio" name="edit_email_status" id="email-enable1" value="Enable" {% if department.email_sys == "Enable" %}checked{% endif %}>
+                                            <label class="form-check-label" for="email-enable1">Enable</label>
+                                        </div>
+                                        <div class="form-check form-check-inline">
+                                            <input class="form-check-input" type="radio" name="edit_email_status" id="email-disable1" value="Disable" {% if department.email_sys == "Disable" %}checked{% endif %}>
+                                            <label class="form-check-label" for="email-disable1">Disable</label>
+                                        </div>
+                                    </div>
+                                </div>
                                 <div class="col-md-6 form-group">
-                                    <input type="text" class="form-control" name="edit_email_alert" id="edit_email_alert" value="{{ department.email_alert|default:'' }}" placeholder=" " >
+                                    <input type="text" class="form-control" name="edit_email_delay" id="edit_email_alert" value="{{ department.email_delay|default:'' }}" placeholder=" " >
                                     <label for="edit_email_alert" class="form-label">Email Alert Delay</label>
                                 </div>
                                 <div class="col-md-6 form-group">
@@ -675,21 +688,21 @@
                                     <h6 style="margin-right: 10px;">SMS System:</h6>
                                     <div id="status">
                                         <div class="form-check form-check-inline">
-                                            <input class="form-check-input" type="radio" name="edit_sms_status" id="sms-enable1" value="Enable" checked>
+                                            <input class="form-check-input" type="radio" name="edit_sms_sys" id="sms-enable1" value="Enable" {% if department.sms_sys == "Enable" %}checked{% endif %}>
                                             <label class="form-check-label" for="sms-enable1">Enable</label>
                                         </div>
                                         <div class="form-check form-check-inline">
-                                            <input class="form-check-input" type="radio" name="edit_sms_status" id="sms-disable1" value="Disable">
+                                            <input class="form-check-input" type="radio" name="edit_sms_sys" id="sms-disable1" value="Disable" {% if department.sms_sys == "Disable" %}checked{% endif %}>
                                             <label class="form-check-label" for="sms-disable1">Disable</label>
                                         </div>
                                     </div>
                                 </div>
                                 <div class="col-md-6 form-group">
-                                    <input type="text" class="form-control" name="edit_sms_delay" id="edit_sms_delay" placeholder=" ">
+                                    <input type="text" class="form-control" name="edit_sms_delay" id="edit_sms_delay" placeholder=" " value="{{ department.sms_delay|default:'' }}">
                                     <label for="edit_sms_delay" class="form-label">SMS Alert Delay*</label>
                                 </div>
                                 <div class="col-md-6 form-group">
-                                    <input type="time" class="form-control" name="edit_sms_time" id="edit_sms_time" placeholder=" ">
+                                    <input type="time" class="form-control" name="edit_sms_time" id="edit_sms_time" placeholder=" " value="{{ department.sms_time|date:'H:i'|default:'' }}">
                                     <label for="edit_sms_time" class="form-label">SMS Time</label>
                                 </div>
                                 <div class="col-md-6 form-group">

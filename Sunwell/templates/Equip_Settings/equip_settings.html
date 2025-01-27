@@ -1,8 +1,7 @@
-
 {% extends "Base/base.html" %}
 {% load static %}
 
-{% block title %} Graphcolor {% endblock %}
+{% block title %} --::: ESTDAS :::-- {% endblock %}
 
 {% block styles %}
     {{ block.super }}
@@ -307,575 +306,71 @@
                         </tr>
                     </thead>
                     <tbody id="form-data-table">
+                        {% for temp in temperature_settings %}
                         <tr>
                             <td><input type="checkbox" class="row-checkbox"></td>
-                            <td>Temperature 1</td>
+                            <td>Temperature {{ temp.index }}</td>
                             <td>
-                                <select class="form-select color-select" name="t1color">
-                                    <option value="" disabled selected>Select Color</option>
-                                    <option value="black">Black</option>
-                                    <option value="darkred">DarkRed</option>
-                                    <option value="midnightblue">MidnightBlue</option>
-                                    <option value="darksalmon">DarkSalmon</option>
-                                    <option value="olive">Olive</option>
-                                    <option value="darkslateblue">DarkSlateBlue</option>
-                                    <option value="orange">Orange</option>
-                                    <option value="darkorange">DarkOrange</option>
+                                <select class="form-select color-select" name="t{{ temp.index }}color"  disabled>
+                                    <option value=""  {% if not temp.color %}selected{% endif %}disabled selected>Select Color</option>
+                                    <option value="black" {% if temp.color == "black" %}selected{% endif %}>Black</option>
+                                    <option value="darkred"{% if temp.color == "darkred" %}selected{% endif %}>DarkRed</option>
+                                    <option value="midnightblue"{% if temp.color == "midnightblue" %}selected{% endif %}>MidnightBlue</option>
+                                    <option value="darksalmon"{% if temp.color == "darksalmon" %}selected{% endif %}>DarkSalmon</option>
+                                    <option value="olive"{% if temp.color == "olive" %}selected{% endif %}>Olive</option>
+                                    <option value="darkslateblue"{% if temp.color == "darkslateblue" %}selected{% endif %}>DarkSlateBlue</option>
+                                    <option value="orange"{% if temp.color == "orange" %}selected{% endif %}>Orange</option>
+                                    <option value="darkorange"{% if temp.color == "darkorange" %}selected{% endif %}>DarkOrange</option>
+                                    <option value="green"{% if temp.color == "green" %}selected{% endif %}>Green</option>
+                                    <option value="blue"{% if temp.color == "blue" %}selected{% endif %}>Blue</option>
+                                    <option value="red"{% if temp.color == "red" %}selected{% endif %}>Red</option>
+                                    <option value="cyan"{% if temp.color == "cyan" %}selected{% endif %}>Cyan</option>
+                                    <option value="magenta"{% if temp.color == "magenta" %}selected{% endif %}>Magenta</option>
+                                    <option value="yellow"{% if temp.color == "yellow" %}selected{% endif %}>Yellow</option>
+                                    <option value="lightgreen"{% if temp.color == "lightgreen" %}selected{% endif %}>Light Green</option>
+                                    <option value="lightblue"{% if temp.color == "lightblue" %}selected{% endif %}>Light Blue</option>
+                                    <option value="violet"{% if temp.color == "violet" %}selected{% endif %}>Violet</option>
+                                    <option value="purple"{% if temp.color == "purple" %}selected{% endif %}>Purple</option>
+                                    <option value="navy"{% if temp.color == "navy" %}selected{% endif %}>Navy</option>
+                                    <option value="grey"{% if temp.color == "grey" %}selected{% endif %}>Grey</option>
                                 </select>
                             </td>
                         </tr>
+                        {% endfor %}
+                      
+                        {% if show_humidity %}
+                        {% for hum in humidity_settings %}
                         <tr>
                             <td><input type="checkbox" class="row-checkbox"></td>
-                            <td>Humidity 1</td>
+                            <td>Humidity {{ hum.index }}</td>
                             <td>
-                                <select class="form-select color-select" name="rh1color">
-                                    <option value="">Select Color</option>
-                                    <option value="black">Black</option>
-                                    <option value="darkred">Dark Red</option>
-                                    <option value="midnightblue">Midnight Blue</option>
-                                    <option value="darksalmon">Dark Salmon</option>
-                                    <option value="olive">Olive</option>
-                                    <option value="darkslateblue">Dark Slate Blue</option>
-                                    <option value="orange">Orange</option>
-                                    <option value="darkorange">Dark Orange</option>
-                                    <option value="green">Green</option>
-                                    <option value="blue">Blue</option>
-                                    <option value="red">Red</option>
-                                    <option value="cyan">Cyan</option>
-                                    <option value="magenta">Magenta</option>
-                                    <option value="yellow">Yellow</option>
-                                    <option value="lightgreen">Light Green</option>
-                                    <option value="lightblue">Light Blue</option>
-                                    <option value="violet">Violet</option>
-                                    <option value="purple">Purple</option>
-                                    <option value="navy">Navy</option>
-                                    <option value="grey">Grey</option>
-                                </select>
-                                
-                            </td>
-                        </tr>
-                        <tr>
-                            <td><input type="checkbox" class="row-checkbox"></td>
-                            <td>Temperature 2</td>
-                            <td>
-                                <select class="form-select color-select" name="t2color">
-                                    <option value="">Select Color</option>
-                                    <option value="black">Black</option>
-                                    <option value="darkred">Dark Red</option>
-                                    <option value="midnightblue">Midnight Blue</option>
-                                    <option value="darksalmon">Dark Salmon</option>
-                                    <option value="olive">Olive</option>
-                                    <option value="darkslateblue">Dark Slate Blue</option>
-                                    <option value="orange">Orange</option>
-                                    <option value="darkorange">Dark Orange</option>
-                                    <option value="green">Green</option>
-                                    <option value="blue">Blue</option>
-                                    <option value="red">Red</option>
-                                    <option value="cyan">Cyan</option>
-                                    <option value="magenta">Magenta</option>
-                                    <option value="yellow">Yellow</option>
-                                    <option value="lightgreen">Light Green</option>
-                                    <option value="lightblue">Light Blue</option>
-                                    <option value="violet">Violet</option>
-                                    <option value="purple">Purple</option>
-                                    <option value="navy">Navy</option>
-                                    <option value="grey">Grey</option>
+                                <select class="form-select color-select" name="t{{ temp.index }}color"  disabled>
+                                    <option value=""  {% if not hum.color %}selected{% endif %}disabled selected>Select Color</option>
+                                    <option value="black" {% if hum.color == "black" %}selected{% endif %}>Black</option>
+                                    <option value="darkred"{% if hum.color == "darkred" %}selected{% endif %}>DarkRed</option>
+                                    <option value="midnightblue"{% if hum.color == "midnightblue" %}selected{% endif %}>MidnightBlue</option>
+                                    <option value="darksalmon"{% if hum.color == "darksalmon" %}selected{% endif %}>DarkSalmon</option>
+                                    <option value="olive"{% if hum.color == "olive" %}selected{% endif %}>Olive</option>
+                                    <option value="darkslateblue"{% if  hum.color == "darkslateblue" %}selected{% endif %}>DarkSlateBlue</option>
+                                    <option value="orange"{% if hum.color == "orange" %}selected{% endif %}>Orange</option>
+                                    <option value="darkorange"{% if hum.color == "darkorange" %}selected{% endif %}>DarkOrange</option>
+                                    <option value="green"{% if hum.color == "green" %}selected{% endif %}>Green</option>
+                                    <option value="blue"{% if hum.color == "blue" %}selected{% endif %}>Blue</option>
+                                    <option value="red"{% if hum.color == "red" %}selected{% endif %}>Red</option>
+                                    <option value="cyan"{% if hum.color == "cyan" %}selected{% endif %}>Cyan</option>
+                                    <option value="magenta"{% if hum.color == "magenta" %}selected{% endif %}>Magenta</option>
+                                    <option value="yellow"{% if hum.color == "yellow" %}selected{% endif %}>Yellow</option>
+                                    <option value="lightgreen"{% if hum.color == "lightgreen" %}selected{% endif %}>Light Green</option>
+                                    <option value="lightblue"{% if hum.color == "lightblue" %}selected{% endif %}>Light Blue</option>
+                                    <option value="violet"{% if hum.color == "violet" %}selected{% endif %}>Violet</option>
+                                    <option value="purple"{% if hum.color == "purple" %}selected{% endif %}>Purple</option>
+                                    <option value="navy"{% if hum.color == "navy" %}selected{% endif %}>Navy</option>
+                                    <option value="grey"{% if hum.color == "grey" %}selected{% endif %}>Grey</option>
                                 </select>
                             </td>
                         </tr>
-                        <tr>
-                            <td><input type="checkbox" class="row-checkbox"></td>
-                            <td>Humidity 2</td>
-                            <td>
-                                <select class="form-select color-select" name="rh2color">
-                                    <option value="">Select Color</option>
-                                    <option value="black">Black</option>
-                                    <option value="darkred">Dark Red</option>
-                                    <option value="midnightblue">Midnight Blue</option>
-                                    <option value="darksalmon">Dark Salmon</option>
-                                    <option value="olive">Olive</option>
-                                    <option value="darkslateblue">Dark Slate Blue</option>
-                                    <option value="orange">Orange</option>
-                                    <option value="darkorange">Dark Orange</option>
-                                    <option value="green">Green</option>
-                                    <option value="blue">Blue</option>
-                                    <option value="red">Red</option>
-                                    <option value="cyan">Cyan</option>
-                                    <option value="magenta">Magenta</option>
-                                    <option value="yellow">Yellow</option>
-                                    <option value="lightgreen">Light Green</option>
-                                    <option value="lightblue">Light Blue</option>
-                                    <option value="violet">Violet</option>
-                                    <option value="purple">Purple</option>
-                                    <option value="navy">Navy</option>
-                                    <option value="grey">Grey</option>
-                                </select>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td><input type="checkbox" class="row-checkbox"></td>
-                            <td>Temperature 3</td>
-                            <td>
-                                <select class="form-select color-select" name="t3color">
-                                    <option value="">Select Color</option>
-                                    <option value="black">Black</option>
-                                    <option value="darkred">Dark Red</option>
-                                    <option value="midnightblue">Midnight Blue</option>
-                                    <option value="darksalmon">Dark Salmon</option>
-                                    <option value="olive">Olive</option>
-                                    <option value="darkslateblue">Dark Slate Blue</option>
-                                    <option value="orange">Orange</option>
-                                    <option value="darkorange">Dark Orange</option>
-                                    <option value="green">Green</option>
-                                    <option value="blue">Blue</option>
-                                    <option value="red">Red</option>
-                                    <option value="cyan">Cyan</option>
-                                    <option value="magenta">Magenta</option>
-                                    <option value="yellow">Yellow</option>
-                                    <option value="lightgreen">Light Green</option>
-                                    <option value="lightblue">Light Blue</option>
-                                    <option value="violet">Violet</option>
-                                    <option value="purple">Purple</option>
-                                    <option value="navy">Navy</option>
-                                    <option value="grey">Grey</option>
-                                </select>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td><input type="checkbox" class="row-checkbox"></td>
-                            <td>Humidity 3</td>
-                            <td>
-                                <select class="form-select color-select" name="rh3color">
-                                    <option value="">Select Color</option>
-                                    <option value="black">Black</option>
-                                    <option value="darkred">Dark Red</option>
-                                    <option value="midnightblue">Midnight Blue</option>
-                                    <option value="darksalmon">Dark Salmon</option>
-                                    <option value="olive">Olive</option>
-                                    <option value="darkslateblue">Dark Slate Blue</option>
-                                    <option value="orange">Orange</option>
-                                    <option value="darkorange">Dark Orange</option>
-                                    <option value="green">Green</option>
-                                    <option value="blue">Blue</option>
-                                    <option value="red">Red</option>
-                                    <option value="cyan">Cyan</option>
-                                    <option value="magenta">Magenta</option>
-                                    <option value="yellow">Yellow</option>
-                                    <option value="lightgreen">Light Green</option>
-                                    <option value="lightblue">Light Blue</option>
-                                    <option value="violet">Violet</option>
-                                    <option value="purple">Purple</option>
-                                    <option value="navy">Navy</option>
-                                    <option value="grey">Grey</option>
-                                </select>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td><input type="checkbox" class="row-checkbox"></td>
-                            <td>Temperature 4</td>
-                            <td>
-                                <select class="form-select color-select" name="t4color">
-                                    <option value="">Select Color</option>
-                                    <option value="black">Black</option>
-                                    <option value="darkred">Dark Red</option>
-                                    <option value="midnightblue">Midnight Blue</option>
-                                    <option value="darksalmon">Dark Salmon</option>
-                                    <option value="olive">Olive</option>
-                                    <option value="darkslateblue">Dark Slate Blue</option>
-                                    <option value="orange">Orange</option>
-                                    <option value="darkorange">Dark Orange</option>
-                                    <option value="green">Green</option>
-                                    <option value="blue">Blue</option>
-                                    <option value="red">Red</option>
-                                    <option value="cyan">Cyan</option>
-                                    <option value="magenta">Magenta</option>
-                                    <option value="yellow">Yellow</option>
-                                    <option value="lightgreen">Light Green</option>
-                                    <option value="lightblue">Light Blue</option>
-                                    <option value="violet">Violet</option>
-                                    <option value="purple">Purple</option>
-                                    <option value="navy">Navy</option>
-                                    <option value="grey">Grey</option>
-                                </select>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td><input type="checkbox" class="row-checkbox"></td>
-                            <td>Humidity 4</td>
-                            <td>
-                                <select class="form-select color-select" name="rh4color">
-                                    <option value="">Select Color</option>
-                                    <option value="black">Black</option>
-                                    <option value="darkred">Dark Red</option>
-                                    <option value="midnightblue">Midnight Blue</option>
-                                    <option value="darksalmon">Dark Salmon</option>
-                                    <option value="olive">Olive</option>
-                                    <option value="darkslateblue">Dark Slate Blue</option>
-                                    <option value="orange">Orange</option>
-                                    <option value="darkorange">Dark Orange</option>
-                                    <option value="green">Green</option>
-                                    <option value="blue">Blue</option>
-                                    <option value="red">Red</option>
-                                    <option value="cyan">Cyan</option>
-                                    <option value="magenta">Magenta</option>
-                                    <option value="yellow">Yellow</option>
-                                    <option value="lightgreen">Light Green</option>
-                                    <option value="lightblue">Light Blue</option>
-                                    <option value="violet">Violet</option>
-                                    <option value="purple">Purple</option>
-                                    <option value="navy">Navy</option>
-                                    <option value="grey">Grey</option>
-                                </select>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td><input type="checkbox" class="row-checkbox"></td>
-                            <td>Temperature 5</td>
-                            <td>
-                                <select class="form-select color-select" name="t5color">
-                                    <option value="">Select Color</option>
-                                    <option value="black">Black</option>
-                                    <option value="darkred">Dark Red</option>
-                                    <option value="midnightblue">Midnight Blue</option>
-                                    <option value="darksalmon">Dark Salmon</option>
-                                    <option value="olive">Olive</option>
-                                    <option value="darkslateblue">Dark Slate Blue</option>
-                                    <option value="orange">Orange</option>
-                                    <option value="darkorange">Dark Orange</option>
-                                    <option value="green">Green</option>
-                                    <option value="blue">Blue</option>
-                                    <option value="red">Red</option>
-                                    <option value="cyan">Cyan</option>
-                                    <option value="magenta">Magenta</option>
-                                    <option value="yellow">Yellow</option>
-                                    <option value="lightgreen">Light Green</option>
-                                    <option value="lightblue">Light Blue</option>
-                                    <option value="violet">Violet</option>
-                                    <option value="purple">Purple</option>
-                                    <option value="navy">Navy</option>
-                                    <option value="grey">Grey</option>
-                                </select> 
-                            </td>
-                        </tr>
-                        <tr>
-                            <td><input type="checkbox" class="row-checkbox"></td>
-                            <td>Humidity 5</td>
-                            <td>
-                                <select class="form-select color-select" name="rh5color">
-                                    <option value="">Select Color</option>
-                                    <option value="black">Black</option>
-                                    <option value="darkred">Dark Red</option>
-                                    <option value="midnightblue">Midnight Blue</option>
-                                    <option value="darksalmon">Dark Salmon</option>
-                                    <option value="olive">Olive</option>
-                                    <option value="darkslateblue">Dark Slate Blue</option>
-                                    <option value="orange">Orange</option>
-                                    <option value="darkorange">Dark Orange</option>
-                                    <option value="green">Green</option>
-                                    <option value="blue">Blue</option>
-                                    <option value="red">Red</option>
-                                    <option value="cyan">Cyan</option>
-                                    <option value="magenta">Magenta</option>
-                                    <option value="yellow">Yellow</option>
-                                    <option value="lightgreen">Light Green</option>
-                                    <option value="lightblue">Light Blue</option>
-                                    <option value="violet">Violet</option>
-                                    <option value="purple">Purple</option>
-                                    <option value="navy">Navy</option>
-                                    <option value="grey">Grey</option>
-                                </select>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td><input type="checkbox" class="row-checkbox"></td>
-                            <td>Temperature 6</td>
-                            <td>
-                                <select class="form-select color-select" name="t6color">
-                                    <option value="">Select Color</option>
-                                    <option value="black">Black</option>
-                                    <option value="darkred">Dark Red</option>
-                                    <option value="midnightblue">Midnight Blue</option>
-                                    <option value="darksalmon">Dark Salmon</option>
-                                    <option value="olive">Olive</option>
-                                    <option value="darkslateblue">Dark Slate Blue</option>
-                                    <option value="orange">Orange</option>
-                                    <option value="darkorange">Dark Orange</option>
-                                    <option value="green">Green</option>
-                                    <option value="blue">Blue</option>
-                                    <option value="red">Red</option>
-                                    <option value="cyan">Cyan</option>
-                                    <option value="magenta">Magenta</option>
-                                    <option value="yellow">Yellow</option>
-                                    <option value="lightgreen">Light Green</option>
-                                    <option value="lightblue">Light Blue</option>
-                                    <option value="violet">Violet</option>
-                                    <option value="purple">Purple</option>
-                                    <option value="navy">Navy</option>
-                                    <option value="grey">Grey</option>
-                                </select>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td><input type="checkbox" class="row-checkbox"></td>
-                            <td>Humidity 6</td>
-                            <td>
-                                <select class="form-select color-select" name="rh6color">
-                                    <option value="">Select Color</option>
-                                    <option value="black">Black</option>
-                                    <option value="darkred">Dark Red</option>
-                                    <option value="midnightblue">Midnight Blue</option>
-                                    <option value="darksalmon">Dark Salmon</option>
-                                    <option value="olive">Olive</option>
-                                    <option value="darkslateblue">Dark Slate Blue</option>
-                                    <option value="orange">Orange</option>
-                                    <option value="darkorange">Dark Orange</option>
-                                    <option value="green">Green</option>
-                                    <option value="blue">Blue</option>
-                                    <option value="red">Red</option>
-                                    <option value="cyan">Cyan</option>
-                                    <option value="magenta">Magenta</option>
-                                    <option value="yellow">Yellow</option>
-                                    <option value="lightgreen">Light Green</option>
-                                    <option value="lightblue">Light Blue</option>
-                                    <option value="violet">Violet</option>
-                                    <option value="purple">Purple</option>
-                                    <option value="navy">Navy</option>
-                                    <option value="grey">Grey</option>
-                                </select>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td><input type="checkbox" class="row-checkbox"></td>
-                            <td>Temperature 7</td>
-                            <td>
-                                <select class="form-select color-select" name="t7color">
-                                    <option value="">Select Color</option>
-                                    <option value="black">Black</option>
-                                    <option value="darkred">Dark Red</option>
-                                    <option value="midnightblue">Midnight Blue</option>
-                                    <option value="darksalmon">Dark Salmon</option>
-                                    <option value="olive">Olive</option>
-                                    <option value="darkslateblue">Dark Slate Blue</option>
-                                    <option value="orange">Orange</option>
-                                    <option value="darkorange">Dark Orange</option>
-                                    <option value="green">Green</option>
-                                    <option value="blue">Blue</option>
-                                    <option value="red">Red</option>
-                                    <option value="cyan">Cyan</option>
-                                    <option value="magenta">Magenta</option>
-                                    <option value="yellow">Yellow</option>
-                                    <option value="lightgreen">Light Green</option>
-                                    <option value="lightblue">Light Blue</option>
-                                    <option value="violet">Violet</option>
-                                    <option value="purple">Purple</option>
-                                    <option value="navy">Navy</option>
-                                    <option value="grey">Grey</option>
-                                </select>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td><input type="checkbox" class="row-checkbox"></td>
-                            <td>Humidity 7</td>
-                            <td>
-                                <select class="form-select color-select" name="rh7color">
-                                    <option value="">Select Color</option>
-                                    <option value="black">Black</option>
-                                    <option value="darkred">Dark Red</option>
-                                    <option value="midnightblue">Midnight Blue</option>
-                                    <option value="darksalmon">Dark Salmon</option>
-                                    <option value="olive">Olive</option>
-                                    <option value="darkslateblue">Dark Slate Blue</option>
-                                    <option value="orange">Orange</option>
-                                    <option value="darkorange">Dark Orange</option>
-                                    <option value="green">Green</option>
-                                    <option value="blue">Blue</option>
-                                    <option value="red">Red</option>
-                                    <option value="cyan">Cyan</option>
-                                    <option value="magenta">Magenta</option>
-                                    <option value="yellow">Yellow</option>
-                                    <option value="lightgreen">Light Green</option>
-                                    <option value="lightblue">Light Blue</option>
-                                    <option value="violet">Violet</option>
-                                    <option value="purple">Purple</option>
-                                    <option value="navy">Navy</option>
-                                    <option value="grey">Grey</option>
-                                </select>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td><input type="checkbox" class="row-checkbox"></td>
-                            <td>Temperature 8</td>
-                            <td>
-                                <select class="form-select color-select" name="t8color">
-                                    <option value="">Select Color</option>
-                                    <option value="black">Black</option>
-                                    <option value="darkred">Dark Red</option>
-                                    <option value="midnightblue">Midnight Blue</option>
-                                    <option value="darksalmon">Dark Salmon</option>
-                                    <option value="olive">Olive</option>
-                                    <option value="darkslateblue">Dark Slate Blue</option>
-                                    <option value="orange">Orange</option>
-                                    <option value="darkorange">Dark Orange</option>
-                                    <option value="green">Green</option>
-                                    <option value="blue">Blue</option>
-                                    <option value="red">Red</option>
-                                    <option value="cyan">Cyan</option>
-                                    <option value="magenta">Magenta</option>
-                                    <option value="yellow">Yellow</option>
-                                    <option value="lightgreen">Light Green</option>
-                                    <option value="lightblue">Light Blue</option>
-                                    <option value="violet">Violet</option>
-                                    <option value="purple">Purple</option>
-                                    <option value="navy">Navy</option>
-                                    <option value="grey">Grey</option>
-                                </select>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td><input type="checkbox" class="row-checkbox"></td>
-                            <td>Humidity 8</td>
-                            <td>
-                                <select class="form-select color-select" name="rh8color">
-                                    <option value="">Select Color</option>
-                                    <option value="black">Black</option>
-                                    <option value="darkred">Dark Red</option>
-                                    <option value="midnightblue">Midnight Blue</option>
-                                    <option value="darksalmon">Dark Salmon</option>
-                                    <option value="olive">Olive</option>
-                                    <option value="darkslateblue">Dark Slate Blue</option>
-                                    <option value="orange">Orange</option>
-                                    <option value="darkorange">Dark Orange</option>
-                                    <option value="green">Green</option>
-                                    <option value="blue">Blue</option>
-                                    <option value="red">Red</option>
-                                    <option value="cyan">Cyan</option>
-                                    <option value="magenta">Magenta</option>
-                                    <option value="yellow">Yellow</option>
-                                    <option value="lightgreen">Light Green</option>
-                                    <option value="lightblue">Light Blue</option>
-                                    <option value="violet">Violet</option>
-                                    <option value="purple">Purple</option>
-                                    <option value="navy">Navy</option>
-                                    <option value="grey">Grey</option>
-                                </select>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td><input type="checkbox" class="row-checkbox"></td>
-                            <td>Temperature 9</td>
-                            <td>
-                                <select class="form-select color-select" name="t9color">
-                                    <option value="">Select Color</option>
-                                    <option value="black">Black</option>
-                                    <option value="darkred">Dark Red</option>
-                                    <option value="midnightblue">Midnight Blue</option>
-                                    <option value="darksalmon">Dark Salmon</option>
-                                    <option value="olive">Olive</option>
-                                    <option value="darkslateblue">Dark Slate Blue</option>
-                                    <option value="orange">Orange</option>
-                                    <option value="darkorange">Dark Orange</option>
-                                    <option value="green">Green</option>
-                                    <option value="blue">Blue</option>
-                                    <option value="red">Red</option>
-                                    <option value="cyan">Cyan</option>
-                                    <option value="magenta">Magenta</option>
-                                    <option value="yellow">Yellow</option>
-                                    <option value="lightgreen">Light Green</option>
-                                    <option value="lightblue">Light Blue</option>
-                                    <option value="violet">Violet</option>
-                                    <option value="purple">Purple</option>
-                                    <option value="navy">Navy</option>
-                                    <option value="grey">Grey</option>
-                                </select>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td><input type="checkbox" class="row-checkbox"></td>
-                            <td>Humidity 9</td>
-                            <td>
-                                <select class="form-select color-select" name="rh9color">
-                                    <option value="">Select Color</option>
-                                    <option value="black">Black</option>
-                                    <option value="darkred">Dark Red</option>
-                                    <option value="midnightblue">Midnight Blue</option>
-                                    <option value="darksalmon">Dark Salmon</option>
-                                    <option value="olive">Olive</option>
-                                    <option value="darkslateblue">Dark Slate Blue</option>
-                                    <option value="orange">Orange</option>
-                                    <option value="darkorange">Dark Orange</option>
-                                    <option value="green">Green</option>
-                                    <option value="blue">Blue</option>
-                                    <option value="red">Red</option>
-                                    <option value="cyan">Cyan</option>
-                                    <option value="magenta">Magenta</option>
-                                    <option value="yellow">Yellow</option>
-                                    <option value="lightgreen">Light Green</option>
-                                    <option value="lightblue">Light Blue</option>
-                                    <option value="violet">Violet</option>
-                                    <option value="purple">Purple</option>
-                                    <option value="navy">Navy</option>
-                                    <option value="grey">Grey</option>
-                                </select>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td><input type="checkbox" class="row-checkbox"></td>
-                            <td>Temperature 10</td>
-                            <td>
-                                <select class="form-select color-select" name="t10color">
-                                    <option value="">Select Color</option>
-                                    <option value="black">Black</option>
-                                    <option value="darkred">Dark Red</option>
-                                    <option value="midnightblue">Midnight Blue</option>
-                                    <option value="darksalmon">Dark Salmon</option>
-                                    <option value="olive">Olive</option>
-                                    <option value="darkslateblue">Dark Slate Blue</option>
-                                    <option value="orange">Orange</option>
-                                    <option value="darkorange">Dark Orange</option>
-                                    <option value="green">Green</option>
-                                    <option value="blue">Blue</option>
-                                    <option value="red">Red</option>
-                                    <option value="cyan">Cyan</option>
-                                    <option value="magenta">Magenta</option>
-                                    <option value="yellow">Yellow</option>
-                                    <option value="lightgreen">Light Green</option>
-                                    <option value="lightblue">Light Blue</option>
-                                    <option value="violet">Violet</option>
-                                    <option value="purple">Purple</option>
-                                    <option value="navy">Navy</option>
-                                    <option value="grey">Grey</option>
-                                </select>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td><input type="checkbox" class="row-checkbox"></td>
-                            <td>Humidity 10</td>
-                            <td>
-                                <select class="form-select color-select" name="rh10color">
-                                    <option value="">Select Color</option>
-                                    <option value="black">Black</option>
-                                    <option value="darkred">Dark Red</option>
-                                    <option value="midnightblue">Midnight Blue</option>
-                                    <option value="darksalmon">Dark Salmon</option>
-                                    <option value="olive">Olive</option>
-                                    <option value="darkslateblue">Dark Slate Blue</option>
-                                    <option value="orange">Orange</option>
-                                    <option value="darkorange">Dark Orange</option>
-                                    <option value="green">Green</option>
-                                    <option value="blue">Blue</option>
-                                    <option value="red">Red</option>
-                                    <option value="cyan">Cyan</option>
-                                    <option value="magenta">Magenta</option>
-                                    <option value="yellow">Yellow</option>
-                                    <option value="lightgreen">Light Green</option>
-                                    <option value="lightblue">Light Blue</option>
-                                    <option value="violet">Violet</option>
-                                    <option value="purple">Purple</option>
-                                    <option value="navy">Navy</option>
-                                    <option value="grey">Grey</option>
-                                </select>
-                            </td>
-                        </tr>
+                       {% endfor %}
+                       {% endif %}
                     </tbody>
                 </table>
             </div>
@@ -974,7 +469,8 @@
                         </div>
                     </div>
                 </div>
-    
+
+                {% if show_humidity %}
                 <h5 class="section-title">Humidity</h5>
                 <div class="row">
                     <!-- First Column -->
@@ -1029,9 +525,13 @@
                             </div>
                         </div>
                     </div>
+                   
                 </div>
+                {% endif %}
+                
             </div>
         </div>
+       
 
         <div class="tab-pane fade" id="write-event" role="tabpanel" aria-labelledby="write-event-tab">
             <div class="table-wrapper">
@@ -1102,8 +602,8 @@
 
         <div class="tab-pane fade" id="emailsmsalert" role="tabpanel" aria-labelledby="email-sms-alarm-alert-tab" style="padding:15px; background:#ffff;">
             <div class="d-flex justify-content-end align-items-end"> 
-                <button class="btn btn-primary edit-button me-2" onclick="editMode(this)">Edit</button>
-                <button class="btn btn-success save-button d-none" onclick="saveMode(this)">Save</button>
+                <button class="btn btn-primary edit-button me-2" onclick="editMode1(this)">Edit</button>
+                <button class="btn btn-success save-button d-none" onclick="saveMode1(this)">Save</button>
             </div>
             <div class="row mt-0 p-4" id="alertSections">
                 <!-- Email Alert Section -->
@@ -1114,15 +614,15 @@
                     </div>
                     
                     <div class="checkbox-list-1">
-                        {% for i in logs %} 
-                        <div class="form-check">
-                            <input class="form-check-input" type="checkbox" id="emailAlert1">
-                            <label class="form-check-label" for="emailAlert1">{{ i.alarm_log }}</label>
-                        </div>
+                        {% for field in fields %}
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="{{ field.name }}" disabled {{ field.value|yesno:"checked," }}>
+                                <label class="form-check-label" for="{{ field.name }}">{{ field.help_text }}</label>
+                            </div>
                         {% endfor %}
                     </div>
-
                 </div>
+                
     
                 <div class="col-md-6">
                     <div class="mb-3">
@@ -1130,13 +630,13 @@
                         <label class="form-check-label" for="activateSms">Activate SMS Alert</label>
                     </div>
                     <div class="checkbox-list-2">
-                        {% for i in logs %} 
+                        {% for field in sms_fields %} 
                         <div class="form-check">
-                            <input class="form-check-input" type="checkbox" id="smsAlert1">
-                            <label class="form-check-label" for="smsAlert1">{{ i.alarm_log }}</label>
+                            <input class="form-check-input" type="checkbox" id="{{ field.name }}" disabled {{ field.value|yesno:"checked," }}>
+                            <label class="form-check-label" for="{{ field.name }}">{{ field.help_text }}</label>
                         </div>
                         {% endfor %}
-                            <!-- Add more alerts here -->
+                            
                     </div>
                 </div>
             </div>
@@ -1224,8 +724,8 @@
     
                     for (let i = 1; i <= totalPages; i++) {
                         const pageItem = document.createElement("li");
-                        pageItem.className = `page-item ${i === currentPage ? "active" : ""}`;
-                        pageItem.innerHTML = `<a class="page-link" href="#">${i}</a>`;
+                        pageItem.className = page-item ${i === currentPage ? "active" : ""};
+                        pageItem.innerHTML = <a class="page-link" href="#">${i}</a>;
                         pageItem.addEventListener("click", event => {
                             event.preventDefault();
                             currentPage = i;
@@ -1329,7 +829,7 @@ function saveMode(button) {
 
     // Ensure the modal is triggered only when the save button is clicked in the "settings" tab
     if (formContainer.id !== "settings") {
-        alert("Save functionality is not enabled for this tab.");
+        saveparametersMode()
         return;
     }
 
@@ -1370,22 +870,33 @@ function saveMode(button) {
         inputData['acknowledge'] = acknowledge;
 
         fetch("{% url 'save_equipment_settings' %}", {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-CSRFToken': getCookie('csrftoken')
-            },
-            body: JSON.stringify(inputData)
-        })
-        .then(response => response.json())
-        .then(data => {
-            alert("Data Saved Successfully");
-            authModal.hide();
-        })
-        .catch(error => {
-            console.error('Error:', error);
-            alert('Failed to save data.');
-        });
+    method: 'POST',
+    headers: {
+        'Content-Type': 'application/json',
+        'X-CSRFToken': getCookie('csrftoken')
+    },
+    body: JSON.stringify(inputData)
+})
+.then(response => {
+    // First, check if the response is ok (status 200-299)
+    if (!response.ok) {
+        // If not ok, return the response as JSON with a rejection to enter the catch block
+        return response.json().then(json => Promise.reject(json));
+    }
+    // If ok, parse the response as JSON
+    return response.json();
+})
+.then(data => {
+    // Process your successful response data here
+    alert(data.message);  // Display success message from server
+    authModal.hide();  // Assuming you have a modal to hide after processing
+})
+.catch(errorData => {
+    // Error handling block
+    console.error('Error:', errorData);
+    alert(errorData.message);  // Use the errorData object, which should have the 'message' field
+});
+
     });
 }
 
@@ -1404,6 +915,7 @@ function getCookie(name) {
     }
     return cookieValue;
 }
+
 
 // Reset only password and comment fields on modal close
     document.getElementById('authModal').addEventListener('hidden.bs.modal', function () {
@@ -1527,8 +1039,181 @@ function getCookie(name) {
 
     // Code for Modal Popup for equipment settings
 
-    
-    
+    document.addEventListener('DOMContentLoaded', function() {
+    // Function to disable elements
+    function toggleEditable(state) {
+        const selects = document.querySelectorAll('.color-select');
+        const checkboxes = document.querySelectorAll('.row-checkbox');
+        selects.forEach(select => {
+            select.disabled = !state;
+        });
+        checkboxes.forEach(checkbox => {
+            checkbox.disabled = !state;
+        });
+    }
+
+    // Initially disable the form elements
+    toggleEditable(false);
+
+    // Function to enable edit mode
+    function editMode(button) {
+        toggleEditable(true);
+        button.classList.add('d-none'); // Hide the edit button
+        const saveButton = button.nextElementSibling;
+        saveButton.classList.remove('d-none'); // Show the save button
+    }
+
+    // Function to save changes and disable edit mode
+    function saveMode(button) {
+        toggleEditable(false);
+        button.classList.add('d-none'); // Hide the save button
+        const editButton = button.previousElementSibling;
+        editButton.classList.remove('d-none'); // Show the edit button
+    }
+
+    // Event listeners for edit buttons
+    const editButtons = document.querySelectorAll('.edit-button');
+    editButtons.forEach(button => {
+        button.addEventListener('click', function() {
+            editMode(this);
+        });
+    });
+
+    // Event listeners for save buttons
+    const saveButtons = document.querySelectorAll('.save-button');
+    saveButtons.forEach(button => {
+        button.addEventListener('click', function() {
+            saveMode(this);
+        });
+    });
+});
+  
+function saveparametersMode(button) {
+    const ip_address = document.getElementById('ip_address').value;
+
+    // Gather all the data from the table
+    const dataToSend = [];
+    const rows = document.querySelectorAll('#form-data-table tr');
+    rows.forEach(row => {
+        const checkbox = row.querySelector('.row-checkbox');
+        if (checkbox.checked) {
+            const name = row.cells[1].textContent;
+            const colorSelect = row.querySelector('.color-select');
+            const color = colorSelect.value;
+            dataToSend.push({ name, color });
+        }
+    });
+
+    // Convert data to JSON
+    const jsonData = JSON.stringify({
+        parameters: dataToSend,
+        ip_address: ip_address // IP address added once at the end
+    });
+
+    // Send data to the server
+    fetch('/save-parameters/', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': getCsrfToken() // Function to get CSRF token
+        },
+        body: jsonData
+    })
+    .then(response => response.json())
+    .then(data => {
+        console.log('Success:', data);
+        alert('Data saved successfully!');
+    })
+    .catch((error) => {
+        console.error('Error:', error);
+        alert('Error saving data');
+    });
+
+    // Disable edit mode
+    toggleEditable(false);
+    button.classList.add('d-none'); // Hide the save button
+    const editButton = button.previousElementSibling;
+    editButton.classList.remove('d-none'); // Show the edit button
+}
+
+// Helper function to get CSRF token from cookies
+function getCsrfToken() {
+    return document.cookie.split('; ').find(row => row.startsWith('csrftoken=')).split('=')[1];
+}
+  
+
+
+function saveMode1(button) {
+    let emailAlerts = [];
+    let smsAlerts = [];
+
+    const ip_address = document.getElementById('ip_address').value;  // Get IP address from input
+    console.log('ip_address')
+
+    // Collect only checked checkboxes from email alerts
+    document.querySelectorAll('.checkbox-list-1 .form-check-input:checked').forEach((checkbox) => {
+        emailAlerts.push(checkbox.id.replace('emailAlert', ''));  // Collecting numeric part of ID
+    });
+
+    // Collect only checked checkboxes from SMS alerts
+    document.querySelectorAll('.checkbox-list-2 .form-check-input:checked').forEach((checkbox) => {
+        smsAlerts.push(checkbox.id.replace('smsAlert', ''));  // Collecting numeric part of ID
+    });
+
+    // Package each alert list with the IP address
+    const data = {
+        emailData: { email: emailAlerts },
+        smsData: { sms: smsAlerts,  },
+        ip_address: {ip_address:ip_address}
+    };
+    console.log('data to be sent', data)
+
+    fetch('/save-alert-settings/', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': getCookie('csrftoken') // Ensuring CSRF token is included for Django
+        },
+        body: JSON.stringify(data)
+    }).then(response => response.json())
+      .then(data => {
+        alert("Alert settings saved successfully!");
+          console.log('Success:', data);
+      })
+      .catch((error) => {
+          console.error('Error:', error);
+      });
+}
+
+// Function to get CSRF token from cookies (required for Django POST requests)
+function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+function editMode1(button) {
+    // Enable all checkboxes in both email and SMS alert sections
+    document.querySelectorAll('.checkbox-list-1 .form-check-input').forEach((checkbox) => {
+        checkbox.disabled = false;  // Enable the checkbox
+    });
+    document.querySelectorAll('.checkbox-list-2 .form-check-input').forEach((checkbox) => {
+        checkbox.disabled = false;  // Enable the checkbox
+    });
+
+    // Optionally hide the edit button and show the save button
+    button.classList.add('d-none');  // Hide the edit button
+    document.querySelector('.save-button').classList.remove('d-none');  // Show the save button
+}
+
 </script>
 {% endblock %}
 {% endblock content %}

@@ -482,8 +482,8 @@ class Alarm_logs(models.Model):
 
 class Email_logs(models.Model):
     equipment=models.ForeignKey(Equipment, on_delete=models.CASCADE, null=True, blank=True)
-    time=models.TimeField(auto_now_add=True)
-    date=models.DateField(auto_now_add=True)
+    time=models.TimeField()
+    date=models.DateField()
     sys_mail = models.BooleanField(default=False)
     to_email = models.EmailField()
     email_sub = models.CharField(max_length=100, null=True)
@@ -551,3 +551,187 @@ class EquipParameter(models.Model):
 
     def __int__(self):
         return self.equipment
+    
+
+class emailalert(models.Model):
+    equipment_name = models.ForeignKey(Equipment, on_delete=models.CASCADE)
+
+  
+    code_1001 = models.BooleanField(default=False, help_text="Temp 1 Low Alarm")
+    code_1002 = models.BooleanField(default=False, help_text="Temp 2 Low Alarm")
+    code_1003 = models.BooleanField(default=False, help_text="Temp 3 Low Alarm")
+    code_1004 = models.BooleanField(default=False, help_text="Temp 4 Low Alarm")
+    code_1005 = models.BooleanField(default=False, help_text="Temp 5 Low Alarm")
+    code_1006 = models.BooleanField(default=False, help_text="Temp 6 Low Alarm")
+    code_1007 = models.BooleanField(default=False, help_text="Temp 7 Low Alarm")
+    code_1008 = models.BooleanField(default=False, help_text="Temp 8 Low Alarm")
+    code_1009 = models.BooleanField(default=False, help_text="Temp 9 Low Alarm")
+    code_1010 = models.BooleanField(default=False, help_text="Temp 10 Low Alarm")
+
+    # Temperature Alarms (High)
+    code_1011 = models.BooleanField(default=False, help_text="Temp 1 High Alarm")
+    code_1012 = models.BooleanField(default=False, help_text="Temp 2 High Alarm")
+    code_1013 = models.BooleanField(default=False, help_text="Temp 3 High Alarm")
+    code_1014 = models.BooleanField(default=False, help_text="Temp 4 High Alarm")
+    code_1015 = models.BooleanField(default=False, help_text="Temp 5 High Alarm")
+    code_1016 = models.BooleanField(default=False, help_text="Temp 6 High Alarm")
+    code_1017 = models.BooleanField(default=False, help_text="Temp 7 High Alarm")
+    code_1018 = models.BooleanField(default=False, help_text="Temp 8 High Alarm")
+    code_1019 = models.BooleanField(default=False, help_text="Temp 9 High Alarm")
+    code_1020 = models.BooleanField(default=False, help_text="Temp 10 High Alarm")
+
+    # Temperature Within Limits
+    code_1021 = models.BooleanField(default=False, help_text="Temp 1 Within Limit")
+    code_1022 = models.BooleanField(default=False, help_text="Temp 2 Within Limit")
+    code_1023 = models.BooleanField(default=False, help_text="Temp 3 Within Limit")
+    code_1024 = models.BooleanField(default=False, help_text="Temp 4 Within Limit")
+    code_1025 = models.BooleanField(default=False, help_text="Temp 5 Within Limit")
+    code_1026 = models.BooleanField(default=False, help_text="Temp 6 Within Limit")
+    code_1027 = models.BooleanField(default=False, help_text="Temp 7 Within Limit")
+    code_1028 = models.BooleanField(default=False, help_text="Temp 8 Within Limit")
+    code_1029 = models.BooleanField(default=False, help_text="Temp 9 Within Limit")
+    code_1030 = models.BooleanField(default=False, help_text="Temp 10 Within Limit")
+
+    # Circuit Failures and Power Issues
+    code_1031 = models.BooleanField(default=False, help_text="CS 1 Circuit Fail")
+    code_1032 = models.BooleanField(default=False, help_text="CS 2 Circuit Fail")
+    code_1033 = models.BooleanField(default=False, help_text="Dry Heater Circuit Fail")
+    code_1034 = models.BooleanField(default=False, help_text="Mains Power Fail")
+    code_1035 = models.BooleanField(default=False, help_text="Mains Power Resume")
+
+    # Miscellaneous Alerts
+    code_1036 = models.BooleanField(default=False, help_text="LT Thermostat Trip")
+    code_1037 = models.BooleanField(default=False, help_text="HT Thermostat Trip")
+    code_1038 = models.BooleanField(default=False, help_text="Door Open")
+    code_1039 = models.BooleanField(default=False, help_text="Door Closed")
+    code_1040 = models.BooleanField(default=False, help_text="Water Level Low")
+    code_1041 = models.BooleanField(default=False, help_text="Water Level OK")
+
+    # Relative Humidity (Low Alarms)
+    code_1042 = models.BooleanField(default=False, help_text="RH 1 Low Alarm")
+    code_1043 = models.BooleanField(default=False, help_text="RH 2 Low Alarm")
+    code_1044 = models.BooleanField(default=False, help_text="RH 3 Low Alarm")
+    code_1045 = models.BooleanField(default=False, help_text="RH 4 Low Alarm")
+    code_1046 = models.BooleanField(default=False, help_text="RH 5 Low Alarm")
+    code_1047 = models.BooleanField(default=False, help_text="RH 6 Low Alarm")
+    code_1048 = models.BooleanField(default=False, help_text="RH 7 Low Alarm")
+    code_1049 = models.BooleanField(default=False, help_text="RH 8 Low Alarm")
+    code_1050 = models.BooleanField(default=False, help_text="RH 9 Low Alarm")
+    code_1051 = models.BooleanField(default=False, help_text="RH 10 Low Alarm")
+
+    # Relative Humidity (High Alarms)
+    code_1053 = models.BooleanField(default=False, help_text="RH 1 High Alarm")
+    code_1054 = models.BooleanField(default=False, help_text="RH 2 High Alarm")
+    code_1055 = models.BooleanField(default=False, help_text="RH 3 High Alarm")
+    code_1056 = models.BooleanField(default=False, help_text="RH 4 High Alarm")
+    code_1057 = models.BooleanField(default=False, help_text="RH 5 High Alarm")
+    code_1058 = models.BooleanField(default=False, help_text="RH 6 High Alarm")
+    code_1059 = models.BooleanField(default=False, help_text="RH 7 High Alarm")
+    code_1060 = models.BooleanField(default=False, help_text="RH 8 High Alarm")
+    code_1061 = models.BooleanField(default=False, help_text="RH 9 High Alarm")
+    code_1062 = models.BooleanField(default=False, help_text="RH 10 High Alarm")
+
+    # Relative Humidity (Within Limits)
+    code_1063 = models.BooleanField(default=False, help_text="RH 1 Within Limit")
+    code_1064 = models.BooleanField(default=False, help_text="RH 2 Within Limit")
+    code_1065 = models.BooleanField(default=False, help_text="RH 3 Within Limit")
+    code_1066 = models.BooleanField(default=False, help_text="RH 4 Within Limit")
+    code_1067 = models.BooleanField(default=False, help_text="RH 5 Within Limit")
+    code_1068 = models.BooleanField(default=False, help_text="RH 6 Within Limit")
+    code_1069 = models.BooleanField(default=False, help_text="RH 7 Within Limit")
+    code_1070 = models.BooleanField(default=False, help_text="RH 8 Within Limit")
+    code_1071 = models.BooleanField(default=False, help_text="RH 9 Within Limit")
+    code_1072 = models.BooleanField(default=False, help_text="RH 10 Within Limit")
+
+    
+
+
+class smsalert(models.Model):
+    equipment_name = models.ForeignKey(Equipment, on_delete=models.CASCADE)
+
+  
+    code_1001 = models.BooleanField(default=False, help_text="Temp 1 Low Alarm")
+    code_1002 = models.BooleanField(default=False, help_text="Temp 2 Low Alarm")
+    code_1003 = models.BooleanField(default=False, help_text="Temp 3 Low Alarm")
+    code_1004 = models.BooleanField(default=False, help_text="Temp 4 Low Alarm")
+    code_1005 = models.BooleanField(default=False, help_text="Temp 5 Low Alarm")
+    code_1006 = models.BooleanField(default=False, help_text="Temp 6 Low Alarm")
+    code_1007 = models.BooleanField(default=False, help_text="Temp 7 Low Alarm")
+    code_1008 = models.BooleanField(default=False, help_text="Temp 8 Low Alarm")
+    code_1009 = models.BooleanField(default=False, help_text="Temp 9 Low Alarm")
+    code_1010 = models.BooleanField(default=False, help_text="Temp 10 Low Alarm")
+
+    # Temperature Alarms (High)
+    code_1011 = models.BooleanField(default=False, help_text="Temp 1 High Alarm")
+    code_1012 = models.BooleanField(default=False, help_text="Temp 2 High Alarm")
+    code_1013 = models.BooleanField(default=False, help_text="Temp 3 High Alarm")
+    code_1014 = models.BooleanField(default=False, help_text="Temp 4 High Alarm")
+    code_1015 = models.BooleanField(default=False, help_text="Temp 5 High Alarm")
+    code_1016 = models.BooleanField(default=False, help_text="Temp 6 High Alarm")
+    code_1017 = models.BooleanField(default=False, help_text="Temp 7 High Alarm")
+    code_1018 = models.BooleanField(default=False, help_text="Temp 8 High Alarm")
+    code_1019 = models.BooleanField(default=False, help_text="Temp 9 High Alarm")
+    code_1020 = models.BooleanField(default=False, help_text="Temp 10 High Alarm")
+
+    # Temperature Within Limits
+    code_1021 = models.BooleanField(default=False, help_text="Temp 1 Within Limit")
+    code_1022 = models.BooleanField(default=False, help_text="Temp 2 Within Limit")
+    code_1023 = models.BooleanField(default=False, help_text="Temp 3 Within Limit")
+    code_1024 = models.BooleanField(default=False, help_text="Temp 4 Within Limit")
+    code_1025 = models.BooleanField(default=False, help_text="Temp 5 Within Limit")
+    code_1026 = models.BooleanField(default=False, help_text="Temp 6 Within Limit")
+    code_1027 = models.BooleanField(default=False, help_text="Temp 7 Within Limit")
+    code_1028 = models.BooleanField(default=False, help_text="Temp 8 Within Limit")
+    code_1029 = models.BooleanField(default=False, help_text="Temp 9 Within Limit")
+    code_1030 = models.BooleanField(default=False, help_text="Temp 10 Within Limit")
+
+    # Circuit Failures and Power Issues
+    code_1031 = models.BooleanField(default=False, help_text="CS 1 Circuit Fail")
+    code_1032 = models.BooleanField(default=False, help_text="CS 2 Circuit Fail")
+    code_1033 = models.BooleanField(default=False, help_text="Dry Heater Circuit Fail")
+    code_1034 = models.BooleanField(default=False, help_text="Mains Power Fail")
+    code_1035 = models.BooleanField(default=False, help_text="Mains Power Resume")
+
+    # Miscellaneous Alerts
+    code_1036 = models.BooleanField(default=False, help_text="LT Thermostat Trip")
+    code_1037 = models.BooleanField(default=False, help_text="HT Thermostat Trip")
+    code_1038 = models.BooleanField(default=False, help_text="Door Open")
+    code_1039 = models.BooleanField(default=False, help_text="Door Closed")
+    code_1040 = models.BooleanField(default=False, help_text="Water Level Low")
+    code_1041 = models.BooleanField(default=False, help_text="Water Level OK")
+
+    # Relative Humidity (Low Alarms)
+    code_1042 = models.BooleanField(default=False, help_text="RH 1 Low Alarm")
+    code_1043 = models.BooleanField(default=False, help_text="RH 2 Low Alarm")
+    code_1044 = models.BooleanField(default=False, help_text="RH 3 Low Alarm")
+    code_1045 = models.BooleanField(default=False, help_text="RH 4 Low Alarm")
+    code_1046 = models.BooleanField(default=False, help_text="RH 5 Low Alarm")
+    code_1047 = models.BooleanField(default=False, help_text="RH 6 Low Alarm")
+    code_1048 = models.BooleanField(default=False, help_text="RH 7 Low Alarm")
+    code_1049 = models.BooleanField(default=False, help_text="RH 8 Low Alarm")
+    code_1050 = models.BooleanField(default=False, help_text="RH 9 Low Alarm")
+    code_1051 = models.BooleanField(default=False, help_text="RH 10 Low Alarm")
+
+    # Relative Humidity (High Alarms)
+    code_1053 = models.BooleanField(default=False, help_text="RH 1 High Alarm")
+    code_1054 = models.BooleanField(default=False, help_text="RH 2 High Alarm")
+    code_1055 = models.BooleanField(default=False, help_text="RH 3 High Alarm")
+    code_1056 = models.BooleanField(default=False, help_text="RH 4 High Alarm")
+    code_1057 = models.BooleanField(default=False, help_text="RH 5 High Alarm")
+    code_1058 = models.BooleanField(default=False, help_text="RH 6 High Alarm")
+    code_1059 = models.BooleanField(default=False, help_text="RH 7 High Alarm")
+    code_1060 = models.BooleanField(default=False, help_text="RH 8 High Alarm")
+    code_1061 = models.BooleanField(default=False, help_text="RH 9 High Alarm")
+    code_1062 = models.BooleanField(default=False, help_text="RH 10 High Alarm")
+
+    # Relative Humidity (Within Limits)
+    code_1063 = models.BooleanField(default=False, help_text="RH 1 Within Limit")
+    code_1064 = models.BooleanField(default=False, help_text="RH 2 Within Limit")
+    code_1065 = models.BooleanField(default=False, help_text="RH 3 Within Limit")
+    code_1066 = models.BooleanField(default=False, help_text="RH 4 Within Limit")
+    code_1067 = models.BooleanField(default=False, help_text="RH 5 Within Limit")
+    code_1068 = models.BooleanField(default=False, help_text="RH 6 Within Limit")
+    code_1069 = models.BooleanField(default=False, help_text="RH 7 Within Limit")
+    code_1070 = models.BooleanField(default=False, help_text="RH 8 Within Limit")
+    code_1071 = models.BooleanField(default=False, help_text="RH 9 Within Limit")
+    code_1072 = models.BooleanField(default=False, help_text="RH 10 Within Limit")

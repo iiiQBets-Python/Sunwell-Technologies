@@ -44,7 +44,8 @@ urlpatterns = [
     path('equipment_configure/', equipment_configure_view, name='equipment_configure'),
     path('equipment/edit/<int:equipment_id>/', equipment_edit, name='equipment_edit'),
     path('equipment_setting/<int:id>/',equipment_setting,name='equipment_setting'),
-    # path('equipment_configure/', equipment_configure_view, name='equipment_configure'),
+    path('save-alert-settings/', save_alert_settings, name='save-alert-settings'),
+    path('save-parameters/', save_parameters, name='save_parameters'),
     path('plc_connect/', plc_connect, name='plc_connect'),
     path('plc_disconnect/', plc_disconnect, name='plc_disconnect'),
 
@@ -65,7 +66,7 @@ urlpatterns = [
     path('sms_Audit_log/', sms_Audit_log, name="sms_Audit_log"),
 
 
-    path('upload_csv/', upload_csv, name='upload_csv'),
+    # path('upload_csv/', upload_csv, name='upload_csv'),
 
     path('change_pass', change_pass, name="change_pass"),
     path('change_pass_2', change_pass_2, name='change_pass_2'),

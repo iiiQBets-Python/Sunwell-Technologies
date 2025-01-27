@@ -1016,3 +1016,923 @@
 2025-01-24 20:22:10,005 - Anonymous is created record in App1_email_logs.
 2025-01-24 20:22:14,541 - Anonymous is created record in App1_email_logs.
 2025-01-24 20:22:18,580 - Anonymous is created record in App1_email_logs.
+2025-01-25 10:58:09,071 - Anonymous is accessing /.
+2025-01-25 10:58:15,895 - Anonymous is accessing /.
+2025-01-25 10:58:16,796 - Darshan is created record in App1_useractivitylog.
+2025-01-25 10:58:16,800 - Darshan is created record in django_session.
+2025-01-25 10:58:16,898 - Darshan is accessing /dashboard/.
+2025-01-25 10:58:18,274 - Darshan is accessing /media/crsco.webp.
+2025-01-25 10:58:26,634 - Darshan is accessing /users/.
+2025-01-25 10:59:08,533 - Darshan is accessing /edit_user/1/.
+2025-01-25 10:59:20,789 - Darshan is accessing /admin/.
+2025-01-25 10:59:20,849 - Darshan is accessing /admin/login/.
+2025-01-25 10:59:26,189 - Darshan is accessing /admin/login/.
+2025-01-25 10:59:26,957 - Darshan is created record in django_session.
+2025-01-25 10:59:27,121 - Darshan is deleting record in django_session.
+2025-01-25 10:59:27,259 - Darshan is updated record in auth_user.
+2025-01-25 10:59:27,264 - Darshan is updated record in django_session.
+2025-01-25 10:59:27,344 - Darshan is accessing /admin/.
+2025-01-25 10:59:33,558 - Darshan is accessing /admin/App1/user/.
+2025-01-25 10:59:33,708 - Darshan is accessing /admin/jsi18n/.
+2025-01-25 10:59:34,945 - Darshan is accessing /admin/App1/user/1/change/.
+2025-01-25 10:59:35,128 - Darshan is accessing /admin/jsi18n/.
+2025-01-25 10:59:52,437 - Darshan is accessing /admin/App1/user/1/change/.
+2025-01-25 10:59:52,459 - Darshan is updated record in App1_user.
+2025-01-25 10:59:52,459 - Darshan is created record in django_admin_log.
+2025-01-25 10:59:52,711 - Darshan is accessing /admin/App1/user/.
+2025-01-25 10:59:52,772 - Darshan is accessing /admin/jsi18n/.
+2025-01-25 10:59:55,960 - Darshan is accessing /users/.
+2025-01-25 10:59:56,018 - Darshan is accessing /media/crsco.webp.
+2025-01-25 11:00:26,233 - Darshan is accessing /users/.
+2025-01-25 11:00:31,963 - Darshan is accessing /users/.
+2025-01-25 11:00:38,301 - Darshan is accessing /users/.
+2025-01-25 11:00:44,043 - Darshan is accessing /app_setings/.
+2025-01-25 11:05:52,824 - Darshan is accessing /users/.
+2025-01-25 11:06:08,365 - Darshan is accessing /role_permission/.
+2025-01-25 11:06:10,546 - Darshan is accessing /user_access/.
+2025-01-25 11:07:24,044 - Anonymous is accessing /.
+2025-01-25 11:07:27,805 - Anonymous is accessing /favicon.ico.
+2025-01-25 11:07:28,606 - Darshan is accessing /admin/App1/superadmin/.
+2025-01-25 11:07:28,709 - Darshan is accessing /admin/jsi18n/.
+2025-01-25 11:07:30,339 - Darshan is accessing /admin/App1/superadmin/1/change/.
+2025-01-25 11:07:30,512 - Darshan is accessing /admin/jsi18n/.
+2025-01-25 11:07:40,473 - Anonymous is accessing /.
+2025-01-25 11:07:41,464 - Anonymous is created record in django_session.
+2025-01-25 11:07:53,761 - Anonymous is accessing /.
+2025-01-25 11:07:55,707 - Sunwell is created record in App1_useractivitylog.
+2025-01-25 11:07:55,712 - Sunwell is updated record in django_session.
+2025-01-25 11:07:55,805 - Sunwell is accessing /dashboard/.
+2025-01-25 11:07:57,277 - Sunwell is accessing /media/crsco.webp.
+2025-01-25 11:08:00,940 - Sunwell is accessing /role_permission/.
+2025-01-25 11:08:02,559 - Sunwell is accessing /user_access/.
+2025-01-25 11:08:04,787 - Sunwell is accessing /user_access/.
+2025-01-25 11:08:04,996 - Sunwell is updated record in App1_user_access_db.
+2025-01-25 11:08:05,126 - Sunwell is created record in App1_useractivitylog.
+2025-01-25 11:08:06,544 - Sunwell is accessing /role_permission/.
+2025-01-25 11:08:07,945 - Sunwell is accessing /user_access/.
+2025-01-25 11:08:12,307 - Sunwell is accessing /user_access/.
+2025-01-25 11:08:12,514 - Sunwell is updated record in App1_user_access_db.
+2025-01-25 11:08:12,610 - Sunwell is created record in App1_useractivitylog.
+2025-01-25 11:08:13,803 - Sunwell is accessing /role_permission/.
+2025-01-25 11:08:15,215 - Sunwell is accessing /user_access/.
+2025-01-25 11:08:27,350 - Sunwell is accessing /user_access/.
+2025-01-25 11:08:27,360 - Sunwell is updated record in App1_user_access_db.
+2025-01-25 11:08:27,566 - Sunwell is created record in App1_useractivitylog.
+2025-01-25 11:08:28,804 - Sunwell is accessing /role_permission/.
+2025-01-25 11:08:40,846 - Darshan is accessing /role_permission/.
+2025-01-25 11:08:44,238 - Darshan is accessing /app_setings/.
+2025-01-25 11:08:48,179 - Darshan is accessing /save_app_settings/.
+2025-01-25 11:08:48,364 - Darshan is updated record in App1_appsettings.
+2025-01-25 11:14:36,268 - Darshan is accessing /app_setings/.
+2025-01-25 11:14:37,132 - Darshan is accessing /app_setings/.
+2025-01-25 11:14:37,945 - Darshan is accessing /app_setings/.
+2025-01-25 11:15:38,977 - Darshan is accessing /logout/.
+2025-01-25 11:15:39,421 - Darshan is created record in App1_useractivitylog.
+2025-01-25 11:15:39,424 - Anonymous is deleting record in django_session.
+2025-01-25 11:15:39,528 - Anonymous is accessing /.
+2025-01-25 11:34:05,103 - Anonymous is accessing /.
+2025-01-25 11:34:05,849 - Anonymous is created record in django_session.
+2025-01-25 11:34:14,024 - Anonymous is accessing /.
+2025-01-25 11:34:14,753 - Anonymous is deleting record in django_session.
+2025-01-25 11:34:15,035 - Darshan is created record in App1_useractivitylog.
+2025-01-25 11:34:15,038 - Darshan is created record in django_session.
+2025-01-25 11:34:15,124 - Darshan is accessing /dashboard/.
+2025-01-25 11:34:16,662 - Darshan is accessing /media/crsco.webp.
+2025-01-25 11:34:35,187 - Darshan is accessing /dashboard/.
+2025-01-25 11:36:40,980 - Darshan is accessing /logout/.
+2025-01-25 11:36:41,425 - Darshan is created record in App1_useractivitylog.
+2025-01-25 11:36:41,429 - Anonymous is deleting record in django_session.
+2025-01-25 11:36:41,531 - Anonymous is accessing /.
+2025-01-25 12:08:31,000 - Sunwell is accessing /logout/.
+2025-01-25 12:08:33,320 - Sunwell is created record in App1_useractivitylog.
+2025-01-25 12:08:33,322 - Anonymous is deleting record in django_session.
+2025-01-25 12:08:33,426 - Anonymous is accessing /.
+2025-01-25 12:15:45,740 - Anonymous is accessing /.
+2025-01-25 12:15:46,910 - Darshan is created record in App1_useractivitylog.
+2025-01-25 12:15:46,912 - Darshan is created record in django_session.
+2025-01-25 12:15:47,019 - Darshan is accessing /dashboard/.
+2025-01-25 12:15:48,177 - Darshan is accessing /media/crsco.webp.
+2025-01-25 12:15:51,849 - Darshan is accessing /equipment_configure/.
+2025-01-25 12:15:55,735 - Darshan is accessing /dashboard/.
+2025-01-25 12:17:16,367 - Darshan is accessing /view_log/.
+2025-01-25 12:17:51,001 - Darshan is accessing /view_log/.
+2025-01-25 12:18:03,222 - Darshan is accessing /view_log/.
+2025-01-25 12:18:11,581 - Darshan is accessing /view_log/.
+2025-01-25 12:18:22,169 - Darshan is accessing /admin/App1/equipment/.
+2025-01-25 12:18:22,177 - Darshan is accessing /admin/login/.
+2025-01-25 12:18:25,433 - Darshan is accessing /admin/login/.
+2025-01-25 12:18:26,163 - Darshan is created record in django_session.
+2025-01-25 12:18:26,377 - Darshan is deleting record in django_session.
+2025-01-25 12:18:26,559 - Darshan is updated record in auth_user.
+2025-01-25 12:18:26,562 - Darshan is updated record in django_session.
+2025-01-25 12:18:26,711 - Darshan is accessing /admin/App1/equipment/.
+2025-01-25 12:18:26,792 - Darshan is accessing /admin/jsi18n/.
+2025-01-25 12:18:54,796 - Darshan is accessing /admin/App1/equipment/9/change/.
+2025-01-25 12:18:54,857 - Darshan is accessing /admin/jsi18n/.
+2025-01-25 12:19:16,983 - Darshan is accessing /logout/.
+2025-01-25 12:19:17,420 - Darshan is created record in App1_useractivitylog.
+2025-01-25 12:19:17,426 - Anonymous is deleting record in django_session.
+2025-01-25 12:19:17,515 - Anonymous is accessing /.
+2025-01-25 12:19:52,031 - Anonymous is accessing /admin/App1/equipment/9/delete/.
+2025-01-25 12:19:52,048 - Anonymous is accessing /admin/login/.
+2025-01-25 12:19:56,804 - Anonymous is accessing /admin/login/.
+2025-01-25 12:19:57,536 - Anonymous is created record in django_session.
+2025-01-25 12:19:57,812 - Anonymous is updated record in auth_user.
+2025-01-25 12:19:57,815 - Anonymous is updated record in django_session.
+2025-01-25 12:19:57,901 - Anonymous is accessing /admin/App1/equipment/9/delete/.
+2025-01-25 12:20:08,044 - Anonymous is accessing /admin/login/.
+2025-01-25 12:20:08,058 - Anonymous is accessing /admin/.
+2025-01-25 12:20:11,953 - Anonymous is accessing /admin/App1/equipment/.
+2025-01-25 12:20:12,008 - Anonymous is accessing /admin/jsi18n/.
+2025-01-25 12:20:13,300 - Anonymous is accessing /admin/App1/equipment/9/change/.
+2025-01-25 12:20:13,360 - Anonymous is accessing /admin/jsi18n/.
+2025-01-25 12:20:25,913 - Anonymous is accessing /.
+2025-01-25 12:20:27,730 - Anonymous is accessing /.
+2025-01-25 12:20:28,860 - Anonymous is accessing /.
+2025-01-25 12:20:29,198 - Anonymous is accessing /.
+2025-01-25 12:20:29,672 - Anonymous is accessing /.
+2025-01-25 12:20:29,823 - Anonymous is accessing /.
+2025-01-25 12:20:30,494 - Anonymous is accessing /.
+2025-01-25 12:20:30,657 - Anonymous is accessing /.
+2025-01-25 12:20:30,861 - Anonymous is accessing /.
+2025-01-25 12:20:36,378 - Anonymous is accessing /.
+2025-01-25 12:20:37,102 - Anonymous is deleting record in django_session.
+2025-01-25 12:20:37,402 - Darshan is created record in App1_useractivitylog.
+2025-01-25 12:20:37,406 - Darshan is created record in django_session.
+2025-01-25 12:20:37,505 - Darshan is accessing /dashboard/.
+2025-01-25 12:21:43,366 - Darshan is accessing /logout/.
+2025-01-25 12:21:43,797 - Darshan is created record in App1_useractivitylog.
+2025-01-25 12:21:43,801 - Anonymous is deleting record in django_session.
+2025-01-25 12:21:43,893 - Anonymous is accessing /.
+2025-01-25 12:25:15,525 - Anonymous is accessing /.
+2025-01-25 12:25:16,717 - Darshan is created record in App1_useractivitylog.
+2025-01-25 12:25:16,722 - Darshan is created record in django_session.
+2025-01-25 12:25:16,818 - Darshan is accessing /dashboard/.
+2025-01-25 12:25:21,464 - Darshan is accessing /app_setings/.
+2025-01-25 12:25:27,057 - Darshan is accessing /save_app_settings/.
+2025-01-25 12:25:27,242 - Darshan is updated record in App1_appsettings.
+2025-01-25 12:25:56,662 - Darshan is accessing /admin/App1/equipment/9/change/.
+2025-01-25 12:25:56,672 - Darshan is accessing /admin/login/.
+2025-01-25 12:25:59,418 - Darshan is accessing /admin/login/.
+2025-01-25 12:26:00,149 - Darshan is created record in django_session.
+2025-01-25 12:26:00,326 - Darshan is deleting record in django_session.
+2025-01-25 12:26:00,463 - Darshan is updated record in auth_user.
+2025-01-25 12:26:00,466 - Darshan is updated record in django_session.
+2025-01-25 12:26:00,551 - Darshan is accessing /admin/App1/equipment/9/change/.
+2025-01-25 12:26:00,627 - Darshan is accessing /admin/jsi18n/.
+2025-01-25 12:26:28,979 - Darshan is accessing /logout/.
+2025-01-25 12:26:29,506 - Darshan is created record in App1_useractivitylog.
+2025-01-25 12:26:29,509 - Anonymous is deleting record in django_session.
+2025-01-25 12:26:29,602 - Anonymous is accessing /.
+2025-01-25 12:26:36,581 - Anonymous is accessing /.
+2025-01-25 12:26:38,338 - Sunwell is created record in App1_useractivitylog.
+2025-01-25 12:26:38,342 - Sunwell is created record in django_session.
+2025-01-25 12:26:38,442 - Sunwell is accessing /dashboard/.
+2025-01-25 12:26:42,759 - Sunwell is accessing /logout/.
+2025-01-25 12:26:42,945 - Sunwell is created record in App1_useractivitylog.
+2025-01-25 12:26:42,949 - Anonymous is deleting record in django_session.
+2025-01-25 12:26:43,042 - Anonymous is accessing /.
+2025-01-25 12:26:50,170 - Anonymous is accessing /.
+2025-01-25 12:26:52,006 - Darshan is created record in App1_useractivitylog.
+2025-01-25 12:26:52,011 - Darshan is created record in django_session.
+2025-01-25 12:26:52,112 - Darshan is accessing /dashboard/.
+2025-01-25 12:26:58,752 - Darshan is accessing /app_setings/.
+2025-01-25 12:27:08,987 - Darshan is accessing /equipment_configure/.
+2025-01-25 12:27:13,440 - Darshan is accessing /equipment_configure/.
+2025-01-25 12:27:15,526 - Darshan is accessing /equipment_configure/.
+2025-01-25 12:27:17,113 - Darshan is accessing /equipment_configure/.
+2025-01-25 12:27:30,809 - Darshan is accessing /admin/App1/equipment/.
+2025-01-25 12:27:30,824 - Darshan is accessing /admin/login/.
+2025-01-25 12:27:34,183 - Darshan is accessing /admin/login/.
+2025-01-25 12:27:35,754 - Darshan is created record in django_session.
+2025-01-25 12:27:35,958 - Darshan is deleting record in django_session.
+2025-01-25 12:27:36,084 - Darshan is updated record in auth_user.
+2025-01-25 12:27:36,087 - Darshan is updated record in django_session.
+2025-01-25 12:27:36,175 - Darshan is accessing /admin/App1/equipment/.
+2025-01-25 12:27:36,293 - Darshan is accessing /admin/jsi18n/.
+2025-01-25 12:27:37,799 - Darshan is accessing /admin/App1/equipment/7/change/.
+2025-01-25 12:27:37,914 - Darshan is accessing /admin/jsi18n/.
+2025-01-25 12:27:41,985 - Darshan is accessing /admin/App1/equipment/.
+2025-01-25 12:27:43,109 - Darshan is accessing /admin/App1/equipment/8/change/.
+2025-01-25 12:27:43,260 - Darshan is accessing /admin/jsi18n/.
+2025-01-25 12:27:53,431 - Darshan is accessing /equipment_configure/.
+2025-01-25 12:27:53,577 - Darshan is accessing /media/crsco.webp.
+2025-01-25 12:32:57,078 - Darshan is accessing /view_log/.
+2025-01-25 12:32:59,548 - Darshan is accessing /view_log/.
+2025-01-25 12:33:12,163 - Darshan is accessing /view_log/.
+2025-01-25 12:34:01,493 - Darshan is accessing /admin/App1/equipment/8/change/.
+2025-01-25 12:34:01,513 - Darshan is updated record in App1_equipment.
+2025-01-25 12:34:01,516 - Darshan is created record in django_admin_log.
+2025-01-25 12:34:01,970 - Darshan is accessing /admin/App1/equipment/.
+2025-01-25 12:34:02,030 - Darshan is accessing /admin/jsi18n/.
+2025-01-25 12:34:05,118 - Darshan is accessing /view_log/.
+2025-01-25 12:35:15,540 - Darshan is accessing /admin/App1/temperaturehumidityrecord/.
+2025-01-25 12:35:15,644 - Darshan is accessing /admin/jsi18n/.
+2025-01-25 12:35:16,935 - Darshan is accessing /admin/App1/temperaturehumidityrecord/49/change/.
+2025-01-25 12:35:17,198 - Darshan is accessing /admin/jsi18n/.
+2025-01-25 12:35:19,750 - Darshan is accessing /admin/App1/temperaturehumidityrecord/.
+2025-01-25 12:35:24,653 - Darshan is accessing /admin/App1/equipment/.
+2025-01-25 12:35:24,736 - Darshan is accessing /admin/jsi18n/.
+2025-01-25 12:35:26,326 - Darshan is accessing /admin/App1/equipment/8/change/.
+2025-01-25 12:35:26,434 - Darshan is accessing /admin/jsi18n/.
+2025-01-25 12:35:28,177 - Darshan is accessing /admin/App1/equipment/.
+2025-01-25 12:35:30,314 - Darshan is accessing /admin/App1/temperaturehumidityrecord/.
+2025-01-25 12:35:30,402 - Darshan is accessing /admin/jsi18n/.
+2025-01-25 12:35:31,357 - Darshan is accessing /admin/App1/temperaturehumidityrecord/49/change/.
+2025-01-25 12:35:31,478 - Darshan is accessing /admin/jsi18n/.
+2025-01-25 12:35:37,832 - Darshan is accessing /admin/App1/temperaturehumidityrecord/49/delete/.
+2025-01-25 12:35:39,061 - Darshan is accessing /admin/App1/temperaturehumidityrecord/49/delete/.
+2025-01-25 12:35:39,071 - Darshan is created record in django_admin_log.
+2025-01-25 12:35:39,072 - Darshan is deleting record in App1_temperaturehumidityrecord.
+2025-01-25 12:35:39,330 - Darshan is accessing /admin/App1/temperaturehumidityrecord/.
+2025-01-25 12:35:39,439 - Darshan is accessing /admin/jsi18n/.
+2025-01-25 12:35:43,072 - Darshan is accessing /view_log/.
+2025-01-25 12:35:51,851 - Darshan is accessing /admin/App1/temperaturehumidityrecord/48/change/.
+2025-01-25 12:35:51,975 - Darshan is accessing /admin/jsi18n/.
+2025-01-25 12:35:55,282 - Darshan is accessing /admin/App1/temperaturehumidityrecord/48/delete/.
+2025-01-25 12:35:56,269 - Darshan is accessing /admin/App1/temperaturehumidityrecord/48/delete/.
+2025-01-25 12:35:56,309 - Darshan is created record in django_admin_log.
+2025-01-25 12:35:56,310 - Darshan is deleting record in App1_temperaturehumidityrecord.
+2025-01-25 12:35:56,527 - Darshan is accessing /admin/App1/temperaturehumidityrecord/.
+2025-01-25 12:35:56,649 - Darshan is accessing /admin/jsi18n/.
+2025-01-25 12:35:58,480 - Darshan is accessing /view_log/.
+2025-01-25 12:36:01,289 - Darshan is accessing /view_log/.
+2025-01-25 12:36:12,862 - Darshan is accessing /view_log/.
+2025-01-25 12:39:28,987 - Darshan is accessing /admin/App1/equipment/.
+2025-01-25 12:39:29,030 - Darshan is accessing /admin/jsi18n/.
+2025-01-25 12:39:30,966 - Darshan is accessing /admin/App1/equipment/7/change/.
+2025-01-25 12:39:31,022 - Darshan is accessing /admin/jsi18n/.
+2025-01-25 13:27:55,513 - Darshan is accessing /logout/.
+2025-01-25 13:27:55,767 - Darshan is created record in App1_useractivitylog.
+2025-01-25 13:27:55,777 - Anonymous is deleting record in django_session.
+2025-01-25 13:27:55,959 - Anonymous is accessing /.
+2025-01-25 13:36:12,990 - Anonymous is accessing /logout/.
+2025-01-25 13:36:13,013 - Anonymous is accessing /.
+2025-01-25 13:44:34,832 - Anonymous is accessing /.
+2025-01-25 13:44:36,867 - Darshan is created record in App1_useractivitylog.
+2025-01-25 13:44:36,873 - Darshan is created record in django_session.
+2025-01-25 13:44:37,017 - Darshan is accessing /dashboard/.
+2025-01-25 13:44:38,250 - Darshan is accessing /media/crsco.webp.
+2025-01-25 13:44:42,126 - Darshan is accessing /app_setings/.
+2025-01-25 13:51:05,478 - Darshan is accessing /department/.
+2025-01-25 13:51:21,215 - Darshan is accessing /edit_department/1/.
+2025-01-25 13:51:21,404 - Darshan is updated record in App1_department.
+2025-01-25 13:51:21,504 - Darshan is created record in App1_useractivitylog.
+2025-01-25 13:51:21,529 - Darshan is accessing /department/.
+2025-01-25 13:52:05,568 - Anonymous is created record in App1_email_logs.
+2025-01-25 13:52:11,596 - Anonymous is created record in App1_email_logs.
+2025-01-25 14:51:50,976 - Darshan is accessing /logout/.
+2025-01-25 14:51:51,410 - Darshan is created record in App1_useractivitylog.
+2025-01-25 14:51:51,417 - Anonymous is deleting record in django_session.
+2025-01-25 14:51:51,510 - Anonymous is accessing /.
+2025-01-25 15:03:03,839 - Anonymous is accessing /.
+2025-01-25 15:03:04,805 - Darshan is created record in App1_useractivitylog.
+2025-01-25 15:03:04,827 - Darshan is created record in django_session.
+2025-01-25 15:03:04,916 - Darshan is accessing /dashboard/.
+2025-01-25 15:03:06,217 - Darshan is accessing /media/crsco.webp.
+2025-01-25 15:03:14,572 - Darshan is accessing /app_setings/.
+2025-01-25 15:03:19,273 - Darshan is accessing /equipment_configure/.
+2025-01-25 15:03:20,628 - Darshan is accessing /equipment_setting/8/.
+2025-01-25 15:05:43,440 - Darshan is accessing /app_setings/.
+2025-01-25 15:06:21,648 - Darshan is accessing /app_setings/.
+2025-01-25 15:07:42,274 - Darshan is accessing /dashboard/.
+2025-01-25 15:07:43,534 - Darshan is accessing /dashboard/.
+2025-01-25 15:07:43,765 - Darshan is accessing /dashboard/.
+2025-01-25 15:07:47,306 - Darshan is accessing /logout/.
+2025-01-25 15:07:47,403 - Darshan is created record in App1_useractivitylog.
+2025-01-25 15:07:47,411 - Anonymous is deleting record in django_session.
+2025-01-25 15:07:47,517 - Anonymous is accessing /.
+2025-01-25 15:08:01,132 - Anonymous is accessing /.
+2025-01-25 15:08:01,963 - Darshan is created record in App1_useractivitylog.
+2025-01-25 15:08:01,966 - Darshan is created record in django_session.
+2025-01-25 15:08:02,055 - Darshan is accessing /dashboard/.
+2025-01-25 16:08:03,990 - Darshan is accessing /logout/.
+2025-01-25 16:08:04,430 - Darshan is created record in App1_useractivitylog.
+2025-01-25 16:08:04,430 - Anonymous is deleting record in django_session.
+2025-01-25 16:08:04,526 - Anonymous is accessing /.
+2025-01-25 16:45:06,303 - Anonymous is accessing /.
+2025-01-25 16:45:08,668 - Darshan is created record in App1_useractivitylog.
+2025-01-25 16:45:08,721 - Darshan is created record in django_session.
+2025-01-25 16:45:08,888 - Darshan is accessing /dashboard/.
+2025-01-25 16:45:10,290 - Darshan is accessing /media/crsco.webp.
+2025-01-25 16:45:14,041 - Darshan is accessing /department/.
+2025-01-25 16:45:24,958 - Darshan is accessing /edit_department/1/.
+2025-01-25 16:45:25,144 - Darshan is updated record in App1_department.
+2025-01-25 16:45:25,221 - Darshan is created record in App1_useractivitylog.
+2025-01-25 16:45:25,236 - Darshan is accessing /department/.
+2025-01-25 16:48:49,766 - Darshan is accessing /edit_department/1/.
+2025-01-25 16:48:49,950 - Darshan is updated record in App1_department.
+2025-01-25 16:48:50,071 - Darshan is created record in App1_useractivitylog.
+2025-01-25 16:48:50,119 - Darshan is accessing /department/.
+2025-01-25 16:50:04,350 - Anonymous is created record in App1_email_logs.
+2025-01-25 16:50:08,307 - Anonymous is created record in App1_email_logs.
+2025-01-25 16:50:25,463 - Darshan is accessing /edit_department/1/.
+2025-01-25 16:50:25,630 - Darshan is updated record in App1_department.
+2025-01-25 16:50:25,715 - Darshan is created record in App1_useractivitylog.
+2025-01-25 16:50:25,730 - Darshan is accessing /department/.
+2025-01-25 16:50:39,080 - Darshan is accessing /edit_department/2/.
+2025-01-25 16:50:39,270 - Darshan is updated record in App1_department.
+2025-01-25 16:50:39,366 - Darshan is created record in App1_useractivitylog.
+2025-01-25 16:50:39,388 - Darshan is accessing /department/.
+2025-01-25 16:52:04,160 - Anonymous is created record in App1_email_logs.
+2025-01-25 16:52:08,119 - Anonymous is created record in App1_email_logs.
+2025-01-25 16:57:57,773 - Darshan is accessing /edit_department/1/.
+2025-01-25 16:57:57,943 - Darshan is updated record in App1_department.
+2025-01-25 16:57:58,019 - Darshan is created record in App1_useractivitylog.
+2025-01-25 16:57:58,042 - Darshan is accessing /department/.
+2025-01-25 16:58:08,247 - Darshan is accessing /edit_department/2/.
+2025-01-25 16:58:08,410 - Darshan is updated record in App1_department.
+2025-01-25 16:58:08,488 - Darshan is created record in App1_useractivitylog.
+2025-01-25 16:58:08,502 - Darshan is accessing /department/.
+2025-01-25 16:59:04,288 - Anonymous is created record in App1_email_logs.
+2025-01-25 16:59:07,998 - Anonymous is created record in App1_email_logs.
+2025-01-25 16:59:11,769 - Anonymous is created record in App1_email_logs.
+2025-01-25 16:59:15,708 - Anonymous is created record in App1_email_logs.
+2025-01-25 17:00:34,307 - Darshan is accessing /edit_department/1/.
+2025-01-25 17:00:34,730 - Darshan is updated record in App1_department.
+2025-01-25 17:00:34,804 - Darshan is created record in App1_useractivitylog.
+2025-01-25 17:00:34,813 - Darshan is accessing /department/.
+2025-01-25 17:00:41,603 - Darshan is accessing /edit_department/2/.
+2025-01-25 17:00:41,778 - Darshan is updated record in App1_department.
+2025-01-25 17:00:41,844 - Darshan is created record in App1_useractivitylog.
+2025-01-25 17:00:41,863 - Darshan is accessing /department/.
+2025-01-25 17:02:29,670 - Darshan is accessing /department/.
+2025-01-25 17:02:45,302 - Darshan is accessing /edit_department/1/.
+2025-01-25 17:02:45,483 - Darshan is updated record in App1_department.
+2025-01-25 17:02:45,569 - Darshan is created record in App1_useractivitylog.
+2025-01-25 17:02:45,588 - Darshan is accessing /department/.
+2025-01-25 17:02:51,690 - Darshan is accessing /edit_department/2/.
+2025-01-25 17:02:51,784 - Darshan is updated record in App1_department.
+2025-01-25 17:02:51,858 - Darshan is created record in App1_useractivitylog.
+2025-01-25 17:02:51,872 - Darshan is accessing /department/.
+2025-01-25 17:09:11,363 - Darshan is accessing /department/.
+2025-01-25 17:09:11,538 - Darshan is accessing /department/.
+2025-01-25 17:09:11,754 - Darshan is accessing /department/.
+2025-01-25 17:09:11,944 - Darshan is accessing /department/.
+2025-01-25 17:09:12,131 - Darshan is accessing /department/.
+2025-01-25 17:09:20,424 - Darshan is accessing /edit_department/1/.
+2025-01-25 17:09:20,572 - Darshan is updated record in App1_department.
+2025-01-25 17:09:20,671 - Darshan is created record in App1_useractivitylog.
+2025-01-25 17:09:20,683 - Darshan is accessing /department/.
+2025-01-25 17:09:27,668 - Darshan is accessing /edit_department/2/.
+2025-01-25 17:09:27,839 - Darshan is updated record in App1_department.
+2025-01-25 17:09:27,904 - Darshan is created record in App1_useractivitylog.
+2025-01-25 17:09:27,908 - Darshan is accessing /department/.
+2025-01-25 17:11:04,598 - Anonymous is created record in App1_email_logs.
+2025-01-25 17:11:08,488 - Anonymous is created record in App1_email_logs.
+2025-01-25 17:11:12,340 - Anonymous is created record in App1_email_logs.
+2025-01-25 17:11:16,376 - Anonymous is created record in App1_email_logs.
+2025-01-25 17:19:29,693 - Darshan is accessing /department/.
+2025-01-25 17:19:30,514 - Darshan is accessing /department/.
+2025-01-25 17:19:37,978 - Darshan is accessing /edit_department/1/.
+2025-01-25 17:19:38,148 - Darshan is updated record in App1_department.
+2025-01-25 17:19:38,223 - Darshan is created record in App1_useractivitylog.
+2025-01-25 17:19:38,228 - Darshan is accessing /department/.
+2025-01-25 17:19:44,472 - Darshan is accessing /edit_department/2/.
+2025-01-25 17:19:44,638 - Darshan is updated record in App1_department.
+2025-01-25 17:19:44,704 - Darshan is created record in App1_useractivitylog.
+2025-01-25 17:19:44,714 - Darshan is accessing /department/.
+2025-01-25 17:19:55,143 - Darshan is accessing /edit_department/1/.
+2025-01-25 17:19:55,318 - Darshan is updated record in App1_department.
+2025-01-25 17:19:55,393 - Darshan is created record in App1_useractivitylog.
+2025-01-25 17:19:55,401 - Darshan is accessing /department/.
+2025-01-25 17:20:04,299 - Anonymous is created record in App1_email_logs.
+2025-01-25 17:20:04,666 - Darshan is accessing /edit_department/2/.
+2025-01-25 17:20:04,833 - Darshan is updated record in App1_department.
+2025-01-25 17:20:04,915 - Darshan is created record in App1_useractivitylog.
+2025-01-25 17:20:04,920 - Darshan is accessing /department/.
+2025-01-25 18:11:31,282 - Darshan is accessing /department/.
+2025-01-25 18:11:44,822 - Darshan is accessing /edit_department/1/.
+2025-01-25 18:11:45,033 - Darshan is updated record in App1_department.
+2025-01-25 18:11:45,132 - Darshan is created record in App1_useractivitylog.
+2025-01-25 18:11:45,154 - Darshan is accessing /department/.
+2025-01-25 18:12:06,256 - Darshan is accessing /edit_department/2/.
+2025-01-25 18:12:06,457 - Darshan is updated record in App1_department.
+2025-01-25 18:12:06,562 - Darshan is created record in App1_useractivitylog.
+2025-01-25 18:12:06,584 - Darshan is accessing /department/.
+2025-01-25 18:13:04,610 - Anonymous is created record in App1_email_logs.
+2025-01-25 19:13:10,951 - Darshan is accessing /logout/.
+2025-01-25 19:13:11,141 - Darshan is created record in App1_useractivitylog.
+2025-01-25 19:13:11,141 - Anonymous is deleting record in django_session.
+2025-01-25 19:13:11,282 - Anonymous is accessing /.
+2025-01-26 11:16:36,286 - Anonymous is accessing /.
+2025-01-26 11:16:36,856 - Anonymous is accessing /favicon.ico.
+2025-01-26 11:16:42,631 - Anonymous is accessing /.
+2025-01-26 11:16:43,564 - Darshan is created record in App1_useractivitylog.
+2025-01-26 11:16:43,570 - Darshan is created record in django_session.
+2025-01-26 11:16:43,698 - Darshan is accessing /dashboard/.
+2025-01-26 11:16:46,658 - Darshan is accessing /media/crsco.webp.
+2025-01-26 11:16:51,064 - Darshan is accessing /department/.
+2025-01-26 11:20:43,589 - Darshan is accessing /edit_department/1/.
+2025-01-26 11:20:44,002 - Darshan is updated record in App1_department.
+2025-01-26 11:20:44,121 - Darshan is created record in App1_useractivitylog.
+2025-01-26 11:20:44,128 - Darshan is accessing /department/.
+2025-01-26 11:42:13,980 - Darshan is accessing /edit_department/1/.
+2025-01-26 11:42:14,419 - Darshan is updated record in App1_department.
+2025-01-26 11:42:14,538 - Darshan is created record in App1_useractivitylog.
+2025-01-26 11:42:14,570 - Darshan is accessing /department/.
+2025-01-26 11:57:26,794 - Darshan is accessing /edit_department/1/.
+2025-01-26 11:57:27,228 - Darshan is updated record in App1_department.
+2025-01-26 11:57:27,333 - Darshan is created record in App1_useractivitylog.
+2025-01-26 11:57:27,356 - Darshan is accessing /department/.
+2025-01-26 12:10:33,213 - Darshan is accessing /department/.
+2025-01-26 12:10:48,926 - Darshan is accessing /equipment_configure/.
+2025-01-26 12:10:50,952 - Darshan is accessing /equipment_setting/8/.
+2025-01-26 12:11:10,635 - Darshan is accessing /equipment_configure/.
+2025-01-26 12:11:13,023 - Darshan is accessing /equipment_setting/9/.
+2025-01-26 12:11:24,439 - Darshan is accessing /equipment_configure/.
+2025-01-26 12:11:27,203 - Darshan is accessing /equipment_configure/.
+2025-01-26 12:11:30,891 - Darshan is accessing /equipment_configure/.
+2025-01-26 12:11:41,604 - Darshan is accessing /admin/.
+2025-01-26 12:11:41,690 - Darshan is accessing /admin/login/.
+2025-01-26 12:11:45,591 - Darshan is accessing /admin/login/.
+2025-01-26 12:11:46,397 - Darshan is created record in django_session.
+2025-01-26 12:11:46,569 - Darshan is deleting record in django_session.
+2025-01-26 12:11:46,764 - Darshan is updated record in auth_user.
+2025-01-26 12:11:46,767 - Darshan is updated record in django_session.
+2025-01-26 12:11:46,860 - Darshan is accessing /admin/.
+2025-01-26 12:11:52,006 - Darshan is accessing /admin/App1/equipment/.
+2025-01-26 12:11:52,292 - Darshan is accessing /admin/jsi18n/.
+2025-01-26 12:11:53,796 - Darshan is accessing /admin/App1/equipment/7/change/.
+2025-01-26 12:11:53,948 - Darshan is accessing /admin/jsi18n/.
+2025-01-26 12:12:00,582 - Darshan is accessing /equipment_setting/7/.
+2025-01-26 12:12:42,772 - Darshan is accessing /equipment_setting/7/.
+2025-01-26 12:13:01,305 - Darshan is accessing /save-alert-settings/.
+2025-01-26 12:13:02,923 - Darshan is accessing /save-alert-settings/.
+2025-01-26 12:13:04,682 - Darshan is accessing /save-alert-settings/.
+2025-01-26 12:13:18,273 - Darshan is accessing /equipment_setting/7/.
+2025-01-26 12:13:18,682 - Darshan is accessing /media/crsco.webp.
+2025-01-26 12:13:28,460 - Darshan is accessing /save-alert-settings/.
+2025-01-26 12:14:03,866 - Darshan is accessing /save-parameters/.
+2025-01-26 12:14:03,874 - Darshan is created record in App1_equipparameter.
+2025-01-26 12:14:04,389 - Darshan is updated record in App1_equipparameter.
+2025-01-26 12:14:06,623 - Darshan is accessing /equipment_setting/7/.
+2025-01-26 12:14:18,660 - Darshan is accessing /save-parameters/.
+2025-01-26 12:14:18,849 - Darshan is updated record in App1_equipparameter.
+2025-01-26 12:14:25,834 - Darshan is accessing /equipment_setting/7/.
+2025-01-26 12:14:37,874 - Darshan is accessing /save-parameters/.
+2025-01-26 12:14:38,051 - Darshan is updated record in App1_equipparameter.
+2025-01-26 12:15:00,202 - Darshan is accessing /equipment_setting/7/.
+2025-01-26 12:15:04,689 - Darshan is accessing /equipment_setting/7/.
+2025-01-26 12:15:15,053 - Darshan is accessing /save-parameters/.
+2025-01-26 12:15:15,232 - Darshan is updated record in App1_equipparameter.
+2025-01-26 12:15:19,403 - Darshan is accessing /equipment_setting/7/.
+2025-01-26 12:15:39,679 - Darshan is accessing /equipment_configure/.
+2025-01-26 12:15:49,863 - Darshan is accessing /equipment_setting/9/.
+2025-01-26 12:16:06,841 - Darshan is accessing /admin/App1/equipment/.
+2025-01-26 12:16:06,929 - Darshan is accessing /admin/jsi18n/.
+2025-01-26 12:16:08,792 - Darshan is accessing /admin/App1/equipment/8/change/.
+2025-01-26 12:16:08,910 - Darshan is accessing /admin/jsi18n/.
+2025-01-26 12:16:19,327 - Darshan is accessing /admin/App1/equipment/8/change/.
+2025-01-26 12:16:19,386 - Darshan is updated record in App1_equipment.
+2025-01-26 12:16:19,387 - Darshan is created record in django_admin_log.
+2025-01-26 12:16:19,584 - Darshan is accessing /admin/App1/equipment/.
+2025-01-26 12:16:19,646 - Darshan is accessing /admin/jsi18n/.
+2025-01-26 12:16:24,231 - Darshan is accessing /equipment_setting/8/.
+2025-01-26 12:17:08,432 - Darshan is accessing /equipment_configure/.
+2025-01-26 12:17:10,269 - Darshan is accessing /equipment_setting/9/.
+2025-01-26 12:17:40,304 - Darshan is accessing /save-equipment-settings/.
+2025-01-26 12:17:41,178 - Darshan is accessing /save-equipment-settings/.
+2025-01-26 12:18:49,713 - Darshan is accessing /department/.
+2025-01-26 12:19:12,746 - Darshan is accessing /edit_department/1/.
+2025-01-26 12:19:12,937 - Darshan is updated record in App1_department.
+2025-01-26 12:19:13,033 - Darshan is created record in App1_useractivitylog.
+2025-01-26 12:19:13,041 - Darshan is accessing /department/.
+2025-01-26 12:41:20,049 - Darshan is accessing /department/.
+2025-01-26 12:41:43,494 - Darshan is accessing /edit_department/1/.
+2025-01-26 12:41:43,681 - Darshan is updated record in App1_department.
+2025-01-26 12:41:43,779 - Darshan is created record in App1_useractivitylog.
+2025-01-26 12:41:43,785 - Darshan is accessing /department/.
+2025-01-26 12:42:53,792 - Darshan is accessing /department/.
+2025-01-26 12:42:54,589 - Darshan is accessing /department/.
+2025-01-26 12:42:54,799 - Darshan is accessing /department/.
+2025-01-26 12:42:55,453 - Darshan is accessing /department/.
+2025-01-26 12:43:02,509 - Darshan is accessing /edit_department/1/.
+2025-01-26 12:43:02,692 - Darshan is updated record in App1_department.
+2025-01-26 12:43:02,767 - Darshan is created record in App1_useractivitylog.
+2025-01-26 12:43:02,777 - Darshan is accessing /department/.
+2025-01-26 12:43:32,049 - Darshan is accessing /edit_department/1/.
+2025-01-26 12:43:32,230 - Darshan is updated record in App1_department.
+2025-01-26 12:43:32,306 - Darshan is created record in App1_useractivitylog.
+2025-01-26 12:43:32,313 - Darshan is accessing /department/.
+2025-01-26 12:44:33,117 - Darshan is accessing /edit_department/1/.
+2025-01-26 12:44:33,547 - Darshan is updated record in App1_department.
+2025-01-26 12:44:33,632 - Darshan is created record in App1_useractivitylog.
+2025-01-26 12:44:33,645 - Darshan is accessing /department/.
+2025-01-26 12:45:30,799 - Darshan is accessing /department/.
+2025-01-26 12:45:37,029 - Darshan is accessing /edit_department/1/.
+2025-01-26 12:45:37,274 - Darshan is updated record in App1_department.
+2025-01-26 12:45:37,361 - Darshan is created record in App1_useractivitylog.
+2025-01-26 12:45:37,369 - Darshan is accessing /department/.
+2025-01-26 12:47:08,412 - Anonymous is created record in App1_email_logs.
+2025-01-26 12:47:13,612 - Anonymous is created record in App1_email_logs.
+2025-01-26 12:48:19,667 - Darshan is accessing /edit_department/1/.
+2025-01-26 12:48:20,106 - Darshan is updated record in App1_department.
+2025-01-26 12:48:20,181 - Darshan is created record in App1_useractivitylog.
+2025-01-26 12:48:20,188 - Darshan is accessing /department/.
+2025-01-26 12:48:46,836 - Darshan is accessing /edit_department/2/.
+2025-01-26 12:48:47,038 - Darshan is updated record in App1_department.
+2025-01-26 12:48:47,113 - Darshan is created record in App1_useractivitylog.
+2025-01-26 12:48:47,121 - Darshan is accessing /department/.
+2025-01-26 12:48:55,533 - Darshan is accessing /edit_department/1/.
+2025-01-26 12:48:55,714 - Darshan is updated record in App1_department.
+2025-01-26 12:48:55,766 - Darshan is created record in App1_useractivitylog.
+2025-01-26 12:48:55,774 - Darshan is accessing /department/.
+2025-01-26 12:49:12,652 - Anonymous is created record in App1_email_logs.
+2025-01-26 12:49:21,868 - Anonymous is created record in App1_email_logs.
+2025-01-26 12:50:06,438 - Anonymous is created record in App1_email_logs.
+2025-01-26 12:50:16,829 - Anonymous is created record in App1_email_logs.
+2025-01-26 12:53:14,642 - Darshan is accessing /organization/.
+2025-01-26 12:53:15,595 - Darshan is accessing /app_setings/.
+2025-01-26 12:53:16,787 - Darshan is accessing /organization/.
+2025-01-26 12:53:20,684 - Darshan is accessing /logout/.
+2025-01-26 12:53:20,872 - Darshan is created record in App1_useractivitylog.
+2025-01-26 12:53:20,875 - Anonymous is deleting record in django_session.
+2025-01-26 12:53:20,983 - Anonymous is accessing /.
+2025-01-26 12:53:44,219 - Anonymous is accessing /.
+2025-01-26 12:53:45,176 - Darshan is created record in App1_useractivitylog.
+2025-01-26 12:53:45,180 - Darshan is created record in django_session.
+2025-01-26 12:53:45,288 - Darshan is accessing /dashboard/.
+2025-01-26 12:54:01,732 - Darshan is accessing /logout/.
+2025-01-26 12:54:01,925 - Darshan is created record in App1_useractivitylog.
+2025-01-26 12:54:01,928 - Anonymous is deleting record in django_session.
+2025-01-26 12:54:02,035 - Anonymous is accessing /.
+2025-01-26 12:54:11,183 - Anonymous is accessing /.
+2025-01-26 12:54:12,086 - Darshan is created record in App1_useractivitylog.
+2025-01-26 12:54:12,091 - Darshan is created record in django_session.
+2025-01-26 12:54:12,191 - Darshan is accessing /dashboard/.
+2025-01-26 12:55:44,126 - Darshan is accessing /organization/.
+2025-01-26 12:55:45,358 - Darshan is accessing /organization/edit/2/.
+2025-01-26 12:55:46,765 - Darshan is accessing /organization/.
+2025-01-26 12:55:47,903 - Darshan is accessing /organization/edit/2/.
+2025-01-26 12:55:49,458 - Darshan is accessing /organization/edit/2/.
+2025-01-26 12:55:49,465 - Darshan is updated record in App1_organization.
+2025-01-26 12:55:49,654 - Darshan is created record in App1_useractivitylog.
+2025-01-26 12:55:49,665 - Darshan is accessing /organization/.
+2025-01-26 12:55:53,550 - Darshan is accessing /app_setings/.
+2025-01-26 13:07:42,643 - Darshan is accessing /logout/.
+2025-01-26 13:07:43,058 - Darshan is created record in App1_useractivitylog.
+2025-01-26 13:07:43,068 - Anonymous is deleting record in django_session.
+2025-01-26 13:07:43,273 - Anonymous is accessing /.
+2025-01-26 13:07:50,963 - Anonymous is accessing /.
+2025-01-26 13:07:51,855 - Darshan is created record in App1_useractivitylog.
+2025-01-26 13:07:51,859 - Darshan is created record in django_session.
+2025-01-26 13:07:51,959 - Darshan is accessing /dashboard/.
+2025-01-26 13:08:53,424 - Darshan is accessing /dashboard/.
+2025-01-26 13:08:56,914 - Darshan is accessing /logout/.
+2025-01-26 13:08:57,089 - Darshan is created record in App1_useractivitylog.
+2025-01-26 13:08:57,092 - Anonymous is deleting record in django_session.
+2025-01-26 13:08:57,196 - Anonymous is accessing /.
+2025-01-26 13:09:04,620 - Anonymous is accessing /.
+2025-01-26 13:09:05,524 - Darshan is created record in App1_useractivitylog.
+2025-01-26 13:09:05,526 - Darshan is created record in django_session.
+2025-01-26 13:09:05,601 - Darshan is accessing /dashboard/.
+2025-01-26 13:09:10,474 - Darshan is accessing /dashboard/.
+2025-01-26 13:09:13,514 - Darshan is accessing /dashboard/.
+2025-01-26 13:26:43,073 - Darshan is accessing /dashboard/.
+2025-01-26 13:30:21,907 - Darshan is accessing /dashboard/.
+2025-01-26 13:30:23,149 - Darshan is accessing /comm_group/.
+2025-01-26 13:30:39,510 - Darshan is accessing /validate-activation-key/.
+2025-01-26 13:30:39,511 - Darshan is accessing /validate-activation-key/.
+2025-01-26 13:31:37,935 - Darshan is accessing /validate-activation-key/.
+2025-01-26 13:31:37,936 - Darshan is accessing /validate-activation-key/.
+2025-01-26 13:31:57,986 - Darshan is accessing /comm_group/.
+2025-01-26 13:32:07,442 - Darshan is accessing /edit_comm_group/1001/.
+2025-01-26 13:32:07,635 - Darshan is updated record in App1_commgroup.
+2025-01-26 13:32:07,722 - Darshan is created record in App1_useractivitylog.
+2025-01-26 13:32:07,730 - Darshan is accessing /comm_group/.
+2025-01-26 13:33:01,785 - Darshan is accessing /edit_comm_group/1001/.
+2025-01-26 13:33:01,980 - Darshan is updated record in App1_commgroup.
+2025-01-26 13:33:02,079 - Darshan is created record in App1_useractivitylog.
+2025-01-26 13:33:02,088 - Darshan is accessing /comm_group/.
+2025-01-26 13:33:21,594 - Darshan is accessing /comm_group/.
+2025-01-26 13:34:30,402 - Darshan is accessing /comm_group/.
+2025-01-26 13:34:30,929 - Darshan is accessing /media/crsco.webp.
+2025-01-26 13:34:37,304 - Darshan is accessing /edit_comm_group/1001/.
+2025-01-26 13:34:37,519 - Darshan is updated record in App1_commgroup.
+2025-01-26 13:34:37,628 - Darshan is created record in App1_useractivitylog.
+2025-01-26 13:34:37,640 - Darshan is accessing /comm_group/.
+2025-01-26 13:50:30,699 - Darshan is accessing /comm_group/.
+2025-01-26 13:50:32,979 - Darshan is accessing /admin/.
+2025-01-26 13:50:33,064 - Darshan is accessing /admin/login/.
+2025-01-26 13:50:38,827 - Darshan is accessing /admin/login/.
+2025-01-26 13:50:39,636 - Darshan is created record in django_session.
+2025-01-26 13:50:39,813 - Darshan is deleting record in django_session.
+2025-01-26 13:50:39,943 - Darshan is updated record in auth_user.
+2025-01-26 13:50:39,945 - Darshan is updated record in django_session.
+2025-01-26 13:50:40,027 - Darshan is accessing /admin/.
+2025-01-26 13:50:49,717 - Darshan is accessing /admin/App1/user_role/.
+2025-01-26 13:50:49,912 - Darshan is accessing /admin/jsi18n/.
+2025-01-26 13:50:51,714 - Darshan is accessing /admin/App1/user_role/2/change/.
+2025-01-26 13:50:51,778 - Darshan is accessing /admin/jsi18n/.
+2025-01-26 13:50:54,838 - Darshan is accessing /admin/App1/user_role/.
+2025-01-26 13:50:57,456 - Darshan is accessing /admin/App1/user_access_db/.
+2025-01-26 13:50:57,512 - Darshan is accessing /admin/jsi18n/.
+2025-01-26 13:50:58,896 - Darshan is accessing /admin/App1/user_access_db/1/change/.
+2025-01-26 13:50:58,990 - Darshan is accessing /admin/jsi18n/.
+2025-01-26 13:51:19,070 - Darshan is accessing /admin/App1/user_access_db/.
+2025-01-26 13:51:22,288 - Darshan is accessing /admin/App1/user_access_db/1/change/.
+2025-01-26 13:51:22,373 - Darshan is accessing /admin/jsi18n/.
+2025-01-26 13:51:28,914 - Darshan is accessing /admin/App1/user_access_db/.
+2025-01-26 13:51:31,737 - Darshan is accessing /admin/App1/user_access_db/1/change/.
+2025-01-26 13:51:31,816 - Darshan is accessing /admin/jsi18n/.
+2025-01-26 14:05:01,326 - Darshan is accessing /comm_group/.
+2025-01-26 14:05:04,291 - Darshan is accessing /dashboard/.
+2025-01-26 14:05:08,848 - Darshan is accessing /organization/.
+2025-01-26 14:05:12,627 - Darshan is accessing /app_setings/.
+2025-01-26 14:05:14,596 - Darshan is accessing /comm_group/.
+2025-01-26 14:05:15,511 - Darshan is accessing /department/.
+2025-01-26 14:05:17,081 - Darshan is accessing /role_permission/.
+2025-01-26 14:05:18,150 - Darshan is accessing /users/.
+2025-01-26 14:05:19,155 - Darshan is accessing /backup/.
+2025-01-26 14:05:20,871 - Darshan is accessing /restore/.
+2025-01-26 14:05:27,651 - Darshan is accessing /equipment_configure/.
+2025-01-26 14:05:31,826 - Darshan is accessing /equipment_configure/.
+2025-01-26 14:05:34,411 - Darshan is accessing /view_log/.
+2025-01-26 14:05:37,428 - Darshan is accessing /equipment_configure/.
+2025-01-26 14:05:40,082 - Darshan is accessing /equipment_setting/8/.
+2025-01-26 14:05:44,656 - Darshan is accessing /view_log/.
+2025-01-26 14:05:49,863 - Darshan is accessing /alaram_log/.
+2025-01-26 14:05:52,128 - Darshan is accessing /Mkt_analysis.
+2025-01-26 14:05:54,682 - Darshan is accessing /livedata_summary/.
+2025-01-26 14:05:59,617 - Darshan is accessing /user_activity_log/.
+2025-01-26 14:07:09,418 - Darshan is accessing /user_activity_log/.
+2025-01-26 14:07:10,509 - Darshan is accessing /Equipment_Audit/.
+2025-01-26 14:07:12,255 - Darshan is accessing /alaram_Audit_log/.
+2025-01-26 14:07:13,044 - Darshan is accessing /email_Audit_log/.
+2025-01-26 14:07:15,115 - Darshan is accessing /sms_Audit_log/.
+2025-01-27 11:44:39,060 - Darshan is accessing /.
+2025-01-27 11:44:45,838 - Darshan is accessing /favicon.ico.
+2025-01-27 11:45:04,216 - Darshan is accessing /.
+2025-01-27 11:45:04,987 - Anonymous is deleting record in django_session.
+2025-01-27 11:45:05,192 - Darshan is created record in App1_useractivitylog.
+2025-01-27 11:45:05,196 - Darshan is created record in django_session.
+2025-01-27 11:45:05,308 - Darshan is accessing /dashboard/.
+2025-01-27 11:45:06,903 - Darshan is accessing /media/crsco.webp.
+2025-01-27 11:45:14,837 - Darshan is accessing /email_Audit_log/.
+2025-01-27 11:45:18,695 - Darshan is accessing /email_Audit_log/.
+2025-01-27 12:04:32,781 - Darshan is accessing /email_Audit_log/.
+2025-01-27 12:04:41,363 - Darshan is accessing /view_log/.
+2025-01-27 12:04:44,694 - Darshan is accessing /view_log/.
+2025-01-27 12:04:57,013 - Darshan is accessing /admin/.
+2025-01-27 12:04:57,178 - Darshan is accessing /admin/login/.
+2025-01-27 12:05:01,048 - Darshan is accessing /admin/login/.
+2025-01-27 12:05:01,798 - Darshan is created record in django_session.
+2025-01-27 12:05:02,005 - Darshan is deleting record in django_session.
+2025-01-27 12:05:02,185 - Darshan is updated record in auth_user.
+2025-01-27 12:05:02,187 - Darshan is updated record in django_session.
+2025-01-27 12:05:02,318 - Darshan is accessing /admin/.
+2025-01-27 12:05:06,195 - Darshan is accessing /admin/App1/email_logs/.
+2025-01-27 12:05:06,521 - Darshan is accessing /admin/jsi18n/.
+2025-01-27 12:05:07,659 - Darshan is accessing /admin/App1/email_logs/158/change/.
+2025-01-27 12:05:07,884 - Darshan is accessing /admin/jsi18n/.
+2025-01-27 12:05:14,380 - Darshan is accessing /admin/App1/email_logs/.
+2025-01-27 12:05:16,721 - Darshan is accessing /admin/App1/email_logs/114/change/.
+2025-01-27 12:05:16,785 - Darshan is accessing /admin/jsi18n/.
+2025-01-27 12:05:19,768 - Darshan is accessing /admin/App1/email_logs/.
+2025-01-27 12:05:21,784 - Darshan is accessing /admin/App1/email_logs/87/change/.
+2025-01-27 12:05:21,836 - Darshan is accessing /admin/jsi18n/.
+2025-01-27 12:05:23,863 - Darshan is accessing /admin/App1/email_logs/.
+2025-01-27 12:05:25,782 - Darshan is accessing /admin/App1/email_logs/83/change/.
+2025-01-27 12:05:25,873 - Darshan is accessing /admin/jsi18n/.
+2025-01-27 12:05:27,898 - Darshan is accessing /admin/App1/email_logs/.
+2025-01-27 12:49:04,046 - Anonymous is created record in App1_email_logs.
+2025-01-27 12:49:08,225 - Anonymous is created record in App1_email_logs.
+2025-01-27 12:50:04,166 - Anonymous is created record in App1_email_logs.
+2025-01-27 12:50:07,922 - Anonymous is created record in App1_email_logs.
+2025-01-27 13:20:41,902 - Darshan is accessing /email_Audit_log/.
+2025-01-27 13:20:41,990 - Darshan is accessing /media/crsco.webp.
+2025-01-27 13:20:45,912 - Darshan is accessing /admin/.
+2025-01-27 13:20:54,953 - Darshan is accessing /admin/App1/email_logs/.
+2025-01-27 13:20:55,056 - Darshan is accessing /admin/jsi18n/.
+2025-01-27 13:20:56,849 - Darshan is accessing /admin/App1/email_logs/add/.
+2025-01-27 13:20:56,909 - Darshan is accessing /admin/jsi18n/.
+2025-01-27 13:21:03,387 - Darshan is accessing /admin/App1/equipment/.
+2025-01-27 13:21:03,432 - Darshan is accessing /admin/jsi18n/.
+2025-01-27 13:21:04,792 - Darshan is accessing /admin/App1/equipment/7/change/.
+2025-01-27 13:21:04,847 - Darshan is accessing /admin/jsi18n/.
+2025-01-27 13:21:10,357 - Darshan is accessing /admin/App1/equipment/.
+2025-01-27 13:21:11,803 - Darshan is accessing /admin/App1/email_logs/.
+2025-01-27 13:21:11,878 - Darshan is accessing /admin/jsi18n/.
+2025-01-27 13:21:13,092 - Darshan is accessing /admin/App1/email_logs/add/.
+2025-01-27 13:21:13,204 - Darshan is accessing /admin/jsi18n/.
+2025-01-27 13:23:03,037 - Darshan is accessing /admin/App1/email_logs/add/.
+2025-01-27 13:23:03,051 - Darshan is created record in App1_email_logs.
+2025-01-27 13:23:03,051 - Darshan is created record in django_admin_log.
+2025-01-27 13:23:03,486 - Darshan is accessing /admin/App1/email_logs/.
+2025-01-27 13:23:03,547 - Darshan is accessing /admin/jsi18n/.
+2025-01-27 13:23:07,615 - Darshan is accessing /email_Audit_log/.
+2025-01-27 13:23:12,240 - Darshan is accessing /email_Audit_log/.
+2025-01-27 13:23:31,755 - Darshan is accessing /email_Audit_log/.
+2025-01-27 13:23:31,938 - Darshan is accessing /email_Audit_log/.
+2025-01-27 13:23:32,139 - Darshan is accessing /email_Audit_log/.
+2025-01-27 13:23:36,883 - Darshan is accessing /email_Audit_log/.
+2025-01-27 13:32:48,424 - Darshan is accessing /admin/App1/smsalert/.
+2025-01-27 13:32:50,731 - Darshan is accessing /admin/App1/email_logs/.
+2025-01-27 13:32:56,762 - Darshan is accessing /admin/App1/smsalert/.
+2025-01-27 13:33:06,765 - Darshan is accessing /admin/App1/email_logs/.
+2025-01-27 13:33:19,102 - Darshan is accessing /admin/App1/emailalert/.
+2025-01-27 13:33:20,844 - Darshan is accessing /admin/App1/email_logs/.
+2025-01-27 13:33:39,815 - Darshan is accessing /admin/App1/smsalert/.
+2025-01-27 13:33:43,600 - Darshan is accessing /admin/App1/email_logs/.
+2025-01-27 13:35:40,421 - Darshan is accessing /admin/App1/email_logs/.
+2025-01-27 13:35:40,581 - Darshan is accessing /admin/jsi18n/.
+2025-01-27 13:35:42,186 - Darshan is accessing /admin/App1/email_logs/.
+2025-01-27 13:35:42,351 - Darshan is accessing /admin/jsi18n/.
+2025-01-27 13:35:44,479 - Darshan is accessing /admin/App1/emailalert/.
+2025-01-27 13:35:44,601 - Darshan is accessing /admin/jsi18n/.
+2025-01-27 13:35:46,027 - Darshan is accessing /admin/App1/emailalert/add/.
+2025-01-27 13:35:46,138 - Darshan is accessing /admin/jsi18n/.
+2025-01-27 13:35:50,287 - Darshan is accessing /admin/App1/emailalert/.
+2025-01-27 13:35:53,736 - Darshan is accessing /admin/App1/smsalert/.
+2025-01-27 13:35:53,789 - Darshan is accessing /admin/jsi18n/.
+2025-01-27 13:35:59,428 - Darshan is accessing /admin/App1/smsalert/add/.
+2025-01-27 13:35:59,522 - Darshan is accessing /admin/jsi18n/.
+2025-01-27 13:36:26,996 - Darshan is accessing /admin/App1/smsalert/add/.
+2025-01-27 13:36:27,012 - Darshan is created record in App1_smsalert.
+2025-01-27 13:36:27,014 - Darshan is created record in django_admin_log.
+2025-01-27 13:36:27,463 - Darshan is accessing /admin/App1/smsalert/add/.
+2025-01-27 13:36:27,551 - Darshan is accessing /admin/jsi18n/.
+2025-01-27 13:36:31,638 - Darshan is accessing /admin/App1/smsalert/add/.
+2025-01-27 13:36:31,651 - Darshan is created record in App1_smsalert.
+2025-01-27 13:36:31,652 - Darshan is created record in django_admin_log.
+2025-01-27 13:36:31,862 - Darshan is accessing /admin/App1/smsalert/add/.
+2025-01-27 13:36:31,970 - Darshan is accessing /admin/jsi18n/.
+2025-01-27 13:36:36,387 - Darshan is accessing /admin/App1/smsalert/add/.
+2025-01-27 13:36:36,401 - Darshan is created record in App1_smsalert.
+2025-01-27 13:36:36,403 - Darshan is created record in django_admin_log.
+2025-01-27 13:36:36,610 - Darshan is accessing /admin/App1/smsalert/add/.
+2025-01-27 13:36:36,702 - Darshan is accessing /admin/jsi18n/.
+2025-01-27 13:36:40,222 - Darshan is accessing /admin/App1/emailalert/.
+2025-01-27 13:36:40,341 - Darshan is accessing /admin/jsi18n/.
+2025-01-27 13:36:42,389 - Darshan is accessing /admin/App1/emailalert/add/.
+2025-01-27 13:36:42,594 - Darshan is accessing /admin/jsi18n/.
+2025-01-27 13:36:46,817 - Darshan is accessing /admin/App1/emailalert/add/.
+2025-01-27 13:36:46,851 - Darshan is created record in App1_emailalert.
+2025-01-27 13:36:46,852 - Darshan is created record in django_admin_log.
+2025-01-27 13:36:47,038 - Darshan is accessing /admin/App1/emailalert/add/.
+2025-01-27 13:36:47,206 - Darshan is accessing /admin/jsi18n/.
+2025-01-27 13:36:52,464 - Darshan is accessing /admin/App1/emailalert/add/.
+2025-01-27 13:36:52,479 - Darshan is created record in App1_emailalert.
+2025-01-27 13:36:52,480 - Darshan is created record in django_admin_log.
+2025-01-27 13:36:52,689 - Darshan is accessing /admin/App1/emailalert/add/.
+2025-01-27 13:36:52,792 - Darshan is accessing /admin/jsi18n/.
+2025-01-27 13:36:57,624 - Darshan is accessing /admin/App1/emailalert/add/.
+2025-01-27 13:36:57,637 - Darshan is created record in App1_emailalert.
+2025-01-27 13:36:57,638 - Darshan is created record in django_admin_log.
+2025-01-27 13:36:57,823 - Darshan is accessing /admin/App1/emailalert/3/change/.
+2025-01-27 13:36:57,925 - Darshan is accessing /admin/jsi18n/.
+2025-01-27 13:45:33,861 - Darshan is accessing /equipment_configure/.
+2025-01-27 13:45:35,827 - Darshan is accessing /equipment_setting/8/.
+2025-01-27 13:46:06,390 - Darshan is accessing /save-equipment-settings/.
+2025-01-27 13:46:19,499 - Darshan is accessing /save-equipment-settings/.
+2025-01-27 13:46:34,413 - Darshan is accessing /save-equipment-settings/.
+2025-01-27 13:46:53,641 - Darshan is accessing /save-alert-settings/.
+2025-01-27 13:47:05,099 - Darshan is accessing /admin/App1/emailalert/.
+2025-01-27 13:47:05,210 - Darshan is accessing /admin/jsi18n/.
+2025-01-27 13:47:06,514 - Darshan is accessing /admin/App1/emailalert/1/change/.
+2025-01-27 13:47:06,642 - Darshan is accessing /admin/jsi18n/.
+2025-01-27 13:47:08,780 - Darshan is accessing /admin/App1/emailalert/.
+2025-01-27 13:47:12,159 - Darshan is accessing /equipment_setting/8/.
+2025-01-27 13:48:58,813 - Darshan is accessing /equipment_setting/8/.
+2025-01-27 13:49:08,868 - Darshan is accessing /save-alert-settings/.
+2025-01-27 13:49:09,057 - Darshan is updated record in App1_emailalert.
+2025-01-27 13:49:09,153 - Darshan is updated record in App1_smsalert.
+2025-01-27 13:49:12,283 - Darshan is accessing /equipment_setting/8/.
+2025-01-27 13:49:28,319 - Darshan is accessing /admin/App1/emailalert/.
+2025-01-27 13:49:28,431 - Darshan is accessing /admin/jsi18n/.
+2025-01-27 13:49:32,028 - Darshan is accessing /admin/App1/emailalert/2/change/.
+2025-01-27 13:49:32,135 - Darshan is accessing /admin/jsi18n/.
+2025-01-27 13:49:37,389 - Darshan is accessing /admin/App1/smsalert/.
+2025-01-27 13:49:37,488 - Darshan is accessing /admin/jsi18n/.
+2025-01-27 13:49:38,685 - Darshan is accessing /admin/App1/smsalert/2/change/.
+2025-01-27 13:49:38,805 - Darshan is accessing /admin/jsi18n/.
+2025-01-27 13:51:48,791 - Darshan is accessing /equipment_setting/8/.
+2025-01-27 13:51:50,235 - Darshan is accessing /equipment_configure/.
+2025-01-27 13:51:58,618 - Darshan is accessing /dashboard/.
+2025-01-27 13:52:03,394 - Darshan is accessing /dashboard/.
+2025-01-27 13:52:04,957 - Darshan is accessing /equipment_configure/.
+2025-01-27 13:52:10,400 - Darshan is accessing /equipment/edit/8/.
+2025-01-27 13:52:10,507 - Darshan is updated record in App1_equipment.
+2025-01-27 13:52:11,128 - Darshan is accessing /equipment_configure/.
+2025-01-27 13:52:16,467 - Darshan is accessing /equipment_configure/.
+2025-01-27 13:52:23,381 - Darshan is accessing /equipment_configure/.
+2025-01-27 13:52:30,853 - Darshan is accessing /dashboard/.
+2025-01-27 13:52:30,913 - Darshan is accessing /dashboard/.
+2025-01-27 13:52:43,972 - Darshan is accessing /equipment_configure/.
+2025-01-27 13:52:56,662 - Darshan is accessing /dashboard/.
+2025-01-27 14:11:01,273 - Darshan is accessing /dashboard/.
+2025-01-27 14:11:20,949 - Darshan is accessing /dashboard/.
+2025-01-27 14:12:27,121 - Darshan is accessing /dashboard/.
+2025-01-27 14:12:33,214 - Darshan is accessing /dashboard/dashboard.
+2025-01-27 14:12:33,247 - Darshan is accessing /dashboard/dashboard.
+2025-01-27 14:13:17,911 - Darshan is accessing /dashboard/dashboard.
+2025-01-27 14:13:20,470 - Darshan is accessing /dashboard/.
+2025-01-27 14:13:21,436 - Darshan is accessing /media/crsco.webp.
+2025-01-27 14:13:26,914 - Darshan is accessing /dashboard/.
+2025-01-27 14:13:26,931 - Darshan is accessing /dashboard/.
+2025-01-27 14:13:32,684 - Darshan is accessing /dashboard/.
+2025-01-27 14:13:32,700 - Darshan is accessing /dashboard/.
+2025-01-27 14:13:38,672 - Darshan is accessing /dashboard/.
+2025-01-27 14:13:38,691 - Darshan is accessing /dashboard/.
+2025-01-27 14:13:44,970 - Darshan is accessing /dashboard/.
+2025-01-27 14:13:44,979 - Darshan is accessing /dashboard/.
+2025-01-27 14:13:50,969 - Darshan is accessing /dashboard/.
+2025-01-27 14:13:50,979 - Darshan is accessing /dashboard/.
+2025-01-27 14:13:54,307 - Darshan is accessing /department/.
+2025-01-27 14:21:02,918 - Darshan is accessing /dashboard/.
+2025-01-27 14:21:08,707 - Darshan is accessing /dashboard/.
+2025-01-27 14:21:08,730 - Darshan is accessing /dashboard/.
+2025-01-27 14:21:14,716 - Darshan is accessing /dashboard/.
+2025-01-27 14:21:14,734 - Darshan is accessing /dashboard/.
+2025-01-27 14:21:20,667 - Darshan is accessing /dashboard/.
+2025-01-27 14:21:20,680 - Darshan is accessing /dashboard/.
+2025-01-27 14:21:26,677 - Darshan is accessing /dashboard/.
+2025-01-27 14:21:26,687 - Darshan is accessing /dashboard/.
+2025-01-27 14:21:32,974 - Darshan is accessing /dashboard/.
+2025-01-27 14:21:32,983 - Darshan is accessing /dashboard/.
+2025-01-27 14:21:38,974 - Darshan is accessing /dashboard/.
+2025-01-27 14:21:38,981 - Darshan is accessing /dashboard/.
+2025-01-27 14:21:44,974 - Darshan is accessing /dashboard/.
+2025-01-27 14:21:44,980 - Darshan is accessing /dashboard/.
+2025-01-27 14:21:50,976 - Darshan is accessing /dashboard/.
+2025-01-27 14:21:50,983 - Darshan is accessing /dashboard/.
+2025-01-27 14:21:56,970 - Darshan is accessing /dashboard/.
+2025-01-27 14:21:56,977 - Darshan is accessing /dashboard/.
+2025-01-27 14:22:02,972 - Darshan is accessing /dashboard/.
+2025-01-27 14:22:02,982 - Darshan is accessing /dashboard/.
+2025-01-27 14:22:08,981 - Darshan is accessing /dashboard/.
+2025-01-27 14:22:08,992 - Darshan is accessing /dashboard/.
+2025-01-27 14:22:14,977 - Darshan is accessing /dashboard/.
+2025-01-27 14:22:14,987 - Darshan is accessing /dashboard/.
+2025-01-27 14:22:20,716 - Darshan is accessing /dashboard/.
+2025-01-27 14:22:20,721 - Darshan is accessing /dashboard/.
+2025-01-27 14:22:26,798 - Darshan is accessing /dashboard/.
+2025-01-27 14:22:26,804 - Darshan is accessing /dashboard/.
+2025-01-27 14:22:28,121 - Darshan is accessing /dashboard/.
+2025-01-27 14:22:29,263 - Darshan is accessing /dashboard/.
+2025-01-27 14:22:30,669 - Darshan is accessing /dashboard/.
+2025-01-27 14:22:31,819 - Darshan is accessing /media/crsco.webp.
+2025-01-27 14:22:37,417 - Darshan is accessing /dashboard/.
+2025-01-27 14:22:37,501 - Darshan is accessing /dashboard/.
+2025-01-27 14:22:43,177 - Darshan is accessing /dashboard/.
+2025-01-27 14:22:43,194 - Darshan is accessing /dashboard/.
+2025-01-27 14:22:49,961 - Darshan is accessing /dashboard/.
+2025-01-27 14:22:49,961 - Darshan is accessing /dashboard/.
+2025-01-27 14:22:55,972 - Darshan is accessing /dashboard/.
+2025-01-27 14:22:55,978 - Darshan is accessing /dashboard/.
+2025-01-27 14:23:01,977 - Darshan is accessing /dashboard/.
+2025-01-27 14:23:01,986 - Darshan is accessing /dashboard/.
+2025-01-27 14:23:07,961 - Darshan is accessing /dashboard/.
+2025-01-27 14:23:07,971 - Darshan is accessing /dashboard/.
+2025-01-27 14:23:13,985 - Darshan is accessing /dashboard/.
+2025-01-27 14:23:13,991 - Darshan is accessing /dashboard/.
+2025-01-27 14:23:19,971 - Darshan is accessing /dashboard/.
+2025-01-27 14:23:19,981 - Darshan is accessing /dashboard/.
+2025-01-27 14:23:25,993 - Darshan is accessing /dashboard/.
+2025-01-27 14:23:26,002 - Darshan is accessing /dashboard/.
+2025-01-27 14:23:31,985 - Darshan is accessing /dashboard/.
+2025-01-27 14:23:31,991 - Darshan is accessing /dashboard/.
+2025-01-27 14:23:37,980 - Darshan is accessing /dashboard/.
+2025-01-27 14:23:37,987 - Darshan is accessing /dashboard/.
+2025-01-27 14:23:43,991 - Darshan is accessing /dashboard/.
+2025-01-27 14:23:44,001 - Darshan is accessing /dashboard/.
+2025-01-27 14:23:49,973 - Darshan is accessing /dashboard/.
+2025-01-27 14:23:49,986 - Darshan is accessing /dashboard/.
+2025-01-27 14:23:55,982 - Darshan is accessing /dashboard/.
+2025-01-27 14:23:55,994 - Darshan is accessing /dashboard/.
+2025-01-27 14:24:01,971 - Darshan is accessing /dashboard/.
+2025-01-27 14:24:01,971 - Darshan is accessing /dashboard/.
+2025-01-27 14:24:07,964 - Darshan is accessing /dashboard/.
+2025-01-27 14:24:07,971 - Darshan is accessing /dashboard/.
+2025-01-27 14:24:13,971 - Darshan is accessing /dashboard/.
+2025-01-27 14:24:13,984 - Darshan is accessing /dashboard/.
+2025-01-27 14:24:19,961 - Darshan is accessing /dashboard/.
+2025-01-27 14:24:19,977 - Darshan is accessing /dashboard/.
+2025-01-27 14:24:25,981 - Darshan is accessing /dashboard/.
+2025-01-27 14:24:25,989 - Darshan is accessing /dashboard/.
+2025-01-27 14:24:31,965 - Darshan is accessing /dashboard/.
+2025-01-27 14:24:31,973 - Darshan is accessing /dashboard/.
+2025-01-27 14:24:37,975 - Darshan is accessing /dashboard/.
+2025-01-27 14:24:37,982 - Darshan is accessing /dashboard/.
+2025-01-27 14:24:43,971 - Darshan is accessing /dashboard/.
+2025-01-27 14:24:43,991 - Darshan is accessing /dashboard/.
+2025-01-27 14:24:49,988 - Darshan is accessing /dashboard/.
+2025-01-27 14:24:50,012 - Darshan is accessing /dashboard/.
+2025-01-27 14:24:55,727 - Darshan is accessing /dashboard/.
+2025-01-27 14:24:55,796 - Darshan is accessing /dashboard/.
+2025-01-27 14:25:01,752 - Darshan is accessing /dashboard/.
+2025-01-27 14:25:01,785 - Darshan is accessing /dashboard/.
+2025-01-27 14:25:07,759 - Darshan is accessing /dashboard/.
+2025-01-27 14:25:07,778 - Darshan is accessing /dashboard/.
+2025-01-27 14:25:13,689 - Darshan is accessing /dashboard/.
+2025-01-27 14:25:13,716 - Darshan is accessing /dashboard/.
+2025-01-27 14:25:19,732 - Darshan is accessing /dashboard/.
+2025-01-27 14:25:19,768 - Darshan is accessing /dashboard/.
+2025-01-27 14:25:25,669 - Darshan is accessing /dashboard/.
+2025-01-27 14:25:25,688 - Darshan is accessing /dashboard/.
+2025-01-27 14:25:31,710 - Darshan is accessing /dashboard/.
+2025-01-27 14:25:31,729 - Darshan is accessing /dashboard/.
+2025-01-27 14:25:36,247 - Darshan is accessing /dashboard/.
+2025-01-27 14:25:42,983 - Darshan is accessing /dashboard/.
+2025-01-27 14:25:42,992 - Darshan is accessing /dashboard/.

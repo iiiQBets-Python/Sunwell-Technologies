@@ -1,1 +1,8 @@
 2025-01-24 16:18:33,039 - Darshan is getting AttributeError on accessing send_test_email: 'function' object has no attribute 'email_signature'
+2025-01-25 10:59:08,544 - Darshan is getting IntegrityError on accessing edit_user: NOT NULL constraint failed: App1_user.account_lock
+2025-01-26 12:17:41,119 - Darshan is getting RuntimeError on accessing save_equipment_settings: b' TCP : Unreachable peer'
+2025-01-26 12:17:41,613 - Darshan is getting RuntimeError on accessing save_equipment_settings: b' TCP : Unreachable peer'
+2025-01-27 13:32:48,429 - Darshan is getting OperationalError on accessing admin:App1_smsalert_changelist: no such table: App1_smsalert
+2025-01-27 13:32:56,764 - Darshan is getting OperationalError on accessing admin:App1_smsalert_changelist: no such table: App1_smsalert
+2025-01-27 13:33:19,106 - Darshan is getting OperationalError on accessing admin:App1_emailalert_changelist: no such table: App1_emailalert
+2025-01-27 13:33:39,822 - Darshan is getting OperationalError on accessing admin:App1_smsalert_changelist: no such table: App1_smsalert

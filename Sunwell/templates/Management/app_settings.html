@@ -2,7 +2,7 @@
 
 {% extends "Base/base.html" %}
 {% load static %}
-{% block title %} email_sms {% endblock %}
+{% block title %} --::: ESTDAS :::-- {% endblock %}
 {% block styles %}
 {{ block.super }}
 <style>
@@ -35,6 +35,15 @@
 
 {% block content %}
 <div class="container-custom">
+    {% if messages %}
+        <div class="mt-3">
+            {% for message in messages %}
+                <div id="floating-alert" class="floating-alert">
+                    {{ message|safe }}
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
     <h5 class="mb-3">Email, SMS, and WhatsApp Configuration</h5>
     <div class="tab-content" id="myTabContent">
         <div class="tab-pane fade show active" id="appsetting" role="tabpanel" aria-labelledby="appsetting-tab">
@@ -67,10 +76,10 @@
                                 <label class="form-label" for="password_change">Password Change</label> {% endcomment %}
                                 <select class="form-select" id="password_change" name="password_change"  value="{{ app_settings.passwordchange }}" disabled>
                                     <option value="">-- Select Password Reset Duration --</option> 
-                                    <option value="30">30</option>
-                                    <option value="60">60</option>
-                                    <option value="90">90</option>
-                                    <option value="120">120</option>
+                                    <option value="30" {% if app_settings.passwordchange == 30 %}selected{% endif %} >30</option>
+                                    <option value="60"  {% if app_settings.passwordchange == 60 %}selected{% endif %} >60</option>
+                                    <option value="90"  {% if app_settings.passwordchange == 90 %}selected{% endif %} >90</option>
+                                    <option value="120"  {% if app_settings.passwordchange == 120 %}selected{% endif %} >120</option>
                                   </select>
                                   <label for="passwordDuration" class="form-label">Set Password Duration in Days</label>
                             </div>
@@ -78,7 +87,7 @@
                                 <span class="form-span">Days</span>   
                             </div>
                             <div class="form-group col-md-8">
-                                <input type="number" class="form-control" placeholder=" " id="system_auto_logout" name="system_auto_logout" value="{{ app_settings.autologouttime }}"  disabled>
+                                <input type="number" class="form-control" placeholder=" " id="system_auto_logout" name="system_auto_logout" value="{{ app_settings.autologouttime }}" min=1  disabled>
                                 <label class="form-label" for="system_auto_logout">System Auto Logout Time</label>
                             </div>
                             <div class="form-group col-md-2">
@@ -87,9 +96,9 @@
                             <div class="form-group col-md-8">
                                 <select class="form-select" id="user_access_lock" name="user_access_lock" placeholder=" " required disabled>
                                     <option value="" disabled hidden>Select</option>
-                                    <option value="1" {% if app_settings.comm_port == "1" %}selected{% endif %}>1</option>
-                                    <option value="3" {% if app_settings.comm_port == "3" %}selected{% endif %}>3</option>
-                                    <option value="5" {% if app_settings.comm_port == "5" %}selected{% endif %}>5</option>
+                                    <option value="1" {% if app_settings.lockcount == 1 %}selected{% endif %}>1</option>
+                                    <option value="3" {% if app_settings.lockcount == 3 %}selected{% endif %}>3</option>
+                                    <option value="5" {% if app_settings.lockcount == 5 %}selected{% endif %}>5</option>
                                 </select>
                                 {% comment %} <input type="number" class="form-control" placeholder=" " id="" name="" value="{{ app_settings.lockcount }}" disabled> {% endcomment %}
                                 <label class="form-label" for="user_access_lock">User Access Lock Count</label>
@@ -441,6 +450,7 @@
         .then((data) => {
             console.log("Success:", data);
             alert("Settings saved successfully.");
+            window.location.reload()
             
             // Disable inputs after successful save
             inputs.forEach((input) => {

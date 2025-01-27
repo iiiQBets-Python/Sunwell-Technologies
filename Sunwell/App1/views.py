@@ -43,7 +43,7 @@ from reportlab.lib import colors
 from datetime import datetime, timedelta
 from apscheduler.schedulers.background import BackgroundScheduler
 from apscheduler.triggers.cron import CronTrigger
-
+from django.views.decorators.csrf import csrf_exempt
 
 def base(request):
     return render(request, 'Base/base.html', )
@@ -214,8 +214,8 @@ def change_pass(request):
             return render(request, 'Base/login.html', {'success_msg_2': success_msg_2})  
         else:
             error_msg = 'Please enter valid credentials.'
-            return render(request, 'Base/login.html', {'error_msg': error_msg}) 
-        
+            return render(request, 'Base/login.html', {'error_msg': error_msg})     
+
 
 def change_pass_2(request): 
     username = request.session.get('username') 
@@ -269,6 +269,8 @@ def change_pass_2(request):
             return JsonResponse({'message': 'Please enter valid credentials.'})    
 
     emp_user = request.session.get('username', None)
+
+
 def forgot_password(request):
     if request.method == 'POST':
         login_name = request.POST.get('forgot_username')
@@ -316,7 +318,6 @@ def forgot_password(request):
         return JsonResponse({'message':"Your password has been reset successfully. Please log in with your new password."})
     return render(request, 'Base/login.html')
 
-    
 
 def user_logout(request):
     username = request.session.get('username')
@@ -340,7 +341,7 @@ def user_logout(request):
     return redirect('login')
 
 
-# dashboard
+# Dashboard
 def dashboard(request):
     emp_user = request.session.get('username', None)
 
@@ -361,14 +362,14 @@ def dashboard(request):
 
     status = request.GET.get('status')
 
-    if status == 'online':
-        equipment_queryset = Equipment.objects.filter(status='active')
-    elif status == 'offline':
-        equipment_queryset = Equipment.objects.filter(status='inactive')
-    else: 
-        equipment_queryset = Equipment.objects.all()
+    # if status == 'online':
+    #     equipment_queryset = Equipment.objects.filter(status='active')
+    # elif status == 'offline':
+    #     equipment_queryset = Equipment.objects.filter(status='inactive')
+    # else: 
+    #     equipment_queryset = Equipment.objects.all()
 
-   
+    equipment_queryset = Equipment.objects.filter(status='active')
     for eqp in equipment_queryset:
         alarms = Alarm_logs.objects.filter(equipment=eqp, acknowledge=False)
         pending_review_count = alarms.count()
@@ -400,8 +401,6 @@ def dashboard(request):
         'equipment_data': equipment_data,
         'status_filter': status,
     })
-
-
 
 
 # Management-organization
@@ -516,34 +515,37 @@ def comm_group(request):
         acc_db = None
 
     if request.method == "POST":
-        comm_name = request.POST.get('comm_name')
-        comm_code = request.POST.get('comm_code')
-        soft_key = request.POST.get('softKey')
-        activation_key = request.POST.get('activationKey')
-        device_count = int(request.POST.get('device_count', 0))  # Get validated device count from form input
+        try:
+            comm_name = request.POST.get('comm_name')
+            comm_code = request.POST.get('comm_code')
+            soft_key = request.POST.get('softKey')
+            activation_key = request.POST.get('activationKey')
+            device_count = int(request.POST.get('device_count', 0))  # Get validated device count from form input
 
-        # Calculate the new total devices and save it to Organization’s nod
-        current_nod = organization.get_nod()
-        
-        total_devices = current_nod + device_count
-        organization.set_nod(total_devices)
-        organization.save()
+            # Calculate the new total devices and save it to Organization’s nod
+            current_nod = organization.get_nod()
+            
+            total_devices = current_nod + device_count
+            organization.set_nod(total_devices)
+            organization.save()
 
-        new_commgroup = CommGroup(
-            CommGroup_name=comm_name,
-            CommGroup_code=comm_code,
-            soft_key=soft_key,
-            activation_key=activation_key,
-        )
-        new_commgroup.save()
+            new_commgroup = CommGroup(
+                CommGroup_name=comm_name,
+                CommGroup_code=comm_code,
+                soft_key=soft_key,
+                activation_key=activation_key,
+            )
+            new_commgroup.save()
 
-        UserActivityLog.objects.create(
-            user=emp_user,
-            log_date=timezone.localtime(timezone.now()).date(),
-            log_time=timezone.localtime(timezone.now()).time(),
-            event_name=f"Added new comm.group {comm_name} details"
-        )
-
+            UserActivityLog.objects.create(
+                user=emp_user,
+                log_date=timezone.localtime(timezone.now()).date(),
+                log_time=timezone.localtime(timezone.now()).time(),
+                event_name=f"Added new comm.group {comm_name} details"
+            )
+            messages.success(request, 'Comm. Group added successfully!')
+        except Exception:
+            messages.error(request, "We couldn't add the Comm Group. Please check your input and try again.")
         return redirect('comm_group')
 
     comm_groups = CommGroup.objects.all()
@@ -599,7 +601,7 @@ def validate_activation_key(request):
             return JsonResponse({'validation_icon': '✔', 'message': "Validation successful", 'device_count': device_count})
 
         except Exception as e:
-            return JsonResponse({'validation_icon': '✖', 'message': f"Validation failed: {str(e)}"})
+            return JsonResponse({'validation_icon': '✖', 'message': f"Validation failed, Activation Key is Invalid "})
 
     return JsonResponse({'validation_icon': '✖', 'message': "Invalid request method"})
 
@@ -623,21 +625,25 @@ def edit_comm_group(request, comm_code):
     comm_group = get_object_or_404(CommGroup, CommGroup_code=comm_code)
 
     if request.method == "POST":
-        comm_name = request.POST.get('edit_comm_name')
-        soft_key = request.POST.get('edit_softKey')
-        activation_key = request.POST.get('edit_activationKey')
+        try:
+            comm_name = request.POST.get('edit_comm_name')
+            soft_key = request.POST.get('edit_softKey')
+            activation_key = request.POST.get('edit_activationKey')
 
-        
-        comm_group.CommGroup_name = comm_name
-        comm_group.soft_key = soft_key
-        comm_group.activation_key = activation_key
-        comm_group.save()
-        UserActivityLog.objects.create(
-            user=emp_user,
-            log_date=timezone.localtime(timezone.now()).date(),
-            log_time=timezone.localtime(timezone.now()).time(),
-            event_name=f"Updated {comm_name} Comm. Group details"
-        )
+            
+            comm_group.CommGroup_name = comm_name
+            comm_group.soft_key = soft_key
+            comm_group.activation_key = activation_key
+            comm_group.save()
+            UserActivityLog.objects.create(
+                user=emp_user,
+                log_date=timezone.localtime(timezone.now()).date(),
+                log_time=timezone.localtime(timezone.now()).time(),
+                event_name=f"Updated {comm_name} Comm. Group details"
+            )
+            messages.success(request, f"Updated {comm_name} Comm. Group details")
+        except:
+            messages.error(request, f"Failed to updated {comm_name} Comm. Group details. Please check your input and try again.")
 
         return redirect('comm_group')
 
@@ -667,115 +673,118 @@ def department(request):
 
 
     if request.method == "POST":
-        department_name = request.POST.get('departmentName')
-        commgroup_name = request.POST.get('commGroup')
-        header_note = request.POST.get('headerNote')
-        footer_note = request.POST.get('footerNote')
-        report_datetime_stamp = request.POST.get('report_datetime_stamp') == 'True'
+        try:
+            department_name = request.POST.get('departmentName')
+            commgroup_name = request.POST.get('commGroup')
+            header_note = request.POST.get('headerNote')
+            footer_note = request.POST.get('footerNote')
+            report_datetime_stamp = request.POST.get('report_datetime_stamp') == 'True'
 
-        email_sys = request.POST.get('email_status')
-        email_delay = request.POST.get('email_delay')
-        email_time = request.POST.get('email_time')  or None
+            email_sys = request.POST.get('email_status')
+            email_delay = request.POST.get('email_delay')
+            email_time = request.POST.get('email_time')  or None
 
-        email_address_1 = request.POST.get('email_address_1')
-        email_address_2 = request.POST.get('email_address_2')
-        email_address_3 = request.POST.get('email_address_3')
-        email_address_4 = request.POST.get('email_address_4')
-        email_address_5 = request.POST.get('email_address_5')
-        email_address_6 = request.POST.get('email_address_6')
-        email_address_7 = request.POST.get('email_address_7')
-        email_address_8 = request.POST.get('email_address_8')
-        email_address_9 = request.POST.get('email_address_9')
-        email_address_10 = request.POST.get('email_address_10')
-        sms_sys=request.POST.get('sms_sys')
-        sms_delay=request.POST.get('sms_delay')
-        sms_time=request.POST.get('sms_time')
-        mobile_user1 = request.POST.get('mobile_user1') or None
-        mobile_no1 = request.POST.get('mobile_no1') or None if request.POST.get('mobile_no1', '').isdigit() else None
+            email_address_1 = request.POST.get('email_address_1')
+            email_address_2 = request.POST.get('email_address_2')
+            email_address_3 = request.POST.get('email_address_3')
+            email_address_4 = request.POST.get('email_address_4')
+            email_address_5 = request.POST.get('email_address_5')
+            email_address_6 = request.POST.get('email_address_6')
+            email_address_7 = request.POST.get('email_address_7')
+            email_address_8 = request.POST.get('email_address_8')
+            email_address_9 = request.POST.get('email_address_9')
+            email_address_10 = request.POST.get('email_address_10')
+            sms_sys=request.POST.get('sms_sys')
+            sms_delay=request.POST.get('sms_delay')
+            sms_time=request.POST.get('sms_time')
+            mobile_user1 = request.POST.get('mobile_user1') or None
+            mobile_no1 = request.POST.get('mobile_no1') or None if request.POST.get('mobile_no1', '').isdigit() else None
 
-        mobile_user2 = request.POST.get('mobile_user2') or None
-        mobile_no2 = request.POST.get('mobile_no2') or None if request.POST.get('mobile_no2', '').isdigit() else None
+            mobile_user2 = request.POST.get('mobile_user2') or None
+            mobile_no2 = request.POST.get('mobile_no2') or None if request.POST.get('mobile_no2', '').isdigit() else None
 
-        mobile_user3 = request.POST.get('mobile_user3') or None
-        mobile_no3 = request.POST.get('mobile_no3') or None if request.POST.get('mobile_no3', '').isdigit() else None
+            mobile_user3 = request.POST.get('mobile_user3') or None
+            mobile_no3 = request.POST.get('mobile_no3') or None if request.POST.get('mobile_no3', '').isdigit() else None
 
-        mobile_user4 = request.POST.get('mobile_user4') or None
-        mobile_no4 = request.POST.get('mobile_no4') or None if request.POST.get('mobile_no4', '').isdigit() else None
+            mobile_user4 = request.POST.get('mobile_user4') or None
+            mobile_no4 = request.POST.get('mobile_no4') or None if request.POST.get('mobile_no4', '').isdigit() else None
 
-        mobile_user5 = request.POST.get('mobile_user5') or None
-        mobile_no5 = request.POST.get('mobile_no5') or None if request.POST.get('mobile_no5', '').isdigit() else None
+            mobile_user5 = request.POST.get('mobile_user5') or None
+            mobile_no5 = request.POST.get('mobile_no5') or None if request.POST.get('mobile_no5', '').isdigit() else None
 
-        mobile_user6 = request.POST.get('mobile_user6') or None
-        mobile_no6 = request.POST.get('mobile_no6') or None if request.POST.get('mobile_no6', '').isdigit() else None
+            mobile_user6 = request.POST.get('mobile_user6') or None
+            mobile_no6 = request.POST.get('mobile_no6') or None if request.POST.get('mobile_no6', '').isdigit() else None
 
-        mobile_user7 = request.POST.get('mobile_user7') or None
-        mobile_no7 = request.POST.get('mobile_no7') or None if request.POST.get('mobile_no7', '').isdigit() else None
+            mobile_user7 = request.POST.get('mobile_user7') or None
+            mobile_no7 = request.POST.get('mobile_no7') or None if request.POST.get('mobile_no7', '').isdigit() else None
 
-        mobile_user8 = request.POST.get('mobile_user8') or None
-        mobile_no8 = request.POST.get('mobile_no8') or None if request.POST.get('mobile_no8', '').isdigit() else None
+            mobile_user8 = request.POST.get('mobile_user8') or None
+            mobile_no8 = request.POST.get('mobile_no8') or None if request.POST.get('mobile_no8', '').isdigit() else None
 
-        mobile_user9 = request.POST.get('mobile_user9') or None
-        mobile_no9 = request.POST.get('mobile_no9') or None if request.POST.get('mobile_no9', '').isdigit() else None
+            mobile_user9 = request.POST.get('mobile_user9') or None
+            mobile_no9 = request.POST.get('mobile_no9') or None if request.POST.get('mobile_no9', '').isdigit() else None
 
-        mobile_user10 = request.POST.get('mobile_user10') or None
-        mobile_no10 = request.POST.get('mobile_no10') or None if request.POST.get('mobile_no10', '').isdigit() else None
-        # sms_alert = True if sms_status == 'Enable' else False
-        comm_group = CommGroup.objects.get(CommGroup_code=commgroup_name)
-        
-
-        new_department = Department(
-            department_name=department_name,
-            commGroup=comm_group,
-            header_note=header_note,
-            footer_note=footer_note,
-            report_datetime_stamp=report_datetime_stamp,
+            mobile_user10 = request.POST.get('mobile_user10') or None
+            mobile_no10 = request.POST.get('mobile_no10') or None if request.POST.get('mobile_no10', '').isdigit() else None
+            # sms_alert = True if sms_status == 'Enable' else False
+            comm_group = CommGroup.objects.get(CommGroup_code=commgroup_name)
             
-            email_sys=email_sys,
-            email_delay = email_delay,
-            email_time = email_time,
-            alert_email_address_1 = email_address_1,
-            alert_email_address_2 = email_address_2,
-            alert_email_address_3 = email_address_3,
-            alert_email_address_4 = email_address_4,
-            alert_email_address_5 = email_address_5,
-            alert_email_address_6 = email_address_6,
-            alert_email_address_7 = email_address_7,
-            alert_email_address_8 = email_address_8,
-            alert_email_address_9 = email_address_9,
-            alert_email_address_10 = email_address_10,
-            sms_sys=sms_sys,
-            sms_delay=sms_delay,
-            sms_time=sms_time,
-            user1=mobile_user1,
-            user1_num=mobile_no1,
-            user2=mobile_user2,
-            user2_num=mobile_no2,
-            user3=mobile_user3,
-            user3_num=mobile_no3,
-            user4=mobile_user4,
-            user4_num=mobile_no4,
-            user5=mobile_user5,
-            user5_num=mobile_no5,
-            user6=mobile_user6,
-            user6_num=mobile_no6,
-            user7=mobile_user7,
-            user7_num=mobile_no7,
-            user8=mobile_user8,
-            user8_num=mobile_no8,
-            user9=mobile_user9,
-            user9_num=mobile_no9,
-            user10=mobile_user10,
-            user10_num=mobile_no10
 
-        )
-        new_department.save()
-        UserActivityLog.objects.create(
-            user=emp_user,
-            log_date=timezone.localtime(timezone.now()).date(),
-            log_time=timezone.localtime(timezone.now()).time(),
-            event_name=f"Added new department {department_name} details"
-        )
-        messages.success(request, 'Department Saved Successfully!')
+            new_department = Department(
+                department_name=department_name,
+                commGroup=comm_group,
+                header_note=header_note,
+                footer_note=footer_note,
+                report_datetime_stamp=report_datetime_stamp,
+                
+                email_sys=email_sys,
+                email_delay = email_delay,
+                email_time = email_time,
+                alert_email_address_1 = email_address_1,
+                alert_email_address_2 = email_address_2,
+                alert_email_address_3 = email_address_3,
+                alert_email_address_4 = email_address_4,
+                alert_email_address_5 = email_address_5,
+                alert_email_address_6 = email_address_6,
+                alert_email_address_7 = email_address_7,
+                alert_email_address_8 = email_address_8,
+                alert_email_address_9 = email_address_9,
+                alert_email_address_10 = email_address_10,
+                sms_sys=sms_sys,
+                sms_delay=sms_delay,
+                sms_time=sms_time,
+                user1=mobile_user1,
+                user1_num=mobile_no1,
+                user2=mobile_user2,
+                user2_num=mobile_no2,
+                user3=mobile_user3,
+                user3_num=mobile_no3,
+                user4=mobile_user4,
+                user4_num=mobile_no4,
+                user5=mobile_user5,
+                user5_num=mobile_no5,
+                user6=mobile_user6,
+                user6_num=mobile_no6,
+                user7=mobile_user7,
+                user7_num=mobile_no7,
+                user8=mobile_user8,
+                user8_num=mobile_no8,
+                user9=mobile_user9,
+                user9_num=mobile_no9,
+                user10=mobile_user10,
+                user10_num=mobile_no10
+
+            )
+            new_department.save()
+            UserActivityLog.objects.create(
+                user=emp_user,
+                log_date=timezone.localtime(timezone.now()).date(),
+                log_time=timezone.localtime(timezone.now()).time(),
+                event_name=f"Added new department {department_name} details"
+            )
+            messages.success(request, f'Department {department_name} Saved Successfully!')
+        except:
+            messages.error(request, "We couldn't add the Department. Please check your input and try again.")
 
         return redirect('department')
     
@@ -792,114 +801,119 @@ def department(request):
 def edit_department(request, department_id):
     departments = get_object_or_404(Department, id=department_id)
     if request.method == "POST":
-        department_name = request.POST.get('edit_dept_name')  # Correct field name
-        commgroup_name = request.POST.get('edit_commGroup')
-        header_note = request.POST.get('edit_headerNote')
-        footer_note = request.POST.get('edit_footerNote')
-        report_datetime_stamp = request.POST.get('edit_report_datetime_stamp') == 'True'  
+        try:
+            department_name = request.POST.get('edit_dept_name')  # Correct field name
+            commgroup_name = request.POST.get('edit_commGroup')
+            header_note = request.POST.get('edit_headerNote')
+            footer_note = request.POST.get('edit_footerNote')
+            report_datetime_stamp = request.POST.get('edit_report_datetime_stamp') == 'True'  
 
-        email_sys = request.POST.get('edit_email_status')
-        email_delay = request.POST.get('edit_email_delay')
-        email_time = request.POST.get('edit_email_time')  or None
+            email_sys = request.POST.get('edit_email_status')
+            email_delay = request.POST.get('edit_email_delay')
+            email_time = request.POST.get('edit_email_time')  or None
 
-        email_address_1 = request.POST.get('edit_email_address_1')
-        email_address_2 = request.POST.get('edit_email_address_2')
-        email_address_3 = request.POST.get('edit_email_address_3')
-        email_address_4 = request.POST.get('edit_email_address_4')
-        email_address_5 = request.POST.get('edit_email_address_5')  
-        email_address_6 = request.POST.get('edit_email_address_6')
-        email_address_7 = request.POST.get('edit_email_address_7')
-        email_address_8 = request.POST.get('edit_email_address_8')
-        email_address_9 = request.POST.get('edit_email_address_9')
-        email_address_10 = request.POST.get('edit_email_address_10')
-        sms_sys=request.POST.get('edit_sms_sys')
-        sms_delay=request.POST.get('edit_sms_delay')
-        sms_time=request.POST.get('edit_sms_time')
-        mobile_user1 = request.POST.get('edit_mobile_user1') or None
-        mobile_no1 = request.POST.get('edit_mobile_no1') or None if request.POST.get('edit_mobile_no1').isdigit() else None
-        mobile_user2 = request.POST.get('edit_mobile_user2') or None
-        mobile_no2 = request.POST.get('edit_mobile_no2') or None if request.POST.get('edit_mobile_no2').isdigit() else None
-        mobile_user3 = request.POST.get('edit_mobile_user3') or None
-        mobile_no3 = request.POST.get('edit_mobile_no3') or None if request.POST.get('edit_mobile_no3').isdigit() else None
-        mobile_user4 = request.POST.get('edit_mobile_user4') or None
-        mobile_no4 = request.POST.get('edit_mobile_no4') or None if request.POST.get('edit_mobile_no4').isdigit() else None
-        mobile_user5 = request.POST.get('edit_mobile_user5') or None
-        mobile_no5 = request.POST.get('edit_mobile_no5') or None if request.POST.get('edit_mobile_no5').isdigit() else None
-        mobile_user6 = request.POST.get('edit_mobile_user6') or None
-        mobile_no6 = request.POST.get('edit_mobile_no6') or None if request.POST.get('edit_mobile_no6').isdigit() else None
-        mobile_user7 = request.POST.get('edit_mobile_user7') or None
-        mobile_no7 = request.POST.get('edit_mobile_no7') or None if request.POST.get('edit_mobile_no7').isdigit() else None
-        mobile_user8 = request.POST.get('edit_mobile_user8') or None
-        mobile_no8 = request.POST.get('edit_mobile_no8') or None if request.POST.get('edit_mobile_no8').isdigit() else None
-        mobile_user9 = request.POST.get('edit_mobile_user9') or None
-        mobile_no9 = request.POST.get('edit_mobile_no9') or None if request.POST.get('edit_mobile_no9').isdigit() else None
-        mobile_user10 = request.POST.get('edit_mobile_user10') or None
-        mobile_no10 = request.POST.get('edit_mobile_no10') or None if request.POST.get('edit_mobile_no10').isdigit() else None
-        email_time = parse_time(email_time) if email_time else None
-        sms_time = parse_time(sms_time) if sms_time else None
-        if not department_name:
-            # Handle the missing department name error
-            return render(request, 'Management/department.html', {
-                'department': department,
-                'groups': CommGroup.objects.all(),
-                'error': 'Department name is required.'
-            })
+            email_address_1 = request.POST.get('edit_email_address_1')
+            email_address_2 = request.POST.get('edit_email_address_2')
+            email_address_3 = request.POST.get('edit_email_address_3')
+            email_address_4 = request.POST.get('edit_email_address_4')
+            email_address_5 = request.POST.get('edit_email_address_5')  
+            email_address_6 = request.POST.get('edit_email_address_6')
+            email_address_7 = request.POST.get('edit_email_address_7')
+            email_address_8 = request.POST.get('edit_email_address_8')
+            email_address_9 = request.POST.get('edit_email_address_9')
+            email_address_10 = request.POST.get('edit_email_address_10')
+            sms_sys=request.POST.get('edit_sms_sys')
+            sms_delay=request.POST.get('edit_sms_delay')
+            sms_time=request.POST.get('edit_sms_time')
+            mobile_user1 = request.POST.get('edit_mobile_user1') or None
+            mobile_no1 = request.POST.get('edit_mobile_no1') or None if request.POST.get('edit_mobile_no1').isdigit() else None
+            mobile_user2 = request.POST.get('edit_mobile_user2') or None
+            mobile_no2 = request.POST.get('edit_mobile_no2') or None if request.POST.get('edit_mobile_no2').isdigit() else None
+            mobile_user3 = request.POST.get('edit_mobile_user3') or None
+            mobile_no3 = request.POST.get('edit_mobile_no3') or None if request.POST.get('edit_mobile_no3').isdigit() else None
+            mobile_user4 = request.POST.get('edit_mobile_user4') or None
+            mobile_no4 = request.POST.get('edit_mobile_no4') or None if request.POST.get('edit_mobile_no4').isdigit() else None
+            mobile_user5 = request.POST.get('edit_mobile_user5') or None
+            mobile_no5 = request.POST.get('edit_mobile_no5') or None if request.POST.get('edit_mobile_no5').isdigit() else None
+            mobile_user6 = request.POST.get('edit_mobile_user6') or None
+            mobile_no6 = request.POST.get('edit_mobile_no6') or None if request.POST.get('edit_mobile_no6').isdigit() else None
+            mobile_user7 = request.POST.get('edit_mobile_user7') or None
+            mobile_no7 = request.POST.get('edit_mobile_no7') or None if request.POST.get('edit_mobile_no7').isdigit() else None
+            mobile_user8 = request.POST.get('edit_mobile_user8') or None
+            mobile_no8 = request.POST.get('edit_mobile_no8') or None if request.POST.get('edit_mobile_no8').isdigit() else None
+            mobile_user9 = request.POST.get('edit_mobile_user9') or None
+            mobile_no9 = request.POST.get('edit_mobile_no9') or None if request.POST.get('edit_mobile_no9').isdigit() else None
+            mobile_user10 = request.POST.get('edit_mobile_user10') or None
+            mobile_no10 = request.POST.get('edit_mobile_no10') or None if request.POST.get('edit_mobile_no10').isdigit() else None
+            email_time = parse_time(email_time) if email_time else None
+            sms_time = parse_time(sms_time) if sms_time else None
+            if not department_name:
+                # Handle the missing department name error
+                return render(request, 'Management/department.html', {
+                    'department': department,
+                    'groups': CommGroup.objects.all(),
+                    'error': 'Department name is required.'
+                })
 
-        commgroup = get_object_or_404(CommGroup, CommGroup_name=commgroup_name)
-        
-        # Update the department
-        departments.department_name = department_name
-        departments.commGroup = commgroup
-        departments.header_note = header_note
-        departments.footer_note = footer_note
-        departments.report_datetime_stamp = report_datetime_stamp
+            commgroup = get_object_or_404(CommGroup, CommGroup_name=commgroup_name)
+            
+            # Update the department
+            departments.department_name = department_name
+            departments.commGroup = commgroup
+            departments.header_note = header_note
+            departments.footer_note = footer_note
+            departments.report_datetime_stamp = report_datetime_stamp
 
-        departments.email_sys = email_sys
-        departments.email_delay = email_delay
-        departments.email_time = email_time
-        departments.alert_email_address_1 = email_address_1
-        departments.alert_email_address_2 = email_address_2
-        departments.alert_email_address_3 = email_address_3
-        departments.alert_email_address_4 = email_address_4
-        departments.alert_email_address_5 = email_address_5
-        departments.alert_email_address_6 = email_address_6
-        departments.alert_email_address_7 = email_address_7
-        departments.alert_email_address_8 = email_address_8
-        departments.alert_email_address_9 = email_address_9
-        departments.alert_email_address_10 = email_address_10
-        departments.sms_sys=sms_sys
-        departments.sms_delay = sms_delay
-        departments.sms_time=sms_time
-        departments.user1=mobile_user1
-        departments.user1_num=mobile_no1
-        departments.user2=mobile_user2
-        departments.user2_num=mobile_no2
-        departments.user3=mobile_user3
-        departments.user3_num=mobile_no3
-        departments.user4=mobile_user4
-        departments.user4_num=mobile_no4
-        departments.user5=mobile_user5
-        departments.user5_num=mobile_no5
-        departments.user6=mobile_user6
-        departments.user6_num=mobile_no6
-        departments.user7=mobile_user7
-        departments.user7_num=mobile_no7
-        departments.user8=mobile_user8
-        departments.user8_num=mobile_no8
-        departments.user9=mobile_user9
-        departments.user9_num=mobile_no9
-        departments.user10=mobile_user10
-        departments.user10_num=mobile_no10
-        
-        departments.save()
+            departments.email_sys = email_sys
+            departments.email_delay = email_delay
+            departments.email_time = email_time
+            departments.alert_email_address_1 = email_address_1
+            departments.alert_email_address_2 = email_address_2
+            departments.alert_email_address_3 = email_address_3
+            departments.alert_email_address_4 = email_address_4
+            departments.alert_email_address_5 = email_address_5
+            departments.alert_email_address_6 = email_address_6
+            departments.alert_email_address_7 = email_address_7
+            departments.alert_email_address_8 = email_address_8
+            departments.alert_email_address_9 = email_address_9
+            departments.alert_email_address_10 = email_address_10
+            departments.sms_sys=sms_sys
+            departments.sms_delay = sms_delay
+            departments.sms_time=sms_time
+            departments.user1=mobile_user1
+            departments.user1_num=mobile_no1
+            departments.user2=mobile_user2
+            departments.user2_num=mobile_no2
+            departments.user3=mobile_user3
+            departments.user3_num=mobile_no3
+            departments.user4=mobile_user4
+            departments.user4_num=mobile_no4
+            departments.user5=mobile_user5
+            departments.user5_num=mobile_no5
+            departments.user6=mobile_user6
+            departments.user6_num=mobile_no6
+            departments.user7=mobile_user7
+            departments.user7_num=mobile_no7
+            departments.user8=mobile_user8
+            departments.user8_num=mobile_no8
+            departments.user9=mobile_user9
+            departments.user9_num=mobile_no9
+            departments.user10=mobile_user10
+            departments.user10_num=mobile_no10
+            
+            departments.save()
 
-        # Log the edit event
-        UserActivityLog.objects.create(
-            user=User.objects.get(username=request.session.get('username')),
-            log_date=timezone.localtime(timezone.now()).date(),
-            log_time=timezone.localtime(timezone.now()).time(),
-            event_name=f"Edited Department {department_name} details"
-        )
+            # Log the edit event
+            UserActivityLog.objects.create(
+                user=User.objects.get(username=request.session.get('username')),
+                log_date=timezone.localtime(timezone.now()).date(),
+                log_time=timezone.localtime(timezone.now()).time(),
+                event_name=f"Edited Department {department_name} details"
+            )
+
+            messages.success(request, f"Updated {department_name} Department details")
+        except:
+            messages.error(request, f"Failed to updated {department_name} Department details. Please check your input and try again.")
 
         return redirect('department')
 
@@ -941,63 +955,67 @@ def users(request):
 
 
     if request.method == 'POST':
-        username = request.POST.get('userName')
-        login_name = request.POST.get('loginName')
-        password = request.POST.get('password')
-        password_duration = request.POST.get('passwordDuration')
-        role = request.POST.get('role')
-        comm_group = request.POST.get('commGroup')
-        departmentname = request.POST.get('departmentName')
-        status = request.POST.get('status')
-        accessible_departments = request.POST.getlist('accessibleDepartment')
+        try:
+            username = request.POST.get('userName')
+            login_name = request.POST.get('loginName')
+            password = request.POST.get('password')
+            password_duration = request.POST.get('passwordDuration')
+            role = request.POST.get('role')
+            comm_group = request.POST.get('commGroup')
+            departmentname = request.POST.get('departmentName')
+            status = request.POST.get('status')
+            accessible_departments = request.POST.getlist('accessibleDepartment')
 
-        # Check if the user already exists
-        if User.objects.filter(username=username).exists():
-            messages.error(request, f"The username '{username}' already exists. Please choose a different username.")
-            return redirect('users')
+            # Check if the user already exists
+            if User.objects.filter(username=username).exists():
+                messages.error(request, f"The username '{username}' already exists. Please choose a different username.")
+                return redirect('users')
 
-        commgroup = CommGroup.objects.get(CommGroup_code=comm_group)
-        department = Department.objects.get(id=departmentname)
+            commgroup = CommGroup.objects.get(CommGroup_code=comm_group)
+            department = Department.objects.get(id=departmentname)
 
-        # Create a new user
-        newuser = User(
-            username=username,
-            login_name=login_name,
-            password=password,
-            password_duration=password_duration,
-            role=role,
-            commGroup=commgroup,
-            department=department,
-            status=status,
-            created_at=timezone.now() + timedelta(hours=5, minutes=30)
-        )
-        newuser.save()
+            # Create a new user
+            newuser = User(
+                username=username,
+                login_name=login_name,
+                password=password,
+                password_duration=password_duration,
+                role=role,
+                commGroup=commgroup,
+                department=department,
+                status=status,
+                created_at=timezone.now() + timedelta(hours=5, minutes=30)
+            )
+            newuser.save()
 
-        if accessible_departments:
-            selected_departments = Department.objects.filter(id__in=accessible_departments)
-            newuser.accessible_departments.set(selected_departments)
+            if accessible_departments:
+                selected_departments = Department.objects.filter(id__in=accessible_departments)
+                newuser.accessible_departments.set(selected_departments)
 
-        # Handle password history
-        password_history = PasswordHistory.objects.filter(user=newuser).order_by('created_at')
-        if password_history.count() >= 3:
-            # Replace the oldest entry if there are already 3 entries
-            oldest_entry = password_history.first()
-            oldest_entry.password = password
-            oldest_entry.created_at = timezone.now()
-            oldest_entry.save()
-        else:
-            # Create a new entry if fewer than 3 entries
-            PasswordHistory.objects.create(user=newuser, password=password)
+            # Handle password history
+            password_history = PasswordHistory.objects.filter(user=newuser).order_by('created_at')
+            if password_history.count() >= 3:
+                # Replace the oldest entry if there are already 3 entries
+                oldest_entry = password_history.first()
+                oldest_entry.password = password
+                oldest_entry.created_at = timezone.now()
+                oldest_entry.save()
+            else:
+                # Create a new entry if fewer than 3 entries
+                PasswordHistory.objects.create(user=newuser, password=password)
 
-        # Log the add event
-        UserActivityLog.objects.create(
-            user=emp_user,
-            log_date=timezone.localtime(timezone.now()).date(),
-            log_time=timezone.localtime(timezone.now()).time(),
-            event_name=f"Added new user {username} details"
-        )
+            # Log the add event
+            UserActivityLog.objects.create(
+                user=emp_user,
+                log_date=timezone.localtime(timezone.now()).date(),
+                log_time=timezone.localtime(timezone.now()).time(),
+                event_name=f"Added new user {username} details"
+            )
 
-        messages.success(request, f"User '{username}' added successfully!")
+            messages.success(request, f"User '{username}' added successfully!")
+        except:
+            messages.error(request, "We couldn't add the User. Please check your input and try again.")
+
         return redirect('users')
 
     # Get the status and department filters from the query parameters
@@ -1077,60 +1095,60 @@ def edit_user(request, user_id):
     user = get_object_or_404(User, id=user_id)
 
     if request.method == 'POST':
-
-        username = request.POST.get('editUsername')
-        login_name = request.POST.get('editLoginName')
-        password = request.POST.get('editPassword')
-        password_duration = request.POST.get('editpasswordDuration')
-        role = request.POST.get('editRole')
-        comm_group_code = request.POST.get('editCommGroup')
-        department_id = request.POST.get('editdepartmentName')
-        status = request.POST.get('editstatus')
-        accessible_departments = request.POST.getlist('editaccessibleDepartment')
-        accountlock=request.POST.get('editAccountLock')
-        
-
-
-        comm_group = get_object_or_404(CommGroup, CommGroup_code=comm_group_code)
-        department = get_object_or_404(Department, id=department_id)
-
- 
-        user.username = username
-        user.password = password
-        user.password_duration = password_duration
-        user.role = role
-        user.commGroup = comm_group
-        user.department = department
-        user.status = status
-        user.account_lock=accountlock
-        user.save() 
-
-        if accessible_departments:
-            selected_departments = Department.objects.filter(id__in=accessible_departments)
-            user.accessible_departments.set(selected_departments)
-        else:
-            user.accessible_departments.clear()
-
-        password_history = PasswordHistory.objects.filter(user=user).order_by('created_at')
-        if password_history.count() >= 3:
-            # Replace the oldest entry if there are already 3 entries
-            oldest_entry = password_history.first()
-            oldest_entry.password = password
-            oldest_entry.created_at = timezone.now()
-            oldest_entry.save()
-        else:
-            # Create a new entry if fewer than 3 exist
-            PasswordHistory.objects.create(user=user, password=password)
-
         try:
-            UserActivityLog.objects.create(
-                user=emp_user,
-                log_date=timezone.localtime(timezone.now()).date(),
-                log_time=timezone.localtime(timezone.now()).time(),
-                event_name=f"Updated {username} user details"
-            )
-        except User.DoesNotExist:   
-            pass  
+            username = request.POST.get('editUsername')
+            login_name = request.POST.get('editLoginName')
+            password = request.POST.get('editPassword')
+            password_duration = request.POST.get('editpasswordDuration')
+            role = request.POST.get('editRole')
+            comm_group_code = request.POST.get('editCommGroup')
+            department_id = request.POST.get('editdepartmentName')
+            status = request.POST.get('editstatus')
+            accessible_departments = request.POST.getlist('editaccessibleDepartment')
+            accountlock=request.POST.get('editAccountLock')
+            
+            comm_group = get_object_or_404(CommGroup, CommGroup_code=comm_group_code)
+            department = get_object_or_404(Department, id=department_id)
+    
+            user.username = username
+            user.password = password
+            user.password_duration = password_duration
+            user.role = role
+            user.commGroup = comm_group
+            user.department = department
+            user.status = status
+            user.account_lock=accountlock
+            user.save() 
+
+            if accessible_departments:
+                selected_departments = Department.objects.filter(id__in=accessible_departments)
+                user.accessible_departments.set(selected_departments)
+            else:
+                user.accessible_departments.clear()
+
+            password_history = PasswordHistory.objects.filter(user=user).order_by('created_at')
+            if password_history.count() >= 3:
+                # Replace the oldest entry if there are already 3 entries
+                oldest_entry = password_history.first()
+                oldest_entry.password = password
+                oldest_entry.created_at = timezone.now()
+                oldest_entry.save()
+            else:
+                # Create a new entry if fewer than 3 exist
+                PasswordHistory.objects.create(user=user, password=password)
+
+            try:
+                UserActivityLog.objects.create(
+                    user=emp_user,
+                    log_date=timezone.localtime(timezone.now()).date(),
+                    log_time=timezone.localtime(timezone.now()).time(),
+                    event_name=f"Updated {username} user details"
+                )
+            except User.DoesNotExist:   
+                pass  
+            messages.success(request, f"Updated {username} User details")
+        except:
+            messages.error(request, f"Failed to updated {username} User details. Please check your input and try again.")
 
         return redirect('users')
 
@@ -1172,43 +1190,45 @@ def role_permission(request):
         role_data = None
     
     if request.method == 'POST':
-        role = request.POST.get('role')
-        description = request.POST.get('description')
-    
-        if role_data:
-            for i in role_data:
-                if i.role == role:
-                    error_msg = 'This {} has already in use.'.format(role)
-                    return render(request, 'Management/role_permission.html', {'data':data, 'organization':organization, 'acc_db':acc_db, 'role_data':role_data, 'error_msg':error_msg})
+        try:
+            role = request.POST.get('role')
+            description = request.POST.get('description')
+        
+            if role_data:
+                for i in role_data:
+                    if i.role == role:
+                        error_msg = 'This {} has already in use.'.format(role)
+                        return render(request, 'Management/role_permission.html', {'data':data, 'organization':organization, 'acc_db':acc_db, 'role_data':role_data, 'error_msg':error_msg})
 
-        role_new = User_role(
-            role = role,
-            description = description,
-        )  
-        role_new.save() 
+            role_new = User_role(
+                role = role,
+                description = description,
+            )  
+            role_new.save() 
 
-        user_access_new = user_access_db(
-            role = role,
-            org_v = True,
-            c_group_v = True,
-            dep_v = True,
-            role_v = True,
-            user_v = True,
-            app_v = True,
-            back_v = True,
-            sys_v = True,
-            res_v = True
-        )
-        user_access_new.save()
+            user_access_new = user_access_db(
+                role = role,
+                org_v = True,
+                c_group_v = True,
+                dep_v = True,
+                role_v = True,
+                user_v = True,
+                app_v = True,
+                back_v = True,
+                sys_v = True,
+                res_v = True
+            )
+            user_access_new.save()
 
-        UserActivityLog.objects.create(
-            user=emp_user,
-            log_date=timezone.localtime(timezone.now()).date(),
-            log_time=timezone.localtime(timezone.now()).time(),
-            event_name=f"Added new {role} role"
-        ) 
-
-        success_msg = 'Role is added successfully.'
+            UserActivityLog.objects.create(
+                user=emp_user,
+                log_date=timezone.localtime(timezone.now()).date(),
+                log_time=timezone.localtime(timezone.now()).time(),
+                event_name=f"Added new {role} role"
+            ) 
+            messages.success(request, f'Role is added successfully.!')
+        except:
+            messages.error(request, "We couldn't add the Role. Please check your input and try again.")
         return redirect('role_permission')
     
     return render(request, 'Management/role_permission.html', {'organization': organization, 'data':data, 'acc_db':acc_db, 'role_data':role_data})
@@ -1236,34 +1256,37 @@ def edit_role(request, id):
     role_instance = get_object_or_404(User_role, id=id)
 
     if request.method == 'POST':
-        role_instance = get_object_or_404(User_role, id=id)
-
-        role_name = request.POST.get('role')
-        description = request.POST.get('description')
-
-        role_instance.role = role_name
-        role_instance.description = description
-        role_instance.save()
-
-
         try:
-            access_instance = user_access_db.objects.get(role=role_instance.role)
-        except user_access_db.DoesNotExist:
-            access_instance = None
+            role_instance = get_object_or_404(User_role, id=id)
 
-        if access_instance:
-            access_instance.role = role_name
-            access_instance.save()
+            role_name = request.POST.get('role')
+            description = request.POST.get('description')
+
+            role_instance.role = role_name
+            role_instance.description = description
+            role_instance.save()
 
 
-        UserActivityLog.objects.create(
-            user=emp_user,
-            log_date=timezone.localtime(timezone.now()).date(),
-            log_time=timezone.localtime(timezone.now()).time(),
-            event_name=f"Updated {role_name} role"
-        )
+            try:
+                access_instance = user_access_db.objects.get(role=role_instance.role)
+            except user_access_db.DoesNotExist:
+                access_instance = None
 
-        success_msg = 'Role updated successfully.'
+            if access_instance:
+                access_instance.role = role_name
+                access_instance.save()
+
+
+            UserActivityLog.objects.create(
+                user=emp_user,
+                log_date=timezone.localtime(timezone.now()).date(),
+                log_time=timezone.localtime(timezone.now()).time(),
+                event_name=f"Updated {role_name} role"
+            )
+            messages.success(request, f"Updated {role_name} role details")
+        except:
+            messages.error(request, f"Failed to updated {role_name} role details. Please check your input and try again.")
+
         return redirect('role_permission')
     
 
@@ -1593,35 +1616,37 @@ def app_settings(request):
         acc_db = None
 
     if request.method == 'POST':
+        try:
+            email_sys_set = request.POST.get('email_setting_status')
+            smpthost = request.POST.get('smpthost')
+            smtpPort = request.POST.get('smtpPort')
+            smptemail = request.POST.get('smptemail')
+            smptpass = request.POST.get('smptpass')
+            emailsignature = request.POST.get('emailsignature')
 
-        email_sys_set = request.POST.get('email_setting_status')
-        smpthost = request.POST.get('smpthost')
-        smtpPort = request.POST.get('smtpPort')
-        smptemail = request.POST.get('smptemail')
-        smptpass = request.POST.get('smptpass')
-        emailsignature = request.POST.get('emailsignature')
+            # Update or Create
+            app_email_settings, created = AppSettings.objects.update_or_create(
+                id=1,  # Assuming a single settings instance
+                defaults={
+                    'email_sys_set': email_sys_set,
+                    'email_host': smpthost,
+                    'email_port': smtpPort,
+                    'email_host_user': smptemail,
+                    'email_host_password': smptpass,
+                    'email_signature': emailsignature
+                }
+            )
 
-        # Update or Create
-        app_email_settings, created = AppSettings.objects.update_or_create(
-            id=1,  # Assuming a single settings instance
-            defaults={
-                'email_sys_set': email_sys_set,
-                'email_host': smpthost,
-                'email_port': smtpPort,
-                'email_host_user': smptemail,
-                'email_host_password': smptpass,
-                'email_signature': emailsignature
-            }
-        )
-
-        # Log the settings update
-        UserActivityLog.objects.create(
-            user=emp_user,
-            log_date=timezone.localtime(timezone.now()).date(),
-            log_time=timezone.localtime(timezone.now()).time(),
-            event_name="Updated Application settings"
-        )
-        messages.success(request, 'Application settings saved successfully!')
+            # Log the settings update
+            UserActivityLog.objects.create(
+                user=emp_user,
+                log_date=timezone.localtime(timezone.now()).date(),
+                log_time=timezone.localtime(timezone.now()).time(),
+                event_name="Updated Application settings"
+            )
+            messages.success(request, 'Application settings saved successfully!')
+        except:
+            messages.error(request, "We couldn't save App Settings. Please check your input and try again.")
         return redirect('app_settings')
 
     # Fetch the existing settings
@@ -1650,42 +1675,45 @@ def app_sms_settings(request):
     acc_db = user_access_db.objects.filter(role=data.role).first()
 
     if request.method == 'POST':
-        sms_sys_set = request.POST.get('sms_setting_status')
-        comm_port = request.POST.get('commport')
-        parity = request.POST.get('parity')
-        baud_rate = request.POST.get('baudrate')
-        data_bits = request.POST.get('databits')
-        stop_bits = request.POST.get('stopbits')
-        flow_control = request.POST.get('flowcontrol')
-        passwordchange=request.POST.get('password_change')
-        autologout=request.POST.get('system_auto_logout')
-        lock=request.POST.get('user_access_lock')
-        # Update or Create
-        app_sms_settings, created = AppSettings.objects.update_or_create(
-            id=1,  # Assuming a single settings instance
-            defaults={
-                'sms_sys_set': sms_sys_set,
-                'comm_port': comm_port,
-                'parity': parity,
-                'baud_rate': baud_rate,
-                'data_bits': data_bits,
-                'stop_bits': stop_bits,
-                'flow_control': flow_control,
-                'passwordchange':passwordchange,
-                'autologouttime':autologout,
-                'lockcount':lock
-            }
-        )
+        try:
+            sms_sys_set = request.POST.get('sms_setting_status')
+            comm_port = request.POST.get('commport')
+            parity = request.POST.get('parity')
+            baud_rate = request.POST.get('baudrate')
+            data_bits = request.POST.get('databits')
+            stop_bits = request.POST.get('stopbits')
+            flow_control = request.POST.get('flowcontrol')
+            passwordchange=request.POST.get('password_change')
+            autologout=request.POST.get('system_auto_logout')
+            lock=request.POST.get('user_access_lock')
+            # Update or Create
+            app_sms_settings, created = AppSettings.objects.update_or_create(
+                id=1,  # Assuming a single settings instance
+                defaults={
+                    'sms_sys_set': sms_sys_set,
+                    'comm_port': comm_port,
+                    'parity': parity,
+                    'baud_rate': baud_rate,
+                    'data_bits': data_bits,
+                    'stop_bits': stop_bits,
+                    'flow_control': flow_control,
+                    'passwordchange':passwordchange,
+                    'autologouttime':autologout,
+                    'lockcount':lock
+                }
+            )
 
-        # Log the settings update
-        UserActivityLog.objects.create(
-            user=emp_user,
-            log_date=timezone.localtime(timezone.now()).date(),
-            log_time=timezone.localtime(timezone.now()).time(),
-            event_name="Updated SMS settings"
-        )
+            # Log the settings update
+            UserActivityLog.objects.create(
+                user=emp_user,
+                log_date=timezone.localtime(timezone.now()).date(),
+                log_time=timezone.localtime(timezone.now()).time(),
+                event_name="Updated SMS settings"
+            )
 
-        messages.success(request, 'SMS settings saved successfully!')
+            messages.success(request, 'SMS settings saved successfully!')
+        except:
+            messages.error(request, f"We couldn't save App Settings. Please check your input and try again.")
         return redirect('app_sms_settings')
 
     # Fetch the existing SMS settings
@@ -1748,42 +1776,13 @@ def save_app_settings(request):
     return JsonResponse({'status': 'error', 'message': 'Invalid request'}, status=400)
 
 
-
-
-import serial
-import time
 from datetime import datetime, timedelta, date
-import threading
-from django.shortcuts import redirect
-from django.contrib import messages
 from .models import AppSettings
-
-import time
 from concurrent.futures import ThreadPoolExecutor
-import serial
 import serial.tools.list_ports
-
-import threading
-import serial
-import time
-from django.shortcuts import redirect
-from django.contrib import messages
-
-import threading
-import serial
-import time
-from django.shortcuts import redirect
-from django.contrib import messages
-
 import concurrent.futures
 import serial
 import time
-from django.shortcuts import redirect
-from django.contrib import messages
-import serial
-import threading
-import time
-from datetime import datetime
 from django.shortcuts import redirect
 from django.contrib import messages
 from .models import AppSettings  # Adjust this import based on your actual model location
@@ -1830,115 +1829,119 @@ from .models import AppSettings, Sms_logs
 
 def send_test_sms(request):
     if request.method == 'POST':
-        # Retrieve the phone number and time from the request
-        test_sms_number = request.POST.get('testsms')
-        test_sms_time = request.POST.get('testsmstime')
+        try:
+            # Retrieve the phone number and time from the request
+            test_sms_number = request.POST.get('testsms')
+            test_sms_time = request.POST.get('testsmstime')
 
-        if not test_sms_number:
-            messages.error(request, "Please provide a valid phone number.")
-            return redirect('app_sms_settings')
-
-        # Fetch SMS settings from the database
-        sms_settings = AppSettings.objects.first()
-        if not sms_settings:
-            messages.error(request, "SMS settings not configured.")
-            return redirect('app_sms_settings')
-
-        lock = threading.Lock()
-
-        def send_sms(scheduled_time=None):
-            ser = None  # Initialize the variable
-            message = "This is test SMS from ESTDAS application"
-            status = "Failed"  # Default to failed; update on success
-            try:
-                # Initialize the GSM modem connection
-                ser = serial.Serial(
-                    port=sms_settings.comm_port,
-                    baudrate=int(sms_settings.baud_rate),
-                    bytesize=serial.EIGHTBITS,
-                    parity=serial.PARITY_NONE if sms_settings.parity == 'None' else sms_settings.parity.upper()[0],
-                    stopbits=serial.STOPBITS_ONE if sms_settings.stop_bits == 1 else serial.STOPBITS_TWO,
-                    timeout=2
-                )
-
-                def send_command(command, wait_for_response=True, delay=2):
-                    """Send a command to the GSM modem and optionally wait for a response."""
-                    ser.write(command.encode() + b'\r')
-                    ser.flush()
-                    time.sleep(delay)
-                    if wait_for_response:
-                        response = ser.read(1000).decode(errors="ignore").strip()
-                        return response
-                    return ""
-
-                # Test modem connectivity
-                if "OK" not in send_command("AT"):
-                    messages.error(request, "Modem not responding to 'AT' command. Check your connection.")
-                    return
-
-                # Set SMS mode to text
-                if "OK" not in send_command("AT+CMGF=1"):
-                    messages.error(request, "Failed to set SMS mode to text.")
-                    return
-
-                # Initiate SMS sending
-                response = send_command(f'AT+CMGS="{test_sms_number}"', wait_for_response=True, delay=2)
-                if ">" not in response:
-                    messages.error(request, "Modem did not prompt for message input.")
-                    return
-
-                # Send the message and terminate with Ctrl+Z
-                ser.write((message + '\r').encode())
-                ser.flush()
-                time.sleep(1)  # Brief pause before sending Ctrl+Z
-                ser.write(b"\x1A")  # Ctrl+Z to send the SMS
-                ser.flush()
-
-                # Wait for final response
-                time.sleep(5)
-                response = ser.read(1000).decode(errors="ignore").strip()
-
-                if "+CMGS" in response and "OK" in response:
-                    messages.success(request, f"Test SMS sent successfully to {test_sms_number}.")
-                    status = "Sent"  # Update status to sent
-                else:
-                    messages.error(request, f"Failed to send SMS. Detailed response: {response}")
-
-            except Exception as e:
-                messages.error(request, f"Error sending SMS: {str(e)}")
-            finally:
-                # Ensure the serial connection is closed
-                if ser and ser.is_open:
-                    ser.close()
-
-                # Log SMS details to the database
-                Sms_logs.objects.create(
-                    time=scheduled_time if scheduled_time else datetime.now().time(),
-                    date=datetime.now().date(),
-                    sys_sms=True,
-                    to_num=test_sms_number,
-                    user_name="Test SMS",
-                    msg_body=message,
-                    status=status
-                )
-
-        # Check if a time is provided
-        if test_sms_time:
-            try:
-                # Parse and calculate the delay for scheduled SMS
-                sms_datetime = datetime.strptime(test_sms_time, "%H:%M").time()
-                now = datetime.now().time()
-                delay = (datetime.combine(date.today(), sms_datetime) - datetime.now()).total_seconds()
-                if delay < 0:
-                    delay += 86400  # Schedule for the next day
-                threading.Timer(delay, send_sms, args=[sms_datetime]).start()
-                messages.success(request, f"SMS scheduled to {test_sms_number} at {test_sms_time}.")
-            except ValueError:
-                messages.error(request, "Invalid time format. Please use HH:MM.")
+            if not test_sms_number:
+                messages.error(request, "Please provide a valid phone number.")
                 return redirect('app_sms_settings')
-        else:
-            # Send SMS immediately if no time is provided
-            send_sms()
+
+            # Fetch SMS settings from the database
+            sms_settings = AppSettings.objects.first()
+            if not sms_settings:
+                messages.error(request, "SMS settings not configured.")
+                return redirect('app_sms_settings')
+
+            lock = threading.Lock()
+
+            def send_sms(scheduled_time=None):
+                ser = None  # Initialize the variable
+                message = "This is test SMS from ESTDAS application"
+                status = "Failed"  # Default to failed; update on success
+                try:
+                    # Initialize the GSM modem connection
+                    ser = serial.Serial(
+                        port=sms_settings.comm_port,
+                        baudrate=int(sms_settings.baud_rate),
+                        bytesize=serial.EIGHTBITS,
+                        parity=serial.PARITY_NONE if sms_settings.parity == 'None' else sms_settings.parity.upper()[0],
+                        stopbits=serial.STOPBITS_ONE if sms_settings.stop_bits == 1 else serial.STOPBITS_TWO,
+                        timeout=2
+                    )
+
+                    def send_command(command, wait_for_response=True, delay=2):
+                        """Send a command to the GSM modem and optionally wait for a response."""
+                        ser.write(command.encode() + b'\r')
+                        ser.flush()
+                        time.sleep(delay)
+                        if wait_for_response:
+                            response = ser.read(1000).decode(errors="ignore").strip()
+                            return response
+                        return ""
+
+                    # Test modem connectivity
+                    if "OK" not in send_command("AT"):
+                        messages.error(request, "Modem not responding to 'AT' command. Check your connection.")
+                        return
+
+                    # Set SMS mode to text
+                    if "OK" not in send_command("AT+CMGF=1"):
+                        messages.error(request, "Failed to set SMS mode to text.")
+                        return
+
+                    # Initiate SMS sending
+                    response = send_command(f'AT+CMGS="{test_sms_number}"', wait_for_response=True, delay=2)
+                    if ">" not in response:
+                        messages.error(request, "Modem did not prompt for message input.")
+                        return
+
+                    # Send the message and terminate with Ctrl+Z
+                    ser.write((message + '\r').encode())
+                    ser.flush()
+                    time.sleep(1)  # Brief pause before sending Ctrl+Z
+                    ser.write(b"\x1A")  # Ctrl+Z to send the SMS
+                    ser.flush()
+
+                    # Wait for final response
+                    time.sleep(5)
+                    response = ser.read(1000).decode(errors="ignore").strip()
+
+                    if "+CMGS" in response and "OK" in response:
+                        messages.success(request, f"Test SMS sent successfully to {test_sms_number}.")
+                        status = "Sent"  # Update status to sent
+                    else:
+                        messages.error(request, f"Failed to send SMS. Detailed response: {response}")
+
+                except Exception as e:
+                    messages.error(request, f"Error sending SMS: {str(e)}")
+                finally:
+                    # Ensure the serial connection is closed
+                    if ser and ser.is_open:
+                        ser.close()
+
+                    # Log SMS details to the database
+                    Sms_logs.objects.create(
+                        time=scheduled_time if scheduled_time else datetime.now().time(),
+                        date=datetime.now().date(),
+                        sys_sms=True,
+                        to_num=test_sms_number,
+                        user_name="Test SMS",
+                        msg_body=message,
+                        status=status
+                    )
+
+            # Check if a time is provided
+            if test_sms_time:
+                try:
+                    # Parse and calculate the delay for scheduled SMS
+                    sms_datetime = datetime.strptime(test_sms_time, "%H:%M").time()
+                    now = datetime.now().time()
+                    delay = (datetime.combine(date.today(), sms_datetime) - datetime.now()).total_seconds()
+                    if delay < 0:
+                        delay += 86400  # Schedule for the next day
+                    threading.Timer(delay, send_sms, args=[sms_datetime]).start()
+                    messages.success(request, f"SMS scheduled to {test_sms_number} at {test_sms_time}.")
+                except ValueError:
+                    messages.error(request, "Invalid time format. Please use HH:MM.")
+                    return redirect('app_sms_settings')
+            else:
+                # Send SMS immediately if no time is provided
+                send_sms()
+            messages.success(request, "Test SMS sent Successfully!")
+        except:
+            messages.error(request, "We couldn't send message. Please check your input and try again.")
 
         return redirect('app_sms_settings')
     else:
@@ -1948,87 +1951,91 @@ def send_test_sms(request):
 
 def send_test_email(request):
     if request.method == 'POST':
-        recipient_email = request.POST.get('testemail')
-        email_time = request.POST.get('testemailtime')
+        try:
+            recipient_email = request.POST.get('testemail')
+            email_time = request.POST.get('testemailtime')
+            
+            # Fetch the email settings dynamically
+            app_settings=AppSettings.objects.first()
+            if not app_settings or app_settings.email_sys_set != 'Enable':
+                return
         
-        # Fetch the email settings dynamically
-        app_settings=AppSettings.objects.first()
-        if not app_settings or app_settings.email_sys_set != 'Enable':
-            return
-    
-        email_settings = get_email_settings(request)
-        if not email_settings:
-            return HttpResponse("Email settings are not configured.", status=500)
-        
-        subject = 'ESTDAS Test Email'
-        message = (
-            f"This is test email from ESTDAS application"
-            f"\n\n{app_settings.email_signature or ''}"
-        )
+            email_settings = get_email_settings(request)
+            if not email_settings:
+                return HttpResponse("Email settings are not configured.", status=500)
+            
+            subject = 'ESTDAS Test Email'
+            message = (
+                f"This is test email from ESTDAS application"
+                f"\n\n{app_settings.email_signature or ''}"
+            )
 
-        # Set the dynamic email settings
-        settings.EMAIL_HOST = email_settings['EMAIL_HOST']
-        settings.EMAIL_HOST_USER = email_settings['EMAIL_HOST_USER']
-        settings.EMAIL_HOST_PASSWORD = email_settings['EMAIL_HOST_PASSWORD']
-        settings.EMAIL_PORT = email_settings['EMAIL_PORT']
+            # Set the dynamic email settings
+            settings.EMAIL_HOST = email_settings['EMAIL_HOST']
+            settings.EMAIL_HOST_USER = email_settings['EMAIL_HOST_USER']
+            settings.EMAIL_HOST_PASSWORD = email_settings['EMAIL_HOST_PASSWORD']
+            settings.EMAIL_PORT = email_settings['EMAIL_PORT']
 
-        # Function to send the email
-        def send_email():
-            try:
-                send_mail(
-                    subject=subject,
-                    message=message,
-                    from_email=email_settings['EMAIL_HOST_USER'],
-                    recipient_list=[recipient_email],
-                    fail_silently=False,
-                )
-                # Log successful email attempt
-                Email_logs.objects.create(
-                    equipment=None,  # Assuming None is set for no specific equipment
-                    sys_mail=True,
-                    to_email=recipient_email,
-                    email_sub=subject,
-                    email_body=message,
-                    status='Sent'
-                )
-            except Exception as e:
-                # Log failed email attempt
-                Email_logs.objects.create(
-                    equipment=None,  # Assuming None is set for no specific equipment
-                    sys_mail=True,
-                    to_email=recipient_email,
-                    email_sub=subject,
-                    email_body=message,
-                    status='Failed'
-                )
+            # Function to send the email
+            def send_email():
+                try:
+                    send_mail(
+                        subject=subject,
+                        message=message,
+                        from_email=email_settings['EMAIL_HOST_USER'],
+                        recipient_list=[recipient_email],
+                        fail_silently=False,
+                    )
+                    # Log successful email attempt
+                    Email_logs.objects.create(
+                        equipment=None,  # Assuming None is set for no specific equipment
+                        sys_mail=True,
+                        to_email=recipient_email,
+                        email_sub=subject,
+                        email_body=message,
+                        status='Sent'
+                    )
+                except Exception as e:
+                    # Log failed email attempt
+                    Email_logs.objects.create(
+                        equipment=None,  # Assuming None is set for no specific equipment
+                        sys_mail=True,
+                        to_email=recipient_email,
+                        email_sub=subject,
+                        email_body=message,
+                        status='Failed'
+                    )
 
-        # Calculate delay if time is provided
-        if email_time:
-            try:
-                # Parse the provided time
-                email_datetime = datetime.strptime(email_time, "%H:%M").time()
-                now = datetime.now().time()
-                
-                # Combine the date with the time for full datetime comparison
-                today_date = date.today()
-                email_datetime_full = datetime.combine(today_date, email_datetime)
-                now_full = datetime.combine(today_date, now)
-                
-                # Calculate delay in seconds
-                delay = (email_datetime_full - now_full).total_seconds()
-
-                # If delay is negative, schedule the email for the next day
-                if delay < 0:
-                    email_datetime_full += timedelta(days=1)
+            # Calculate delay if time is provided
+            if email_time:
+                try:
+                    # Parse the provided time
+                    email_datetime = datetime.strptime(email_time, "%H:%M").time()
+                    now = datetime.now().time()
+                    
+                    # Combine the date with the time for full datetime comparison
+                    today_date = date.today()
+                    email_datetime_full = datetime.combine(today_date, email_datetime)
+                    now_full = datetime.combine(today_date, now)
+                    
+                    # Calculate delay in seconds
                     delay = (email_datetime_full - now_full).total_seconds()
 
-                # Schedule email with delay
-                threading.Timer(delay, send_email).start()
-            except ValueError:
-                return HttpResponse("Invalid time format. Please use HH:MM.", status=400)
-        else:
-            # Send email immediately if no time is provided
-            send_email()
+                    # If delay is negative, schedule the email for the next day
+                    if delay < 0:
+                        email_datetime_full += timedelta(days=1)
+                        delay = (email_datetime_full - now_full).total_seconds()
+
+                    # Schedule email with delay
+                    threading.Timer(delay, send_email).start()
+                except ValueError:
+                    return HttpResponse("Invalid time format. Please use HH:MM.", status=400)
+            else:
+                # Send email immediately if no time is provided
+                send_email()
+            messages.success(request, "Test Email sent Successfully!")
+        except:
+            messages.error(request, "We couldn't send email. Please check your input and try again.")
 
         return redirect('app_settings')
     else:
@@ -2217,6 +2224,7 @@ def send_test_email(request):
 #     backup_thread.start()
 
 # start_backup_scheduler()
+
 def backup(request):
     emp_user = request.session.get('username', None)
     if not emp_user:
@@ -2233,28 +2241,31 @@ def backup(request):
         acc_db = None
 
     if request.method == 'POST':
-        local_path = request.POST.get('backup-local-path')
-        remote_path = request.POST.get('backup-remote-path')
-        backup_time = request.POST.get('backup-time')
+        try:
+            local_path = request.POST.get('backup-local-path')
+            remote_path = request.POST.get('backup-remote-path')
+            backup_time = request.POST.get('backup-time')
 
-        # Create or update the backup settings
-        backup_setting, created = BackupSettings.objects.update_or_create(
-            defaults={
-                'local_path': local_path,
-                'remote_path': remote_path,
-                'backup_time': backup_time,
-            }
-        )
+            # Create or update the backup settings
+            backup_setting, created = BackupSettings.objects.update_or_create(
+                defaults={
+                    'local_path': local_path,
+                    'remote_path': remote_path,
+                    'backup_time': backup_time,
+                }
+            )
 
-        # Log the backup settings update
-        UserActivityLog.objects.create(
-            user=emp_user,
-            log_date=timezone.localtime(timezone.now()).date(),
-            log_time=timezone.localtime(timezone.now()).time(),
-            event_name="Added or updated backup settings"
-        )
+            # Log the backup settings update
+            UserActivityLog.objects.create(
+                user=emp_user,
+                log_date=timezone.localtime(timezone.now()).date(),
+                log_time=timezone.localtime(timezone.now()).time(),
+                event_name="Added or updated backup settings"
+            )
 
-        messages.success(request, 'Backup settings saved successfully!')
+            messages.success(request, 'Backup settings saved successfully!')
+        except:
+            messages.erro(request, f"We couldn't save Backup Settings. Please check your input and try again.")
         return redirect('backup')
 
     # Fetch the first backup settings record if it exists
@@ -2286,21 +2297,24 @@ def edit_backup(request, id):
     backup_setting, created = BackupSettings.objects.get_or_create()
 
     if request.method == 'POST':
+        try:
         # Update backup settings
-        backup_setting.local_path = request.POST.get('backup-local-path')
-        backup_setting.remote_path = request.POST.get('backup-remote-path')
-        backup_setting.backup_time = request.POST.get('backup-time')
-        backup_setting.save()
+            backup_setting.local_path = request.POST.get('backup-local-path')
+            backup_setting.remote_path = request.POST.get('backup-remote-path')
+            backup_setting.backup_time = request.POST.get('backup-time')
+            backup_setting.save()
 
-        # Log the backup settings update
-        UserActivityLog.objects.create(
-            user=emp_user,
-            log_date=timezone.localtime(timezone.now()).date(),
-            log_time=timezone.localtime(timezone.now()).time(),
-            event_name="Updated backup settings"
-        )
+            # Log the backup settings update
+            UserActivityLog.objects.create(
+                user=emp_user,
+                log_date=timezone.localtime(timezone.now()).date(),
+                log_time=timezone.localtime(timezone.now()).time(),
+                event_name="Updated backup settings"
+            )
 
-        messages.success(request, 'Updated Backup settings successfully!')
+            messages.success(request, 'Updated Backup settings successfully!')
+        except:
+            messages.error(request, f"Failed to updated Backup Setting details. Please check your input and try again.")
         return redirect('backup')
 
     context = {
@@ -2460,7 +2474,6 @@ def connect_to_plc(ip_address):
         plc.connect(ip_address, PLC_RACK, PLC_SLOT)
         return plc
     except Exception as e:
-        print("ABCD",e)
         raise e
 
 def write_interval_to_plc(plc, interval):
@@ -2588,14 +2601,14 @@ def plc_disconnect(request):
                 equipment.save()
 
                 # Trigger the stop event for this equipment's background task
-                stop_event = stop_flags.get(equipment.id)
+                # stop_event = stop_flags.get(equipment.id)
                 if stop_event:
                     stop_event.set() 
                     time.sleep(2)
                     if stop_event.is_set():
                         pass
 
-                    del stop_flags[equipment.id]  
+                    # del stop_flags[equipment.id]  
 
                     
                     plc = connect_to_plc(ip_address)  
@@ -3029,13 +3042,18 @@ def process_alarm_logs(file_path, equipment_id):
                             ]
                             email_list = [email for email in email_fields if email]
 
-                            numbers_list = ['8296061293', '8904411103']
+                            user_data = {}
+                            for i in range(1, 11): 
+                                username = getattr(dept, f'user{i}', None)
+                                usernum = getattr(dept, f'user{i}_num', None)
+                                if username is not None and usernum is not None: 
+                                    user_data[username]=usernum
                             thread_email = threading.Thread(target=send_alert_email, args=(alarm_log.id, email_list))
-                            # thread_sms = threading.Thread(target=send_alert_messages, args=(numbers_list, alarm_log.id))
+                            thread_sms = threading.Thread(target=send_alert_messages, args=(user_data, alarm_log.id))
                             thread_email.start()
-                            # thread_sms.start()
+                            thread_sms.start()
                             thread_email.join()
-                            # thread_sms.join()
+                            thread_sms.join()
 
                     except IntegrityError:
                         pass
@@ -3065,7 +3083,7 @@ def setup_gsm_modem(ser):
         response = ser.read_all().decode('utf-8', errors='ignore').strip()
         
 
-def gsm_message(ser, number, message, lock, alarm_id):
+def gsm_message(ser, number, message, lock, alarm_id, name):
     alaram = Alarm_logs.objects.get(id=alarm_id)
     with lock:
         try:
@@ -3086,7 +3104,7 @@ def gsm_message(ser, number, message, lock, alarm_id):
                         date=timezone.now().date(),
                         sys_sms=False,
                         to_num=int(number),
-                        user_name="Darshan",  
+                        user_name=name,  
                         msg_body=message,
                         status="Sent"
                     )
@@ -3098,7 +3116,7 @@ def gsm_message(ser, number, message, lock, alarm_id):
                         date=timezone.now().date(),
                         sys_sms=False,
                         to_num=int(number),
-                        user_name="",  # Leave username blank
+                        user_name=name,  # Leave username blank
                         msg_body=message,
                         status="Failed"
                     )
@@ -3113,36 +3131,36 @@ def gsm_message(ser, number, message, lock, alarm_id):
                         date=timezone.now().date(),
                         sys_sms=False,
                         to_num=int(number),
-                        user_name="",  
+                        user_name=name,  
                         msg_body=message,
                         status="Failed"
                     )
 
 def send_alert_messages(numbers_list, alarm_code):
-    print("SMS TRIGGERED")
+    print("SMS TRIGGERED", numbers_list, alarm_code)
     alarm=Alarm_logs.objects.get(id=alarm_code)
+    alarm_id=alarm.id
+    app=AppSettings.objects.first()
     equipment_id = alarm.equipment.equip_name
     alarm_code = alarm.alarm_code.code
-    alarm_description = alarm.alarm_code.alarm_log  # Verify this field
+    alarm_description = alarm.alarm_code.alarm_log 
     date_field = alarm.date
     time_field = alarm.time
     combined_datetime = datetime.combine(date_field, time_field)
     formatted_datetime = combined_datetime.strftime('%Y-%m-%d %H:%M:%S')
-    port = "COM3"
-    baud_rate = 9600
-    parity = serial.PARITY_NONE
-    stop_bits = serial.STOPBITS_ONE
-    timeout = 2
-
+    sms_settings=AppSettings.objects.first()
     try:
+        print("Trying to connect to modem")
         ser = serial.Serial(
-            port=port,
-            baudrate=baud_rate,
+            port=sms_settings.comm_port,
+            baudrate=int(sms_settings.baud_rate),
             bytesize=serial.EIGHTBITS,
-            parity=parity,
-            stopbits=stop_bits,
-            timeout=timeout
+            parity=serial.PARITY_NONE if sms_settings.parity == 'None' else sms_settings.parity.upper()[0],
+            stopbits=serial.STOPBITS_ONE if sms_settings.stop_bits == 1 else serial.STOPBITS_TWO,
+            timeout=2
         )
+        print(f"Serial port opened on {app.comm_port} with baud rate {app.baud_rate}.")
+
         setup_modem(ser)  
 
         threads = []
@@ -3235,18 +3253,34 @@ Alarm Description: {alarm_description}
 Date and Time: {formatted_datetime}"""
 
         # message_template = f"Equipment ID: {alarm.equipment}\nAlarm Description: {alarm.alarm_code.alarm_log}\nDate and Time: {combined_datetime}"
+        try:
+            for name,number in numbers_list.items():
+                print(f"Preparing to send message to {number}")
+                thread = threading.Thread(target=gsm_message, args=(ser, number, message, lock, alarm_id, name))
+                threads.append(thread)
+                thread.start()
 
-        for number in numbers_list:
-            thread = threading.Thread(target=gsm_message, args=(ser, number, message, lock, alarm_code))
-            threads.append(thread)
-            thread.start()
+            for thread in threads:
+                thread.join()
+                print("Thread for sending SMS has completed.")
 
-        for thread in threads:
-            thread.join()
-
-        ser.close()
+            ser.close()
+            print("Serial port closed after sending all messages.")
+        except Exception as e:
+            print(f"Error during send_alert_messages: {str(e)}")
+            Sms_logs.objects.create(
+                            equipment=alarm.equipment.equip_name,
+                            time=timezone.now().time(),
+                            date=timezone.now().date(),
+                            sys_sms=False,
+                            to_num=int(number),
+                            user_name=name,  
+                            msg_body=message,
+                            status="Failed"
+                        )
 
     except Exception as e:
+        print(f"Error during send_alert_messages: {str(e)}")
         pass
 
 
@@ -3370,9 +3404,11 @@ Date and Time: {formatted_datetime}"""
                     equipment=alarm.equipment,
                     sys_mail=False,
                     to_email=recipient,
+                    date=datetime.now().date(),
+                    time=datetime.now().time(),
                     email_sub=subject,
                     email_body=message,
-                    status="Success"
+                    status="Sent"
                 )
 
             
@@ -3385,9 +3421,11 @@ Date and Time: {formatted_datetime}"""
                     equipment=alarm.equipment,
                     sys_mail=False,
                     to_email=recipient,
+                    date=datetime.now().date(),
+                    time=datetime.now().time(),
                     email_sub=subject,
                     email_body=message,
-                    status=f"Failed"
+                    status="Success"
                 )
             
 
@@ -3479,6 +3517,12 @@ def equipment_configure_view(request):
 
         )
         equipment.save()
+        emailalert.objects.create(
+            equipment_name=equipment
+        )
+        smsalert.objects.create(
+            equipment_name=equipment
+        )
         if "Humidity" in equipment_type:
             equipment.total_humidity_sensors = sensor
         else:
@@ -3627,11 +3671,11 @@ def equipment_edit(request, equipment_id):
             if plc.get_connected():
                 
                 # Start a new background task for the edited equipment
-                
-                stop_event = threading.Event()  # Create a new stop event
-                stop_flags[equipment.id] = stop_event  # Track stop event by equipment ID
-                thread = threading.Thread(target=background_task, args=(equipment, plc, equipment.ip_address, equipment.interval, stop_event))
-                thread.start()
+                pass
+                # stop_event = threading.Event()  # Create a new stop event
+                # stop_flags[equipment.id] = stop_event  # Track stop event by equipment ID
+                # thread = threading.Thread(target=background_task, args=(equipment, plc, equipment.ip_address, equipment.interval, stop_event))
+                # thread.start()
             else:
                 messages.error(request, 'Failed to connect to PLC.')
                 return redirect('equipment_configure')
@@ -3663,13 +3707,100 @@ def equipment_setting(request, id):
     equipment=Equipment.objects.get(id=id)
     logs=Alarm_codes.objects.all()
     l=logs.count()
-    print("ABCD", l)
-    equipmentwrite=Equipmentwrite.objects.filter(equipment=id)
+    alert_instance=emailalert.objects.get(equipment_name=id)
+    try:
+        equipmentwrite = Equipmentwrite.objects.filter(equipment=id)
+        equipment_parameters = EquipParameter.objects.get(equipment=id)
+        
+    except Equipmentwrite.DoesNotExist:
+        
+        equipmentwrite = None
+        email=None
+        sms=None
+        print("No Equipmentwrite objects found for the given equipment ID.")
+    except EquipParameter.DoesNotExist:
+        
+        equipment_parameters = None
+        print("No EquipParameter object found for the given equipment ID.")
+    else:
+       
+        print("Equipmentwrite and EquipParameter objects retrieved successfully.")
 
-    
-    return render(request, 'Equip_Settings/equip_settings.html', {'organization': organization, 'data':data, 'acc_db':acc_db, 'equipment':equipment, 'logs':logs, 'equipmentwrite':equipmentwrite})
+    temperature_settings = []
+    for i in range(1, equipment.total_temp_sensors + 1):
+        color_attr = f"t{i}color" 
+        color_value = getattr(equipment_parameters, color_attr, None)
+        temperature_settings.append({
+            'index': i,
+            'color': color_value
+        })
+    humidity_settings = []
+    if equipment.total_humidity_sensors > 0:
+        for i in range(1, equipment.total_humidity_sensors + 1):
+            color_attr = f"rh{i}color"
+            color_value = getattr(equipment_parameters, color_attr, None)
+            humidity_settings.append({
+                'index': i,
+                'color': color_value
+            })
+    if alert_instance:
+        fields = [
+            {
+                'name': field.name,
+                'help_text': field.help_text,
+                'value': getattr(alert_instance, field.name),
+                'type': field.get_internal_type(),
+            }
+            for field in emailalert._meta.get_fields()
+            if field.get_internal_type() == 'BooleanField'
+        ]
+    else:
+        fields = []
+    sms_alert=smsalert.objects.get(equipment_name=id)
+    if sms_alert:
+        sms_fields = [
+            {
+                'name': field.name,
+                'help_text': field.help_text,
+                'value': getattr(sms_alert, field.name),
+                'type': field.get_internal_type(),
+            }
+            for field in emailalert._meta.get_fields()
+            if field.get_internal_type() == 'BooleanField'
+        ]
+    else:
+        sms_fields = []
+    return render(request, 'Equip_Settings/equip_settings.html', {'organization': organization, 'data':data, 'acc_db':acc_db, 'equipment':equipment, 'logs':logs, 'equipmentwrite':equipmentwrite, 'equipmentparameters':equipment_parameters,
+                                                                  'temperature_settings': temperature_settings, 'humidity_settings': humidity_settings,
+        'show_humidity': equipment.total_humidity_sensors > 0, 'fields': fields, 'sms_fields':sms_fields
+        
+       })
 
+@csrf_exempt
+def save_alert_settings(request):
+    if request.method == 'POST':
+        data = json.loads(request.body)
+        email_alerts = data.get('emailData', {}).get('email', [])
+        sms_alerts = data.get('smsData', {}).get('sms', [])
+        print(email_alerts)
+        ip_address = data.get('ip_address', {}).get('ip_address', '')
+        
+        equipment=Equipment.objects.get(ip_address=ip_address)
+        email=emailalert.objects.get(equipment_name=equipment.id)
+        print(email)
+        for i in email_alerts:
+           if hasattr(email, i):  
+                setattr(email, i, True)
+        email.save()
+        sms=smsalert.objects.get(equipment_name=equipment.id)
+        for i in sms_alerts:
+           if hasattr(sms, i):  
+                setattr(sms, i, True)
+        sms.save()
+        
 
+        return JsonResponse({"status": "success", "message": "Alert settings saved successfully."})
+    return JsonResponse({"status": "error", "message": "Invalid request"}, status=400)
 # DATA Analysis
 
 
@@ -5617,7 +5748,9 @@ def email_Audit_log(request):
     elif format_type=='Equipment-wise':
         if equipment_list:
             user_names = Equipment.objects.filter(id=equipment_list).values_list('equip_name', flat=True)
+            print("EQP", user_names)
             filter_kwargs &= Q(equipment__equip_name__in=user_names)
+            print(" Filter EQP", filter_kwargs)
             current_date = now()
             from_date_parsed = parse_date(from_date) if from_date else current_date.replace(day=1).date()
             to_date_parsed = parse_date(to_date) if to_date else current_date.date()
@@ -5637,6 +5770,8 @@ def email_Audit_log(request):
                     (Q(date=to_date_parsed) & Q(time__lte=to_time_parsed)) |
                     Q(date__gt=from_date_parsed, date__lt=to_date_parsed)
                 )
+            
+            print(" Filtered details", filter_kwargs)
         else:
             return HttpResponse("Equipment List is mandatory for Equipment-wise format.", status=400)
         
@@ -6180,82 +6315,82 @@ def Mkt_analysis(request):
     return render(request, 'Data_Analysis/Mkt.html')
 
 
-import csv
-from django.urls import reverse
-from django.contrib import messages
-from django.core.files.storage import default_storage
-from datetime import datetime
+# import csv
+# from django.urls import reverse
+# from django.contrib import messages
+# from django.core.files.storage import default_storage
+# from datetime import datetime
 
-def upload_csv(request):
-    if request.method == "POST":
-        equip_id = request.POST.get('equip_name')
-        csv_file = request.FILES.get("csv_file")
+# def upload_csv(request):
+#     if request.method == "POST":
+#         equip_id = request.POST.get('equip_name')
+#         csv_file = request.FILES.get("csv_file")
         
-        if not csv_file.name.endswith('.csv'):
-            messages.error(request, 'File is not CSV type')
-            return redirect(reverse('upload_csv'))
+#         if not csv_file.name.endswith('.csv'):
+#             messages.error(request, 'File is not CSV type')
+#             return redirect(reverse('upload_csv'))
 
-        try:
-            equip_name = Equipment.objects.get(id=equip_id)
-        except Equipment.DoesNotExist:
-            messages.error(request, 'Selected equipment not found')
-            return redirect(reverse('upload_csv'))
+#         try:
+#             equip_name = Equipment.objects.get(id=equip_id)
+#         except Equipment.DoesNotExist:
+#             messages.error(request, 'Selected equipment not found')
+#             return redirect(reverse('upload_csv'))
 
-        file_path = default_storage.save(csv_file.name, csv_file)
-        file_path = default_storage.path(file_path)
+#         file_path = default_storage.save(csv_file.name, csv_file)
+#         file_path = default_storage.path(file_path)
         
-        with open(file_path, mode='r', encoding='utf-8') as f:
-            reader = csv.DictReader(f)
-            for row in reader:
-                try:
+#         with open(file_path, mode='r', encoding='utf-8') as f:
+#             reader = csv.DictReader(f)
+#             for row in reader:
+#                 try:
                     
-                    date_str = row['Date']
-                    formatted_date = datetime.strptime(date_str, '%d-%m-%Y').date()
+#                     date_str = row['Date']
+#                     formatted_date = datetime.strptime(date_str, '%d-%m-%Y').date()
 
-                    TemperatureHumidityRecord.objects.create(
-                        equip_name=equip_name,
-                        date=formatted_date,
-                        time=row['Time'] if 'Time' in row else None,
-                        set_temp=row['Set Temp'],
-                        t_low_alarm=row['T Low Alarm'],
-                        t_low_alert=row['T Low Alert'],
-                        t_high_alarm=row['T High Alarm'],
-                        t_high_alert=row['T High Alert'],
-                        tmp_1=row['Tmp 1'] if 'Tmp 1' in row else None,
-                        tmp_2=row['Tmp 2'] if 'Tmp 2' in row else None,
-                        tmp_3=row['Tmp 3'] if 'Tmp 3' in row else None,
-                        tmp_4=row['Tmp 4'] if 'Tmp 4' in row else None,
-                        tmp_5=row['Tmp 5'] if 'Tmp 5' in row else None,
-                        tmp_6=row['Tmp 6'] if 'Tmp 6' in row else None,
-                        tmp_7=row['Tmp 7'] if 'Tmp 7' in row else None,
-                        tmp_8=row['Tmp 8'] if 'Tmp 8' in row else None,
-                        tmp_9=row['Tmp 9'] if 'Tmp 9' in row else None,
-                        tmp_10=row['Tmp 10'] if 'Tmp 10' in row else None,
-                        set_rh=row['Set RH'] if 'Set RH' in row else None,
-                        rh_low_alarm=row['RH Low Alarm'] if 'RH Low Alarm' in row else None,
-                        rh_low_alert=row['RH Low Alert'] if 'RH Low Alert' in row else None,
-                        rh_high_alarm=row['RH High Alarm'] if 'RH High Alarm' in row else None,
-                        rh_high_alert=row['RH High Alert'] if 'RH High Alert' in row else None,
-                        rh_1=row['RH 1'] if 'RH 1' in row else None,
-                        rh_2=row['RH 2'] if 'RH 2' in row else None,
-                        rh_3=row['RH 3'] if 'RH 3' in row else None,
-                        rh_4=row['RH 4'] if 'RH 4' in row else None,
-                        rh_5=row['RH 5'] if 'RH 5' in row else None,
-                        rh_6=row['RH 6'] if 'RH 6' in row else None,
-                        rh_7=row['RH 7'] if 'RH 7' in row else None,
-                        rh_8=row['RH 8'] if 'RH 8' in row else None,
-                        rh_9=row['RH 9'] if 'RH 9' in row else None,
-                        rh_10=row['RH 10'] if 'RH 10' in row else None,
-                    )
-                except ValueError as e:
-                    messages.error(request, f"Error processing row: {row}. {str(e)}")
-                    return redirect(reverse('upload_csv'))
+#                     TemperatureHumidityRecord.objects.create(
+#                         equip_name=equip_name,
+#                         date=formatted_date,
+#                         time=row['Time'] if 'Time' in row else None,
+#                         set_temp=row['Set Temp'],
+#                         t_low_alarm=row['T Low Alarm'],
+#                         t_low_alert=row['T Low Alert'],
+#                         t_high_alarm=row['T High Alarm'],
+#                         t_high_alert=row['T High Alert'],
+#                         tmp_1=row['Tmp 1'] if 'Tmp 1' in row else None,
+#                         tmp_2=row['Tmp 2'] if 'Tmp 2' in row else None,
+#                         tmp_3=row['Tmp 3'] if 'Tmp 3' in row else None,
+#                         tmp_4=row['Tmp 4'] if 'Tmp 4' in row else None,
+#                         tmp_5=row['Tmp 5'] if 'Tmp 5' in row else None,
+#                         tmp_6=row['Tmp 6'] if 'Tmp 6' in row else None,
+#                         tmp_7=row['Tmp 7'] if 'Tmp 7' in row else None,
+#                         tmp_8=row['Tmp 8'] if 'Tmp 8' in row else None,
+#                         tmp_9=row['Tmp 9'] if 'Tmp 9' in row else None,
+#                         tmp_10=row['Tmp 10'] if 'Tmp 10' in row else None,
+#                         set_rh=row['Set RH'] if 'Set RH' in row else None,
+#                         rh_low_alarm=row['RH Low Alarm'] if 'RH Low Alarm' in row else None,
+#                         rh_low_alert=row['RH Low Alert'] if 'RH Low Alert' in row else None,
+#                         rh_high_alarm=row['RH High Alarm'] if 'RH High Alarm' in row else None,
+#                         rh_high_alert=row['RH High Alert'] if 'RH High Alert' in row else None,
+#                         rh_1=row['RH 1'] if 'RH 1' in row else None,
+#                         rh_2=row['RH 2'] if 'RH 2' in row else None,
+#                         rh_3=row['RH 3'] if 'RH 3' in row else None,
+#                         rh_4=row['RH 4'] if 'RH 4' in row else None,
+#                         rh_5=row['RH 5'] if 'RH 5' in row else None,
+#                         rh_6=row['RH 6'] if 'RH 6' in row else None,
+#                         rh_7=row['RH 7'] if 'RH 7' in row else None,
+#                         rh_8=row['RH 8'] if 'RH 8' in row else None,
+#                         rh_9=row['RH 9'] if 'RH 9' in row else None,
+#                         rh_10=row['RH 10'] if 'RH 10' in row else None,
+#                     )
+#                 except ValueError as e:
+#                     messages.error(request, f"Error processing row: {row}. {str(e)}")
+#                     return redirect(reverse('upload_csv'))
 
-        messages.success(request, "CSV file uploaded and records saved.")
-        return redirect(reverse('upload_csv'))
+#         messages.success(request, "CSV file uploaded and records saved.")
+#         return redirect(reverse('upload_csv'))
 
-    equipment = Equipment.objects.all()
-    return render(request, 'upload_csv.html', {'equipment': equipment})
+#     equipment = Equipment.objects.all()
+#     return render(request, 'upload_csv.html', {'equipment': equipment})
 
 
 def view_alarm_log(request):
@@ -6482,8 +6617,20 @@ def generate_alaram_log_pdf(request, records, from_date, to_date, from_time, to_
     doc.build(content, onFirstPage=create_page, onLaterPages=create_page, canvasmaker=NumberedCanvas)
     return response
 
+def connect_to_plc1(ip_address):
+    try:
+        plc=snap7.client.Client()
+        plc.connect(ip_address, PLC_RACK, PLC_SLOT)
+        return plc
+    except Exception as e:
+        return False
 
 
+def eqp_stngs_safe_float(value, default=0.0):
+    try:
+        return float(value)
+    except (ValueError, TypeError):
+        return default
 
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
@@ -6491,30 +6638,44 @@ from django.views.decorators.http import require_http_methods
 import json
 
 @csrf_exempt  
-@require_http_methods(["POST"])
+
 def save_equipment_settings(request):
     data = json.loads(request.body)
-    
+    # print("data", data)
     tab_name = data.get('tab_name')
-   
+    username=data.get('username')
+    password=data.get('password')
+    ackn=data.get('acknowledge')
+    try:
+        
+        user = User.objects.get(username=username)
+    except User.DoesNotExist:
+        return JsonResponse({"message": "User not found."}, status=404)
+
+    if not check_password(password, user.password):
+        print(12)
+        return JsonResponse({"status": "error", "message": "Invalid password."}, status=400)
+    
     if tab_name == "settings":
         ip = data.get('equipment_ip')
         ip_address = Equipment.objects.get(ip_address=ip)
-        temp_set_value = float(data.get('temp_set_value', 0.0))
-        temp_low_alarm = float(data.get('temp_low_alarm', 0.0))
-        temp_high_alarm = float(data.get('temp_high_alarm', 0.0))
-        temp_sensor = float(data.get('temp_sensor', 0.0))
-        temp_high_alert = float(data.get('temp_high_alert', 0.0))
-        temp_low_alert = float(data.get('temp_low_alert', 0.0))
-        humidity_set_value = float(data.get('humidity_set_value', 0.0))
-        humidity_low_alarm = float(data.get('humidity_low_alarm', 0.0))
-        humidity_high_alarm = float(data.get('humidity_high_alarm', 0.0))
-        humidity_sensor = float(data.get('humidity_sensor', 0.0))
-        humidity_high_alert = float(data.get('humidity_high_alert', 0.0))
-        humidity_low_alert = float(data.get('humidity_low_alert', 0.0))
+        temp_set_value = eqp_stngs_safe_float(data.get('temp_set_value'))
+        temp_low_alarm = eqp_stngs_safe_float(data.get('temp_low_alarm'))
+        temp_high_alarm = eqp_stngs_safe_float(data.get('temp_high_alarm'))
+        temp_sensor = eqp_stngs_safe_float(data.get('temp_sensor'))
+        temp_high_alert = eqp_stngs_safe_float(data.get('temp_high_alert'))
+        temp_low_alert = eqp_stngs_safe_float(data.get('temp_low_alert'))
+        humidity_set_value = eqp_stngs_safe_float(data.get('humidity_set_value'))
+        humidity_low_alarm = eqp_stngs_safe_float(data.get('humidity_low_alarm'))
+        humidity_high_alarm = eqp_stngs_safe_float(data.get('humidity_high_alarm'))
+        humidity_sensor = eqp_stngs_safe_float(data.get('humidity_sensor'))
+        humidity_high_alert = eqp_stngs_safe_float(data.get('humidity_high_alert'))
+        humidity_low_alert = eqp_stngs_safe_float(data.get('humidity_low_alert'))
 
-        plc = connect_to_plc(ip)
-        
+        plc = connect_to_plc1(ip)
+        if plc==False:
+            
+            return JsonResponse({"status":"error", "message":"Equipment Not connected! Please check "})
         if plc.get_connected():
             if ip_address.set_value != temp_set_value:
                 
@@ -6525,7 +6686,9 @@ def save_equipment_settings(request):
                     equipment=ip_address,
                     label="Temperature Set Value Updated",
                     value=temp_set_value,
-                    status='Done'
+                    status='Done',
+                    time=datetime.now().time(),
+                    date=datetime.now().date(),
                 )
                 ip_address.set_value = temp_set_value
 
@@ -6538,7 +6701,9 @@ def save_equipment_settings(request):
                     equipment=ip_address,
                     label="Temperature Low Alarm Value Updated",
                     value=temp_low_alarm,
-                    status='Done'
+                    status='Done',
+                    time=datetime.now().time(),
+                    date=datetime.now().date(),
                 )
                 ip_address.low_alarm = temp_low_alarm
 
@@ -6551,58 +6716,134 @@ def save_equipment_settings(request):
                     equipment=ip_address,
                     label="Temperature High Alarm Value Updated",
                     value=temp_high_alarm,
-                    status='Done'
+                    status='Done',
+                    time=datetime.now().time(),
+                    date=datetime.now().date(),
                 )
                 ip_address.high_alarm = temp_high_alarm
+            if ip_address.total_humidity_sensors > 0:
+                if ip_address.set_value_hum != humidity_set_value:
+                    
+                    data = bytearray(4)
+                    set_real(data, 0, humidity_set_value)
+                    plc.db_write(19, 766, data)
+                    Equipmentwrite.objects.create(
+                        equipment=ip_address,
+                        label="Humidity Set Value Updated",
+                        value=humidity_set_value,
+                        status='Done',
+                        time=datetime.now().time(),
+                        date=datetime.now().date(),
+                    )
+                    ip_address.set_value_hum = humidity_set_value
 
-            if ip_address.set_value_hum != humidity_set_value:
-                
-                data = bytearray(4)
-                set_real(data, 0, humidity_set_value)
-                plc.db_write(19, 766, data)
-                Equipmentwrite.objects.create(
-                    equipment=ip_address,
-                    label="Humidity Set Value Updated",
-                    value=humidity_set_value,
-                    status='Done'
-                )
-                ip_address.set_value_hum = humidity_set_value
+                if ip_address.low_alarm_hum != humidity_low_alarm:
+                    
+                    data = bytearray(4)
+                    set_real(data, 0, humidity_low_alarm)
+                    plc.db_write(19, 770, data)
+                    Equipmentwrite.objects.create(
+                        equipment=ip_address,
+                        label="Humidity Low Alarm Value Updated",
+                        value=humidity_low_alarm,
+                        status='Done',
+                        time=datetime.now().time(),
+                        date=datetime.now().date(),
+                    )
+                    ip_address.low_alarm_hum = humidity_low_alarm
 
-            if ip_address.low_alarm_hum != humidity_low_alarm:
-                
-                data = bytearray(4)
-                set_real(data, 0, humidity_low_alarm)
-                plc.db_write(19, 770, data)
-                Equipmentwrite.objects.create(
-                    equipment=ip_address,
-                    label="Humidity Low Alarm Value Updated",
-                    value=humidity_low_alarm,
-                    status='Done'
-                )
-                ip_address.low_alarm_hum = humidity_low_alarm
-
-            if ip_address.high_alarm_hum != humidity_high_alarm:
-                
-                data = bytearray(4)
-                set_real(data, 0, humidity_high_alarm)
-                plc.db_write(19, 774, data)
-                Equipmentwrite.objects.create(
-                    equipment=ip_address,
-                    label="Humidity High Alarm Value Updated",
-                    value=humidity_high_alarm,
-                    status='Done'
-                )
-                ip_address.high_alarm_hum = humidity_high_alarm
+                if ip_address.high_alarm_hum != humidity_high_alarm:
+                    
+                    data = bytearray(4)
+                    set_real(data, 0, humidity_high_alarm)
+                    plc.db_write(19, 774, data)
+                    Equipmentwrite.objects.create(
+                        equipment=ip_address,
+                        label="Humidity High Alarm Value Updated",
+                        value=humidity_high_alarm,
+                        status='Done',
+                        time=datetime.now().time(),
+                        date=datetime.now().date(),
+                    )
+                    ip_address.high_alarm_hum = humidity_high_alarm
 
         ip_address.total_temp_sensors = temp_sensor
         ip_address.high_alert = temp_high_alert
         ip_address.low_alert = temp_low_alert
-
-        ip_address.total_humidity_sensors = humidity_sensor
-        ip_address.high_alert_hum = humidity_high_alert
-        ip_address.low_alert_hum = humidity_low_alert
-
         ip_address.save()
+        if ip_address.total_humidity_sensors > 0:
+            ip_address.total_humidity_sensors = humidity_sensor
+            ip_address.high_alert_hum = humidity_high_alert
+            ip_address.low_alert_hum = humidity_low_alert
+
+            ip_address.save()
 
     return JsonResponse({"status": "success", "message": "Data saved successfully!"})
+
+
+from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
+import json
+from .models import Equipment, EquipParameter
+
+@csrf_exempt
+def save_parameters(request):
+    if request.method == 'POST':
+        data = json.loads(request.body)
+        parameters = data.get('parameters', [])
+        ip_address = data.get('ip_address') 
+        print(data)
+        try:
+            equipment = Equipment.objects.get(ip_address=ip_address)  
+        except Equipment.DoesNotExist:
+            return JsonResponse({'status': 'error', 'message': 'Equipment not found'}, status=404)
+        
+        equip_params, created = EquipParameter.objects.get_or_create(equipment=equipment)
+        
+        
+        for i in range(1, int(equipment.total_temp_sensors) + 1):
+            param_name = f'Temperature {i}'
+           
+            color = next((item['color'] for item in parameters if item['name'] == param_name), None)
+            if color:
+                setattr(equip_params, f't{i}color', color)
+       
+        for i in range(1, int(equipment.total_humidity_sensors) + 1):
+            param_name = f'Humidity {i}'
+           
+            color = next((item['color'] for item in parameters if item['name'] == param_name), None)
+            if color:
+                setattr(equip_params, f'rh{i}color', color)
+
+        equip_params.save()
+
+        return JsonResponse({'status': 'success', 'message': 'Parameters updated successfully!'})
+    return JsonResponse({'status': 'error', 'message': 'Invalid request'}, status=400)
+
+
+@csrf_exempt
+def save_alert_settings(request):
+    if request.method == 'POST':
+        data = json.loads(request.body)
+        email_alerts = data.get('emailData', {}).get('email', [])
+        sms_alerts = data.get('smsData', {}).get('sms', [])
+        print(email_alerts)
+        ip_address = data.get('ip_address', {}).get('ip_address', '')
+        
+        equipment=Equipment.objects.get(ip_address=ip_address)
+        email=emailalert.objects.get(equipment_name=equipment.id)
+        print(email)
+        for i in email_alerts:
+           if hasattr(email, i):  
+                setattr(email, i, True)
+        email.save()
+        sms=smsalert.objects.get(equipment_name=equipment.id)
+        for i in sms_alerts:
+           if hasattr(sms, i):  
+                setattr(sms, i, True)
+        sms.save()
+        
+
+        return JsonResponse({"status": "success", "message": "Alert settings saved successfully."})
+    return JsonResponse({"status": "error", "message": "Invalid request"}, status=400)
 

@@ -26,3 +26,7 @@ class EquipSettingsConfig(AppConfig):
             daily_email_scheduler()
             print("[INFO] Email scheduler initialized.")
             self.scheduler_started = True
+            from .scheduler import daily_sms_scheduler
+            print("[INFO] App is ready, starting the SMS scheduler...")
+            daily_sms_scheduler()
+            print("[INFO] SMS scheduler initialized.")

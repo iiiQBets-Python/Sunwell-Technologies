@@ -2,7 +2,7 @@
 {% extends "Base/base.html" %}
 {% load static %}
 
-{% block title %} Dashboard {% endblock %}
+{% block title %} --::: ESTDAS :::-- {% endblock %}
 
 {% block styles %}
     {{ block.super }}
@@ -89,9 +89,18 @@
 
 {% block content %} 
 <div class="container mt-2 table-container fade-in">
-    <div id="floating-alert" class="floating-alert">
+    {% if messages %}
+        <div class="mt-3">
+            {% for message in messages %}
+                <div id="floating-alert" class="floating-alert">
+                    {{ message|safe }}
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+    {% comment %} <div id="floating-alert" class="floating-alert">
       Login Successful!
-    </div>
+    </div> {% endcomment %}
     <div class="d-flex justify-content-between mb-2">
         <div class="ms-auto">
             <div class="d-flex align-items-right">
@@ -228,6 +237,11 @@
         }, 2000); // 2 seconds delay
     }
 
+    // Auto-refresh the page every 5 seconds
+    setInterval(function () {
+        window.location.reload()
+    }, 5000);
+
     // Automatically show the alert if there's a success message
     window.onload = function() {
         {% if messages %}
@@ -276,7 +290,7 @@
         function applyFilters() {
             // Get the selected status from the URL, default to 'online'
             const urlParams = new URLSearchParams(window.location.search);
-            const status = urlParams.get("status") || "online";
+            const status = urlParams.get("status") || "all";
     
             // Update the status dropdown button text
             const dropdownButton = document.getElementById("roleFilterDropdown");

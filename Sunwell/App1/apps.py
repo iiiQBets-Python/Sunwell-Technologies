@@ -1,5 +1,6 @@
 from django.apps import AppConfig
 import threading
+import os
 
 # class App1Config(AppConfig):
 #     default_auto_field = 'django.db.models.BigAutoField'
@@ -14,6 +15,11 @@ class EquipSettingsConfig(AppConfig):
     name = 'App1'  # Change to your actual app name
 
     def ready(self):
+
+        if os.environ.get('RUN_MAIN') != 'true':
+            return
+
+
         print("[INFO] App is ready, starting background task.")
         from .views import background_task_for_all_equipment, stop_event
         interval = 2  # Interval in minutes

@@ -1936,3 +1936,1754 @@
 2025-01-27 14:25:36,247 - Darshan is accessing /dashboard/.
 2025-01-27 14:25:42,983 - Darshan is accessing /dashboard/.
 2025-01-27 14:25:42,992 - Darshan is accessing /dashboard/.
+2025-01-27 16:13:05,064 - Darshan is accessing /logout/.
+2025-01-27 16:13:05,248 - Darshan is created record in App1_useractivitylog.
+2025-01-27 16:13:05,251 - Anonymous is deleting record in django_session.
+2025-01-27 16:13:05,361 - Anonymous is accessing /.
+2025-01-27 16:13:18,654 - Anonymous is accessing /.
+2025-01-27 16:13:19,558 - Darshan is created record in App1_useractivitylog.
+2025-01-27 16:13:19,563 - Darshan is created record in django_session.
+2025-01-27 16:13:19,658 - Darshan is accessing /dashboard/.
+2025-01-27 16:13:20,685 - Darshan is accessing /media/crsco.webp.
+2025-01-27 16:13:25,738 - Darshan is accessing /dashboard/.
+2025-01-27 16:13:25,785 - Darshan is accessing /dashboard/.
+2025-01-27 16:13:28,784 - Darshan is accessing /dashboard/.
+2025-01-27 16:13:34,648 - Darshan is accessing /dashboard/.
+2025-01-27 16:13:34,672 - Darshan is accessing /dashboard/.
+2025-01-27 16:13:39,154 - Darshan is accessing /organization/.
+2025-01-27 16:13:40,328 - Darshan is accessing /app_setings/.
+2025-01-27 16:13:41,311 - Darshan is accessing /department/.
+2025-01-27 16:13:41,869 - Darshan is accessing /comm_group/.
+2025-01-27 16:13:43,588 - Darshan is accessing /organization/.
+2025-01-27 16:13:46,792 - Darshan is accessing /role_permission/.
+2025-01-27 16:13:48,288 - Darshan is accessing /user_access/.
+2025-01-27 16:15:08,066 - Darshan is accessing /user_access/.
+2025-01-27 16:26:21,199 - Darshan is accessing /equipment_configure/.
+2025-01-27 17:15:17,066 - Darshan is accessing /dashboard/.
+2025-01-27 17:15:21,848 - Darshan is accessing /role_permission/.
+2025-01-27 17:15:24,486 - Darshan is accessing /user_access/.
+2025-01-27 18:13:32,685 - Darshan is accessing /user_access/.
+2025-01-27 18:13:34,690 - Darshan is accessing /user_access/.
+2025-01-27 18:15:56,505 - Anonymous is accessing /.
+2025-01-27 18:15:57,965 - Anonymous is accessing /favicon.ico.
+2025-01-27 18:16:10,536 - Anonymous is accessing /.
+2025-01-27 18:16:11,440 - Sunwell is created record in App1_useractivitylog.
+2025-01-27 18:16:11,445 - Sunwell is created record in django_session.
+2025-01-27 18:16:11,541 - Sunwell is accessing /dashboard/.
+2025-01-27 18:16:12,246 - Sunwell is accessing /media/crsco.webp.
+2025-01-27 18:16:17,446 - Sunwell is accessing /dashboard/.
+2025-01-27 18:16:17,480 - Sunwell is accessing /dashboard/.
+2025-01-27 18:16:23,182 - Sunwell is accessing /dashboard/.
+2025-01-27 18:16:23,198 - Sunwell is accessing /dashboard/.
+2025-01-27 18:16:29,207 - Sunwell is accessing /dashboard/.
+2025-01-27 18:16:29,228 - Sunwell is accessing /dashboard/.
+2025-01-27 18:16:35,092 - Sunwell is accessing /role_permission/.
+2025-01-27 18:16:38,070 - Sunwell is accessing /user_access/.
+2025-01-27 18:16:49,718 - Sunwell is accessing /user_access/.
+2025-01-27 18:16:49,897 - Sunwell is updated record in App1_user_access_db.
+2025-01-27 18:16:49,984 - Sunwell is created record in App1_useractivitylog.
+2025-01-27 18:16:51,377 - Sunwell is accessing /role_permission/.
+2025-01-27 18:16:55,144 - Darshan is accessing /user_access/.
+2025-01-27 18:17:02,689 - Darshan is accessing /user_access/.
+2025-01-27 18:25:09,766 - Sunwell is accessing /user_activity_log/.
+2025-01-27 18:25:14,225 - Sunwell is accessing /user_activity_log/.
+2025-01-27 18:27:08,138 - Sunwell is accessing /user_activity_log/.
+2025-01-27 18:28:43,408 - Darshan is accessing /equipment_configure/.
+2025-01-27 18:30:32,799 - Sunwell is accessing /role_permission/.
+2025-01-27 18:30:34,839 - Sunwell is accessing /user_access/.
+2025-01-27 18:31:48,878 - Sunwell is accessing /user_access/.
+2025-01-27 18:32:24,598 - Sunwell is accessing /user_access/.
+2025-01-27 18:32:50,962 - Sunwell is accessing /user_access/.
+2025-01-27 18:32:52,525 - Sunwell is accessing /user_access/.
+2025-01-27 18:32:53,302 - Sunwell is accessing /user_access/.
+2025-01-27 18:33:14,759 - Sunwell is accessing /user_access/.
+2025-01-27 18:34:34,794 - Sunwell is accessing /user_access/.
+2025-01-27 18:35:31,579 - Sunwell is accessing /user_access/.
+2025-01-27 18:36:36,538 - Sunwell is accessing /user_access/.
+2025-01-27 18:37:12,279 - Sunwell is accessing /user_access/.
+2025-01-27 18:37:51,507 - Sunwell is accessing /user_access/.
+2025-01-27 18:39:01,788 - Sunwell is accessing /user_access/.
+2025-01-27 18:39:01,954 - Sunwell is updated record in App1_user_access_db.
+2025-01-27 18:39:02,032 - Sunwell is created record in App1_useractivitylog.
+2025-01-27 18:39:04,788 - Sunwell is accessing /role_permission/.
+2025-01-27 18:39:06,908 - Sunwell is accessing /user_access/.
+2025-01-27 18:39:19,805 - Darshan is accessing /equipment_configure/.
+2025-01-27 18:40:16,224 - Darshan is accessing /equipment_configure/.
+2025-01-27 18:40:16,888 - Darshan is accessing /equipment_configure/.
+2025-01-27 18:40:17,068 - Darshan is accessing /equipment_configure/.
+2025-01-27 18:40:17,302 - Darshan is accessing /equipment_configure/.
+2025-01-27 18:40:18,007 - Darshan is accessing /equipment_configure/.
+2025-01-27 18:40:19,754 - Darshan is accessing /dashboard/.
+2025-01-27 18:40:20,489 - Darshan is accessing /dashboard/.
+2025-01-27 18:40:20,662 - Darshan is accessing /dashboard/.
+2025-01-27 18:40:22,486 - Darshan is accessing /equipment_configure/.
+2025-01-27 18:40:22,678 - Darshan is accessing /equipment_configure/.
+2025-01-27 18:41:29,173 - Darshan is accessing /equipment_configure/.
+2025-01-27 18:41:30,093 - Darshan is accessing /equipment_configure/.
+2025-01-27 18:41:54,067 - Sunwell is accessing /admin/.
+2025-01-27 18:41:54,100 - Sunwell is accessing /admin/login/.
+2025-01-27 18:41:57,391 - Sunwell is accessing /admin/login/.
+2025-01-27 18:41:58,118 - Sunwell is created record in django_session.
+2025-01-27 18:41:58,288 - Sunwell is deleting record in django_session.
+2025-01-27 18:41:58,485 - Sunwell is updated record in auth_user.
+2025-01-27 18:41:58,489 - Sunwell is updated record in django_session.
+2025-01-27 18:41:58,582 - Sunwell is accessing /admin/.
+2025-01-27 18:42:06,713 - Sunwell is accessing /admin/App1/user_role/.
+2025-01-27 18:42:06,811 - Sunwell is accessing /admin/jsi18n/.
+2025-01-27 18:42:08,198 - Sunwell is accessing /admin/.
+2025-01-27 18:42:09,957 - Sunwell is accessing /admin/App1/user_access_db/.
+2025-01-27 18:42:10,014 - Sunwell is accessing /admin/jsi18n/.
+2025-01-27 18:42:11,077 - Sunwell is accessing /admin/App1/user_access_db/2/change/.
+2025-01-27 18:42:11,173 - Sunwell is accessing /admin/jsi18n/.
+2025-01-27 18:43:46,859 - Darshan is accessing /logout/.
+2025-01-27 18:43:47,282 - Darshan is created record in App1_useractivitylog.
+2025-01-27 18:43:47,292 - Anonymous is deleting record in django_session.
+2025-01-27 18:43:47,426 - Anonymous is accessing /.
+2025-01-27 18:43:54,138 - Anonymous is accessing /.
+2025-01-27 18:43:55,080 - Darshan is created record in App1_useractivitylog.
+2025-01-27 18:43:55,084 - Darshan is created record in django_session.
+2025-01-27 18:43:55,187 - Darshan is accessing /dashboard/.
+2025-01-27 18:43:56,192 - Darshan is accessing /media/crsco.webp.
+2025-01-27 18:44:01,223 - Darshan is accessing /dashboard/.
+2025-01-27 18:44:01,230 - Darshan is accessing /dashboard/.
+2025-01-27 18:44:04,334 - Darshan is accessing /equipment_configure/.
+2025-01-27 18:46:48,507 - Darshan is accessing /equipment_configure/.
+2025-01-27 18:47:00,094 - Sunwell is accessing /user_access/.
+2025-01-27 18:47:02,991 - Darshan is accessing /equipment_configure/.
+2025-01-27 18:47:13,992 - Sunwell is accessing /user_access/.
+2025-01-27 18:47:14,084 - Sunwell is updated record in App1_user_access_db.
+2025-01-27 18:47:14,172 - Sunwell is created record in App1_useractivitylog.
+2025-01-27 18:47:15,419 - Sunwell is accessing /role_permission/.
+2025-01-27 18:47:19,388 - Darshan is accessing /equipment_configure/.
+2025-01-27 18:47:20,547 - Darshan is accessing /equipment_configure/.
+2025-01-27 18:47:21,295 - Darshan is accessing /equipment_configure/.
+2025-01-27 18:47:22,002 - Darshan is accessing /equipment_configure/.
+2025-01-27 18:47:22,520 - Darshan is accessing /equipment_configure/.
+2025-01-27 18:47:22,707 - Darshan is accessing /equipment_configure/.
+2025-01-27 18:47:22,889 - Darshan is accessing /equipment_configure/.
+2025-01-27 18:47:23,102 - Darshan is accessing /equipment_configure/.
+2025-01-27 18:47:27,967 - Sunwell is accessing /user_access/.
+2025-01-27 18:47:33,893 - Sunwell is accessing /admin/App1/user_access_db/2/change/.
+2025-01-27 18:47:34,026 - Sunwell is accessing /admin/jsi18n/.
+2025-01-27 18:49:06,942 - Darshan is accessing /equipment_configure/.
+2025-01-27 18:49:20,141 - Sunwell is accessing /user_access/.
+2025-01-27 18:49:20,328 - Sunwell is updated record in App1_user_access_db.
+2025-01-27 18:49:20,426 - Sunwell is created record in App1_useractivitylog.
+2025-01-27 18:49:21,574 - Sunwell is accessing /role_permission/.
+2025-01-27 18:49:22,741 - Sunwell is accessing /user_access/.
+2025-01-27 18:49:28,183 - Darshan is accessing /equipment_configure/.
+2025-01-27 18:49:47,597 - Darshan is accessing /equipment_setting/7/.
+2025-01-27 18:51:24,717 - Darshan is accessing /equipment_configure/.
+2025-01-27 18:51:31,919 - Sunwell is accessing /user_access/.
+2025-01-27 18:51:32,097 - Sunwell is updated record in App1_user_access_db.
+2025-01-27 18:51:32,180 - Sunwell is created record in App1_useractivitylog.
+2025-01-27 18:51:33,513 - Sunwell is accessing /role_permission/.
+2025-01-27 18:51:36,396 - Darshan is accessing /equipment_configure/.
+2025-01-27 18:51:49,809 - Sunwell is accessing /user_access/.
+2025-01-27 18:51:56,304 - Sunwell is accessing /user_access/.
+2025-01-27 18:51:56,489 - Sunwell is updated record in App1_user_access_db.
+2025-01-27 18:51:56,565 - Sunwell is created record in App1_useractivitylog.
+2025-01-27 18:51:57,735 - Sunwell is accessing /role_permission/.
+2025-01-27 18:52:22,597 - Darshan is accessing /equipment_configure/.
+2025-01-27 18:52:24,000 - Darshan is accessing /equipment_setting/7/.
+2025-01-27 18:54:07,842 - Darshan is accessing /equipment_setting/7/.
+2025-01-27 18:55:54,126 - Sunwell is accessing /user_access/.
+2025-01-27 18:57:35,821 - Darshan is accessing /equipment_setting/7/.
+2025-01-27 18:57:45,779 - Sunwell is accessing /user_access/.
+2025-01-27 18:57:45,959 - Sunwell is updated record in App1_user_access_db.
+2025-01-27 18:57:46,035 - Sunwell is created record in App1_useractivitylog.
+2025-01-27 18:57:47,008 - Sunwell is accessing /role_permission/.
+2025-01-27 18:57:50,313 - Darshan is accessing /equipment_setting/7/.
+2025-01-27 18:57:52,400 - Darshan is accessing /save-parameters/.
+2025-01-27 18:57:52,470 - Darshan is updated record in App1_equipparameter.
+2025-01-27 18:58:37,441 - Sunwell is accessing /user_access/.
+2025-01-27 18:58:49,478 - Sunwell is accessing /user_access/.
+2025-01-27 18:58:49,662 - Sunwell is updated record in App1_user_access_db.
+2025-01-27 18:58:49,738 - Sunwell is created record in App1_useractivitylog.
+2025-01-27 18:58:51,281 - Sunwell is accessing /role_permission/.
+2025-01-27 18:58:56,321 - Darshan is accessing /equipment_setting/7/.
+2025-01-27 18:59:01,042 - Darshan is accessing /equipment_setting/7/.
+2025-01-27 18:59:02,160 - Darshan is accessing /equipment_setting/7/.
+2025-01-27 18:59:02,525 - Darshan is accessing /equipment_setting/7/.
+2025-01-27 18:59:02,712 - Darshan is accessing /equipment_setting/7/.
+2025-01-27 18:59:03,110 - Darshan is accessing /equipment_setting/7/.
+2025-01-27 18:59:03,286 - Darshan is accessing /equipment_setting/7/.
+2025-01-27 18:59:03,502 - Darshan is accessing /equipment_setting/7/.
+2025-01-27 18:59:03,669 - Darshan is accessing /equipment_setting/7/.
+2025-01-27 18:59:03,866 - Darshan is accessing /equipment_setting/7/.
+2025-01-27 18:59:04,035 - Darshan is accessing /equipment_setting/7/.
+2025-01-27 18:59:04,218 - Darshan is accessing /equipment_setting/7/.
+2025-01-27 18:59:04,815 - Darshan is accessing /dashboard/.
+2025-01-27 18:59:09,921 - Darshan is accessing /dashboard/.
+2025-01-27 18:59:14,816 - Sunwell is accessing /user_access/.
+2025-01-27 18:59:15,975 - Darshan is accessing /dashboard/.
+2025-01-27 18:59:15,987 - Darshan is accessing /dashboard/.
+2025-01-27 18:59:21,744 - Sunwell is accessing /user_access/.
+2025-01-27 18:59:21,750 - Sunwell is updated record in App1_user_access_db.
+2025-01-27 18:59:21,927 - Sunwell is created record in App1_useractivitylog.
+2025-01-27 18:59:21,980 - Darshan is accessing /dashboard/.
+2025-01-27 18:59:21,990 - Darshan is accessing /dashboard/.
+2025-01-27 18:59:23,028 - Sunwell is accessing /role_permission/.
+2025-01-27 18:59:25,266 - Sunwell is accessing /user_access/.
+2025-01-27 18:59:27,967 - Darshan is accessing /dashboard/.
+2025-01-27 18:59:27,973 - Darshan is accessing /dashboard/.
+2025-01-27 18:59:33,974 - Darshan is accessing /dashboard/.
+2025-01-27 18:59:33,991 - Darshan is accessing /dashboard/.
+2025-01-27 18:59:39,972 - Darshan is accessing /dashboard/.
+2025-01-27 18:59:39,981 - Darshan is accessing /dashboard/.
+2025-01-27 18:59:45,968 - Darshan is accessing /dashboard/.
+2025-01-27 18:59:45,977 - Darshan is accessing /dashboard/.
+2025-01-27 18:59:51,969 - Darshan is accessing /dashboard/.
+2025-01-27 18:59:51,977 - Darshan is accessing /dashboard/.
+2025-01-27 18:59:57,980 - Darshan is accessing /dashboard/.
+2025-01-27 18:59:57,987 - Darshan is accessing /dashboard/.
+2025-01-27 19:00:03,966 - Darshan is accessing /dashboard/.
+2025-01-27 19:00:03,972 - Darshan is accessing /dashboard/.
+2025-01-27 19:00:09,969 - Darshan is accessing /dashboard/.
+2025-01-27 19:00:09,979 - Darshan is accessing /dashboard/.
+2025-01-27 19:00:15,990 - Darshan is accessing /dashboard/.
+2025-01-27 19:00:15,995 - Darshan is accessing /dashboard/.
+2025-01-27 19:00:21,969 - Darshan is accessing /dashboard/.
+2025-01-27 19:00:21,975 - Darshan is accessing /dashboard/.
+2025-01-27 19:00:27,966 - Darshan is accessing /dashboard/.
+2025-01-27 19:00:27,972 - Darshan is accessing /dashboard/.
+2025-01-27 19:00:33,974 - Darshan is accessing /dashboard/.
+2025-01-27 19:00:33,980 - Darshan is accessing /dashboard/.
+2025-01-27 19:00:39,976 - Darshan is accessing /dashboard/.
+2025-01-27 19:00:39,982 - Darshan is accessing /dashboard/.
+2025-01-27 19:00:45,980 - Darshan is accessing /dashboard/.
+2025-01-27 19:00:45,986 - Darshan is accessing /dashboard/.
+2025-01-27 19:00:51,969 - Darshan is accessing /dashboard/.
+2025-01-27 19:00:51,973 - Darshan is accessing /dashboard/.
+2025-01-27 19:00:57,977 - Darshan is accessing /dashboard/.
+2025-01-27 19:00:57,982 - Darshan is accessing /dashboard/.
+2025-01-27 19:01:03,980 - Darshan is accessing /dashboard/.
+2025-01-27 19:01:03,990 - Darshan is accessing /dashboard/.
+2025-01-27 19:01:09,982 - Darshan is accessing /dashboard/.
+2025-01-27 19:01:09,982 - Darshan is accessing /dashboard/.
+2025-01-27 19:01:15,974 - Darshan is accessing /dashboard/.
+2025-01-27 19:01:15,982 - Darshan is accessing /dashboard/.
+2025-01-27 19:01:16,260 - Sunwell is accessing /user_access/.
+2025-01-27 19:01:16,431 - Sunwell is updated record in App1_user_access_db.
+2025-01-27 19:01:16,507 - Sunwell is created record in App1_useractivitylog.
+2025-01-27 19:01:17,509 - Sunwell is accessing /role_permission/.
+2025-01-27 19:01:18,773 - Sunwell is accessing /user_access/.
+2025-01-27 19:01:21,967 - Darshan is accessing /dashboard/.
+2025-01-27 19:01:21,980 - Darshan is accessing /dashboard/.
+2025-01-27 19:01:23,342 - Darshan is accessing /dashboard/.
+2025-01-27 19:01:24,859 - Darshan is accessing /view_log/.
+2025-01-27 19:02:19,225 - Darshan is accessing /view_log/.
+2025-01-27 19:02:20,317 - Darshan is accessing /view_log/.
+2025-01-27 19:02:20,845 - Darshan is accessing /view_log/.
+2025-01-27 19:02:21,522 - Darshan is accessing /view_log/.
+2025-01-27 19:02:22,339 - Darshan is accessing /view_log/.
+2025-01-27 19:02:38,842 - Sunwell is accessing /admin/App1/user_access_db/2/change/.
+2025-01-27 19:02:38,977 - Sunwell is accessing /admin/jsi18n/.
+2025-01-27 19:02:44,043 - Darshan is accessing /view_log/.
+2025-01-27 19:02:44,850 - Darshan is accessing /view_log/.
+2025-01-27 19:03:14,372 - Darshan is accessing /view_log/.
+2025-01-27 19:03:29,196 - Darshan is accessing /view_log/.
+2025-01-27 19:03:44,077 - Darshan is accessing /view_log/.
+2025-01-27 19:03:53,858 - Sunwell is accessing /admin/App1/user_access_db/2/change/.
+2025-01-27 19:03:53,870 - Sunwell is updated record in App1_user_access_db.
+2025-01-27 19:03:53,876 - Sunwell is created record in django_admin_log.
+2025-01-27 19:03:54,064 - Sunwell is accessing /admin/App1/user_access_db/.
+2025-01-27 19:03:54,171 - Sunwell is accessing /admin/jsi18n/.
+2025-01-27 19:03:56,009 - Sunwell is accessing /user_access/.
+2025-01-27 19:03:59,894 - Darshan is accessing /view_log/.
+2025-01-27 19:04:02,618 - Darshan is accessing /alaram_log/.
+2025-01-27 19:04:20,396 - Sunwell is accessing /user_access/.
+2025-01-27 19:04:20,565 - Sunwell is updated record in App1_user_access_db.
+2025-01-27 19:04:20,643 - Sunwell is created record in App1_useractivitylog.
+2025-01-27 19:04:21,789 - Sunwell is accessing /role_permission/.
+2025-01-27 19:04:23,703 - Sunwell is accessing /user_access/.
+2025-01-27 19:04:29,045 - Darshan is accessing /alaram_log/.
+2025-01-27 19:04:33,202 - Sunwell is accessing /user_access/.
+2025-01-27 19:04:33,381 - Sunwell is updated record in App1_user_access_db.
+2025-01-27 19:04:33,488 - Sunwell is created record in App1_useractivitylog.
+2025-01-27 19:04:34,546 - Sunwell is accessing /role_permission/.
+2025-01-27 19:04:36,482 - Sunwell is accessing /user_access/.
+2025-01-27 19:06:02,194 - Darshan is accessing /alaram_log/.
+2025-01-27 19:06:03,701 - Darshan is accessing /alaram_log/.
+2025-01-27 19:06:10,388 - Sunwell is accessing /user_access/.
+2025-01-27 19:06:10,554 - Sunwell is updated record in App1_user_access_db.
+2025-01-27 19:06:10,630 - Sunwell is created record in App1_useractivitylog.
+2025-01-27 19:06:11,635 - Sunwell is accessing /role_permission/.
+2025-01-27 19:06:13,966 - Sunwell is accessing /user_access/.
+2025-01-27 19:06:31,225 - Darshan is accessing /alaram_log/.
+2025-01-27 19:08:09,233 - Sunwell is accessing /user_access/.
+2025-01-27 19:08:09,652 - Sunwell is updated record in App1_user_access_db.
+2025-01-27 19:08:09,731 - Sunwell is created record in App1_useractivitylog.
+2025-01-27 19:08:10,795 - Sunwell is accessing /role_permission/.
+2025-01-27 19:08:15,008 - Darshan is accessing /alaram_log/.
+2025-01-27 19:08:16,297 - Darshan is accessing /Mkt_analysis.
+2025-01-27 19:19:54,884 - Sunwell is accessing /user_access/.
+2025-01-27 19:20:06,180 - Sunwell is accessing /user_access/.
+2025-01-27 19:20:06,352 - Sunwell is updated record in App1_user_access_db.
+2025-01-27 19:20:06,428 - Sunwell is created record in App1_useractivitylog.
+2025-01-27 19:20:07,862 - Sunwell is accessing /role_permission/.
+2025-01-27 19:20:11,545 - Darshan is accessing /user_activity_log/.
+2025-01-27 19:20:16,729 - Darshan is accessing /Equipment_Audit/.
+2025-01-27 19:20:28,981 - Darshan is accessing /alaram_Audit_log/.
+2025-01-27 19:20:55,161 - Darshan is accessing /alaram_Audit_log/.
+2025-01-27 19:21:35,430 - Darshan is accessing /email_Audit_log/.
+2025-01-27 19:21:57,332 - Darshan is accessing /sms_Audit_log/.
+2025-01-28 11:52:06,428 - Darshan is accessing /logout/.
+2025-01-28 11:52:06,526 - Darshan is created record in App1_useractivitylog.
+2025-01-28 11:52:06,534 - Anonymous is deleting record in django_session.
+2025-01-28 11:52:06,634 - Anonymous is accessing /.
+2025-01-28 11:52:06,864 - Anonymous is accessing /favicon.ico.
+2025-01-28 12:49:04,646 - Anonymous is created record in App1_email_logs.
+2025-01-28 12:49:09,013 - Anonymous is created record in App1_email_logs.
+2025-01-28 12:50:04,225 - Anonymous is created record in App1_email_logs.
+2025-01-28 12:50:08,327 - Anonymous is created record in App1_email_logs.
+2025-01-28 13:38:17,865 - Anonymous is accessing /.
+2025-01-28 13:38:18,990 - Darshan is created record in App1_useractivitylog.
+2025-01-28 13:38:18,998 - Darshan is created record in django_session.
+2025-01-28 13:38:19,189 - Darshan is accessing /dashboard/.
+2025-01-28 13:38:20,434 - Darshan is accessing /media/crsco.webp.
+2025-01-28 13:38:23,691 - Darshan is accessing /department/.
+2025-01-28 15:26:16,988 - Darshan is accessing /logout/.
+2025-01-28 15:26:17,404 - Darshan is created record in App1_useractivitylog.
+2025-01-28 15:26:17,409 - Anonymous is deleting record in django_session.
+2025-01-28 15:26:17,491 - Anonymous is accessing /.
+2025-01-28 16:36:02,992 - Anonymous is accessing /.
+2025-01-28 16:36:03,874 - Darshan is created record in App1_useractivitylog.
+2025-01-28 16:36:03,880 - Darshan is created record in django_session.
+2025-01-28 16:36:03,962 - Darshan is accessing /dashboard/.
+2025-01-28 16:36:04,690 - Darshan is accessing /media/crsco.webp.
+2025-01-28 16:36:09,749 - Darshan is accessing /dashboard/.
+2025-01-28 16:36:09,752 - Darshan is accessing /dashboard/.
+2025-01-28 16:36:15,673 - Darshan is accessing /dashboard/.
+2025-01-28 16:36:15,710 - Darshan is accessing /dashboard/.
+2025-01-28 16:36:21,975 - Darshan is accessing /dashboard/.
+2025-01-28 16:36:21,985 - Darshan is accessing /dashboard/.
+2025-01-28 16:36:27,980 - Darshan is accessing /dashboard/.
+2025-01-28 16:36:27,989 - Darshan is accessing /dashboard/.
+2025-01-28 16:36:33,969 - Darshan is accessing /dashboard/.
+2025-01-28 16:36:33,976 - Darshan is accessing /dashboard/.
+2025-01-28 16:36:39,982 - Darshan is accessing /dashboard/.
+2025-01-28 16:36:39,988 - Darshan is accessing /dashboard/.
+2025-01-28 16:36:45,985 - Darshan is accessing /dashboard/.
+2025-01-28 16:36:46,007 - Darshan is accessing /dashboard/.
+2025-01-28 16:36:51,982 - Darshan is accessing /dashboard/.
+2025-01-28 16:36:52,003 - Darshan is accessing /dashboard/.
+2025-01-28 16:36:57,971 - Darshan is accessing /dashboard/.
+2025-01-28 16:36:57,985 - Darshan is accessing /dashboard/.
+2025-01-28 16:37:03,972 - Darshan is accessing /dashboard/.
+2025-01-28 16:37:03,978 - Darshan is accessing /dashboard/.
+2025-01-28 16:37:09,978 - Darshan is accessing /dashboard/.
+2025-01-28 16:37:09,992 - Darshan is accessing /dashboard/.
+2025-01-28 16:37:15,969 - Darshan is accessing /dashboard/.
+2025-01-28 16:37:15,978 - Darshan is accessing /dashboard/.
+2025-01-28 16:37:21,969 - Darshan is accessing /dashboard/.
+2025-01-28 16:37:21,976 - Darshan is accessing /dashboard/.
+2025-01-28 16:37:27,973 - Darshan is accessing /dashboard/.
+2025-01-28 16:37:27,980 - Darshan is accessing /dashboard/.
+2025-01-28 16:37:33,980 - Darshan is accessing /dashboard/.
+2025-01-28 16:37:33,991 - Darshan is accessing /dashboard/.
+2025-01-28 16:37:39,967 - Darshan is accessing /dashboard/.
+2025-01-28 16:37:39,977 - Darshan is accessing /dashboard/.
+2025-01-28 16:37:45,977 - Darshan is accessing /dashboard/.
+2025-01-28 16:37:45,990 - Darshan is accessing /dashboard/.
+2025-01-28 16:37:51,969 - Darshan is accessing /dashboard/.
+2025-01-28 16:37:51,974 - Darshan is accessing /dashboard/.
+2025-01-28 16:37:57,984 - Darshan is accessing /dashboard/.
+2025-01-28 16:37:58,002 - Darshan is accessing /dashboard/.
+2025-01-28 16:38:03,970 - Darshan is accessing /dashboard/.
+2025-01-28 16:38:03,980 - Darshan is accessing /dashboard/.
+2025-01-28 16:38:09,978 - Darshan is accessing /dashboard/.
+2025-01-28 16:38:09,988 - Darshan is accessing /dashboard/.
+2025-01-28 16:38:15,968 - Darshan is accessing /dashboard/.
+2025-01-28 16:38:15,980 - Darshan is accessing /dashboard/.
+2025-01-28 16:38:21,977 - Darshan is accessing /dashboard/.
+2025-01-28 16:38:21,986 - Darshan is accessing /dashboard/.
+2025-01-28 16:38:27,980 - Darshan is accessing /dashboard/.
+2025-01-28 16:38:27,995 - Darshan is accessing /dashboard/.
+2025-01-28 16:38:33,978 - Darshan is accessing /dashboard/.
+2025-01-28 16:38:33,989 - Darshan is accessing /dashboard/.
+2025-01-28 16:38:39,980 - Darshan is accessing /dashboard/.
+2025-01-28 16:38:39,996 - Darshan is accessing /dashboard/.
+2025-01-28 16:38:45,987 - Darshan is accessing /dashboard/.
+2025-01-28 16:38:46,007 - Darshan is accessing /dashboard/.
+2025-01-28 16:38:51,977 - Darshan is accessing /dashboard/.
+2025-01-28 16:38:51,983 - Darshan is accessing /dashboard/.
+2025-01-28 16:38:57,978 - Darshan is accessing /dashboard/.
+2025-01-28 16:38:57,987 - Darshan is accessing /dashboard/.
+2025-01-28 16:39:03,969 - Darshan is accessing /dashboard/.
+2025-01-28 16:39:03,975 - Darshan is accessing /dashboard/.
+2025-01-28 16:39:09,981 - Darshan is accessing /dashboard/.
+2025-01-28 16:39:09,990 - Darshan is accessing /dashboard/.
+2025-01-28 16:39:15,970 - Darshan is accessing /dashboard/.
+2025-01-28 16:39:15,987 - Darshan is accessing /dashboard/.
+2025-01-28 16:39:21,979 - Darshan is accessing /dashboard/.
+2025-01-28 16:39:21,993 - Darshan is accessing /dashboard/.
+2025-01-28 16:39:27,976 - Darshan is accessing /dashboard/.
+2025-01-28 16:39:27,981 - Darshan is accessing /dashboard/.
+2025-01-28 16:39:33,971 - Darshan is accessing /dashboard/.
+2025-01-28 16:39:33,980 - Darshan is accessing /dashboard/.
+2025-01-28 16:39:39,961 - Darshan is accessing /dashboard/.
+2025-01-28 16:39:39,972 - Darshan is accessing /dashboard/.
+2025-01-28 16:39:45,976 - Darshan is accessing /dashboard/.
+2025-01-28 16:39:45,984 - Darshan is accessing /dashboard/.
+2025-01-28 16:39:51,972 - Darshan is accessing /dashboard/.
+2025-01-28 16:39:51,978 - Darshan is accessing /dashboard/.
+2025-01-28 16:39:57,962 - Darshan is accessing /dashboard/.
+2025-01-28 16:39:57,968 - Darshan is accessing /dashboard/.
+2025-01-28 16:40:03,975 - Darshan is accessing /dashboard/.
+2025-01-28 16:40:03,985 - Darshan is accessing /dashboard/.
+2025-01-28 16:40:09,981 - Darshan is accessing /dashboard/.
+2025-01-28 16:40:09,997 - Darshan is accessing /dashboard/.
+2025-01-28 16:40:15,978 - Darshan is accessing /dashboard/.
+2025-01-28 16:40:21,974 - Darshan is accessing /dashboard/.
+2025-01-28 16:40:21,981 - Darshan is accessing /dashboard/.
+2025-01-28 16:40:27,977 - Darshan is accessing /dashboard/.
+2025-01-28 16:40:27,986 - Darshan is accessing /dashboard/.
+2025-01-28 16:40:33,975 - Darshan is accessing /dashboard/.
+2025-01-28 16:40:33,981 - Darshan is accessing /dashboard/.
+2025-01-28 16:40:39,976 - Darshan is accessing /dashboard/.
+2025-01-28 16:40:39,988 - Darshan is accessing /dashboard/.
+2025-01-28 16:40:45,966 - Darshan is accessing /dashboard/.
+2025-01-28 16:40:45,976 - Darshan is accessing /dashboard/.
+2025-01-28 16:40:51,975 - Darshan is accessing /dashboard/.
+2025-01-28 16:40:51,985 - Darshan is accessing /dashboard/.
+2025-01-28 16:40:57,979 - Darshan is accessing /dashboard/.
+2025-01-28 16:40:57,988 - Darshan is accessing /dashboard/.
+2025-01-28 16:41:03,969 - Darshan is accessing /dashboard/.
+2025-01-28 16:41:03,980 - Darshan is accessing /dashboard/.
+2025-01-28 16:41:09,989 - Darshan is accessing /dashboard/.
+2025-01-28 16:41:09,995 - Darshan is accessing /dashboard/.
+2025-01-28 16:41:15,975 - Darshan is accessing /dashboard/.
+2025-01-28 16:41:15,984 - Darshan is accessing /dashboard/.
+2025-01-28 16:41:21,974 - Darshan is accessing /dashboard/.
+2025-01-28 16:41:21,988 - Darshan is accessing /dashboard/.
+2025-01-28 16:41:27,976 - Darshan is accessing /dashboard/.
+2025-01-28 16:41:27,983 - Darshan is accessing /dashboard/.
+2025-01-28 16:41:33,965 - Darshan is accessing /dashboard/.
+2025-01-28 16:41:33,974 - Darshan is accessing /dashboard/.
+2025-01-28 16:41:39,973 - Darshan is accessing /dashboard/.
+2025-01-28 16:41:39,979 - Darshan is accessing /dashboard/.
+2025-01-28 16:41:45,965 - Darshan is accessing /dashboard/.
+2025-01-28 16:41:45,972 - Darshan is accessing /dashboard/.
+2025-01-28 16:41:51,963 - Darshan is accessing /dashboard/.
+2025-01-28 16:41:51,992 - Darshan is accessing /dashboard/.
+2025-01-28 16:41:57,980 - Darshan is accessing /dashboard/.
+2025-01-28 16:41:57,988 - Darshan is accessing /dashboard/.
+2025-01-28 16:42:03,966 - Darshan is accessing /dashboard/.
+2025-01-28 16:42:03,974 - Darshan is accessing /dashboard/.
+2025-01-28 16:42:09,967 - Darshan is accessing /dashboard/.
+2025-01-28 16:42:09,975 - Darshan is accessing /dashboard/.
+2025-01-28 16:42:15,979 - Darshan is accessing /dashboard/.
+2025-01-28 16:42:15,991 - Darshan is accessing /dashboard/.
+2025-01-28 16:42:21,972 - Darshan is accessing /dashboard/.
+2025-01-28 16:42:21,986 - Darshan is accessing /dashboard/.
+2025-01-28 16:42:27,962 - Darshan is accessing /dashboard/.
+2025-01-28 16:42:27,968 - Darshan is accessing /dashboard/.
+2025-01-28 16:42:33,975 - Darshan is accessing /dashboard/.
+2025-01-28 16:42:33,978 - Darshan is accessing /dashboard/.
+2025-01-28 16:42:39,962 - Darshan is accessing /dashboard/.
+2025-01-28 16:42:39,969 - Darshan is accessing /dashboard/.
+2025-01-28 16:42:45,968 - Darshan is accessing /dashboard/.
+2025-01-28 16:42:45,978 - Darshan is accessing /dashboard/.
+2025-01-28 16:42:51,979 - Darshan is accessing /dashboard/.
+2025-01-28 16:42:51,989 - Darshan is accessing /dashboard/.
+2025-01-28 16:42:57,968 - Darshan is accessing /dashboard/.
+2025-01-28 16:42:57,976 - Darshan is accessing /dashboard/.
+2025-01-28 16:43:03,964 - Darshan is accessing /dashboard/.
+2025-01-28 16:43:03,967 - Darshan is accessing /dashboard/.
+2025-01-28 16:43:09,975 - Darshan is accessing /dashboard/.
+2025-01-28 16:43:09,981 - Darshan is accessing /dashboard/.
+2025-01-28 16:43:15,965 - Darshan is accessing /dashboard/.
+2025-01-28 16:43:15,978 - Darshan is accessing /dashboard/.
+2025-01-28 16:43:21,974 - Darshan is accessing /dashboard/.
+2025-01-28 16:43:21,984 - Darshan is accessing /dashboard/.
+2025-01-28 16:43:27,976 - Darshan is accessing /dashboard/.
+2025-01-28 16:43:27,982 - Darshan is accessing /dashboard/.
+2025-01-28 16:43:33,980 - Darshan is accessing /dashboard/.
+2025-01-28 16:43:33,986 - Darshan is accessing /dashboard/.
+2025-01-28 16:43:39,971 - Darshan is accessing /dashboard/.
+2025-01-28 16:43:39,978 - Darshan is accessing /dashboard/.
+2025-01-28 16:43:45,965 - Darshan is accessing /dashboard/.
+2025-01-28 16:43:45,988 - Darshan is accessing /dashboard/.
+2025-01-28 16:43:51,974 - Darshan is accessing /dashboard/.
+2025-01-28 16:43:51,981 - Darshan is accessing /dashboard/.
+2025-01-28 16:43:57,971 - Darshan is accessing /dashboard/.
+2025-01-28 16:43:57,978 - Darshan is accessing /dashboard/.
+2025-01-28 16:44:03,971 - Darshan is accessing /dashboard/.
+2025-01-28 16:44:03,981 - Darshan is accessing /dashboard/.
+2025-01-28 16:44:09,972 - Darshan is accessing /dashboard/.
+2025-01-28 16:44:09,978 - Darshan is accessing /dashboard/.
+2025-01-28 16:44:15,978 - Darshan is accessing /dashboard/.
+2025-01-28 16:44:15,984 - Darshan is accessing /dashboard/.
+2025-01-28 16:44:21,975 - Darshan is accessing /dashboard/.
+2025-01-28 16:44:21,983 - Darshan is accessing /dashboard/.
+2025-01-28 16:44:27,976 - Darshan is accessing /dashboard/.
+2025-01-28 16:44:27,983 - Darshan is accessing /dashboard/.
+2025-01-28 16:44:33,981 - Darshan is accessing /dashboard/.
+2025-01-28 16:44:33,996 - Darshan is accessing /dashboard/.
+2025-01-28 16:44:39,976 - Darshan is accessing /dashboard/.
+2025-01-28 16:44:39,984 - Darshan is accessing /dashboard/.
+2025-01-28 16:44:45,966 - Darshan is accessing /dashboard/.
+2025-01-28 16:44:45,975 - Darshan is accessing /dashboard/.
+2025-01-28 16:44:51,977 - Darshan is accessing /dashboard/.
+2025-01-28 16:44:51,984 - Darshan is accessing /dashboard/.
+2025-01-28 16:44:57,963 - Darshan is accessing /dashboard/.
+2025-01-28 16:44:57,969 - Darshan is accessing /dashboard/.
+2025-01-28 16:45:03,976 - Darshan is accessing /dashboard/.
+2025-01-28 16:45:03,983 - Darshan is accessing /dashboard/.
+2025-01-28 16:45:09,976 - Darshan is accessing /dashboard/.
+2025-01-28 16:45:09,983 - Darshan is accessing /dashboard/.
+2025-01-28 16:45:15,976 - Darshan is accessing /dashboard/.
+2025-01-28 16:45:15,982 - Darshan is accessing /dashboard/.
+2025-01-28 16:45:21,966 - Darshan is accessing /dashboard/.
+2025-01-28 16:45:21,971 - Darshan is accessing /dashboard/.
+2025-01-28 16:45:27,974 - Darshan is accessing /dashboard/.
+2025-01-28 16:45:27,977 - Darshan is accessing /dashboard/.
+2025-01-28 16:45:33,968 - Darshan is accessing /dashboard/.
+2025-01-28 16:45:33,974 - Darshan is accessing /dashboard/.
+2025-01-28 16:45:39,965 - Darshan is accessing /dashboard/.
+2025-01-28 16:45:39,967 - Darshan is accessing /dashboard/.
+2025-01-28 16:45:45,964 - Darshan is accessing /dashboard/.
+2025-01-28 16:45:45,973 - Darshan is accessing /dashboard/.
+2025-01-28 16:45:51,971 - Darshan is accessing /dashboard/.
+2025-01-28 16:45:51,981 - Darshan is accessing /dashboard/.
+2025-01-28 16:45:57,974 - Darshan is accessing /dashboard/.
+2025-01-28 16:45:57,982 - Darshan is accessing /dashboard/.
+2025-01-28 16:46:03,966 - Darshan is accessing /dashboard/.
+2025-01-28 16:46:03,977 - Darshan is accessing /dashboard/.
+2025-01-28 16:46:09,978 - Darshan is accessing /dashboard/.
+2025-01-28 16:46:09,983 - Darshan is accessing /dashboard/.
+2025-01-28 16:46:16,475 - Darshan is accessing /dashboard/.
+2025-01-28 16:46:16,487 - Darshan is accessing /dashboard/.
+2025-01-28 16:46:23,027 - Darshan is accessing /dashboard/.
+2025-01-28 16:46:23,035 - Darshan is accessing /dashboard/.
+2025-01-28 16:46:28,991 - Darshan is accessing /dashboard/.
+2025-01-28 16:46:29,000 - Darshan is accessing /dashboard/.
+2025-01-28 16:46:34,987 - Darshan is accessing /dashboard/.
+2025-01-28 16:46:35,003 - Darshan is accessing /dashboard/.
+2025-01-28 16:46:40,971 - Darshan is accessing /dashboard/.
+2025-01-28 16:46:40,992 - Darshan is accessing /dashboard/.
+2025-01-28 16:46:46,983 - Darshan is accessing /dashboard/.
+2025-01-28 16:46:47,001 - Darshan is accessing /dashboard/.
+2025-01-28 16:46:52,979 - Darshan is accessing /dashboard/.
+2025-01-28 16:46:53,001 - Darshan is accessing /dashboard/.
+2025-01-28 16:46:58,984 - Darshan is accessing /dashboard/.
+2025-01-28 16:46:59,002 - Darshan is accessing /dashboard/.
+2025-01-28 16:47:04,983 - Darshan is accessing /dashboard/.
+2025-01-28 16:47:05,004 - Darshan is accessing /dashboard/.
+2025-01-28 16:47:10,970 - Darshan is accessing /dashboard/.
+2025-01-28 16:47:10,993 - Darshan is accessing /dashboard/.
+2025-01-28 16:47:16,969 - Darshan is accessing /dashboard/.
+2025-01-28 16:47:16,979 - Darshan is accessing /dashboard/.
+2025-01-28 16:47:22,966 - Darshan is accessing /dashboard/.
+2025-01-28 16:47:22,977 - Darshan is accessing /dashboard/.
+2025-01-28 16:47:28,978 - Darshan is accessing /dashboard/.
+2025-01-28 16:47:28,993 - Darshan is accessing /dashboard/.
+2025-01-28 16:47:34,967 - Darshan is accessing /dashboard/.
+2025-01-28 16:47:34,973 - Darshan is accessing /dashboard/.
+2025-01-28 16:47:40,979 - Darshan is accessing /dashboard/.
+2025-01-28 16:47:40,991 - Darshan is accessing /dashboard/.
+2025-01-28 16:47:46,977 - Darshan is accessing /dashboard/.
+2025-01-28 16:47:46,985 - Darshan is accessing /dashboard/.
+2025-01-28 16:47:52,991 - Darshan is accessing /dashboard/.
+2025-01-28 16:47:53,002 - Darshan is accessing /dashboard/.
+2025-01-28 16:47:58,976 - Darshan is accessing /dashboard/.
+2025-01-28 16:47:58,983 - Darshan is accessing /dashboard/.
+2025-01-28 16:48:04,978 - Darshan is accessing /dashboard/.
+2025-01-28 16:48:04,986 - Darshan is accessing /dashboard/.
+2025-01-28 16:48:10,981 - Darshan is accessing /dashboard/.
+2025-01-28 16:48:10,988 - Darshan is accessing /dashboard/.
+2025-01-28 16:48:16,982 - Darshan is accessing /dashboard/.
+2025-01-28 16:48:16,990 - Darshan is accessing /dashboard/.
+2025-01-28 16:48:22,976 - Darshan is accessing /dashboard/.
+2025-01-28 16:48:22,986 - Darshan is accessing /dashboard/.
+2025-01-28 16:48:28,971 - Darshan is accessing /dashboard/.
+2025-01-28 16:48:28,994 - Darshan is accessing /dashboard/.
+2025-01-28 16:48:34,978 - Darshan is accessing /dashboard/.
+2025-01-28 16:48:34,985 - Darshan is accessing /dashboard/.
+2025-01-28 16:48:40,976 - Darshan is accessing /dashboard/.
+2025-01-28 16:48:40,982 - Darshan is accessing /dashboard/.
+2025-01-28 16:48:46,983 - Darshan is accessing /dashboard/.
+2025-01-28 16:48:47,000 - Darshan is accessing /dashboard/.
+2025-01-28 16:48:52,973 - Darshan is accessing /dashboard/.
+2025-01-28 16:48:52,981 - Darshan is accessing /dashboard/.
+2025-01-28 16:48:58,999 - Darshan is accessing /dashboard/.
+2025-01-28 16:48:59,011 - Darshan is accessing /dashboard/.
+2025-01-28 16:49:04,976 - Darshan is accessing /dashboard/.
+2025-01-28 16:49:04,990 - Darshan is accessing /dashboard/.
+2025-01-28 16:49:10,974 - Darshan is accessing /dashboard/.
+2025-01-28 16:49:10,981 - Darshan is accessing /dashboard/.
+2025-01-28 16:49:16,974 - Darshan is accessing /dashboard/.
+2025-01-28 16:49:16,985 - Darshan is accessing /dashboard/.
+2025-01-28 16:49:22,965 - Darshan is accessing /dashboard/.
+2025-01-28 16:49:22,973 - Darshan is accessing /dashboard/.
+2025-01-28 16:49:28,971 - Darshan is accessing /dashboard/.
+2025-01-28 16:49:28,978 - Darshan is accessing /dashboard/.
+2025-01-28 16:49:34,973 - Darshan is accessing /dashboard/.
+2025-01-28 16:49:34,980 - Darshan is accessing /dashboard/.
+2025-01-28 16:49:40,988 - Darshan is accessing /dashboard/.
+2025-01-28 16:49:41,004 - Darshan is accessing /dashboard/.
+2025-01-28 16:49:46,981 - Darshan is accessing /dashboard/.
+2025-01-28 16:49:47,004 - Darshan is accessing /dashboard/.
+2025-01-28 16:49:52,970 - Darshan is accessing /dashboard/.
+2025-01-28 16:49:52,991 - Darshan is accessing /dashboard/.
+2025-01-28 16:49:58,967 - Darshan is accessing /dashboard/.
+2025-01-28 16:49:58,973 - Darshan is accessing /dashboard/.
+2025-01-28 16:50:04,994 - Darshan is accessing /dashboard/.
+2025-01-28 16:50:05,004 - Darshan is accessing /dashboard/.
+2025-01-28 16:50:10,976 - Darshan is accessing /dashboard/.
+2025-01-28 16:50:10,982 - Darshan is accessing /dashboard/.
+2025-01-28 16:50:16,971 - Darshan is accessing /dashboard/.
+2025-01-28 16:50:16,981 - Darshan is accessing /dashboard/.
+2025-01-28 16:50:22,981 - Darshan is accessing /dashboard/.
+2025-01-28 16:50:23,001 - Darshan is accessing /dashboard/.
+2025-01-28 16:50:28,978 - Darshan is accessing /dashboard/.
+2025-01-28 16:50:28,991 - Darshan is accessing /dashboard/.
+2025-01-28 16:50:34,981 - Darshan is accessing /dashboard/.
+2025-01-28 16:50:35,002 - Darshan is accessing /dashboard/.
+2025-01-28 16:50:40,973 - Darshan is accessing /dashboard/.
+2025-01-28 16:50:40,988 - Darshan is accessing /dashboard/.
+2025-01-28 16:50:46,975 - Darshan is accessing /dashboard/.
+2025-01-28 16:50:46,990 - Darshan is accessing /dashboard/.
+2025-01-28 16:50:52,981 - Darshan is accessing /dashboard/.
+2025-01-28 16:50:53,007 - Darshan is accessing /dashboard/.
+2025-01-28 16:50:59,013 - Darshan is accessing /dashboard/.
+2025-01-28 16:50:59,041 - Darshan is accessing /dashboard/.
+2025-01-28 16:51:04,974 - Darshan is accessing /dashboard/.
+2025-01-28 16:51:04,983 - Darshan is accessing /dashboard/.
+2025-01-28 16:51:10,981 - Darshan is accessing /dashboard/.
+2025-01-28 16:51:10,997 - Darshan is accessing /dashboard/.
+2025-01-28 16:51:16,977 - Darshan is accessing /dashboard/.
+2025-01-28 16:51:16,984 - Darshan is accessing /dashboard/.
+2025-01-28 16:51:22,969 - Darshan is accessing /dashboard/.
+2025-01-28 16:51:22,975 - Darshan is accessing /dashboard/.
+2025-01-28 16:51:28,975 - Darshan is accessing /dashboard/.
+2025-01-28 16:51:28,984 - Darshan is accessing /dashboard/.
+2025-01-28 16:51:34,971 - Darshan is accessing /dashboard/.
+2025-01-28 16:51:34,989 - Darshan is accessing /dashboard/.
+2025-01-28 16:51:40,970 - Darshan is accessing /dashboard/.
+2025-01-28 16:51:40,978 - Darshan is accessing /dashboard/.
+2025-01-28 16:51:46,974 - Darshan is accessing /dashboard/.
+2025-01-28 16:51:46,984 - Darshan is accessing /dashboard/.
+2025-01-28 16:51:52,972 - Darshan is accessing /dashboard/.
+2025-01-28 16:51:52,981 - Darshan is accessing /dashboard/.
+2025-01-28 16:51:58,970 - Darshan is accessing /dashboard/.
+2025-01-28 16:51:58,980 - Darshan is accessing /dashboard/.
+2025-01-28 16:52:04,978 - Darshan is accessing /dashboard/.
+2025-01-28 16:52:04,986 - Darshan is accessing /dashboard/.
+2025-01-28 16:52:10,975 - Darshan is accessing /dashboard/.
+2025-01-28 16:52:10,985 - Darshan is accessing /dashboard/.
+2025-01-28 16:52:16,974 - Darshan is accessing /dashboard/.
+2025-01-28 16:52:16,984 - Darshan is accessing /dashboard/.
+2025-01-28 16:52:22,971 - Darshan is accessing /dashboard/.
+2025-01-28 16:52:22,980 - Darshan is accessing /dashboard/.
+2025-01-28 16:52:28,976 - Darshan is accessing /dashboard/.
+2025-01-28 16:52:28,982 - Darshan is accessing /dashboard/.
+2025-01-28 16:52:34,963 - Darshan is accessing /dashboard/.
+2025-01-28 16:52:34,970 - Darshan is accessing /dashboard/.
+2025-01-28 16:52:40,979 - Darshan is accessing /dashboard/.
+2025-01-28 16:52:40,987 - Darshan is accessing /dashboard/.
+2025-01-28 16:52:46,972 - Darshan is accessing /dashboard/.
+2025-01-28 16:52:46,980 - Darshan is accessing /dashboard/.
+2025-01-28 16:52:52,964 - Darshan is accessing /dashboard/.
+2025-01-28 16:52:52,973 - Darshan is accessing /dashboard/.
+2025-01-28 16:52:58,975 - Darshan is accessing /dashboard/.
+2025-01-28 16:52:58,980 - Darshan is accessing /dashboard/.
+2025-01-28 16:53:04,976 - Darshan is accessing /dashboard/.
+2025-01-28 16:53:04,998 - Darshan is accessing /dashboard/.
+2025-01-28 16:53:10,967 - Darshan is accessing /dashboard/.
+2025-01-28 16:53:10,982 - Darshan is accessing /dashboard/.
+2025-01-28 16:53:16,970 - Darshan is accessing /dashboard/.
+2025-01-28 16:53:16,978 - Darshan is accessing /dashboard/.
+2025-01-28 16:53:22,975 - Darshan is accessing /dashboard/.
+2025-01-28 16:53:22,996 - Darshan is accessing /dashboard/.
+2025-01-28 16:53:28,978 - Darshan is accessing /dashboard/.
+2025-01-28 16:53:28,989 - Darshan is accessing /dashboard/.
+2025-01-28 16:53:34,973 - Darshan is accessing /dashboard/.
+2025-01-28 16:53:34,982 - Darshan is accessing /dashboard/.
+2025-01-28 16:53:40,972 - Darshan is accessing /dashboard/.
+2025-01-28 16:53:40,986 - Darshan is accessing /dashboard/.
+2025-01-28 16:53:46,972 - Darshan is accessing /dashboard/.
+2025-01-28 16:53:46,982 - Darshan is accessing /dashboard/.
+2025-01-28 16:53:52,972 - Darshan is accessing /dashboard/.
+2025-01-28 16:53:52,995 - Darshan is accessing /dashboard/.
+2025-01-28 16:53:58,978 - Darshan is accessing /dashboard/.
+2025-01-28 16:53:58,988 - Darshan is accessing /dashboard/.
+2025-01-28 16:54:04,975 - Darshan is accessing /dashboard/.
+2025-01-28 16:54:05,000 - Darshan is accessing /dashboard/.
+2025-01-28 16:54:10,975 - Darshan is accessing /dashboard/.
+2025-01-28 16:54:10,985 - Darshan is accessing /dashboard/.
+2025-01-28 16:54:16,967 - Darshan is accessing /dashboard/.
+2025-01-28 16:54:16,974 - Darshan is accessing /dashboard/.
+2025-01-28 16:54:22,976 - Darshan is accessing /dashboard/.
+2025-01-28 16:54:22,979 - Darshan is accessing /dashboard/.
+2025-01-28 16:54:28,980 - Darshan is accessing /dashboard/.
+2025-01-28 16:54:28,989 - Darshan is accessing /dashboard/.
+2025-01-28 16:54:34,969 - Darshan is accessing /dashboard/.
+2025-01-28 16:54:34,977 - Darshan is accessing /dashboard/.
+2025-01-28 16:54:40,977 - Darshan is accessing /dashboard/.
+2025-01-28 16:54:40,985 - Darshan is accessing /dashboard/.
+2025-01-28 16:54:46,962 - Darshan is accessing /dashboard/.
+2025-01-28 16:54:46,970 - Darshan is accessing /dashboard/.
+2025-01-28 16:54:52,963 - Darshan is accessing /dashboard/.
+2025-01-28 16:54:52,972 - Darshan is accessing /dashboard/.
+2025-01-28 16:54:58,976 - Darshan is accessing /dashboard/.
+2025-01-28 16:54:58,986 - Darshan is accessing /dashboard/.
+2025-01-28 16:55:04,961 - Darshan is accessing /dashboard/.
+2025-01-28 16:55:04,968 - Darshan is accessing /dashboard/.
+2025-01-28 16:55:10,977 - Darshan is accessing /dashboard/.
+2025-01-28 16:55:10,986 - Darshan is accessing /dashboard/.
+2025-01-28 16:55:16,979 - Darshan is accessing /dashboard/.
+2025-01-28 16:55:16,983 - Darshan is accessing /dashboard/.
+2025-01-28 16:55:22,968 - Darshan is accessing /dashboard/.
+2025-01-28 16:55:22,974 - Darshan is accessing /dashboard/.
+2025-01-28 16:55:28,973 - Darshan is accessing /dashboard/.
+2025-01-28 16:55:28,980 - Darshan is accessing /dashboard/.
+2025-01-28 16:55:34,973 - Darshan is accessing /dashboard/.
+2025-01-28 16:55:34,988 - Darshan is accessing /dashboard/.
+2025-01-28 16:55:40,973 - Darshan is accessing /dashboard/.
+2025-01-28 16:55:40,988 - Darshan is accessing /dashboard/.
+2025-01-28 16:55:46,979 - Darshan is accessing /dashboard/.
+2025-01-28 16:55:46,985 - Darshan is accessing /dashboard/.
+2025-01-28 16:55:52,975 - Darshan is accessing /dashboard/.
+2025-01-28 16:55:52,982 - Darshan is accessing /dashboard/.
+2025-01-28 16:55:58,972 - Darshan is accessing /dashboard/.
+2025-01-28 16:55:58,981 - Darshan is accessing /dashboard/.
+2025-01-28 16:56:04,975 - Darshan is accessing /dashboard/.
+2025-01-28 16:56:04,982 - Darshan is accessing /dashboard/.
+2025-01-28 16:56:10,976 - Darshan is accessing /dashboard/.
+2025-01-28 16:56:10,982 - Darshan is accessing /dashboard/.
+2025-01-28 16:56:16,980 - Darshan is accessing /dashboard/.
+2025-01-28 16:56:16,991 - Darshan is accessing /dashboard/.
+2025-01-28 16:56:22,979 - Darshan is accessing /dashboard/.
+2025-01-28 16:56:22,994 - Darshan is accessing /dashboard/.
+2025-01-28 16:56:28,997 - Darshan is accessing /dashboard/.
+2025-01-28 16:56:29,007 - Darshan is accessing /dashboard/.
+2025-01-28 16:56:35,003 - Darshan is accessing /dashboard/.
+2025-01-28 16:56:35,020 - Darshan is accessing /dashboard/.
+2025-01-28 16:56:40,973 - Darshan is accessing /dashboard/.
+2025-01-28 16:56:40,989 - Darshan is accessing /dashboard/.
+2025-01-28 16:56:46,972 - Darshan is accessing /dashboard/.
+2025-01-28 16:56:46,997 - Darshan is accessing /dashboard/.
+2025-01-28 16:56:52,975 - Darshan is accessing /dashboard/.
+2025-01-28 16:56:52,987 - Darshan is accessing /dashboard/.
+2025-01-28 16:56:58,973 - Darshan is accessing /dashboard/.
+2025-01-28 16:56:58,977 - Darshan is accessing /dashboard/.
+2025-01-28 16:57:04,969 - Darshan is accessing /dashboard/.
+2025-01-28 16:57:04,973 - Darshan is accessing /dashboard/.
+2025-01-28 16:57:10,989 - Darshan is accessing /dashboard/.
+2025-01-28 16:57:11,011 - Darshan is accessing /dashboard/.
+2025-01-28 16:57:16,981 - Darshan is accessing /dashboard/.
+2025-01-28 16:57:16,991 - Darshan is accessing /dashboard/.
+2025-01-28 16:57:22,987 - Darshan is accessing /dashboard/.
+2025-01-28 16:57:23,015 - Darshan is accessing /dashboard/.
+2025-01-28 16:57:28,987 - Darshan is accessing /dashboard/.
+2025-01-28 16:57:29,030 - Darshan is accessing /dashboard/.
+2025-01-28 16:57:34,986 - Darshan is accessing /dashboard/.
+2025-01-28 16:57:35,009 - Darshan is accessing /dashboard/.
+2025-01-28 16:57:40,986 - Darshan is accessing /dashboard/.
+2025-01-28 16:57:41,011 - Darshan is accessing /dashboard/.
+2025-01-28 16:57:46,981 - Darshan is accessing /dashboard/.
+2025-01-28 16:57:46,995 - Darshan is accessing /dashboard/.
+2025-01-28 16:57:52,973 - Darshan is accessing /dashboard/.
+2025-01-28 16:57:52,982 - Darshan is accessing /dashboard/.
+2025-01-28 16:57:58,983 - Darshan is accessing /dashboard/.
+2025-01-28 16:57:59,001 - Darshan is accessing /dashboard/.
+2025-01-28 16:58:04,988 - Darshan is accessing /dashboard/.
+2025-01-28 16:58:05,005 - Darshan is accessing /dashboard/.
+2025-01-28 16:58:10,981 - Darshan is accessing /dashboard/.
+2025-01-28 16:58:10,994 - Darshan is accessing /dashboard/.
+2025-01-28 16:58:16,975 - Darshan is accessing /dashboard/.
+2025-01-28 16:58:16,984 - Darshan is accessing /dashboard/.
+2025-01-28 16:58:22,992 - Darshan is accessing /dashboard/.
+2025-01-28 16:58:23,009 - Darshan is accessing /dashboard/.
+2025-01-28 16:58:28,987 - Darshan is accessing /dashboard/.
+2025-01-28 16:58:29,022 - Darshan is accessing /dashboard/.
+2025-01-28 16:58:34,987 - Darshan is accessing /dashboard/.
+2025-01-28 16:58:35,012 - Darshan is accessing /dashboard/.
+2025-01-28 16:58:40,974 - Darshan is accessing /dashboard/.
+2025-01-28 16:58:40,992 - Darshan is accessing /dashboard/.
+2025-01-28 16:58:46,978 - Darshan is accessing /dashboard/.
+2025-01-28 16:58:46,989 - Darshan is accessing /dashboard/.
+2025-01-28 16:58:52,976 - Darshan is accessing /dashboard/.
+2025-01-28 16:58:52,998 - Darshan is accessing /dashboard/.
+2025-01-28 16:58:58,970 - Darshan is accessing /dashboard/.
+2025-01-28 16:58:58,979 - Darshan is accessing /dashboard/.
+2025-01-28 16:59:04,975 - Darshan is accessing /dashboard/.
+2025-01-28 16:59:04,990 - Darshan is accessing /dashboard/.
+2025-01-28 16:59:10,969 - Darshan is accessing /dashboard/.
+2025-01-28 16:59:10,981 - Darshan is accessing /dashboard/.
+2025-01-28 16:59:16,980 - Darshan is accessing /dashboard/.
+2025-01-28 16:59:16,995 - Darshan is accessing /dashboard/.
+2025-01-28 16:59:22,984 - Darshan is accessing /dashboard/.
+2025-01-28 16:59:23,004 - Darshan is accessing /dashboard/.
+2025-01-28 16:59:28,969 - Darshan is accessing /dashboard/.
+2025-01-28 16:59:28,993 - Darshan is accessing /dashboard/.
+2025-01-28 16:59:34,978 - Darshan is accessing /dashboard/.
+2025-01-28 16:59:34,994 - Darshan is accessing /dashboard/.
+2025-01-28 16:59:40,968 - Darshan is accessing /dashboard/.
+2025-01-28 16:59:40,985 - Darshan is accessing /dashboard/.
+2025-01-28 16:59:46,986 - Darshan is accessing /dashboard/.
+2025-01-28 16:59:47,012 - Darshan is accessing /dashboard/.
+2025-01-28 16:59:52,988 - Darshan is accessing /dashboard/.
+2025-01-28 16:59:52,996 - Darshan is accessing /dashboard/.
+2025-01-28 16:59:58,979 - Darshan is accessing /dashboard/.
+2025-01-28 16:59:58,987 - Darshan is accessing /dashboard/.
+2025-01-28 17:00:04,985 - Darshan is accessing /dashboard/.
+2025-01-28 17:00:04,996 - Darshan is accessing /dashboard/.
+2025-01-28 17:00:10,976 - Darshan is accessing /dashboard/.
+2025-01-28 17:00:10,984 - Darshan is accessing /dashboard/.
+2025-01-28 17:00:16,986 - Darshan is accessing /dashboard/.
+2025-01-28 17:00:16,998 - Darshan is accessing /dashboard/.
+2025-01-28 17:00:22,977 - Darshan is accessing /dashboard/.
+2025-01-28 17:00:22,994 - Darshan is accessing /dashboard/.
+2025-01-28 17:00:28,988 - Darshan is accessing /dashboard/.
+2025-01-28 17:00:29,009 - Darshan is accessing /dashboard/.
+2025-01-28 17:00:34,980 - Darshan is accessing /dashboard/.
+2025-01-28 17:00:34,987 - Darshan is accessing /dashboard/.
+2025-01-28 17:00:40,982 - Darshan is accessing /dashboard/.
+2025-01-28 17:00:41,010 - Darshan is accessing /dashboard/.
+2025-01-28 17:00:46,972 - Darshan is accessing /dashboard/.
+2025-01-28 17:00:46,983 - Darshan is accessing /dashboard/.
+2025-01-28 17:00:52,999 - Darshan is accessing /dashboard/.
+2025-01-28 17:00:53,023 - Darshan is accessing /dashboard/.
+2025-01-28 17:00:58,979 - Darshan is accessing /dashboard/.
+2025-01-28 17:00:59,013 - Darshan is accessing /dashboard/.
+2025-01-28 17:01:04,988 - Darshan is accessing /dashboard/.
+2025-01-28 17:01:04,999 - Darshan is accessing /dashboard/.
+2025-01-28 17:01:10,982 - Darshan is accessing /dashboard/.
+2025-01-28 17:01:11,005 - Darshan is accessing /dashboard/.
+2025-01-28 17:01:16,975 - Darshan is accessing /dashboard/.
+2025-01-28 17:01:16,992 - Darshan is accessing /dashboard/.
+2025-01-28 17:01:22,980 - Darshan is accessing /dashboard/.
+2025-01-28 17:01:22,991 - Darshan is accessing /dashboard/.
+2025-01-28 17:01:28,973 - Darshan is accessing /dashboard/.
+2025-01-28 17:01:28,996 - Darshan is accessing /dashboard/.
+2025-01-28 17:01:34,974 - Darshan is accessing /dashboard/.
+2025-01-28 17:01:34,982 - Darshan is accessing /dashboard/.
+2025-01-28 17:01:40,968 - Darshan is accessing /dashboard/.
+2025-01-28 17:01:40,982 - Darshan is accessing /dashboard/.
+2025-01-28 17:01:46,999 - Darshan is accessing /dashboard/.
+2025-01-28 17:01:47,074 - Darshan is accessing /dashboard/.
+2025-01-28 17:01:52,971 - Darshan is accessing /dashboard/.
+2025-01-28 17:01:52,992 - Darshan is accessing /dashboard/.
+2025-01-28 17:01:58,976 - Darshan is accessing /dashboard/.
+2025-01-28 17:01:58,982 - Darshan is accessing /dashboard/.
+2025-01-28 17:02:04,988 - Darshan is accessing /dashboard/.
+2025-01-28 17:02:05,004 - Darshan is accessing /dashboard/.
+2025-01-28 17:02:10,971 - Darshan is accessing /dashboard/.
+2025-01-28 17:02:10,990 - Darshan is accessing /dashboard/.
+2025-01-28 17:02:16,972 - Darshan is accessing /dashboard/.
+2025-01-28 17:02:16,985 - Darshan is accessing /dashboard/.
+2025-01-28 17:02:22,972 - Darshan is accessing /dashboard/.
+2025-01-28 17:02:22,982 - Darshan is accessing /dashboard/.
+2025-01-28 17:02:28,983 - Darshan is accessing /dashboard/.
+2025-01-28 17:02:28,995 - Darshan is accessing /dashboard/.
+2025-01-28 17:02:35,034 - Darshan is accessing /dashboard/.
+2025-01-28 17:02:35,081 - Darshan is accessing /dashboard/.
+2025-01-28 17:02:40,975 - Darshan is accessing /dashboard/.
+2025-01-28 17:02:40,985 - Darshan is accessing /dashboard/.
+2025-01-28 17:02:46,994 - Darshan is accessing /dashboard/.
+2025-01-28 17:02:47,030 - Darshan is accessing /dashboard/.
+2025-01-28 17:02:52,993 - Darshan is accessing /dashboard/.
+2025-01-28 17:02:53,010 - Darshan is accessing /dashboard/.
+2025-01-28 17:02:59,030 - Darshan is accessing /dashboard/.
+2025-01-28 17:02:59,152 - Darshan is accessing /dashboard/.
+2025-01-28 17:03:05,271 - Darshan is accessing /dashboard/.
+2025-01-28 17:03:05,306 - Darshan is accessing /dashboard/.
+2025-01-28 17:03:11,967 - Darshan is accessing /dashboard/.
+2025-01-28 17:03:11,976 - Darshan is accessing /dashboard/.
+2025-01-28 17:03:17,991 - Darshan is accessing /dashboard/.
+2025-01-28 17:03:18,014 - Darshan is accessing /dashboard/.
+2025-01-28 17:03:23,973 - Darshan is accessing /dashboard/.
+2025-01-28 17:03:23,981 - Darshan is accessing /dashboard/.
+2025-01-28 17:03:29,991 - Darshan is accessing /dashboard/.
+2025-01-28 17:03:30,000 - Darshan is accessing /dashboard/.
+2025-01-28 17:03:35,975 - Darshan is accessing /dashboard/.
+2025-01-28 17:03:35,985 - Darshan is accessing /dashboard/.
+2025-01-28 17:03:41,970 - Darshan is accessing /dashboard/.
+2025-01-28 17:03:41,977 - Darshan is accessing /dashboard/.
+2025-01-28 17:03:47,966 - Darshan is accessing /dashboard/.
+2025-01-28 17:03:47,975 - Darshan is accessing /dashboard/.
+2025-01-28 17:03:52,938 - Darshan is accessing /app_setings/.
+2025-01-28 17:03:55,233 - Darshan is accessing /department/.
+2025-01-28 17:04:10,390 - Darshan is accessing /edit_department/1/.
+2025-01-28 17:04:10,574 - Darshan is updated record in App1_department.
+2025-01-28 17:04:10,642 - Darshan is created record in App1_useractivitylog.
+2025-01-28 17:04:10,664 - Darshan is accessing /department/.
+2025-01-28 17:04:22,852 - Darshan is accessing /edit_department/2/.
+2025-01-28 17:04:23,024 - Darshan is updated record in App1_department.
+2025-01-28 17:04:23,122 - Darshan is created record in App1_useractivitylog.
+2025-01-28 17:04:23,125 - Darshan is accessing /department/.
+2025-01-28 17:06:04,814 - Anonymous is created record in App1_email_logs.
+2025-01-28 17:06:08,740 - Anonymous is created record in App1_email_logs.
+2025-01-28 17:07:03,860 - Anonymous is created record in App1_email_logs.
+2025-01-28 17:07:07,506 - Anonymous is created record in App1_email_logs.
+2025-01-28 17:54:17,032 - Anonymous is accessing /.
+2025-01-28 17:54:24,344 - Anonymous is accessing /admin/.
+2025-01-28 17:54:24,398 - Anonymous is accessing /admin/login/.
+2025-01-28 17:54:28,265 - Anonymous is accessing /admin/login/.
+2025-01-28 17:54:28,996 - Anonymous is created record in django_session.
+2025-01-28 17:54:29,003 - Anonymous is updated record in auth_user.
+2025-01-28 17:54:29,007 - Anonymous is updated record in django_session.
+2025-01-28 17:54:29,019 - Anonymous is accessing /admin/.
+2025-01-28 17:54:33,885 - Anonymous is accessing /admin/App1/superadmin/add/.
+2025-01-28 17:54:34,096 - Anonymous is accessing /admin/jsi18n/.
+2025-01-28 17:54:45,670 - Anonymous is accessing /admin/App1/superadmin/add/.
+2025-01-28 17:54:46,392 - Anonymous is created record in App1_superadmin.
+2025-01-28 17:54:46,394 - Anonymous is created record in django_admin_log.
+2025-01-28 17:54:46,394 - Anonymous is accessing /admin/App1/superadmin/.
+2025-01-28 17:54:46,544 - Anonymous is accessing /admin/jsi18n/.
+2025-01-28 17:54:47,168 - Anonymous is accessing /admin/logout/.
+2025-01-28 17:54:47,179 - Anonymous is deleting record in django_session.
+2025-01-28 17:54:50,461 - Anonymous is accessing /.
+2025-01-28 17:54:59,271 - Anonymous is accessing /.
+2025-01-28 17:54:59,989 - Anonymous is created record in django_session.
+2025-01-28 17:55:09,904 - Anonymous is accessing /.
+2025-01-28 17:55:10,608 - Sunwell is created record in App1_useractivitylog.
+2025-01-28 17:55:10,608 - Sunwell is updated record in django_session.
+2025-01-28 17:55:10,630 - Sunwell is accessing /dashboard/.
+2025-01-28 17:55:15,550 - Sunwell is accessing /dashboard/.
+2025-01-28 17:55:15,970 - Sunwell is accessing /dashboard/.
+2025-01-28 17:55:15,981 - Sunwell is accessing /dashboard/.
+2025-01-28 17:55:20,634 - Sunwell is accessing /dashboard/.
+2025-01-28 17:55:21,062 - Sunwell is accessing /dashboard/.
+2025-01-28 17:55:21,071 - Sunwell is accessing /dashboard/.
+2025-01-28 17:55:25,981 - Sunwell is accessing /dashboard/.
+2025-01-28 17:55:25,984 - Sunwell is accessing /dashboard/.
+2025-01-28 17:55:26,135 - Sunwell is accessing /dashboard/.
+2025-01-28 17:55:26,142 - Sunwell is accessing /dashboard/.
+2025-01-28 17:55:29,342 - Sunwell is accessing /organization/.
+2025-01-28 17:55:31,969 - Sunwell is accessing /dashboard/.
+2025-01-28 17:55:31,974 - Sunwell is accessing /dashboard/.
+2025-01-28 17:55:37,965 - Sunwell is accessing /dashboard/.
+2025-01-28 17:55:37,975 - Sunwell is accessing /dashboard/.
+2025-01-28 17:55:43,955 - Sunwell is accessing /dashboard/.
+2025-01-28 17:55:43,971 - Sunwell is accessing /dashboard/.
+2025-01-28 17:55:49,982 - Sunwell is accessing /dashboard/.
+2025-01-28 17:55:49,988 - Sunwell is accessing /dashboard/.
+2025-01-28 17:55:55,969 - Sunwell is accessing /dashboard/.
+2025-01-28 17:55:55,977 - Sunwell is accessing /dashboard/.
+2025-01-28 17:56:01,960 - Sunwell is accessing /dashboard/.
+2025-01-28 17:56:01,979 - Sunwell is accessing /dashboard/.
+2025-01-28 17:56:07,968 - Sunwell is accessing /dashboard/.
+2025-01-28 17:56:07,985 - Sunwell is accessing /dashboard/.
+2025-01-28 17:56:12,748 - Sunwell is accessing /organization/.
+2025-01-28 17:56:12,892 - Sunwell is created record in App1_organization.
+2025-01-28 17:56:12,894 - Sunwell is created record in App1_useractivitylog.
+2025-01-28 17:56:12,894 - Sunwell is accessing /organization/.
+2025-01-28 17:56:12,939 - Sunwell is accessing /media/Sunwell_Logo.jpg.
+2025-01-28 17:56:13,967 - Sunwell is accessing /dashboard/.
+2025-01-28 17:56:13,976 - Sunwell is accessing /dashboard/.
+2025-01-28 17:56:14,011 - Sunwell is accessing /media/Sunwell_Logo.jpg.
+2025-01-28 17:56:15,545 - Sunwell is accessing /app_setings/.
+2025-01-28 17:56:15,590 - Sunwell is accessing /media/Sunwell_Logo.jpg.
+2025-01-28 17:56:19,971 - Sunwell is accessing /dashboard/.
+2025-01-28 17:56:19,978 - Sunwell is accessing /dashboard/.
+2025-01-28 17:56:20,017 - Sunwell is accessing /media/Sunwell_Logo.jpg.
+2025-01-28 17:56:25,971 - Sunwell is accessing /dashboard/.
+2025-01-28 17:56:25,985 - Sunwell is accessing /dashboard/.
+2025-01-28 17:56:26,013 - Sunwell is accessing /media/Sunwell_Logo.jpg.
+2025-01-28 17:56:31,975 - Sunwell is accessing /dashboard/.
+2025-01-28 17:56:31,975 - Sunwell is accessing /dashboard/.
+2025-01-28 17:56:32,019 - Sunwell is accessing /media/Sunwell_Logo.jpg.
+2025-01-28 17:56:37,967 - Sunwell is accessing /dashboard/.
+2025-01-28 17:56:37,977 - Sunwell is accessing /dashboard/.
+2025-01-28 17:56:38,010 - Sunwell is accessing /media/Sunwell_Logo.jpg.
+2025-01-28 17:56:43,968 - Sunwell is accessing /dashboard/.
+2025-01-28 17:56:43,981 - Sunwell is accessing /dashboard/.
+2025-01-28 17:56:44,052 - Sunwell is accessing /media/Sunwell_Logo.jpg.
+2025-01-28 17:56:49,976 - Sunwell is accessing /dashboard/.
+2025-01-28 17:56:49,986 - Sunwell is accessing /dashboard/.
+2025-01-28 17:56:50,018 - Sunwell is accessing /media/Sunwell_Logo.jpg.
+2025-01-28 17:56:55,977 - Sunwell is accessing /dashboard/.
+2025-01-28 17:56:55,979 - Sunwell is accessing /dashboard/.
+2025-01-28 17:56:56,024 - Sunwell is accessing /media/Sunwell_Logo.jpg.
+2025-01-28 17:57:01,985 - Sunwell is accessing /dashboard/.
+2025-01-28 17:57:01,999 - Sunwell is accessing /dashboard/.
+2025-01-28 17:57:02,035 - Sunwell is accessing /media/Sunwell_Logo.jpg.
+2025-01-28 17:57:07,959 - Sunwell is accessing /dashboard/.
+2025-01-28 17:57:07,959 - Sunwell is accessing /dashboard/.
+2025-01-28 17:57:08,006 - Sunwell is accessing /media/Sunwell_Logo.jpg.
+2025-01-28 17:57:13,966 - Sunwell is accessing /dashboard/.
+2025-01-28 17:57:13,973 - Sunwell is accessing /dashboard/.
+2025-01-28 17:57:14,005 - Sunwell is accessing /media/Sunwell_Logo.jpg.
+2025-01-28 17:57:19,970 - Sunwell is accessing /dashboard/.
+2025-01-28 17:57:19,986 - Sunwell is accessing /dashboard/.
+2025-01-28 17:57:25,962 - Sunwell is accessing /dashboard/.
+2025-01-28 17:57:25,978 - Sunwell is accessing /dashboard/.
+2025-01-28 17:57:26,011 - Sunwell is accessing /media/Sunwell_Logo.jpg.
+2025-01-28 17:57:31,975 - Sunwell is accessing /dashboard/.
+2025-01-28 17:57:31,987 - Sunwell is accessing /dashboard/.
+2025-01-28 17:57:37,975 - Sunwell is accessing /dashboard/.
+2025-01-28 17:57:37,975 - Sunwell is accessing /dashboard/.
+2025-01-28 17:57:38,017 - Sunwell is accessing /media/Sunwell_Logo.jpg.
+2025-01-28 17:57:43,965 - Sunwell is accessing /dashboard/.
+2025-01-28 17:57:43,980 - Sunwell is accessing /dashboard/.
+2025-01-28 17:57:49,960 - Sunwell is accessing /dashboard/.
+2025-01-28 17:57:49,972 - Sunwell is accessing /dashboard/.
+2025-01-28 17:57:50,007 - Sunwell is accessing /media/Sunwell_Logo.jpg.
+2025-01-28 17:57:55,977 - Sunwell is accessing /dashboard/.
+2025-01-28 17:57:55,983 - Sunwell is accessing /dashboard/.
+2025-01-28 17:58:01,967 - Sunwell is accessing /dashboard/.
+2025-01-28 17:58:01,985 - Sunwell is accessing /dashboard/.
+2025-01-28 17:58:02,017 - Sunwell is accessing /media/Sunwell_Logo.jpg.
+2025-01-28 17:58:07,968 - Sunwell is accessing /dashboard/.
+2025-01-28 17:58:07,984 - Sunwell is accessing /dashboard/.
+2025-01-28 17:58:13,989 - Sunwell is accessing /dashboard/.
+2025-01-28 17:58:14,001 - Sunwell is accessing /dashboard/.
+2025-01-28 17:58:14,035 - Sunwell is accessing /media/Sunwell_Logo.jpg.
+2025-01-28 17:58:19,979 - Sunwell is accessing /dashboard/.
+2025-01-28 17:58:19,991 - Sunwell is accessing /dashboard/.
+2025-01-28 17:58:25,966 - Sunwell is accessing /dashboard/.
+2025-01-28 17:58:25,974 - Sunwell is accessing /dashboard/.
+2025-01-28 17:58:31,965 - Sunwell is accessing /dashboard/.
+2025-01-28 17:58:31,965 - Sunwell is accessing /dashboard/.
+2025-01-28 17:58:32,005 - Sunwell is accessing /media/Sunwell_Logo.jpg.
+2025-01-28 17:58:37,976 - Sunwell is accessing /dashboard/.
+2025-01-28 17:58:37,985 - Sunwell is accessing /dashboard/.
+2025-01-28 17:58:43,984 - Sunwell is accessing /dashboard/.
+2025-01-28 17:58:43,996 - Sunwell is accessing /dashboard/.
+2025-01-28 17:58:49,955 - Sunwell is accessing /dashboard/.
+2025-01-28 17:58:49,971 - Sunwell is accessing /dashboard/.
+2025-01-28 17:58:50,010 - Sunwell is accessing /media/Sunwell_Logo.jpg.
+2025-01-28 17:58:55,962 - Sunwell is accessing /dashboard/.
+2025-01-28 17:58:55,974 - Sunwell is accessing /dashboard/.
+2025-01-28 17:59:01,961 - Sunwell is accessing /dashboard/.
+2025-01-28 17:59:01,977 - Sunwell is accessing /dashboard/.
+2025-01-28 17:59:07,971 - Sunwell is accessing /dashboard/.
+2025-01-28 17:59:07,973 - Sunwell is accessing /dashboard/.
+2025-01-28 17:59:08,031 - Sunwell is accessing /media/Sunwell_Logo.jpg.
+2025-01-28 17:59:13,967 - Sunwell is accessing /dashboard/.
+2025-01-28 17:59:13,983 - Sunwell is accessing /dashboard/.
+2025-01-28 17:59:19,960 - Sunwell is accessing /dashboard/.
+2025-01-28 17:59:19,976 - Sunwell is accessing /dashboard/.
+2025-01-28 17:59:25,518 - Sunwell is accessing /dashboard/.
+2025-01-28 17:59:25,530 - Sunwell is accessing /dashboard/.
+2025-01-28 17:59:30,955 - Sunwell is accessing /dashboard/.
+2025-01-28 17:59:30,996 - Sunwell is accessing /dashboard/.
+2025-01-28 17:59:31,042 - Sunwell is accessing /media/Sunwell_Logo.jpg.
+2025-01-28 17:59:36,958 - Sunwell is accessing /dashboard/.
+2025-01-28 17:59:36,977 - Sunwell is accessing /dashboard/.
+2025-01-28 17:59:42,974 - Sunwell is accessing /dashboard/.
+2025-01-28 17:59:42,981 - Sunwell is accessing /dashboard/.
+2025-01-28 17:59:48,976 - Sunwell is accessing /dashboard/.
+2025-01-28 17:59:48,983 - Sunwell is accessing /dashboard/.
+2025-01-28 17:59:54,960 - Sunwell is accessing /dashboard/.
+2025-01-28 17:59:54,978 - Sunwell is accessing /dashboard/.
+2025-01-28 17:59:55,001 - Sunwell is accessing /media/Sunwell_Logo.jpg.
+2025-01-28 18:00:00,963 - Sunwell is accessing /dashboard/.
+2025-01-28 18:00:00,963 - Sunwell is accessing /dashboard/.
+2025-01-28 18:00:06,967 - Sunwell is accessing /dashboard/.
+2025-01-28 18:00:06,975 - Sunwell is accessing /dashboard/.
+2025-01-28 18:00:12,985 - Sunwell is accessing /dashboard/.
+2025-01-28 18:00:13,001 - Sunwell is accessing /dashboard/.
+2025-01-28 18:00:18,069 - Sunwell is accessing /dashboard/.
+2025-01-28 18:00:18,083 - Sunwell is accessing /dashboard/.
+2025-01-28 18:00:18,122 - Sunwell is accessing /media/Sunwell_Logo.jpg.
+2025-01-28 18:00:23,970 - Sunwell is accessing /dashboard/.
+2025-01-28 18:00:23,983 - Sunwell is accessing /dashboard/.
+2025-01-28 18:00:40,115 - Sunwell is accessing /dashboard/.
+2025-01-28 18:00:42,214 - Sunwell is accessing /app_setings/.
+2025-01-28 18:00:51,931 - Sunwell is accessing /save_app_settings/.
+2025-01-28 18:00:51,948 - Sunwell is created record in App1_appsettings.
+2025-01-28 18:00:51,949 - Sunwell is updated record in App1_appsettings.
+2025-01-28 18:00:53,195 - Sunwell is accessing /app_setings/.
+2025-01-28 18:00:53,236 - Sunwell is accessing /media/Sunwell_Logo.jpg.
+2025-01-28 18:03:53,865 - Sunwell is accessing /save_app_settings/.
+2025-01-28 18:03:53,865 - Sunwell is updated record in App1_appsettings.
+2025-01-28 18:03:55,168 - Sunwell is accessing /app_setings/.
+2025-01-28 18:03:55,217 - Sunwell is accessing /media/Sunwell_Logo.jpg.
+2025-01-28 18:04:05,864 - Sunwell is accessing /app_setings/send_test_email.
+2025-01-28 18:04:17,960 - Sunwell is accessing /logout/.
+2025-01-28 18:04:17,981 - Sunwell is created record in App1_useractivitylog.
+2025-01-28 18:04:17,985 - Anonymous is deleting record in django_session.
+2025-01-28 18:04:17,990 - Anonymous is accessing /.
+2025-01-28 18:04:37,183 - Anonymous is accessing /app_setings/.
+2025-01-28 18:04:37,196 - Anonymous is accessing /.
+2025-01-28 18:04:48,425 - Anonymous is accessing /.
+2025-01-28 18:04:49,201 - Anonymous is created record in django_session.
+2025-01-28 18:04:54,738 - Anonymous is accessing /.
+2025-01-28 18:04:55,453 - Sunwell is created record in App1_useractivitylog.
+2025-01-28 18:04:55,455 - Sunwell is updated record in django_session.
+2025-01-28 18:04:55,463 - Sunwell is accessing /dashboard/.
+2025-01-28 18:04:55,500 - Sunwell is accessing /media/Sunwell_Logo.jpg.
+2025-01-28 18:04:57,186 - Sunwell is accessing /app_setings/.
+2025-01-28 18:05:15,537 - Sunwell is accessing /save_app_settings/.
+2025-01-28 18:05:15,537 - Sunwell is updated record in App1_appsettings.
+2025-01-28 18:05:16,676 - Sunwell is accessing /app_setings/.
+2025-01-28 18:05:25,053 - Sunwell is accessing /comm_group/.
+2025-01-28 18:05:53,239 - Sunwell is accessing /validate-activation-key/.
+2025-01-28 18:05:53,239 - Sunwell is accessing /validate-activation-key/.
+2025-01-28 18:05:58,088 - Sunwell is accessing /validate-activation-key/.
+2025-01-28 18:05:58,089 - Sunwell is accessing /validate-activation-key/.
+2025-01-28 18:06:02,388 - Sunwell is accessing /validate-activation-key/.
+2025-01-28 18:06:02,388 - Sunwell is accessing /validate-activation-key/.
+2025-01-28 18:06:06,601 - Sunwell is accessing /validate-activation-key/.
+2025-01-28 18:06:06,602 - Sunwell is accessing /validate-activation-key/.
+2025-01-28 18:06:07,219 - Sunwell is accessing /validate-activation-key/.
+2025-01-28 18:06:07,221 - Sunwell is accessing /validate-activation-key/.
+2025-01-28 18:11:42,050 - Sunwell is accessing /comm_group/.
+2025-01-28 18:11:42,262 - Sunwell is accessing /media/Sunwell_Logo.jpg.
+2025-01-28 18:11:43,114 - Sunwell is accessing /comm_group/.
+2025-01-28 18:11:53,360 - Sunwell is accessing /validate-activation-key/.
+2025-01-28 18:11:53,368 - Sunwell is accessing /validate-activation-key/.
+2025-01-28 18:12:30,668 - Sunwell is accessing /comm_group/.
+2025-01-28 18:12:36,992 - Sunwell is accessing /validate-activation-key/.
+2025-01-28 18:12:36,994 - Sunwell is accessing /validate-activation-key/.
+2025-01-28 18:12:44,111 - Sunwell is accessing /validate-activation-key/.
+2025-01-28 18:12:44,111 - Sunwell is accessing /validate-activation-key/.
+2025-01-28 18:13:07,164 - Sunwell is accessing /comm_group/.
+2025-01-28 18:13:07,278 - Sunwell is updated record in App1_organization.
+2025-01-28 18:13:07,278 - Sunwell is created record in App1_commgroup.
+2025-01-28 18:13:07,278 - Sunwell is created record in App1_useractivitylog.
+2025-01-28 18:13:07,295 - Sunwell is accessing /comm_group/.
+2025-01-28 18:13:55,443 - Sunwell is accessing /comm_group/.
+2025-01-28 18:13:55,588 - Sunwell is accessing /media/Sunwell_Logo.jpg.
+2025-01-28 18:14:35,994 - Sunwell is accessing /comm_group/.
+2025-01-28 18:14:37,195 - Sunwell is accessing /comm_group/.
+2025-01-28 18:15:32,383 - Sunwell is accessing /comm_group/.
+2025-01-28 18:15:41,369 - Sunwell is accessing /department/.
+2025-01-28 18:15:41,476 - Sunwell is accessing /media/Sunwell_Logo.jpg.
+2025-01-28 18:21:26,886 - Sunwell is accessing /department/.
+2025-01-28 18:21:26,908 - Sunwell is created record in App1_department.
+2025-01-28 18:21:26,908 - Sunwell is created record in App1_useractivitylog.
+2025-01-28 18:21:26,919 - Sunwell is accessing /department/.
+2025-01-28 18:21:26,977 - Sunwell is accessing /media/Sunwell_Logo.jpg.
+2025-01-28 18:21:29,483 - Sunwell is accessing /role_permission/.
+2025-01-28 18:21:41,091 - Sunwell is accessing /role_permission/.
+2025-01-28 18:21:41,104 - Sunwell is created record in App1_user_role.
+2025-01-28 18:21:41,112 - Sunwell is created record in App1_user_access_db.
+2025-01-28 18:21:41,114 - Sunwell is created record in App1_useractivitylog.
+2025-01-28 18:21:41,125 - Sunwell is accessing /role_permission/.
+2025-01-28 18:21:42,722 - Sunwell is accessing /user_access/.
+2025-01-28 18:22:03,900 - Sunwell is accessing /user_access/.
+2025-01-28 18:22:03,932 - Sunwell is updated record in App1_user_access_db.
+2025-01-28 18:22:03,933 - Sunwell is created record in App1_useractivitylog.
+2025-01-28 18:22:03,944 - Sunwell is accessing /user_access/.
+2025-01-28 18:22:03,953 - Sunwell is updated record in App1_user_access_db.
+2025-01-28 18:22:03,953 - Sunwell is created record in App1_useractivitylog.
+2025-01-28 18:22:05,541 - Sunwell is accessing /role_permission/.
+2025-01-28 18:22:06,570 - Sunwell is accessing /users/.
+2025-01-28 18:23:14,178 - Sunwell is accessing /users/.
+2025-01-28 18:23:15,632 - Sunwell is created record in App1_user.
+2025-01-28 18:23:16,366 - Sunwell is created record in App1_passwordhistory.
+2025-01-28 18:23:16,369 - Sunwell is created record in App1_useractivitylog.
+2025-01-28 18:23:16,376 - Sunwell is accessing /users/.
+2025-01-28 18:29:26,080 - Sunwell is accessing /logout/.
+2025-01-28 18:29:26,081 - Sunwell is created record in App1_useractivitylog.
+2025-01-28 18:29:26,093 - Anonymous is deleting record in django_session.
+2025-01-28 18:29:26,093 - Anonymous is accessing /.
+2025-01-28 18:29:43,313 - Anonymous is accessing /.
+2025-01-28 18:29:44,052 - Darshan is created record in App1_useractivitylog.
+2025-01-28 18:29:44,055 - Darshan is created record in django_session.
+2025-01-28 18:29:44,058 - Darshan is accessing /dashboard/.
+2025-01-28 18:29:44,138 - Darshan is accessing /media/Sunwell_Logo.jpg.
+2025-01-28 18:29:49,184 - Darshan is accessing /dashboard/.
+2025-01-28 18:29:49,201 - Darshan is accessing /dashboard/.
+2025-01-28 18:29:54,281 - Darshan is accessing /dashboard/.
+2025-01-28 18:29:54,297 - Darshan is accessing /dashboard/.
+2025-01-28 18:29:59,348 - Darshan is accessing /dashboard/.
+2025-01-28 18:29:59,364 - Darshan is accessing /dashboard/.
+2025-01-28 18:30:04,423 - Darshan is accessing /dashboard/.
+2025-01-28 18:30:09,968 - Darshan is accessing /dashboard/.
+2025-01-28 18:30:09,972 - Darshan is accessing /dashboard/.
+2025-01-28 18:30:15,956 - Darshan is accessing /dashboard/.
+2025-01-28 18:30:15,972 - Darshan is accessing /dashboard/.
+2025-01-28 18:30:21,970 - Darshan is accessing /dashboard/.
+2025-01-28 18:30:21,986 - Darshan is accessing /dashboard/.
+2025-01-28 18:30:27,963 - Darshan is accessing /dashboard/.
+2025-01-28 18:30:27,972 - Darshan is accessing /dashboard/.
+2025-01-28 18:30:33,974 - Darshan is accessing /dashboard/.
+2025-01-28 18:30:33,990 - Darshan is accessing /dashboard/.
+2025-01-28 18:30:39,956 - Darshan is accessing /dashboard/.
+2025-01-28 18:30:39,972 - Darshan is accessing /dashboard/.
+2025-01-28 18:30:45,955 - Darshan is accessing /dashboard/.
+2025-01-28 18:30:45,971 - Darshan is accessing /dashboard/.
+2025-01-28 18:30:51,983 - Darshan is accessing /dashboard/.
+2025-01-28 18:30:51,999 - Darshan is accessing /dashboard/.
+2025-01-28 18:30:57,966 - Darshan is accessing /dashboard/.
+2025-01-28 18:30:57,982 - Darshan is accessing /dashboard/.
+2025-01-28 18:31:03,961 - Darshan is accessing /dashboard/.
+2025-01-28 18:31:03,977 - Darshan is accessing /dashboard/.
+2025-01-28 18:31:09,026 - Darshan is accessing /dashboard/.
+2025-01-28 18:31:09,044 - Darshan is accessing /dashboard/.
+2025-01-28 18:31:14,093 - Darshan is accessing /dashboard/.
+2025-01-28 18:31:14,134 - Darshan is accessing /dashboard/.
+2025-01-28 18:31:19,970 - Darshan is accessing /dashboard/.
+2025-01-28 18:31:19,977 - Darshan is accessing /dashboard/.
+2025-01-28 18:31:25,978 - Darshan is accessing /dashboard/.
+2025-01-28 18:31:25,987 - Darshan is accessing /dashboard/.
+2025-01-28 18:31:31,973 - Darshan is accessing /dashboard/.
+2025-01-28 18:31:31,975 - Darshan is accessing /dashboard/.
+2025-01-28 18:31:37,965 - Darshan is accessing /dashboard/.
+2025-01-28 18:31:37,974 - Darshan is accessing /dashboard/.
+2025-01-28 18:31:43,965 - Darshan is accessing /dashboard/.
+2025-01-28 18:31:43,977 - Darshan is accessing /dashboard/.
+2025-01-28 18:31:49,963 - Darshan is accessing /dashboard/.
+2025-01-28 18:31:49,987 - Darshan is accessing /dashboard/.
+2025-01-28 18:31:55,972 - Darshan is accessing /dashboard/.
+2025-01-28 18:31:55,972 - Darshan is accessing /dashboard/.
+2025-01-28 18:32:01,972 - Darshan is accessing /dashboard/.
+2025-01-28 18:32:01,976 - Darshan is accessing /dashboard/.
+2025-01-28 18:32:07,962 - Darshan is accessing /dashboard/.
+2025-01-28 18:32:07,974 - Darshan is accessing /dashboard/.
+2025-01-28 18:32:13,961 - Darshan is accessing /dashboard/.
+2025-01-28 18:32:13,977 - Darshan is accessing /dashboard/.
+2025-01-28 18:32:19,980 - Darshan is accessing /dashboard/.
+2025-01-28 18:32:19,996 - Darshan is accessing /dashboard/.
+2025-01-28 18:32:25,969 - Darshan is accessing /dashboard/.
+2025-01-28 18:32:25,993 - Darshan is accessing /dashboard/.
+2025-01-28 18:32:31,962 - Darshan is accessing /dashboard/.
+2025-01-28 18:32:31,980 - Darshan is accessing /dashboard/.
+2025-01-28 18:32:37,979 - Darshan is accessing /dashboard/.
+2025-01-28 18:32:37,996 - Darshan is accessing /dashboard/.
+2025-01-28 18:32:43,961 - Darshan is accessing /dashboard/.
+2025-01-28 18:32:43,977 - Darshan is accessing /dashboard/.
+2025-01-28 18:32:49,964 - Darshan is accessing /dashboard/.
+2025-01-28 18:32:49,979 - Darshan is accessing /dashboard/.
+2025-01-28 18:32:55,961 - Darshan is accessing /dashboard/.
+2025-01-28 18:32:55,977 - Darshan is accessing /dashboard/.
+2025-01-28 18:33:01,976 - Darshan is accessing /dashboard/.
+2025-01-28 18:33:01,981 - Darshan is accessing /dashboard/.
+2025-01-28 18:33:07,977 - Darshan is accessing /dashboard/.
+2025-01-28 18:33:07,977 - Darshan is accessing /dashboard/.
+2025-01-28 18:33:08,035 - Darshan is accessing /media/Sunwell_Logo.jpg.
+2025-01-28 18:33:13,986 - Darshan is accessing /dashboard/.
+2025-01-28 18:33:14,001 - Darshan is accessing /dashboard/.
+2025-01-28 18:33:19,977 - Darshan is accessing /dashboard/.
+2025-01-28 18:33:20,003 - Darshan is accessing /dashboard/.
+2025-01-28 18:33:25,961 - Darshan is accessing /dashboard/.
+2025-01-28 18:33:25,977 - Darshan is accessing /dashboard/.
+2025-01-28 18:33:31,959 - Darshan is accessing /dashboard/.
+2025-01-28 18:33:31,975 - Darshan is accessing /dashboard/.
+2025-01-28 18:33:37,965 - Darshan is accessing /dashboard/.
+2025-01-28 18:33:37,978 - Darshan is accessing /dashboard/.
+2025-01-28 18:33:43,958 - Darshan is accessing /dashboard/.
+2025-01-28 18:33:43,974 - Darshan is accessing /dashboard/.
+2025-01-28 18:33:49,957 - Darshan is accessing /dashboard/.
+2025-01-28 18:33:49,973 - Darshan is accessing /dashboard/.
+2025-01-28 18:33:55,966 - Darshan is accessing /dashboard/.
+2025-01-28 18:33:55,978 - Darshan is accessing /dashboard/.
+2025-01-28 18:34:01,965 - Darshan is accessing /dashboard/.
+2025-01-28 18:34:01,973 - Darshan is accessing /dashboard/.
+2025-01-28 18:34:07,982 - Darshan is accessing /dashboard/.
+2025-01-28 18:34:07,983 - Darshan is accessing /dashboard/.
+2025-01-28 18:34:13,984 - Darshan is accessing /dashboard/.
+2025-01-28 18:34:13,995 - Darshan is accessing /dashboard/.
+2025-01-28 18:34:19,966 - Darshan is accessing /dashboard/.
+2025-01-28 18:34:19,986 - Darshan is accessing /dashboard/.
+2025-01-28 18:34:25,045 - Darshan is accessing /dashboard/.
+2025-01-28 18:34:25,057 - Darshan is accessing /dashboard/.
+2025-01-28 18:34:30,857 - Darshan is accessing /dashboard/.
+2025-01-28 18:34:30,911 - Darshan is accessing /dashboard/.
+2025-01-28 18:34:36,994 - Darshan is accessing /dashboard/.
+2025-01-28 18:34:37,014 - Darshan is accessing /dashboard/.
+2025-01-28 18:34:42,975 - Darshan is accessing /dashboard/.
+2025-01-28 18:34:42,983 - Darshan is accessing /dashboard/.
+2025-01-28 18:34:48,981 - Darshan is accessing /dashboard/.
+2025-01-28 18:34:48,996 - Darshan is accessing /dashboard/.
+2025-01-28 18:34:54,968 - Darshan is accessing /dashboard/.
+2025-01-28 18:34:54,968 - Darshan is accessing /dashboard/.
+2025-01-28 18:35:00,975 - Darshan is accessing /dashboard/.
+2025-01-28 18:35:00,988 - Darshan is accessing /dashboard/.
+2025-01-28 18:35:06,984 - Darshan is accessing /dashboard/.
+2025-01-28 18:35:06,984 - Darshan is accessing /dashboard/.
+2025-01-28 18:35:12,994 - Darshan is accessing /dashboard/.
+2025-01-28 18:35:13,023 - Darshan is accessing /dashboard/.
+2025-01-28 18:35:18,965 - Darshan is accessing /dashboard/.
+2025-01-28 18:35:18,981 - Darshan is accessing /dashboard/.
+2025-01-28 18:35:24,979 - Darshan is accessing /dashboard/.
+2025-01-28 18:35:24,979 - Darshan is accessing /dashboard/.
+2025-01-28 18:35:30,958 - Darshan is accessing /dashboard/.
+2025-01-28 18:35:30,974 - Darshan is accessing /dashboard/.
+2025-01-28 18:41:23,222 - Darshan is accessing /dashboard/.
+2025-01-28 18:41:23,346 - Darshan is accessing /media/Sunwell_Logo.jpg.
+2025-01-28 18:41:26,788 - Darshan is accessing /logout/.
+2025-01-28 18:41:26,796 - Darshan is created record in App1_useractivitylog.
+2025-01-28 18:41:26,800 - Anonymous is deleting record in django_session.
+2025-01-28 18:41:26,806 - Anonymous is accessing /.
+2025-01-28 18:41:36,352 - Anonymous is accessing /.
+2025-01-28 18:41:36,377 - Anonymous is created record in django_session.
+2025-01-28 18:41:48,466 - Anonymous is accessing /change_pass.
+2025-01-28 18:45:06,761 - Anonymous is accessing /.
+2025-01-28 18:45:15,671 - Anonymous is accessing /change_pass.
+2025-01-28 18:45:20,961 - Anonymous is updated record in App1_user.
+2025-01-28 18:45:20,964 - Anonymous is created record in App1_useractivitylog.
+2025-01-28 18:45:20,970 - Anonymous is created record in App1_passwordhistory.
+2025-01-28 18:45:23,239 - Anonymous is accessing /.
+2025-01-28 18:45:45,816 - Anonymous is accessing /.
+2025-01-28 18:45:46,624 - Anonymous is deleting record in django_session.
+2025-01-28 18:45:46,641 - Darshan is created record in App1_useractivitylog.
+2025-01-28 18:45:46,642 - Darshan is created record in django_session.
+2025-01-28 18:45:46,642 - Darshan is accessing /dashboard/.
+2025-01-28 18:45:46,730 - Darshan is accessing /media/Sunwell_Logo.jpg.
+2025-01-28 18:45:51,783 - Darshan is accessing /dashboard/.
+2025-01-28 18:45:51,813 - Darshan is accessing /dashboard/.
+2025-01-28 18:45:53,252 - Darshan is accessing /department/.
+2025-01-28 18:46:07,413 - Darshan is accessing /edit_department/1/.
+2025-01-28 18:46:07,428 - Darshan is updated record in App1_department.
+2025-01-28 18:46:07,428 - Darshan is created record in App1_useractivitylog.
+2025-01-28 18:46:07,444 - Darshan is accessing /department/.
+2025-01-28 18:48:06,094 - Darshan is accessing /app_setings/.
+2025-01-28 18:48:28,003 - Darshan is accessing /app_setings/send_test_email.
+2025-01-28 18:51:12,031 - Darshan is accessing /app_setings/send_test_email.
+2025-01-28 18:51:16,737 - Darshan is accessing /app_setings/.
+2025-01-28 18:51:16,800 - Darshan is accessing /media/Sunwell_Logo.jpg.
+2025-01-28 18:51:25,521 - Darshan is accessing /department/.
+2025-01-28 18:51:31,945 - Darshan is accessing /edit_department/1/.
+2025-01-28 18:51:31,966 - Darshan is updated record in App1_department.
+2025-01-28 18:51:31,966 - Darshan is created record in App1_useractivitylog.
+2025-01-28 18:51:31,981 - Darshan is accessing /department/.
+2025-01-28 18:52:04,346 - Anonymous is created record in App1_email_logs.
+2025-01-28 18:52:09,154 - Anonymous is created record in App1_email_logs.
+2025-01-28 18:52:36,769 - Darshan is accessing /backup/.
+2025-01-28 18:52:49,774 - Darshan is accessing /backup/.
+2025-01-28 18:52:49,783 - Darshan is created record in App1_backupsettings.
+2025-01-28 18:52:49,798 - Darshan is created record in App1_useractivitylog.
+2025-01-28 18:52:49,799 - Darshan is accessing /backup/.
+2025-01-28 18:52:52,214 - Darshan is accessing /download-backup/.
+2025-01-28 18:56:23,621 - Darshan is accessing /backup/.
+2025-01-28 18:56:35,343 - Darshan is accessing /backup/.
+2025-01-28 18:56:36,302 - Darshan is accessing /download-backup/.
+2025-01-28 18:56:36,974 - Darshan is created record in App1_useractivitylog.
+2025-01-28 18:56:49,625 - Darshan is accessing /backup/edit/1/.
+2025-01-28 18:56:55,527 - Darshan is accessing /backup/edit/1/.
+2025-01-28 18:56:55,539 - Darshan is updated record in App1_backupsettings.
+2025-01-28 18:56:55,542 - Darshan is created record in App1_useractivitylog.
+2025-01-28 18:56:55,548 - Darshan is accessing /backup/.
+2025-01-28 18:56:59,210 - Darshan is accessing /equipment_configure/.
+2025-01-28 18:56:59,481 - Darshan is accessing /media/Sunwell_Logo.jpg.
+2025-01-28 18:57:46,575 - Darshan is accessing /equipment_configure/.
+2025-01-28 18:58:34,008 - Darshan is accessing /equipment_configure/.
+2025-01-29 09:59:02,171 - Darshan is accessing /admin/.
+2025-01-29 09:59:02,276 - Darshan is accessing /admin/login/.
+2025-01-29 09:59:03,418 - Darshan is accessing /.
+2025-01-29 09:59:03,742 - Darshan is accessing /favicon.ico.
+2025-01-29 09:59:17,517 - Darshan is accessing /.
+2025-01-29 09:59:18,252 - Anonymous is deleting record in django_session.
+2025-01-29 09:59:18,254 - Darshan is created record in App1_useractivitylog.
+2025-01-29 09:59:18,254 - Darshan is created record in django_session.
+2025-01-29 09:59:18,272 - Darshan is accessing /dashboard/.
+2025-01-29 09:59:18,495 - Darshan is accessing /media/Sunwell_Logo.jpg.
+2025-01-29 09:59:23,520 - Darshan is accessing /dashboard/.
+2025-01-29 09:59:28,577 - Darshan is accessing /dashboard/.
+2025-01-29 09:59:28,608 - Darshan is accessing /dashboard/.
+2025-01-29 09:59:29,201 - Darshan is accessing /media/Sunwell_Logo.jpg.
+2025-01-29 09:59:32,060 - Darshan is accessing /logout/.
+2025-01-29 09:59:32,068 - Darshan is created record in App1_useractivitylog.
+2025-01-29 09:59:32,070 - Anonymous is deleting record in django_session.
+2025-01-29 09:59:32,078 - Anonymous is accessing /.
+2025-01-29 09:59:39,071 - Anonymous is accessing /.
+2025-01-29 09:59:45,802 - Anonymous is accessing /.
+2025-01-29 09:59:46,531 - Darshan is created record in App1_useractivitylog.
+2025-01-29 09:59:46,533 - Darshan is created record in django_session.
+2025-01-29 09:59:46,541 - Darshan is accessing /dashboard/.
+2025-01-29 09:59:46,839 - Darshan is accessing /media/Sunwell_Logo.jpg.
+2025-01-29 09:59:52,041 - Darshan is accessing /dashboard/.
+2025-01-29 09:59:52,063 - Darshan is accessing /dashboard/.
+2025-01-29 09:59:57,955 - Darshan is accessing /dashboard/.
+2025-01-29 09:59:57,975 - Darshan is accessing /dashboard/.
+2025-01-29 10:00:03,961 - Darshan is accessing /dashboard/.
+2025-01-29 10:00:03,977 - Darshan is accessing /dashboard/.
+2025-01-29 10:00:09,968 - Darshan is accessing /dashboard/.
+2025-01-29 10:00:09,980 - Darshan is accessing /dashboard/.
+2025-01-29 10:00:15,955 - Darshan is accessing /dashboard/.
+2025-01-29 10:00:15,982 - Darshan is accessing /dashboard/.
+2025-01-29 10:00:21,963 - Darshan is accessing /dashboard/.
+2025-01-29 10:00:21,971 - Darshan is accessing /dashboard/.
+2025-01-29 10:00:27,957 - Darshan is accessing /dashboard/.
+2025-01-29 10:00:27,971 - Darshan is accessing /dashboard/.
+2025-01-29 10:00:33,983 - Darshan is accessing /dashboard/.
+2025-01-29 10:00:33,995 - Darshan is accessing /dashboard/.
+2025-01-29 10:00:39,965 - Darshan is accessing /dashboard/.
+2025-01-29 10:00:39,978 - Darshan is accessing /dashboard/.
+2025-01-29 10:00:45,992 - Darshan is accessing /dashboard/.
+2025-01-29 10:00:46,001 - Darshan is accessing /dashboard/.
+2025-01-29 10:00:51,970 - Darshan is accessing /dashboard/.
+2025-01-29 10:00:51,983 - Darshan is accessing /dashboard/.
+2025-01-29 10:00:57,972 - Darshan is accessing /dashboard/.
+2025-01-29 10:00:57,984 - Darshan is accessing /dashboard/.
+2025-01-29 10:01:03,965 - Darshan is accessing /dashboard/.
+2025-01-29 10:01:03,973 - Darshan is accessing /dashboard/.
+2025-01-29 10:01:09,969 - Darshan is accessing /dashboard/.
+2025-01-29 10:01:09,994 - Darshan is accessing /dashboard/.
+2025-01-29 10:01:15,969 - Darshan is accessing /dashboard/.
+2025-01-29 10:01:15,982 - Darshan is accessing /dashboard/.
+2025-01-29 10:01:21,969 - Darshan is accessing /dashboard/.
+2025-01-29 10:01:21,983 - Darshan is accessing /dashboard/.
+2025-01-29 10:01:27,983 - Darshan is accessing /dashboard/.
+2025-01-29 10:01:27,994 - Darshan is accessing /dashboard/.
+2025-01-29 10:01:33,975 - Darshan is accessing /dashboard/.
+2025-01-29 10:01:33,986 - Darshan is accessing /dashboard/.
+2025-01-29 10:01:39,971 - Darshan is accessing /dashboard/.
+2025-01-29 10:01:39,985 - Darshan is accessing /dashboard/.
+2025-01-29 10:01:45,961 - Darshan is accessing /dashboard/.
+2025-01-29 10:01:45,983 - Darshan is accessing /dashboard/.
+2025-01-29 10:01:51,964 - Darshan is accessing /dashboard/.
+2025-01-29 10:01:51,979 - Darshan is accessing /dashboard/.
+2025-01-29 10:01:57,955 - Darshan is accessing /dashboard/.
+2025-01-29 10:01:57,971 - Darshan is accessing /dashboard/.
+2025-01-29 10:02:03,971 - Darshan is accessing /dashboard/.
+2025-01-29 10:02:04,012 - Darshan is accessing /dashboard/.
+2025-01-29 10:02:09,977 - Darshan is accessing /dashboard/.
+2025-01-29 10:02:09,991 - Darshan is accessing /dashboard/.
+2025-01-29 10:02:15,966 - Darshan is accessing /dashboard/.
+2025-01-29 10:02:15,978 - Darshan is accessing /dashboard/.
+2025-01-29 10:02:21,970 - Darshan is accessing /dashboard/.
+2025-01-29 10:02:21,975 - Darshan is accessing /dashboard/.
+2025-01-29 10:02:27,963 - Darshan is accessing /dashboard/.
+2025-01-29 10:02:27,980 - Darshan is accessing /dashboard/.
+2025-01-29 10:02:33,961 - Darshan is accessing /dashboard/.
+2025-01-29 10:02:33,975 - Darshan is accessing /dashboard/.
+2025-01-29 10:02:39,968 - Darshan is accessing /dashboard/.
+2025-01-29 10:02:39,984 - Darshan is accessing /dashboard/.
+2025-01-29 10:06:35,511 - Darshan is accessing /dashboard/.
+2025-01-29 10:06:40,670 - Darshan is accessing /dashboard/.
+2025-01-29 10:06:40,700 - Darshan is accessing /dashboard/.
+2025-01-29 10:06:43,901 - Darshan is accessing /dashboard/.
+2025-01-29 10:06:48,968 - Darshan is accessing /dashboard/.
+2025-01-29 10:06:48,984 - Darshan is accessing /dashboard/.
+2025-01-29 10:06:54,965 - Darshan is accessing /dashboard/.
+2025-01-29 10:06:54,973 - Darshan is accessing /dashboard/.
+2025-01-29 10:07:02,994 - Darshan is accessing /dashboard/.
+2025-01-29 10:07:08,071 - Darshan is accessing /dashboard/.
+2025-01-29 10:07:08,103 - Darshan is accessing /dashboard/.
+2025-01-29 10:07:13,960 - Darshan is accessing /dashboard/.
+2025-01-29 10:07:13,983 - Darshan is accessing /dashboard/.
+2025-01-29 10:07:19,030 - Darshan is accessing /dashboard/.
+2025-01-29 10:07:19,046 - Darshan is accessing /dashboard/.
+2025-01-29 10:07:24,961 - Darshan is accessing /dashboard/.
+2025-01-29 10:07:24,980 - Darshan is accessing /dashboard/.
+2025-01-29 10:07:30,972 - Darshan is accessing /dashboard/.
+2025-01-29 10:07:30,972 - Darshan is accessing /dashboard/.
+2025-01-29 10:07:36,972 - Darshan is accessing /dashboard/.
+2025-01-29 10:07:36,983 - Darshan is accessing /dashboard/.
+2025-01-29 10:07:42,964 - Darshan is accessing /dashboard/.
+2025-01-29 10:07:42,983 - Darshan is accessing /dashboard/.
+2025-01-29 10:07:48,976 - Darshan is accessing /dashboard/.
+2025-01-29 10:07:48,985 - Darshan is accessing /dashboard/.
+2025-01-29 10:07:54,975 - Darshan is accessing /dashboard/.
+2025-01-29 10:07:54,983 - Darshan is accessing /dashboard/.
+2025-01-29 10:08:00,974 - Darshan is accessing /dashboard/.
+2025-01-29 10:08:00,988 - Darshan is accessing /dashboard/.
+2025-01-29 10:08:06,969 - Darshan is accessing /dashboard/.
+2025-01-29 10:08:06,986 - Darshan is accessing /dashboard/.
+2025-01-29 10:08:12,041 - Darshan is accessing /dashboard/.
+2025-01-29 10:08:12,064 - Darshan is accessing /dashboard/.
+2025-01-29 10:08:12,257 - Darshan is accessing /organization/.
+2025-01-29 10:11:53,718 - Darshan is accessing /.
+2025-01-29 10:12:00,483 - Darshan is accessing /.
+2025-01-29 10:12:01,199 - Anonymous is deleting record in django_session.
+2025-01-29 10:12:01,204 - Darshan is created record in App1_useractivitylog.
+2025-01-29 10:12:01,207 - Darshan is created record in django_session.
+2025-01-29 10:12:01,215 - Darshan is accessing /dashboard/.
+2025-01-29 10:12:01,320 - Darshan is accessing /media/Sunwell_Logo.jpg.
+2025-01-29 10:12:06,386 - Darshan is accessing /dashboard/.
+2025-01-29 10:12:11,445 - Darshan is accessing /dashboard/.
+2025-01-29 10:12:11,468 - Darshan is accessing /dashboard/.
+2025-01-29 10:12:16,974 - Darshan is accessing /dashboard/.
+2025-01-29 10:12:16,993 - Darshan is accessing /dashboard/.
+2025-01-29 10:13:02,458 - Anonymous is accessing /.
+2025-01-29 10:13:09,428 - Anonymous is accessing /.
+2025-01-29 10:13:10,245 - Darshan is created record in App1_useractivitylog.
+2025-01-29 10:13:10,252 - Darshan is created record in django_session.
+2025-01-29 10:13:10,355 - Darshan is accessing /dashboard/.
+2025-01-29 10:13:11,182 - Darshan is accessing /media/crsco.webp.
+2025-01-29 10:13:16,253 - Darshan is accessing /dashboard/.
+2025-01-29 10:13:16,294 - Darshan is accessing /dashboard/.
+2025-01-29 10:13:22,176 - Darshan is accessing /dashboard/.
+2025-01-29 10:13:22,201 - Darshan is accessing /dashboard/.
+2025-01-29 10:13:24,536 - Darshan is accessing /admin/.
+2025-01-29 10:13:24,572 - Darshan is accessing /admin/login/.
+2025-01-29 10:13:28,176 - Darshan is accessing /dashboard/.
+2025-01-29 10:13:28,176 - Darshan is accessing /dashboard/.
+2025-01-29 10:13:28,428 - Darshan is accessing /about_us/.
+2025-01-29 10:17:24,325 - Darshan is accessing /about_us/.
+2025-01-29 10:17:26,988 - Darshan is accessing /dashboard/.
+2025-01-29 10:17:27,749 - Darshan is accessing /media/crsco.webp.
+2025-01-29 10:20:46,831 - Darshan is accessing /dashboard/.
+2025-01-29 10:36:09,571 - Darshan is accessing /dashboard/.
+2025-01-29 10:38:21,389 - Darshan is accessing /dashboard/.
+2025-01-29 10:38:30,951 - Darshan is accessing /dashboard/.
+2025-01-29 10:38:57,293 - Darshan is accessing /dashboard/.
+2025-01-29 10:39:06,523 - Darshan is accessing /dashboard/.
+2025-01-29 10:39:08,334 - Darshan is accessing /about_us/.
+2025-01-29 10:49:37,990 - Darshan is accessing /about_us/.
+2025-01-29 10:50:27,545 - Darshan is accessing /about_us/.
+2025-01-29 10:51:23,479 - Darshan is accessing /about_us/.
+2025-01-29 10:51:41,469 - Darshan is accessing /about_us/.
+2025-01-29 10:51:58,763 - Darshan is accessing /about_us/.
+2025-01-29 10:52:16,958 - Darshan is accessing /about_us/.
+2025-01-29 10:52:39,777 - Darshan is accessing /about_us/.
+2025-01-29 10:59:05,774 - Darshan is accessing /about_us/.
+2025-01-29 11:12:57,147 - Darshan is accessing /about_us/.
+2025-01-29 11:16:24,578 - Darshan is accessing /about_us/.
+2025-01-29 11:18:11,875 - Darshan is accessing /about_us/.
+2025-01-29 11:42:11,304 - Darshan is accessing /about_us/.
+2025-01-29 11:42:19,812 - Darshan is accessing /about_us/.
+2025-01-29 11:43:36,103 - Darshan is accessing /about_us/.
+2025-01-29 11:43:56,539 - Darshan is accessing /about_us/.
+2025-01-29 11:44:25,010 - Darshan is accessing /about_us/.
+2025-01-29 11:44:44,951 - Darshan is accessing /dashboard/.
+2025-01-29 11:46:47,492 - Darshan is accessing /logout/.
+2025-01-29 11:46:47,911 - Darshan is created record in App1_useractivitylog.
+2025-01-29 11:46:47,915 - Anonymous is deleting record in django_session.
+2025-01-29 11:46:48,007 - Anonymous is accessing /.
+2025-01-29 11:46:58,513 - Anonymous is accessing /.
+2025-01-29 11:46:59,468 - Darshan is created record in App1_useractivitylog.
+2025-01-29 11:46:59,473 - Darshan is created record in django_session.
+2025-01-29 11:46:59,543 - Darshan is accessing /dashboard/.
+2025-01-29 11:47:09,869 - Darshan is accessing /organization/.
+2025-01-29 11:47:12,720 - Darshan is accessing /organization/edit/2/.
+2025-01-29 11:47:14,776 - Darshan is accessing /organization/edit/2/.
+2025-01-29 11:47:14,790 - Darshan is updated record in App1_organization.
+2025-01-29 11:47:14,953 - Darshan is created record in App1_useractivitylog.
+2025-01-29 11:47:14,960 - Darshan is accessing /organization/.
+2025-01-29 11:47:18,971 - Darshan is accessing /app_setings/.
+2025-01-29 11:49:01,085 - Darshan is accessing /comm_group/.
+2025-01-29 11:49:10,999 - Darshan is accessing /validate-activation-key/.
+2025-01-29 11:49:11,000 - Darshan is accessing /validate-activation-key/.
+2025-01-29 11:49:18,989 - Darshan is accessing /comm_group/.
+2025-01-29 11:49:19,315 - Darshan is updated record in App1_organization.
+2025-01-29 11:49:19,393 - Darshan is created record in App1_commgroup.
+2025-01-29 11:49:19,470 - Darshan is created record in App1_useractivitylog.
+2025-01-29 11:49:19,478 - Darshan is accessing /comm_group/.
+2025-01-29 11:49:36,233 - Darshan is accessing /department/.
+2025-01-29 11:49:39,774 - Darshan is accessing /users/.
+2025-01-29 11:49:40,974 - Darshan is accessing /backup/.
+2025-01-29 11:50:03,045 - Darshan is accessing /equipment_configure/.
+2025-01-29 11:51:03,482 - Darshan is accessing /equipment_configure/.
+2025-01-29 11:52:01,308 - Darshan is accessing /comm_group/.
+2025-01-29 12:52:42,548 - Darshan is accessing /.
+2025-01-29 12:52:50,452 - Darshan is accessing /.
+2025-01-29 12:52:51,204 - Anonymous is deleting record in django_session.
+2025-01-29 12:52:51,373 - Darshan is created record in App1_useractivitylog.
+2025-01-29 12:52:51,376 - Darshan is created record in django_session.
+2025-01-29 12:52:51,451 - Darshan is accessing /dashboard/.
+2025-01-29 12:52:52,251 - Darshan is accessing /media/crsco.webp.
+2025-01-29 12:52:57,335 - Darshan is accessing /get-equipment-data/.
+2025-01-29 12:52:58,123 - Darshan is accessing /get-equipment-data/.
+2025-01-29 12:53:02,338 - Darshan is accessing /get-equipment-data/.
+2025-01-29 12:53:03,117 - Darshan is accessing /get-equipment-data/.
+2025-01-29 12:53:07,972 - Darshan is accessing /get-equipment-data/.
+2025-01-29 12:53:08,620 - Darshan is accessing /get-equipment-data/.
+2025-01-29 12:53:12,960 - Darshan is accessing /get-equipment-data/.
+2025-01-29 12:53:13,617 - Darshan is accessing /get-equipment-data/.
+2025-01-29 12:53:17,328 - Darshan is accessing /get-equipment-data/.
+2025-01-29 12:53:18,116 - Darshan is accessing /get-equipment-data/.
+2025-01-29 12:53:22,962 - Darshan is accessing /get-equipment-data/.
+2025-01-29 12:53:23,616 - Darshan is accessing /get-equipment-data/.
+2025-01-29 12:53:27,969 - Darshan is accessing /get-equipment-data/.
+2025-01-29 12:53:28,616 - Darshan is accessing /get-equipment-data/.
+2025-01-29 12:53:32,965 - Darshan is accessing /get-equipment-data/.
+2025-01-29 12:53:33,617 - Darshan is accessing /get-equipment-data/.
+2025-01-29 12:53:37,968 - Darshan is accessing /get-equipment-data/.
+2025-01-29 12:53:38,621 - Darshan is accessing /get-equipment-data/.
+2025-01-29 12:53:42,971 - Darshan is accessing /get-equipment-data/.
+2025-01-29 12:53:43,616 - Darshan is accessing /get-equipment-data/.
+2025-01-29 12:53:47,969 - Darshan is accessing /get-equipment-data/.
+2025-01-29 12:53:48,620 - Darshan is accessing /get-equipment-data/.
+2025-01-29 12:53:52,975 - Darshan is accessing /get-equipment-data/.
+2025-01-29 12:53:53,619 - Darshan is accessing /get-equipment-data/.
+2025-01-29 12:53:57,968 - Darshan is accessing /get-equipment-data/.
+2025-01-29 12:53:58,617 - Darshan is accessing /get-equipment-data/.
+2025-01-29 12:54:02,968 - Darshan is accessing /get-equipment-data/.
+2025-01-29 12:54:03,616 - Darshan is accessing /get-equipment-data/.
+2025-01-29 12:54:07,977 - Darshan is accessing /get-equipment-data/.
+2025-01-29 12:54:08,616 - Darshan is accessing /get-equipment-data/.
+2025-01-29 12:54:12,973 - Darshan is accessing /get-equipment-data/.
+2025-01-29 12:54:13,618 - Darshan is accessing /get-equipment-data/.
+2025-01-29 12:54:17,965 - Darshan is accessing /get-equipment-data/.
+2025-01-29 12:54:18,620 - Darshan is accessing /get-equipment-data/.
+2025-01-29 12:54:22,971 - Darshan is accessing /get-equipment-data/.
+2025-01-29 12:54:23,616 - Darshan is accessing /get-equipment-data/.
+2025-01-29 12:54:51,986 - Darshan is accessing /get-equipment-data/.
+2025-01-29 12:54:52,621 - Darshan is accessing /get-equipment-data/.
+2025-01-29 12:55:51,973 - Darshan is accessing /get-equipment-data/.
+2025-01-29 12:55:52,616 - Darshan is accessing /get-equipment-data/.
+2025-01-29 12:56:51,975 - Darshan is accessing /get-equipment-data/.
+2025-01-29 12:56:52,621 - Darshan is accessing /get-equipment-data/.
+2025-01-29 12:57:51,968 - Darshan is accessing /get-equipment-data/.
+2025-01-29 12:57:52,617 - Darshan is accessing /get-equipment-data/.
+2025-01-29 12:58:51,990 - Darshan is accessing /get-equipment-data/.
+2025-01-29 12:58:52,618 - Darshan is accessing /get-equipment-data/.
+2025-01-29 12:58:53,617 - Darshan is accessing /get-equipment-data/.
+2025-01-29 12:58:54,649 - Darshan is accessing /get-equipment-data/.
+2025-01-29 12:58:57,974 - Darshan is accessing /get-equipment-data/.
+2025-01-29 12:58:58,621 - Darshan is accessing /get-equipment-data/.
+2025-01-29 12:59:02,978 - Darshan is accessing /get-equipment-data/.
+2025-01-29 12:59:03,633 - Darshan is accessing /get-equipment-data/.
+2025-01-29 12:59:07,966 - Darshan is accessing /get-equipment-data/.
+2025-01-29 12:59:08,633 - Darshan is accessing /get-equipment-data/.
+2025-01-29 12:59:12,965 - Darshan is accessing /get-equipment-data/.
+2025-01-29 12:59:13,629 - Darshan is accessing /get-equipment-data/.
+2025-01-29 12:59:17,964 - Darshan is accessing /get-equipment-data/.
+2025-01-29 12:59:18,628 - Darshan is accessing /get-equipment-data/.
+2025-01-29 12:59:22,962 - Darshan is accessing /get-equipment-data/.
+2025-01-29 12:59:23,635 - Darshan is accessing /get-equipment-data/.
+2025-01-29 12:59:27,969 - Darshan is accessing /get-equipment-data/.
+2025-01-29 12:59:28,630 - Darshan is accessing /get-equipment-data/.
+2025-01-29 12:59:32,968 - Darshan is accessing /get-equipment-data/.
+2025-01-29 12:59:33,636 - Darshan is accessing /get-equipment-data/.
+2025-01-29 12:59:37,963 - Darshan is accessing /get-equipment-data/.
+2025-01-29 12:59:38,627 - Darshan is accessing /get-equipment-data/.
+2025-01-29 12:59:42,973 - Darshan is accessing /get-equipment-data/.
+2025-01-29 12:59:43,623 - Darshan is accessing /get-equipment-data/.
+2025-01-29 12:59:47,971 - Darshan is accessing /get-equipment-data/.
+2025-01-29 12:59:48,630 - Darshan is accessing /get-equipment-data/.
+2025-01-29 12:59:52,967 - Darshan is accessing /get-equipment-data/.
+2025-01-29 12:59:53,628 - Darshan is accessing /get-equipment-data/.
+2025-01-29 13:00:51,965 - Darshan is accessing /get-equipment-data/.
+2025-01-29 13:00:52,633 - Darshan is accessing /get-equipment-data/.
+2025-01-29 13:01:33,828 - Darshan is accessing /get-equipment-data/.
+2025-01-29 13:01:34,627 - Darshan is accessing /get-equipment-data/.
+2025-01-29 13:01:37,974 - Darshan is accessing /get-equipment-data/.
+2025-01-29 13:01:38,631 - Darshan is accessing /get-equipment-data/.
+2025-01-29 13:01:42,322 - Darshan is accessing /get-equipment-data/.
+2025-01-29 13:01:43,135 - Darshan is accessing /get-equipment-data/.
+2025-01-29 13:01:47,330 - Darshan is accessing /get-equipment-data/.
+2025-01-29 13:01:48,136 - Darshan is accessing /get-equipment-data/.
+2025-01-29 13:01:52,332 - Darshan is accessing /get-equipment-data/.
+2025-01-29 13:01:53,134 - Darshan is accessing /get-equipment-data/.
+2025-01-29 13:01:57,343 - Darshan is accessing /get-equipment-data/.
+2025-01-29 13:01:58,131 - Darshan is accessing /get-equipment-data/.
+2025-01-29 13:02:02,322 - Darshan is accessing /get-equipment-data/.
+2025-01-29 13:02:03,125 - Darshan is accessing /get-equipment-data/.
+2025-01-29 13:02:06,751 - Darshan is accessing /dashboard/.
+2025-01-29 13:02:07,324 - Darshan is accessing /get-equipment-data/.
+2025-01-29 13:02:07,641 - Darshan is accessing /get-equipment-data/.
+2025-01-29 13:02:12,679 - Darshan is accessing /get-equipment-data/.
+2025-01-29 13:02:13,628 - Darshan is accessing /get-equipment-data/.
+2025-01-29 13:02:17,678 - Darshan is accessing /get-equipment-data/.
+2025-01-29 13:02:18,085 - Darshan is accessing /about_us/.
+2025-01-29 13:02:18,639 - Darshan is accessing /get-equipment-data/.
+2025-01-29 13:02:37,857 - Darshan is accessing /department/.
+2025-01-29 13:02:51,915 - Darshan is accessing /edit_department/1/.
+2025-01-29 13:02:52,049 - Darshan is updated record in App1_department.
+2025-01-29 13:02:52,124 - Darshan is created record in App1_useractivitylog.
+2025-01-29 13:02:52,138 - Darshan is accessing /department/.
+2025-01-29 13:03:01,901 - Darshan is accessing /edit_department/2/.
+2025-01-29 13:03:02,021 - Darshan is updated record in App1_department.
+2025-01-29 13:03:02,087 - Darshan is created record in App1_useractivitylog.
+2025-01-29 13:03:02,095 - Darshan is accessing /department/.
+2025-01-29 13:04:04,873 - Anonymous is created record in App1_email_logs.
+2025-01-29 13:04:08,928 - Anonymous is created record in App1_email_logs.
+2025-01-29 13:05:06,207 - Anonymous is created record in App1_email_logs.
+2025-01-29 13:05:10,968 - Anonymous is created record in App1_email_logs.
+2025-01-29 13:34:03,252 - Darshan is accessing /department/.
+2025-01-29 13:34:03,862 - Darshan is accessing /department/.
+2025-01-29 13:34:04,072 - Darshan is accessing /department/.
+2025-01-29 13:34:23,970 - Darshan is accessing /edit_department/1/.
+2025-01-29 13:34:24,169 - Darshan is updated record in App1_department.
+2025-01-29 13:34:24,243 - Darshan is created record in App1_useractivitylog.
+2025-01-29 13:34:24,250 - Darshan is accessing /department/.
+2025-01-29 13:34:34,321 - Darshan is accessing /edit_department/2/.
+2025-01-29 13:34:34,506 - Darshan is updated record in App1_department.
+2025-01-29 13:34:34,580 - Darshan is created record in App1_useractivitylog.
+2025-01-29 13:34:34,594 - Darshan is accessing /department/.
+2025-01-29 13:35:05,823 - Anonymous is created record in App1_email_logs.
+2025-01-29 13:35:10,585 - Anonymous is created record in App1_email_logs.
+2025-01-29 13:36:04,292 - Anonymous is created record in App1_email_logs.
+2025-01-29 13:36:08,461 - Anonymous is created record in App1_email_logs.
+2025-01-29 13:40:10,265 - Darshan is accessing /equipment_configure/.
+2025-01-29 13:40:19,343 - Darshan is accessing /equipment_configure/.
+2025-01-29 13:40:25,751 - Darshan is accessing /department/.
+2025-01-29 15:16:03,787 - Darshan is accessing /department/.
+2025-01-29 15:16:08,186 - Darshan is accessing /alaram_log/.
+2025-01-29 15:16:27,892 - Darshan is accessing /save_alarm_logs/.
+2025-01-29 15:16:27,898 - Darshan is accessing /alaram_log/.
+2025-01-29 15:16:28,764 - Darshan is updated record in App1_alarm_logs.
+2025-01-29 15:16:28,863 - Darshan is updated record in App1_alarm_logs.
+2025-01-29 15:18:54,001 - Darshan is accessing /alaram_log/.
+2025-01-29 15:18:54,860 - Darshan is accessing /alaram_log/.
+2025-01-29 15:19:00,906 - Darshan is accessing /alaram_log/.
+2025-01-29 15:19:01,234 - Darshan is accessing /media/crsco.webp.
+2025-01-29 15:19:30,953 - Darshan is accessing /admin/.
+2025-01-29 15:19:31,359 - Darshan is accessing /admin/login/.
+2025-01-29 15:19:35,432 - Darshan is accessing /admin/login/.
+2025-01-29 15:19:36,162 - Darshan is created record in django_session.
+2025-01-29 15:19:36,329 - Darshan is deleting record in django_session.
+2025-01-29 15:19:36,502 - Darshan is updated record in auth_user.
+2025-01-29 15:19:36,505 - Darshan is updated record in django_session.
+2025-01-29 15:19:36,590 - Darshan is accessing /admin/.
+2025-01-29 15:19:59,016 - Darshan is accessing /admin/App1/alarm_logs/.
+2025-01-29 15:19:59,333 - Darshan is accessing /admin/jsi18n/.
+2025-01-29 15:20:53,526 - Darshan is accessing /admin/App1/alarm_logs/.
+2025-01-29 15:20:53,603 - Darshan is accessing /admin/jsi18n/.
+2025-01-29 15:20:56,939 - Darshan is accessing /admin/App1/alarm_logs/350/change/.
+2025-01-29 15:20:57,269 - Darshan is accessing /admin/jsi18n/.
+2025-01-29 15:21:01,894 - Darshan is accessing /admin/App1/alarm_logs/.
+2025-01-29 15:21:03,324 - Darshan is accessing /admin/App1/alarm_logs/345/change/.
+2025-01-29 15:21:03,382 - Darshan is accessing /admin/jsi18n/.
+2025-01-29 15:21:06,088 - Darshan is accessing /admin/App1/alarm_logs/.
+2025-01-29 15:22:19,240 - Darshan is accessing /save_alarm_logs/.
+2025-01-29 15:22:19,250 - Darshan is accessing /alaram_log/.
+2025-01-29 15:22:20,438 - Darshan is updated record in App1_alarm_logs.
+2025-01-29 15:22:20,523 - Darshan is updated record in App1_alarm_logs.
+2025-01-29 15:22:20,612 - Darshan is updated record in App1_alarm_logs.
+2025-01-29 15:22:20,687 - Darshan is updated record in App1_alarm_logs.
+2025-01-29 15:22:20,777 - Darshan is updated record in App1_alarm_logs.
+2025-01-29 15:22:35,931 - Darshan is accessing /alaram_log/.
+2025-01-29 15:22:47,387 - Darshan is accessing /save_alarm_logs/.
+2025-01-29 15:22:47,395 - Darshan is accessing /alaram_log/.
+2025-01-29 15:22:48,337 - Darshan is updated record in App1_alarm_logs.
+2025-01-29 15:22:48,422 - Darshan is updated record in App1_alarm_logs.
+2025-01-29 15:22:48,501 - Darshan is updated record in App1_alarm_logs.
+2025-01-29 15:22:48,566 - Darshan is updated record in App1_alarm_logs.
+2025-01-29 15:22:48,654 - Darshan is updated record in App1_alarm_logs.
+2025-01-29 15:23:01,779 - Darshan is accessing /alaram_log/.
+2025-01-29 15:28:38,028 - Darshan is accessing /alaram_log/.
+2025-01-29 15:31:02,689 - Darshan is accessing /alaram_log/.
+2025-01-29 15:31:15,220 - Darshan is accessing /alaram_log/.
+2025-01-29 15:31:15,641 - Darshan is accessing /media/crsco.webp.
+2025-01-29 15:32:44,616 - Darshan is accessing /alaram_log/.
+2025-01-29 15:33:21,089 - Darshan is accessing /alaram_log/.
+2025-01-29 15:43:54,640 - Darshan is accessing /save_alarm_logs/.
+2025-01-29 15:43:55,552 - Darshan is updated record in App1_alarm_logs.
+2025-01-29 15:43:55,641 - Darshan is updated record in App1_alarm_logs.
+2025-01-29 15:43:58,893 - Darshan is accessing /alaram_log/.
+2025-01-29 15:48:07,862 - Darshan is accessing /alaram_log/.
+2025-01-29 15:48:55,696 - Darshan is accessing /alaram_log/.
+2025-01-29 15:50:08,385 - Darshan is accessing /alaram_log/.
+2025-01-29 16:03:19,260 - Darshan is accessing /alaram_log/.
+2025-01-29 16:03:36,292 - Darshan is accessing /save_alarm_logs/.
+2025-01-29 16:03:37,200 - Darshan is updated record in App1_alarm_logs.
+2025-01-29 16:03:38,643 - Darshan is accessing /alaram_log/.
+2025-01-29 16:05:51,126 - Darshan is accessing /alaram_log/.
+2025-01-29 16:06:38,239 - Darshan is accessing /equipment_configure/.
+2025-01-29 16:06:39,483 - Darshan is accessing /equipment_setting/9/.
+2025-01-29 16:07:05,933 - Darshan is accessing /alaram_log/.
+2025-01-29 16:07:31,819 - Darshan is accessing /save_alarm_logs/.
+2025-01-29 16:07:31,826 - Darshan is accessing /alaram_log/.
+2025-01-29 16:07:32,712 - Darshan is updated record in App1_alarm_logs.
+2025-01-29 16:09:44,485 - Darshan is accessing /alaram_log/.
+2025-01-29 16:09:56,921 - Darshan is accessing /alaram_log/.
+2025-01-29 16:10:18,805 - Darshan is accessing /save_alarm_logs/.
+2025-01-29 16:10:19,927 - Darshan is updated record in App1_alarm_logs.
+2025-01-29 16:10:21,160 - Darshan is accessing /alaram_log/.
+2025-01-29 16:14:46,210 - Darshan is accessing /alaram_log/.
+2025-01-29 16:19:44,918 - Darshan is accessing /alaram_log/.
+2025-01-29 16:19:52,145 - Darshan is accessing /alaram_log/.
+2025-01-29 16:19:56,811 - Darshan is accessing /alaram_log/.
+2025-01-29 16:20:39,151 - Darshan is accessing /alaram_log/.
+2025-01-29 16:20:47,899 - Darshan is accessing /alaram_log/.
+2025-01-29 16:20:49,366 - Darshan is accessing /media/crsco.webp.
+2025-01-29 16:21:01,751 - Darshan is accessing /alaram_log/.
+2025-01-29 16:21:27,490 - Darshan is accessing /alaram_log/.
+2025-01-29 16:26:03,541 - Darshan is accessing /alaram_log/.
+2025-01-29 16:26:04,316 - Darshan is accessing /alaram_log/.
+2025-01-29 16:26:14,509 - Darshan is accessing /alaram_log/.
+2025-01-29 16:26:14,781 - Darshan is accessing /media/crsco.webp.
+2025-01-29 16:28:37,171 - Darshan is accessing /alaram_log/.
+2025-01-29 16:28:37,456 - Darshan is accessing /media/crsco.webp.
+2025-01-29 16:28:50,274 - Darshan is accessing /alaram_log/.
+2025-01-29 16:29:56,338 - Darshan is accessing /save_alarm_logs/.
+2025-01-29 16:29:57,454 - Darshan is updated record in App1_alarm_logs.
+2025-01-29 16:29:58,718 - Darshan is accessing /alaram_log/.
+2025-01-29 17:20:45,979 - Darshan is accessing /logout/.
+2025-01-29 17:20:46,404 - Darshan is created record in App1_useractivitylog.
+2025-01-29 17:20:46,408 - Anonymous is deleting record in django_session.
+2025-01-29 17:20:46,486 - Anonymous is accessing /.
+2025-01-29 17:31:30,976 - Anonymous is accessing /logout/.
+2025-01-29 17:31:30,983 - Anonymous is accessing /.

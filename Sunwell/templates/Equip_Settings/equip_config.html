@@ -196,7 +196,9 @@
                 <input type="text" id="searchBar" class="form-control" placeholder="Search here..">
             </div>
             <div class="d-flex">
-                <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#adminUserModal"> Add </button> 
+                {% if data.role == 'Super Admin' or acc_db.e_conf_a %}
+                <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#adminUserModal"> Add </button>
+                {% endif %}
             </div>
         </div>
     </div>
@@ -209,16 +211,19 @@
                     <th scope="col">Equipment Name</th>
                     <th scope="col">IP Address</th>
                     <th scope="col">Status</th>
+                    {% if data.role == 'Super Admin' or acc_db.e_conf_e %}
                     <th scope="col">Action</th>
+                    {% endif %}
                 </tr>
             </thead>
             <tbody id="form-data-table" class="scrollable-tbody">
                 {% for equipment in equipment_list %}
                 <tr data-department-id="{{ equipment.department.id }}">
                     <td><input type="checkbox" class="row-checkbox" name="comm_checkbox"></td>
-                    <td><a href="{% url 'equipment_setting' equipment.id %}">{{ equipment.equip_name }}</a></td>
+                    <td>{% if data.role == 'Super Admin' or acc_db.e_set_v %}<a href="{% url 'equipment_setting' equipment.id %}">{% endif %}{{ equipment.equip_name }}</a></td>
                     <td>{{ equipment.ip_address }} </td>
                     <td>{{ equipment.status|title }}</td>
+                    {% if data.role == 'Super Admin' or acc_db.e_conf_e %}
                     <td>
                         <div class="dropdown">
                             <a class="dropdown-item btn-edit" data-id="{{ equipment.id }}" data-is-connected="{{ equipment.is_connected }}" data-bs-toggle="modal" data-bs-target="#editEquipmentModal-{{ equipment.id }}">
@@ -226,7 +231,8 @@
                             </a>
                         </div>
                         
-                      </td>
+                    </td>
+                    {% endif %}
                 </tr>
                 {% endfor %}
             </tbody>

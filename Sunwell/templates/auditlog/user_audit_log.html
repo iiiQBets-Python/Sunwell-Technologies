@@ -273,7 +273,9 @@
 
                 <div class="btn-container">
                     <input type="hidden" name="generate_pdf" value="1">
+                    {% if data.role == 'Super Admin' or acc_db.u_act_p %}
                     <button type="submit" class="btn btn-primary">Print</button>
+                    {% endif %}
                 </div>                
 
             </div>

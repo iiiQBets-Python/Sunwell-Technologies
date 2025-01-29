@@ -2,10 +2,11 @@ from apscheduler.schedulers.background import BackgroundScheduler
 from apscheduler.triggers.cron import CronTrigger
 from django.core.mail import send_mail
 from django.core.mail.backends.smtp import EmailBackend
-from .models import Department, AppSettings, Email_logs
+from .models import Department, AppSettings, Email_logs, Sms_logs
 from datetime import datetime
 from django.utils.timezone import now
 import pytz
+import serial
 
 scheduler = BackgroundScheduler()
 
@@ -109,18 +110,15 @@ def send_scheduled_emails():
 
 
 def daily_email_scheduler():
-    """
-    Set up a periodic job to check email schedules every minute, precisely at 0 seconds.
-    """
-    if not scheduler.running:
-        scheduler.remove_all_jobs()
+    if not scheduler.get_job("scheduled_email_check"):  # Check if the job already exists
         scheduler.add_job(
             send_scheduled_emails,
-            CronTrigger(second=0),  # Runs exactly at 0 seconds of every minute
+            CronTrigger(second=0),
             id="scheduled_email_check",
             replace_existing=True,
         )
         scheduler.start()
+
 
 
 from apscheduler.schedulers.background import BackgroundScheduler
@@ -129,7 +127,7 @@ from datetime import datetime
 from django.utils.timezone import now
 import pytz
 from .models import Department, AppSettings, Sms_logs
-import serial
+
 import time
 
 scheduler = BackgroundScheduler()
@@ -142,21 +140,18 @@ def send_scheduled_sms():
     # Get current time in IST, truncated to hours and minutes
     ist_timezone = pytz.timezone("Asia/Kolkata")
     current_time = datetime.now(ist_timezone).time().replace(second=0, microsecond=0)
-    print(f"[DEBUG] Current IST time: {current_time}")
 
     # Fetch SMS settings
     app_settings = AppSettings.objects.first()
     if not app_settings:
-        print("[DEBUG] No AppSettings found.")
         return
 
     if app_settings.sms_sys_set != 'Enable':
-        print("[DEBUG] SMS system is not enabled in AppSettings.")
         return
 
     # Query departments with matching sms_time and SMS system enabled
     departments = Department.objects.filter(sms_time=current_time, sms_sys="Enable")
-    print(f"[DEBUG] Departments with SMS enabled at {current_time}: {[d.department_name for d in departments]}")
+
 
     for department in departments:
         recipient_details = [
@@ -190,7 +185,6 @@ def send_scheduled_sms():
 
                     def send_command(command, wait_for_response=True, delay=2):
                         """Send a command to the GSM modem and optionally wait for a response."""
-                        print(f"[DEBUG] Sending command: {command}")
                         ser.write(command.encode() + b'\r')
                         ser.flush()
                         time.sleep(delay)
@@ -226,20 +220,16 @@ def send_scheduled_sms():
 
                     if "+CMGS" in response and "OK" in response:
                         status = "Sent"
-                        print(f"[DEBUG] SMS sent successfully to {user_number} ({user_name})")
                     else:
                         status = "Failed"
-                        print(f"[DEBUG] Failed to send SMS to {user_number} ({user_name}). Response: {response}")
 
                 except Exception as e:
                     status = "Failed"
                     response = str(e)
-                    print(f"[ERROR] Exception while sending SMS to {user_number} ({user_name}): {response}")
 
                 finally:
                     if ser and ser.is_open:
                         ser.close()
-                        print(f"[DEBUG] Serial connection closed for {user_number} ({user_name})")
 
                     # Log SMS details to the database
                     Sms_logs.objects.create(
@@ -256,7 +246,6 @@ def daily_sms_scheduler():
     """
     Set up a periodic job to check SMS schedules every minute, precisely at 0 seconds.
     """
-    print("[DEBUG] Initializing daily SMS scheduler...")
     if not scheduler.running:
         scheduler.remove_all_jobs()
         scheduler.add_job(
@@ -266,4 +255,3 @@ def daily_sms_scheduler():
             replace_existing=True,
         )
         scheduler.start()
-        print("[DEBUG] SMS scheduler started.")

@@ -11,6 +11,7 @@ urlpatterns = [
 
     #Dashboard URL's
     path('dashboard/', dashboard, name='dashboard'),
+    path('get-equipment-data/', get_equipment_data, name='get_equipment_data'),
     path('save-equipment-settings/', save_equipment_settings, name='save_equipment_settings'),
     path('save_app_settings/', save_app_settings, name='save_app_settings'),
     #Management URL's
@@ -25,7 +26,7 @@ urlpatterns = [
     path('app_setings/', app_settings, name='app_settings'),
     path('app_sms_settings/', app_sms_settings, name='app_sms_settings'),
 
-    path('app_setings/send_test_email', send_test_email, name="send_test_email"),
+    path('app_setings/send_test_email/', send_test_email, name="send_test_email"),
     path('app_setings/send_test_sms/', send_test_sms, name='send_test_sms'),
     
     path('backup/', backup, name='backup'),
@@ -55,8 +56,8 @@ urlpatterns = [
     #DATA Analysis
     path('view_log/',view_log,name='view_log'),
     path('alaram_log/',alaram_log,name='alaram_log'),
-    path('view_alarm_log', view_alarm_log, name="view_alarm_log"),
-    path('Mkt_analysis', Mkt_analysis, name="Mkt_analysis"),
+    path('view_alarm_log/', view_alarm_log, name="view_alarm_log"),
+    path('Mkt_analysis/', Mkt_analysis, name="Mkt_analysis"),
 
     # audit_logs #
     path('user_activity_log/', user_activity, name="user_activity"),
@@ -68,10 +69,11 @@ urlpatterns = [
 
     # path('upload_csv/', upload_csv, name='upload_csv'),
 
-    path('change_pass', change_pass, name="change_pass"),
-    path('change_pass_2', change_pass_2, name='change_pass_2'),
+    path('change_pass/', change_pass, name="change_pass"),
+    path('change_pass_2/', change_pass_2, name='change_pass_2'),
     path('forgot_password/', forgot_password, name='forgot_pass'),
     path('save_alarm_logs/', save_alarm_logs, name='save_alarm_logs'),
     # path('view_audit_alarm_logs', view_audit_alarm_logs, name='view_audit_alarm_logs'),
 
+    path('about_us/', about_us, name="about_us"),
 ]

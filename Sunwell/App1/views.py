@@ -114,6 +114,10 @@ def user_login(request):
                     messages.warning(request, 'Your password has expired. Please change your password.')
                     show_change_password_modal = True
                     return render(request, 'Base/login.html', {'show_change_password_modal': show_change_password_modal})
+                
+                if user.pass_change == False:
+                    success_msg = 'Please set a new password.'
+                    return render(request, 'Base/login.html', {'success_msg': success_msg})
 
                 if check_password(password, user.password):
                     # Clear failed attempts for this username
@@ -178,7 +182,7 @@ def change_pass(request):
             # Check if the new password matches any of the last 3 passwords
             password_history = PasswordHistory.objects.filter(user=data).order_by('-created_at')[:3]
             if any(check_password(new_pass, history.password) for history in password_history):
-                return JsonResponse({'message': 'New password cannot be the same as any of the last 3 passwords.'})
+                error_msg ='New password cannot be the same as any of the last 3 passwords.'
 
             # Update the password if no match is found in the last 3 entries
             user.password = new_pass
@@ -403,6 +407,31 @@ def dashboard(request):
     })
 
 
+from django.http import JsonResponse
+
+def get_equipment_data(request):
+    
+    equipment_queryset = Equipment.objects.filter(status='active')
+    equipment_data = []
+    for eqp in equipment_queryset:
+        alarms = Alarm_logs.objects.filter(equipment=eqp, acknowledge=False)
+        pending_review_count = alarms.count()
+
+        try:
+            online = connect_to_plc(eqp.ip_address)
+            eqp.online = True if online else False
+        except Exception:
+            eqp.online = False
+
+        equipment_data.append({
+            'id': eqp.id,
+            'name': eqp.equip_name,
+            'status': 'Online' if eqp.online else 'Offline',
+            'pending_review': pending_review_count,
+            'department_id': eqp.department.id if eqp.department else None,
+        })
+    return JsonResponse({'equipment_data': equipment_data})
+
 # Management-organization
 def organization(request):
 
@@ -413,13 +442,13 @@ def organization(request):
         data = User.objects.get(username = emp_user)
     except:
         data = SuperAdmin.objects.get(username = emp_user)
-    organization = Organization.objects.first()
     
     try:
         acc_db = user_access_db.objects.get(role = data.role)
     except:
         acc_db = None
 
+    organization = Organization.objects.first()
     if request.method == 'POST':
         # Saving the changes
         name = request.POST.get('name')
@@ -559,6 +588,19 @@ def comm_group(request):
 
 
 def validate_activation_key(request):
+    emp_user = request.session.get('username', None)
+    if not emp_user:
+        return redirect('login')
+    try:
+        data = User.objects.get(username = emp_user)
+    except:
+        data = SuperAdmin.objects.get(username = emp_user)
+    
+    try:
+        acc_db = user_access_db.objects.get(role = data.role)
+    except:
+        acc_db = None
+
     if request.method == 'POST':
         emp_user = request.session.get('username', None)
         if not emp_user:
@@ -799,6 +841,19 @@ def department(request):
     return render(request, 'Management/department.html', context)
 
 def edit_department(request, department_id):
+    emp_user = request.session.get('username', None)
+    if not emp_user:
+        return redirect('login')
+    try:
+        data = User.objects.get(username = emp_user)
+    except:
+        data = SuperAdmin.objects.get(username = emp_user)
+    
+    try:
+        acc_db = user_access_db.objects.get(role = data.role)
+    except:
+        acc_db = None
+
     departments = get_object_or_404(Department, id=department_id)
     if request.method == "POST":
         try:
@@ -921,6 +976,8 @@ def edit_department(request, department_id):
     context = {
         'departments': departments,
         'groups': groups,
+        'data':data, 
+        'acc_db':acc_db
     }
 
     return render(request, 'Management/department.html', context)
@@ -1289,6 +1346,8 @@ def edit_role(request, id):
 
         return redirect('role_permission')
     
+    return render(request, 'Management/role_permission.html', {'organization': organization, 'data':data, 'acc_db':acc_db, 'role_data':role_data})
+    
 
 def user_access(request):
 
@@ -1314,7 +1373,6 @@ def user_access(request):
         role_dt = None
 
 
-    print(role)
     if request.method == 'POST':
 
 
@@ -1485,10 +1543,10 @@ def user_access(request):
             role_dt.v_log_v = v_log_v
             role_dt.v_log_p = v_log_p
 
-            role_dt.a_log_v = v_log_v
+            role_dt.a_log_v = a_log_v
             role_dt.a_log_p = a_log_p
 
-            role_dt.v_log_v = v_log_v
+            role_dt.mkt_v = mkt_v
             role_dt.mkt_p = mkt_p
 
             role_dt.sum_v = sum_v
@@ -1594,7 +1652,7 @@ def user_access(request):
             )
 
             success_msg = 'Roles and permissions are added.'
-            return render(request, 'Management/user_group.html', {'organization': organization, 'data': data, 'acc_db': acc_db, 'role_dt':role_dt, 'success_msg': success_msg, 'role':role})
+            return redirect('role_permission')
     
     return render(request, 'Management/user_group.html', {'organization': organization, 'data':data, 'acc_db':acc_db, 'role_dt':role_dt, 'role':role})
 
@@ -1604,9 +1662,14 @@ def app_settings(request):
     if not emp_user:
         return redirect('login')
     try:
-        data = User.objects.get(username=emp_user)
-    except User.DoesNotExist:
-        data = SuperAdmin.objects.get(username=emp_user)
+        data = User.objects.get(username = emp_user)
+    except:
+        data = SuperAdmin.objects.get(username = emp_user)
+    
+    try:
+        acc_db = user_access_db.objects.get(role = data.role)
+    except:
+        acc_db = None
 
     organization = Organization.objects.first()
 
@@ -1665,11 +1728,15 @@ def app_sms_settings(request):
     emp_user = request.session.get('username', None)
     if not emp_user:
         return redirect('login')
-
     try:
-        data = User.objects.get(username=emp_user)
-    except User.DoesNotExist:
-        data = SuperAdmin.objects.get(username=emp_user)
+        data = User.objects.get(username = emp_user)
+    except:
+        data = SuperAdmin.objects.get(username = emp_user)
+    
+    try:
+        acc_db = user_access_db.objects.get(role = data.role)
+    except:
+        acc_db = None
 
     organization = Organization.objects.first()
     acc_db = user_access_db.objects.filter(role=data.role).first()
@@ -1828,6 +1895,19 @@ from .models import AppSettings, Sms_logs
 
 
 def send_test_sms(request):
+    emp_user = request.session.get('username', None)
+    if not emp_user:
+        return redirect('login')
+    try:
+        data = User.objects.get(username = emp_user)
+    except:
+        data = SuperAdmin.objects.get(username = emp_user)
+    
+    try:
+        acc_db = user_access_db.objects.get(role = data.role)
+    except:
+        acc_db = None
+
     if request.method == 'POST':
         try:
             # Retrieve the phone number and time from the request
@@ -1949,7 +2029,21 @@ def send_test_sms(request):
         return redirect('app_sms_settings')
 
 
+
 def send_test_email(request):
+    emp_user = request.session.get('username', None)
+    if not emp_user:
+        return redirect('login')
+    try:
+        data = User.objects.get(username = emp_user)
+    except:
+        data = SuperAdmin.objects.get(username = emp_user)
+    
+    try:
+        acc_db = user_access_db.objects.get(role = data.role)
+    except:
+        acc_db = None
+
     if request.method == 'POST':
         try:
             recipient_email = request.POST.get('testemail')
@@ -2331,9 +2425,14 @@ def download_backup(request):
     if not emp_user:
         return redirect('login')
     try:
-        data = User.objects.get(username=emp_user)
+        data = User.objects.get(username = emp_user)
     except:
-        data = SuperAdmin.objects.get(username=emp_user)
+        data = SuperAdmin.objects.get(username = emp_user)
+    
+    try:
+        acc_db = user_access_db.objects.get(role = data.role)
+    except:
+        acc_db = None
 
     status, message = perform_backup()
 
@@ -2348,53 +2447,66 @@ def download_backup(request):
 
 
 def perform_backup():
+    # Fetch the latest backup settings
     backup_setting = BackupSettings.objects.last()
     if not backup_setting:
         return "failure", "No backup settings found."
 
+    # Construct the backup filename and paths
     current_time = datetime.now().strftime("%d%m%Y_%H%M")
     backup_filename = f"ESTDAS_{current_time}.bak"
-
     local_backup_file_path = os.path.join(backup_setting.local_path, backup_filename)
-    remote_backup_file_path = (
-        os.path.join(backup_setting.remote_path, backup_filename)
-        if backup_setting.remote_path
-        else None
-    )
 
-    # Remove all existing .bak files in the local path
+    # Ensure paths exist
+    if not os.path.exists(backup_setting.local_path):
+        return "failure", f"Local backup path '{backup_setting.local_path}' does not exist."
+
+    if backup_setting.remote_path and not os.path.exists(backup_setting.remote_path):
+        return "failure", f"Remote backup path '{backup_setting.remote_path}' does not exist."
+
+    # Remove existing .bak files in the local path
     for file_name in os.listdir(backup_setting.local_path):
         if file_name.endswith(".bak"):
             os.remove(os.path.join(backup_setting.local_path, file_name))
 
-    # Remove all existing .bak files in the remote path if it exists
+    # Remove existing .bak files in the remote path if applicable
     if backup_setting.remote_path:
         for file_name in os.listdir(backup_setting.remote_path):
             if file_name.endswith(".bak"):
                 os.remove(os.path.join(backup_setting.remote_path, file_name))
 
+    # Database connection details
     db_settings = settings.DATABASES['default']
     db_name = db_settings['NAME']
     db_user = db_settings['USER']
     db_password = db_settings['PASSWORD']
     db_host = db_settings['HOST']
 
+    # Local backup command
     local_backup_command = (
         f"sqlcmd -S {db_host} -U {db_user} -P {db_password} "
         f"-Q \"BACKUP DATABASE [{db_name}] TO DISK = N'{local_backup_file_path}'\""
     )
-    
+
     try:
+        # Execute local backup
         subprocess.run(local_backup_command, check=True, shell=True)
+
+        # If a remote path is provided, also perform a remote backup
         if backup_setting.remote_path:
+            remote_backup_file_path = os.path.join(backup_setting.remote_path, backup_filename)
             remote_backup_command = (
                 f"sqlcmd -S {db_host} -U {db_user} -P {db_password} "
                 f"-Q \"BACKUP DATABASE [{db_name}] TO DISK = N'{remote_backup_file_path}'\""
             )
             subprocess.run(remote_backup_command, check=True, shell=True)
-            
+
+        return "success", "Backup completed successfully."
     except subprocess.CalledProcessError as e:
         return "failure", f"Backup failed: {str(e)}"
+    except Exception as e:
+        return "failure", f"An unexpected error occurred: {str(e)}"
+
 
 
 # Initialize the scheduler
@@ -2927,11 +3039,6 @@ def download_process_logs(ip_address, equipment_id):
         
         return {"status": False, "message": f"Error: {e}"}
 
-
-from datetime import datetime
-
-from datetime import datetime
-import csv
 
 from datetime import datetime
 import csv
@@ -3489,9 +3596,15 @@ def equipment_configure_view(request):
     if not emp_user:
         return redirect('login')
     try:
-        data = User.objects.get(username=emp_user)
+        data = User.objects.get(username = emp_user)
     except:
-        data = SuperAdmin.objects.get(username=emp_user)
+        data = SuperAdmin.objects.get(username = emp_user)
+    
+    try:
+        acc_db = user_access_db.objects.get(role = data.role)
+    except:
+        acc_db = None
+
     organization = Organization.objects.first()
     
     if request.method == 'POST':
@@ -3624,11 +3737,24 @@ def equipment_configure_view(request):
         "equipment_list": equipment_list,
         "status_filter": status_filter,  # Pass the selected filter
         'organization': organization,
-        'data': data
+        'data': data,
+        'acc_db':acc_db
     }
     return render(request, 'Equip_Settings/equip_config.html', context)
     
 def equipment_edit(request, equipment_id):
+    emp_user = request.session.get('username', None)
+    if not emp_user:
+        return redirect('login')
+    try:
+        data = User.objects.get(username = emp_user)
+    except:
+        data = SuperAdmin.objects.get(username = emp_user)
+    
+    try:
+        acc_db = user_access_db.objects.get(role = data.role)
+    except:
+        acc_db = None
     equipment = get_object_or_404(Equipment, id=equipment_id)
     plc_users = PLCUser.objects.filter(equipment=equipment)
     biometric_users = BiometricUser.objects.filter(equipment=equipment)
@@ -3696,7 +3822,12 @@ def equipment_setting(request, id):
     try:
         data = User.objects.get(username = emp_user)
     except:
-        data = SuperAdmin.objects.get(username=emp_user)
+        data = SuperAdmin.objects.get(username = emp_user)
+    
+    try:
+        acc_db = user_access_db.objects.get(role = data.role)
+    except:
+        acc_db = None
     organization = Organization.objects.first()
     
     try:
@@ -3809,16 +3940,15 @@ def view_log(request):
     if not emp_user:
         return redirect('login')
     try:
-        data = User.objects.get(username=emp_user)
+        data = User.objects.get(username = emp_user)
     except:
-        data = SuperAdmin.objects.get(username=emp_user)
-    organization = Organization.objects.first()
-
+        data = SuperAdmin.objects.get(username = emp_user)
+    
     try:
-        acc_db = user_access_db.objects.get(role=data.role)
+        acc_db = user_access_db.objects.get(role = data.role)
     except:
         acc_db = None
-
+    organization= Organization.objects.first()
     equipment_list = Equipment.objects.all()
 
     # Get filter parameters from the request
@@ -3834,33 +3964,6 @@ def view_log(request):
     # Filter by equipment if selected
     if selected_equipment:
         filter_kwargs &= Q(equip_name__equip_name=selected_equipment)
-
-    # Handle missing dates - default to the 1st of the current month and today's date
-    # current_date = now().date()
-    # if not from_date:
-    #     from_date = current_date.replace(day=1).strftime('%Y-%m-%d')  # 1st of the current month
-    # if not to_date:
-    #     to_date = current_date.strftime('%Y-%m-%d')  # Today's date
-
-    # # Parse the from_date and to_date
-    # from_date_parsed = datetime.strptime(from_date, '%Y-%m-%d').date()
-    # to_date_parsed = datetime.strptime(to_date, '%Y-%m-%d').date()
-
-    # from_time_parsed = datetime.strptime(from_time, '%H:%M').time()
-    # to_time_parsed = datetime.strptime(to_time, '%H:%M').time()
-
-    # if from_date_parsed == to_date_parsed:
-    #     filter_kwargs &= (
-    #         Q(date=from_date_parsed) &
-    #         Q(time__gte=from_time_parsed) &
-    #         Q(time__lte=to_time_parsed)
-    #     )
-    # else:
-    #     filter_kwargs &= (
-    #         (Q(date=from_date_parsed) & Q(time__gte=from_time_parsed)) |  # from_time on from_date
-    #         (Q(date=to_date_parsed) & Q(time__lte=to_time_parsed)) |      # to_time on to_date
-    #         Q(date__gt=from_date_parsed, date__lt=to_date_parsed)         # all dates in between
-    #     )
 
     from_date_parsed = parse_date(from_date) if from_date else current_date.replace(day=1).date()
     to_date_parsed = parse_date(to_date) if to_date else current_date.date()
@@ -4726,12 +4829,14 @@ def alaram_log(request):
         data = User.objects.get(username = emp_user)
     except:
         data = SuperAdmin.objects.get(username=emp_user)
-    organization = Organization.objects.first()
+    
     
     try:
         acc_db = user_access_db.objects.get(role = data.role)
     except:
         acc_db = None
+
+    organization = Organization.objects.first()
     equipments = Equipment.objects.all()
     alarm_logs_data = Alarm_logs.objects.filter(acknowledge=False)
  
@@ -4754,29 +4859,28 @@ import json
 def save_alarm_logs(request):
     if request.method == "POST":
         try:
-            # Load the data from the request body
             data = json.loads(request.body)
             username = data.get("username")
             password = data.get("password")
             acknowledge = data.get("acknowledge")
             selected_logs = data.get("selected_logs")
             
-        
+            # Fetch user
             try:
                 user = User.objects.get(username=username)
             except User.DoesNotExist:
                 return JsonResponse({"message": "User not found."}, status=404)
 
+            # Check password
             if not check_password(password, user.password):
                 return JsonResponse({"message": "Invalid password."}, status=400)
             
-            
-            current_time = datetime.now().time()
+            # Save selected logs
             for i in selected_logs:
-                alarm_id = i.get("id") if isinstance(i, dict) else i  # Get ID from dictionary or use the ID directly
+                alarm_id = i.get("id") if isinstance(i, dict) else i
                 try:
                     alarm = Alarm_logs.objects.get(id=alarm_id)
-                    alarm.ack_time=datetime.now().time()
+                    alarm.ack_time = datetime.now().time()
                     alarm.ack_date = date.today()
                     alarm.ack_user = username
                     alarm.acknowledge = True
@@ -4785,51 +4889,52 @@ def save_alarm_logs(request):
                 except Alarm_logs.DoesNotExist:
                     return JsonResponse({"message": f"Alarm log with ID {alarm_id} not found."}, status=404)
             
-            return JsonResponse({"message": "Alarm logs saved successfully!"})
+            return JsonResponse({"message": "Alarm logs saved successfully!"}, status=200)
         
         except json.JSONDecodeError:
             return JsonResponse({"message": "Invalid JSON data."}, status=400)
         except Exception as e:
-            # Catch any other unexpected errors
             return JsonResponse({"message": str(e)}, status=500)
     
     return JsonResponse({"message": "Invalid request method."}, status=405)
-
 
 
 # Live data
 def livedata_summary(request):
 
     emp_user = request.session.get('username', None)
+
     if not emp_user:
         return redirect('login')
     try:
-        data = User.objects.get(username = emp_user)
-    except:
+        data = User.objects.get(username=emp_user)
+    except User.DoesNotExist:
         data = SuperAdmin.objects.get(username=emp_user)
-    organization = Organization.objects.first()
-    
+
     try:
-        acc_db = user_access_db.objects.get(role = data.role)
-    except:
+        acc_db = user_access_db.objects.get(role=data.role)
+    except user_access_db.DoesNotExist:
         acc_db = None
 
     return render(request, 'Live Data/realtime_summary.html', {'organization': organization, 'data':data, 'acc_db':acc_db})
 
 
 def user_activity(request):
+
+    
     emp_user = request.session.get('username', None)
     try:
         data = User.objects.get(username=emp_user)
     except:
         data = SuperAdmin.objects.get(username=emp_user)
-    organization = Organization.objects.first()
+    
 
     try:
         acc_db = user_access_db.objects.get(role=data.role)
     except:
         acc_db = None
 
+    organization = Organization.objects.first()
     filter_format = request.GET.get('format')  # "Date Wise" or "User-wise"
     from_date = request.GET.get('from-date')
     to_date = request.GET.get('to-date')
@@ -5070,19 +5175,17 @@ def generate_userActivity_pdf(request, user_logs, from_date, to_date, from_time,
 def equipment_Audit_log(request):
 
     emp_user = request.session.get('username', None)
-    if not emp_user:
-        return redirect('login')
     try:
-        data = User.objects.get(username = emp_user)
+        data = User.objects.get(username=emp_user)
     except:
         data = SuperAdmin.objects.get(username=emp_user)
-    organization = Organization.objects.first()
     
     try:
-        acc_db = user_access_db.objects.get(role = data.role)
+        acc_db = user_access_db.objects.get(role=data.role)
     except:
         acc_db = None
 
+    organization= Organization.objects.first()
     users = User.objects.all()
     equipments = Equipment.objects.all()
 
@@ -5380,7 +5483,6 @@ def alaram_Audit_log(request):
     emp_user = request.session.get('username', None)
     if not emp_user:
         return redirect('login')
-    organization = Organization.objects.first()
     
     try:
         data = User.objects.get(username=emp_user)
@@ -5392,6 +5494,7 @@ def alaram_Audit_log(request):
     except ObjectDoesNotExist:
         acc_db = None
 
+    organization = Organization.objects.first()
     users = User.objects.all()
     equipments = Equipment.objects.all()
 
@@ -5522,8 +5625,6 @@ def alaram_Audit_log(request):
     return render(request, 'auditlog/alaram_audit.html', context )
 
 
-
-   
 
 def generate_audit_alaram_log_pdf(request, records, from_date, to_date, from_time, to_time, organization, department, username, selected_equipment, format_type):
     response = HttpResponse(content_type='application/pdf')
@@ -5697,13 +5798,13 @@ def email_Audit_log(request):
         data = User.objects.get(username = emp_user)
     except:
         data = SuperAdmin.objects.get(username=emp_user)
-    organization = Organization.objects.first()
     
     try:
         acc_db = user_access_db.objects.get(role = data.role)
     except:
         acc_db = None
 
+    organization = Organization.objects.first()
     equipments = Equipment.objects.all()
 
     current_date = now()
@@ -6014,13 +6115,13 @@ def sms_Audit_log(request):
         data = User.objects.get(username = emp_user)
     except:
         data = SuperAdmin.objects.get(username=emp_user)
-    organization = Organization.objects.first()
     
     try:
         acc_db = user_access_db.objects.get(role = data.role)
     except:
         acc_db = None
 
+    organization = Organization.objects.first()
     equipments = Equipment.objects.all()
 
     current_date = now()
@@ -6312,7 +6413,27 @@ def generate_sms_log_pdf(request, records, from_date, to_date, from_time, to_tim
 
 
 def Mkt_analysis(request):
-    return render(request, 'Data_Analysis/Mkt.html')
+    emp_user = request.session.get('username', None)
+    if not emp_user:
+        return redirect('login')
+    try:
+        data = User.objects.get(username = emp_user)
+    except:
+        data = SuperAdmin.objects.get(username=emp_user)
+    
+    try:
+        acc_db = user_access_db.objects.get(role = data.role)
+    except:
+        acc_db = None
+
+    context = {
+        'organization': organization,
+        'data': data,
+        'acc_db': acc_db,
+          
+    }
+
+    return render(request, 'Data_Analysis/Mkt.html', context)
 
 
 # import csv
@@ -6402,13 +6523,12 @@ def view_alarm_log(request):
     except User.DoesNotExist:
         data = SuperAdmin.objects.get(username=emp_user)
 
-    organization = Organization.objects.first()
-
     try:
         acc_db = user_access_db.objects.get(role=data.role)
     except user_access_db.DoesNotExist:
         acc_db = None
 
+    organization = Organization.objects.first()
     # Get filter parameters from the request
     selected_equipment = request.GET.get('equipment')
     from_date = request.GET.get('from-date')
@@ -6638,7 +6758,6 @@ from django.views.decorators.http import require_http_methods
 import json
 
 @csrf_exempt  
-
 def save_equipment_settings(request):
     data = json.loads(request.body)
     # print("data", data)
@@ -6847,3 +6966,20 @@ def save_alert_settings(request):
         return JsonResponse({"status": "success", "message": "Alert settings saved successfully."})
     return JsonResponse({"status": "error", "message": "Invalid request"}, status=400)
 
+
+
+def about_us(request):
+    emp_user = request.session.get('username', None)
+    if not emp_user:
+        return redirect('login')
+    try:
+        data = User.objects.get(username=emp_user)
+    except User.DoesNotExist:
+        data = SuperAdmin.objects.get(username=emp_user)
+
+    try:
+        acc_db = user_access_db.objects.get(role=data.role)
+    except user_access_db.DoesNotExist:
+        acc_db = None
+
+    return render(request, 'About_us/about_us.html', {'data':data, 'acc_db':acc_db})

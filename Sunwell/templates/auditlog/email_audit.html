@@ -289,7 +289,9 @@
 
                 <!-- Print Button -->
                 <div class="btn-container">
+                    {% if data.role == 'Super Admin' or acc_db.e_aud_p %} 
                     <button type="submit" name="generate_pdf" class="btn btn-primary">Print</button>
+                    {% endif %}
                 </div>
             </div>
         </form>

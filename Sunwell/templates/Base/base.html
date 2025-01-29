@@ -525,19 +525,27 @@
             <li>
                 <a href="#" class="submenu-toggle"><i class="fas fa-wrench"></i> <b>Equip Settings</b></a>
                 <ul class="submenu" id="equip-settings-submenu">
+                    {% if data.role == 'Super Admin' or acc_db.e_conf_v %}
                     <li><a href="{% url 'equipment_configure' %}"><i class="fas fa-cog"></i> <b>Equip Config/Settings</b></a></li>
+                    {% endif %}
                     <li><a href="#"><i class="fas fa-file-alt"></i> <b>Equipment Documents</b></a></li>
                 </ul>
             </li>
             <li>
                 <a href="#" class="submenu-toggle"><i class="fas fa-chart-line"></i> <b>Data Analysis</b></a>
                 <ul class="submenu" id="data-analysis-submenu">
+                    {% if data.role == 'Super Admin' or acc_db.v_log_v %}
                     <li><a href="{% url 'view_log' %}"><i class="fas fa-eye"></i> <b>View Logs</b></a></li>
+                    {% endif %}
                     <li><a href="#"><i class="fas fa-edit"></i> <b>Manage Logs</b></a></li>
                     <li><a href="#"><i class="fas fa-search-plus"></i> <b>Review/Approve Logs</b></a></li>
                     <li><a href="#"><i class="fas fa-clipboard-check"></i> <b>Reviewed/Approved Logs</b></a></li>
+                    {% if data.role == 'Super Admin' or acc_db.a_log_v %}
                     <li><a href="{%url 'alaram_log' %}"><i class="fas fa-bell"></i> <b>Alarm Logs</b></a></li>
+                    {% endif %}
+                    {% if data.role == 'Super Admin' or acc_db.mkt_v %}
                     <li><a href="{%url 'Mkt_analysis' %}"><i class="fas fa-chart-pie"></i> <b>MKT Analysis</b></a></li>
+                    {% endif %}
                 </ul>
             </li>
             <li>
@@ -552,11 +560,21 @@
             <li>
                 <a href="#" class="submenu-toggle"><i class="fas fa-clipboard-list"></i> <b>Audit Logs</b></a>
                 <ul class="submenu" id="audit-logs-submenu">
+                    {% if data.role == 'Super Admin' or acc_db.u_act_v %}
                     <li><a href="{% url 'user_activity' %}"><i class="fas fa-user-secret"></i> <b>User Activity</b></a></li>
+                    {% endif %}
+                    {% if data.role == 'Super Admin' or acc_db.u_equ_v %}
                     <li><a href="{% url 'Equipment_Audit_log' %}"><i class="fas fa-desktop"></i> <b>Equipment Activity</b></a></li>
+                    {% endif %}
+                    {% if data.role == 'Super Admin' or acc_db.a_act_v %}
                     <li><a href="{% url 'alaram_Audit_log' %}"><i class="fas fa-exclamation-triangle"></i> <b>Alarm Activity</b></a></li>
-                    <li><a href="{% url 'email_Audit_log' %}""><i class="fas fa-envelope"></i> <b>Email Activity</b></a></li>
-                    <li><a href="{% url 'sms_Audit_log' %}""><i class="fas fa-sms"></i> <b>SMS Activity</b></a></li>
+                    {% endif %}
+                    {% if data.role == 'Super Admin' or acc_db.e_aud_v %}
+                    <li><a href="{% url 'email_Audit_log' %}"><i class="fas fa-envelope"></i> <b>Email Activity</b></a></li>
+                    {% endif %}
+                    {% if data.role == 'Super Admin' or acc_db.s_act_v %}
+                    <li><a href="{% url 'sms_Audit_log' %}"><i class="fas fa-sms"></i> <b>SMS Activity</b></a></li>
+                    {% endif %}
                     <li><a href="#"><i class="fas fa-thumbs-up"></i> <b>Reviewed/Approved Activity</b></a></li>
                 </ul>
             </li>
@@ -568,10 +586,9 @@
                     <li><a href="#"><i class="fas fa-chart-bar"></i> <b>Analyze</b></a></li>
                 </ul>
             </li>
-            <li>
-                <a href="#" class="submenu-toggle"><i class="fas fa-building"></i> <b>About Us</b></a>
-                <ul class="submenu" id="about-us-submenu"></ul>
-            </li>
+
+            <li><a href="{% url 'about_us' %}"><i class="fas fa-building"></i> <b> About Us</b></a></li>
+
             {% comment %} <li><a href="{% url 'upload_csv' %}"><i class="fas fa-file-alt"></i> <b> Upload Csv File</b></a></li> {% endcomment %}
         </ul>
     </div>

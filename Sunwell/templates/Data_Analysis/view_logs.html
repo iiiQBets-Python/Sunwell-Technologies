@@ -227,7 +227,9 @@
             </div>
             
             <div class="form-group col-md-4 d-flex align-items-end">
+                {% if data.role == 'Super Admin' or acc_db.v_log_p %} 
                 <button type="submit" name="generate_pdf" class="btn btn-primary w-50">Print</button>
+                {% endif %}
                 <button type="submit" class="btn btn-primary w-50 ms-2">Graph</button>
             </div>
         </form>

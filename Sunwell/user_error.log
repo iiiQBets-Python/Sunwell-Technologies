@@ -6,3 +6,9 @@
 2025-01-27 13:32:56,764 - Darshan is getting OperationalError on accessing admin:App1_smsalert_changelist: no such table: App1_smsalert
 2025-01-27 13:33:19,106 - Darshan is getting OperationalError on accessing admin:App1_emailalert_changelist: no such table: App1_emailalert
 2025-01-27 13:33:39,822 - Darshan is getting OperationalError on accessing admin:App1_smsalert_changelist: no such table: App1_smsalert
+2025-01-27 18:25:14,228 - Sunwell is getting AttributeError on accessing user_activity: 'SuperAdmin' object has no attribute 'department'
+2025-01-27 18:27:08,152 - Sunwell is getting AttributeError on accessing user_activity: 'SuperAdmin' object has no attribute 'department'
+2025-01-27 18:46:48,600 - Darshan is getting TemplateSyntaxError on accessing equipment_configure: Invalid block tag on line 216: 'enif', expected 'elif', 'else' or 'endif'. Did you forget to register or load this tag?
+2025-01-28 18:52:53,004 - Darshan is getting TypeError on accessing download_backup: cannot unpack non-iterable NoneType object
+2025-01-28 18:57:46,590 - Darshan is getting ValueError on accessing equipment_configure: Field 'total_temp_sensors' expected a number but got ''.
+2025-01-28 18:58:34,020 - Darshan is getting ValueError on accessing equipment_configure: Field 'total_temp_sensors' expected a number but got ''.

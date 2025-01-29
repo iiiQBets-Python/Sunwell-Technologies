@@ -255,7 +255,7 @@
         </div>
         <div class="col-md-3">
             <label for="status" class="form-label">Status</label>
-            <select name="status" id="status" class="form-select">
+            <select name="status" id="status" class="form-select" readonly>
                 <option value="online" {% if equipment.status == "Yes" %}selected{% endif %}>Online</option>
                 <option value="offline" {% if equipment.status != "Yes" %}selected{% endif %}>Offline</option>
             </select>
@@ -292,8 +292,10 @@
 
     <div class="tab-content" id="myTabContent">
         <div class="tab-pane fade show active table-container" id="parameters" role="tabpanel" aria-labelledby="parameters-tab" style="padding:15px; background:#ffff;">
-            <div class="d-flex justify-content-end align-items-end"> 
+            <div class="d-flex justify-content-end align-items-end">
+                {% if data.role == 'Super Admin' or acc_db.e_set_e %} 
                 <button class="btn btn-primary edit-button me-2 mb-2" onclick="editMode(this)">Edit</button>
+                {% endif %}
                 <button class="btn btn-success save-button me-2 mb-2 d-none" onclick="saveMode(this)">Save</button>
             </div>
             <div class="table-wrapper">
@@ -410,7 +412,9 @@
         <div class="tab-pane fade" id="settings" role="tabpanel" aria-labelledby="settings-tab" style="padding:15px; background:#ffff;">
             <div class="settings-wrapper fade show active" id="equipment-parameters" role="tabpanel" aria-labelledby="equipment-parameters-tab">
                 <div class="edit-save-buttons d-flex justify-content-end align-items-end"> 
+                    {% if data.role == 'Super Admin' or acc_db.e_set_e %} 
                     <button class="btn btn-primary edit-button me-2" onclick="editMode(this)">Edit</button>
+                    {% endif %}
                     <button class="btn btn-success save-button d-none" onclick="saveMode(this)">Save</button>
                 </div>
                 <h5 class="section-title">Temperature</h5>
@@ -602,7 +606,9 @@
 
         <div class="tab-pane fade" id="emailsmsalert" role="tabpanel" aria-labelledby="email-sms-alarm-alert-tab" style="padding:15px; background:#ffff;">
             <div class="d-flex justify-content-end align-items-end"> 
+                {% if data.role == 'Super Admin' or acc_db.e_set_e %} 
                 <button class="btn btn-primary edit-button me-2" onclick="editMode1(this)">Edit</button>
+                {% endif %}
                 <button class="btn btn-success save-button d-none" onclick="saveMode1(this)">Save</button>
             </div>
             <div class="row mt-0 p-4" id="alertSections">

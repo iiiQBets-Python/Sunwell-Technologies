@@ -1,5 +1,10 @@
 from pathlib import Path
 import os
+from dotenv import load_dotenv
+
+# Load environment variables from .env file
+load_dotenv()
+
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -78,6 +83,17 @@ DATABASES = {
 }
 
 # MSSQL Database Connection
+
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'mssql',
+#         'NAME': os.getenv('DATABASE_NAME', 'default_db'),
+#         'USER': os.getenv('DATABASE_USER', 'default_user'),
+#         'PASSWORD': os.getenv('DATABASE_PASSWORD', 'default_password'),
+#         'HOST': os.getenv('DATABASE_HOST', 'localhost'),
+#         'PORT': os.getenv('DATABASE_PORT', '5432'),
+#     }
+# }
 
 # DATABASES = {
 #     'default': {

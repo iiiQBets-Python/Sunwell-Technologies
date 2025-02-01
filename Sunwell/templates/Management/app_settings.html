@@ -127,11 +127,11 @@
                                 <h6 style="margin-right: 10px;">Email System:</h6>
                                 <div id="status">
                                     <div class="form-check form-check-inline">
-                                        <input class="form-check-input" type="radio" name="email_setting_status" id="email-enable2" value="{{ app_settings.email_sys_set }}" checked>
+                                        <input class="form-check-input" type="radio" name="email_setting_status" id="email-enable2" value="True" {% if app_settings.email_sys_set %}checked{% endif %} disabled>
                                         <label class="form-check-label" for="email-enable2">Enable</label>
                                     </div>
                                     <div class="form-check form-check-inline">
-                                        <input class="form-check-input" type="radio" name="email_setting_status" id="email-disable2" value="{{ app_settings.email_sys_set }}">
+                                        <input class="form-check-input" type="radio" name="email_setting_status" id="email-disable2" value="False" {% if not app_settings.email_sys_set %}checked{% endif %} disabled>
                                         <label class="form-check-label" for="email-disable2">Disable</label>
                                     </div>
                                 </div>
@@ -194,11 +194,11 @@
                                 <h6 style="margin-right: 10px;">SMS System:</h6>
                                 <div id="status">
                                     <div class="form-check form-check-inline">
-                                        <input class="form-check-input" type="radio" name="sms_setting_status" id="sms-enable2" value="Enable" checked>
+                                        <input class="form-check-input" type="radio" name="sms_setting_status" id="sms-enable2" value="True" {% if app_settings.sms_sys_set %}checked{% endif %} disabled>
                                         <label class="form-check-label" for="sms-enable2">Enable</label>
                                     </div>
                                     <div class="form-check form-check-inline">
-                                        <input class="form-check-input" type="radio" name="sms_setting_status" id="sms-disable2" value="Disable">
+                                        <input class="form-check-input" type="radio" name="sms_setting_status" id="sms-disable2" value="False" {% if not app_settings.sms_sys_set %}checked{% endif %} disabled>
                                         <label class="form-check-label" for="sms-disable2">Disable</label>
                                     </div>
                                 </div>
@@ -424,7 +424,9 @@
     function sendSettings(sectionId, tabName) {
         const section = document.querySelector(`#${sectionId}`);
         const inputs = section.querySelectorAll("input, select, textarea");
-        const data = { tab_name: tabName };
+        let selectedsms = document.querySelector('input[name="sms_setting_status"]:checked').value;
+        let selectedValue = document.querySelector('input[name="email_setting_status"]:checked').value;
+        const data = { tab_name: tabName, email_sys:selectedValue, sms_sys:selectedsms };
         
         inputs.forEach((input) => {
             if (input.name) {

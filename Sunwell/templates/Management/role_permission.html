@@ -7,6 +7,7 @@
 {% block styles %}
     {{ block.super }}
     <link rel="stylesheet" href="{% static 'css/Management/role_permission.css' %}">
+    <link rel="stylesheet" href="{% static 'alert_msg/alert_msg.css' %}">
     <style>
         /* Add responsive styles */
         @media (max-width: 992px) {
@@ -102,6 +103,13 @@
 
 {% block content %} 
 <div class="container mt-2 table-container fade-in">
+    <div id="floating-alert-success" class="floating-alert-success">
+        <span id="floating-alert-success-message"></span>
+    </div>
+    
+    <div id="floating-alert-error" class="floating-alert-error">
+        <span id="floating-alert-error-message"></span>
+    </div>
     <div class="d-flex justify-content-between align-items-center custom-label mt-3 mb-2" style="font-weight: bold; padding: 5px 10px; background-color: rgb(235, 235, 235);">
         <section class="d-block custom-label mb-2" style="background-color: rgb(235, 235, 235);text-align: center;font-weight: bold; padding: 5px 0px">
             User Roles <span id="records-info">(Records Found: 0, Selected: 0)</span>
@@ -341,5 +349,57 @@
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
   <script src="{% static 'js/Management/role_permission.js' %}"></script>
+
+  {% if messages %}
+    {% for message in messages %}
+        {% if 'success' in message.tags %}
+            <script>
+                document.addEventListener('DOMContentLoaded', function () {
+                    var successAlertElement = document.getElementById('floating-alert-success');
+                    var successMessage = document.getElementById('floating-alert-success-message');
+
+                    // Set the success message and display the floating alert
+                    successMessage.textContent = "{{ message|safe }}";
+                    successAlertElement.style.display = 'block';
+                    successAlertElement.classList.add('show');
+
+                    // Hide the success alert automatically after 3 seconds
+                    setTimeout(function () {
+                        successAlertElement.classList.remove('show');
+                        setTimeout(() => {
+                            successAlertElement.style.display = 'none';
+                        }, 500); // Extra delay for smooth transition
+                    }, 3000); 
+                });
+            </script>
+        {% endif %}
+    {% endfor %}
+{% endif %}
+
+{% if messages %}
+    {% for message in messages %}
+        {% if 'error' in message.tags %}
+            <script>
+                document.addEventListener('DOMContentLoaded', function () {
+                    var errorAlertElement = document.getElementById('floating-alert-error');
+                    var errorMessage = document.getElementById('floating-alert-error-message');
+
+                    // Set the error message and display the floating alert
+                    errorMessage.textContent = "{{ message|safe }}";
+                    errorAlertElement.style.display = 'block';
+                    errorAlertElement.classList.add('show');
+
+                    // Hide the error alert automatically after 3 seconds
+                    setTimeout(function () {
+                        errorAlertElement.classList.remove('show');
+                        setTimeout(() => {
+                            errorAlertElement.style.display = 'none';
+                        }, 500); // Extra delay for smooth transition
+                    }, 3000); 
+                });
+            </script>
+        {% endif %}
+    {% endfor %}
+{% endif %}
 {% endblock %}
 {% endblock content %}

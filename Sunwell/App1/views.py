@@ -64,15 +64,9 @@ def user_login(request):
         if 'failed_attempts' not in request.session:
             request.session['failed_attempts'] = {}
 
-        user_attempts = request.session['failed_attempts'].get(username, {'count': 0, 'locked_until': None})
+        user_attempts = request.session['failed_attempts'].get(username, {'count': 0})
 
-        # Check if account is locked
-        if user_attempts['locked_until'] and timezone.now() < user_attempts['locked_until']:
-            messages.error(
-                request, 
-                f'Account is locked until {user_attempts["locked_until"].strftime("%Y-%m-%d %H:%M:%S")}.'
-            )
-            return render(request, 'Base/login.html')
+        
 
         try:
             # SuperAdmin login without restrictions
@@ -142,7 +136,6 @@ def user_login(request):
                     if user_attempts['count'] >= max_attempts:
                         user.account_lock = True
                         user.save()
-                        user_attempts['locked_until'] = timezone.now() + timedelta(minutes=15)
                         messages.error(request, 'Your account has been locked due to multiple failed login attempts.')
                     else:
                         if attempts_left < 2:
@@ -715,7 +708,9 @@ def department(request):
 
 
     if request.method == "POST":
+        print(12)
         try:
+            print(2)
             department_name = request.POST.get('departmentName')
             commgroup_name = request.POST.get('commGroup')
             header_note = request.POST.get('headerNote')
@@ -769,8 +764,11 @@ def department(request):
             mobile_user10 = request.POST.get('mobile_user10') or None
             mobile_no10 = request.POST.get('mobile_no10') or None if request.POST.get('mobile_no10', '').isdigit() else None
             # sms_alert = True if sms_status == 'Enable' else False
-            comm_group = CommGroup.objects.get(CommGroup_code=commgroup_name)
-            
+            try:
+                comm_group = CommGroup.objects.get(CommGroup_code=commgroup_name)
+            except CommGroup.DoesNotExist:
+                messages.error(request, "Selected Communication Group does not exist.")
+                return redirect('department')
 
             new_department = Department(
                 department_name=department_name,
@@ -817,7 +815,9 @@ def department(request):
                 user10_num=mobile_no10
 
             )
+            print(1)
             new_department.save()
+            print("Saved", new_department)
             UserActivityLog.objects.create(
                 user=emp_user,
                 log_date=timezone.localtime(timezone.now()).date(),
@@ -839,6 +839,8 @@ def department(request):
     }
     
     return render(request, 'Management/department.html', context)
+
+
 
 def edit_department(request, department_id):
     emp_user = request.session.get('username', None)
@@ -1162,7 +1164,7 @@ def edit_user(request, user_id):
             department_id = request.POST.get('editdepartmentName')
             status = request.POST.get('editstatus')
             accessible_departments = request.POST.getlist('editaccessibleDepartment')
-            accountlock=request.POST.get('editAccountLock')
+            account_lock = request.POST.get('editAccountLock') == 'on'
             
             comm_group = get_object_or_404(CommGroup, CommGroup_code=comm_group_code)
             department = get_object_or_404(Department, id=department_id)
@@ -1174,7 +1176,7 @@ def edit_user(request, user_id):
             user.commGroup = comm_group
             user.department = department
             user.status = status
-            user.account_lock=accountlock
+            user.account_lock=account_lock
             user.save() 
 
             if accessible_departments:
@@ -1803,7 +1805,7 @@ import json
 def save_app_settings(request):
     if request.method == 'POST':
         settings_data = json.loads(request.body)
-       
+        print("SD", settings_data)
         
         tab_name = settings_data.get('tab_name')
         
@@ -1817,7 +1819,8 @@ def save_app_settings(request):
                 app_settings.autologouttime = settings_data.get('system_auto_logout')
 
             elif tab_name == "Email Settings":
-                app_settings.email_sys_set = settings_data.get('email_sys_set')
+                status = settings_data.get('email_sys', "False")
+                app_settings.email_sys_set = str(status).strip().lower()=="true"
                 app_settings.email_host = settings_data.get('smpthost')
                 app_settings.email_host_user = settings_data.get('smptemail')
                 app_settings.email_host_password = settings_data.get('smptpass')
@@ -1825,7 +1828,8 @@ def save_app_settings(request):
                 app_settings.email_signature = settings_data.get('emailsignature')
 
             elif tab_name == "SMS Settings":
-                app_settings.sms_sys_set = settings_data.get('sms_setting_status')
+                status = settings_data.get('sms_sys', "False")
+                app_settings.sms_sys_set = str(status).strip().lower()=="true"
                 app_settings.comm_port = settings_data.get('commport')
                 app_settings.baud_rate = settings_data.get('baudrate')
                 app_settings.data_bits = settings_data.get('databits')
@@ -3149,13 +3153,15 @@ def process_alarm_logs(file_path, equipment_id):
                             ]
                             email_list = [email for email in email_fields if email]
 
+                            email_delay = dept.email_delay if dept.email_delay else "0"
+
                             user_data = {}
                             for i in range(1, 11): 
                                 username = getattr(dept, f'user{i}', None)
                                 usernum = getattr(dept, f'user{i}_num', None)
                                 if username is not None and usernum is not None: 
                                     user_data[username]=usernum
-                            thread_email = threading.Thread(target=send_alert_email, args=(alarm_log.id, email_list))
+                            thread_email = threading.Thread(target=send_alert_email, args=(alarm_log.id, email_list, email_delay))
                             thread_sms = threading.Thread(target=send_alert_messages, args=(user_data, alarm_log.id))
                             thread_email.start()
                             thread_sms.start()
@@ -3392,8 +3398,13 @@ Date and Time: {formatted_datetime}"""
 
 
 
-def send_alert_email(alarm_id, email_list):
+def send_alert_email(alarm_id, email_list, email_delay):
     try:
+
+        if email_delay and email_delay.isdigit():
+            delay_minutes = int(email_delay)
+            time.sleep(delay_minutes * 60)  # Convert minutes to seconds
+
         alarm = Alarm_logs.objects.get(id=alarm_id)
         email_settings = get_email_settings(request)
         subject = 'Sun Well Alarm Alerts'
@@ -3937,13 +3948,17 @@ def save_alert_settings(request):
 
 def view_log(request):
     emp_user = request.session.get('username', None)
+    department=""
     if not emp_user:
         return redirect('login')
     try:
         data = User.objects.get(username = emp_user)
+        department= data.department
     except:
         data = SuperAdmin.objects.get(username = emp_user)
+        department=None
     
+    print(department)
     try:
         acc_db = user_access_db.objects.get(role = data.role)
     except:
@@ -4012,7 +4027,7 @@ def view_log(request):
                 from_time_parsed.strftime('%H:%M'),
                 to_time_parsed.strftime('%H:%M'),
                 organization,
-                data.department,
+                department,
                 data.username,
                 selected_equipment
             )
@@ -4026,7 +4041,7 @@ def view_log(request):
                 from_time_parsed.strftime('%H:%M'),
                 to_time_parsed.strftime('%H:%M'),
                 organization,
-                data.department,
+                department,
                 data.username,
                 selected_equipment
             )
@@ -4137,7 +4152,7 @@ def generate_log_pdf(request, records, from_date, to_date, from_time, to_time, o
         footer_left_top = "Sunwell"
         footer_left_bottom = "ESTDAS v1.0"
         footer_center = f"Printed By - {username} on {current_time}"
-        footer_right_top = department.footer_note
+        footer_right_top = department.footer_note if department else " "
         # footer_right_bottom = f"Page {page_num} of {total_pages}"
         
         # Draw footer at the bottom of the page
@@ -4539,7 +4554,7 @@ def generate_log_pdf_landscape(request, records, from_date, to_date, from_time, 
         footer_text_left_top = "Sunwell"
         footer_text_left_bottom = "ESTDAS v1.0"
         footer_text_center = f"Printed By - {username} on {datetime.now().strftime('%d-%m-%Y %H:%M')}"  # Centered dynamic text
-        footer_text_right_top = department.footer_note
+        footer_text_right_top = department.footer_note if department else " "
         # footer_text_right = f"Page {page_num}"
         
         # Draw footer at the bottom of the page
@@ -4827,8 +4842,11 @@ def alaram_log(request):
         return redirect('login')
     try:
         data = User.objects.get(username = emp_user)
+        department= data.department
     except:
-        data = SuperAdmin.objects.get(username=emp_user)
+        data = SuperAdmin.objects.get(username = emp_user)
+        department=None
+
     
     
     try:
@@ -4841,7 +4859,7 @@ def alaram_log(request):
     alarm_logs_data = Alarm_logs.objects.filter(acknowledge=False)
  
     alarm_codes = Alarm_codes.objects.all()
-    return render(request, 'Data_Analysis/alaram_log.html', {'organization': organization, 'data':data, 'acc_db':acc_db, 'equipments': equipments,
+    return render(request, 'Data_Analysis/alaram_log.html', {'organization': organization, 'data':data, 'acc_db':acc_db, 'equipments': equipments, 'department':department,
         'alarm_logs_data': alarm_logs_data,
         'alarm_codes': alarm_codes})
 
@@ -4923,10 +4941,15 @@ def user_activity(request):
 
     
     emp_user = request.session.get('username', None)
+    if not emp_user:
+        return redirect('login')
     try:
-        data = User.objects.get(username=emp_user)
+        data = User.objects.get(username = emp_user)
+        department= data.department
     except:
-        data = SuperAdmin.objects.get(username=emp_user)
+        data = SuperAdmin.objects.get(username = emp_user)
+        department=None
+
     
 
     try:
@@ -5004,7 +5027,7 @@ def user_activity(request):
             from_time,
             to_time,
             organization,
-            data.department,
+            department,
             data.username,
             filter_format
         )
@@ -5111,7 +5134,7 @@ def generate_userActivity_pdf(request, user_logs, from_date, to_date, from_time,
         footer_text_left_top = "Sunwell"
         footer_text_left_bottom = "ESTDAS v1.0"
         footer_text_center = "Printed By - {} on {}".format(username, formatted_time)
-        footer_text_right_top = department.footer_note 
+        footer_text_right_top = department.footer_note if department else " " 
         # footer_text_right_bottom = f"Page {page_num} of {total_pages}"
 
         canvas.setFont("Helvetica", 10)
@@ -5175,10 +5198,14 @@ def generate_userActivity_pdf(request, user_logs, from_date, to_date, from_time,
 def equipment_Audit_log(request):
 
     emp_user = request.session.get('username', None)
+    if not emp_user:
+        return redirect('login')
     try:
-        data = User.objects.get(username=emp_user)
+        data = User.objects.get(username = emp_user)
+        department= data.department
     except:
-        data = SuperAdmin.objects.get(username=emp_user)
+        data = SuperAdmin.objects.get(username = emp_user)
+        department=None
     
     try:
         acc_db = user_access_db.objects.get(role=data.role)
@@ -5306,7 +5333,7 @@ def equipment_Audit_log(request):
             from_time_parsed.strftime('%H:%M'),
             to_time_parsed.strftime('%H:%M'),
             organization,
-            data.department,
+            department,
             data.username,
             equipment_list,
             format_type
@@ -5412,7 +5439,7 @@ def generate_equipment_log_pdf(request, records, from_date, to_date, from_time, 
         footer_text_left_top = "Sunwell"
         footer_text_left_bottom = "ESTDAS v1.0"
         footer_text_center = f"Printed By - {username} on {datetime.now().strftime('%d-%m-%Y %H:%M')}"  # Centered dynamic text
-        footer_text_right_top = department.footer_note
+        footer_text_right_top = department.footer_note if department else " "
         # footer_text_right = f"Page {page_num}"
         
         # Draw footer at the bottom of the page
@@ -5483,12 +5510,13 @@ def alaram_Audit_log(request):
     emp_user = request.session.get('username', None)
     if not emp_user:
         return redirect('login')
-    
     try:
-        data = User.objects.get(username=emp_user)
-    except ObjectDoesNotExist:
-        
-        data = SuperAdmin.objects.get(username=emp_user)
+        data = User.objects.get(username = emp_user)
+        department= data.department
+    except:
+        data = SuperAdmin.objects.get(username = emp_user)
+        department=None
+
     try:
         acc_db = user_access_db.objects.get(role=data.role)
     except ObjectDoesNotExist:
@@ -5609,7 +5637,7 @@ def alaram_Audit_log(request):
             from_time_parsed.strftime('%H:%M'),
             to_time_parsed.strftime('%H:%M'),
             organization,
-            data.department,
+            department,
             data.username,
             equipment_list,
             format_type
@@ -5729,7 +5757,7 @@ def generate_audit_alaram_log_pdf(request, records, from_date, to_date, from_tim
         footer_text_left_top = "Sunwell"
         footer_text_left_bottom = "ESTDAS v1.0"
         footer_text_center = f"Printed By - {username} on {datetime.now().strftime('%d-%m-%Y %H:%M')}"  # Centered dynamic text
-        footer_text_right_top = department.footer_note
+        footer_text_right_top = department.footer_note if department else " "
         # footer_text_right = f"Page {page_num}"
         
         # Draw footer at the bottom of the page
@@ -5796,8 +5824,10 @@ def email_Audit_log(request):
         return redirect('login')
     try:
         data = User.objects.get(username = emp_user)
+        department= data.department
     except:
-        data = SuperAdmin.objects.get(username=emp_user)
+        data = SuperAdmin.objects.get(username = emp_user)
+        department=None
     
     try:
         acc_db = user_access_db.objects.get(role = data.role)
@@ -5849,9 +5879,7 @@ def email_Audit_log(request):
     elif format_type=='Equipment-wise':
         if equipment_list:
             user_names = Equipment.objects.filter(id=equipment_list).values_list('equip_name', flat=True)
-            print("EQP", user_names)
             filter_kwargs &= Q(equipment__equip_name__in=user_names)
-            print(" Filter EQP", filter_kwargs)
             current_date = now()
             from_date_parsed = parse_date(from_date) if from_date else current_date.replace(day=1).date()
             to_date_parsed = parse_date(to_date) if to_date else current_date.date()
@@ -5871,8 +5899,6 @@ def email_Audit_log(request):
                     (Q(date=to_date_parsed) & Q(time__lte=to_time_parsed)) |
                     Q(date__gt=from_date_parsed, date__lt=to_date_parsed)
                 )
-            
-            print(" Filtered details", filter_kwargs)
         else:
             return HttpResponse("Equipment List is mandatory for Equipment-wise format.", status=400)
         
@@ -5938,7 +5964,7 @@ def email_Audit_log(request):
             from_time_parsed.strftime('%H:%M'),
             to_time_parsed.strftime('%H:%M'),
             organization,
-            data.department,
+            department,
             data.username,
             equipment_list,
             format_type
@@ -6003,14 +6029,17 @@ def generate_email_log_pdf(request, records, from_date, to_date, from_time, to_t
         
         canvas.setFont("Helvetica-Bold", 14)
         canvas.setFillColor(colors.blue)
-        canvas.drawString(30, 570, organization.name)
+        org_name=organization.name if organization else " "
+        canvas.drawString(30, 570, org_name)
 
         canvas.setFillColor(colors.black)
         canvas.setFont("Helvetica", 12)
-        canvas.drawString(30, 550, department.header_note)
+        department_name=department.header_note if department else " "
+        canvas.drawString(30, 550, department_name)
 
-        logo_path = organization.logo.path
-        canvas.drawImage(logo_path, 730, 550, width=80, height=30)
+        logo_path = organization.logo.path if organization and organization.logo else " "
+        if logo_path.strip():  
+            canvas.drawImage(logo_path, 730, 550, width=80, height=30)
 
         canvas.setLineWidth(0.2)
         canvas.line(30, 540, 820, 540)
@@ -6039,7 +6068,7 @@ def generate_email_log_pdf(request, records, from_date, to_date, from_time, to_t
         footer_text_left_top = "Sunwell"
         footer_text_left_bottom = "ESTDAS v1.0"
         footer_text_center = f"Printed By - {username} on {datetime.now().strftime('%d-%m-%Y %H:%M')}"
-        footer_text_right_top = department.footer_note
+        footer_text_right_top = department.footer_note if department else " "
         # footer_text_right = f"Page {page_num}"
 
         canvas.setFont("Helvetica", 10)
@@ -6113,8 +6142,10 @@ def sms_Audit_log(request):
         return redirect('login')
     try:
         data = User.objects.get(username = emp_user)
+        department= data.department
     except:
-        data = SuperAdmin.objects.get(username=emp_user)
+        data = SuperAdmin.objects.get(username = emp_user)
+        department=None
     
     try:
         acc_db = user_access_db.objects.get(role = data.role)
@@ -6249,7 +6280,7 @@ def sms_Audit_log(request):
             from_time_parsed.strftime('%H:%M'),
             to_time_parsed.strftime('%H:%M'),
             organization,
-            data.department,
+            department,
             data.username,
             equipment_list,
             format_type
@@ -6313,14 +6344,17 @@ def generate_sms_log_pdf(request, records, from_date, to_date, from_time, to_tim
 
         canvas.setFont("Helvetica-Bold", 14)
         canvas.setFillColor(colors.blue)
-        canvas.drawString(30, 570, organization.name)
+        org_name=organization.name if organization else " "
+        canvas.drawString(30, 570, org_name)
 
         canvas.setFillColor(colors.black)
         canvas.setFont("Helvetica", 12)
-        canvas.drawString(30, 550, department.header_note)
+        department_name=department.header_note if department else " "
+        canvas.drawString(30, 550, department_name)
 
-        logo_path = organization.logo.path
-        canvas.drawImage(logo_path, 730, 550, width=80, height=30)
+        logo_path = organization.logo.path if organization and organization.logo else " "
+        if logo_path.strip():  
+            canvas.drawImage(logo_path, 730, 550, width=80, height=30)
 
         canvas.setLineWidth(0.5)
         canvas.line(30, 540, 820, 540)
@@ -6349,7 +6383,7 @@ def generate_sms_log_pdf(request, records, from_date, to_date, from_time, to_tim
         footer_text_left_top = "Sunwell"
         footer_text_left_bottom = "ESTDAS v1.0"
         footer_text_center = f"Printed By - {username} on {datetime.now().strftime('%d-%m-%Y %H:%M')}"
-        footer_text_right_top = department.footer_note
+        footer_text_right_top = department.footer_note if department else " "
         # footer_text_right = f"Page {page_num}"
 
         canvas.setFont("Helvetica", 10)
@@ -6519,9 +6553,11 @@ def view_alarm_log(request):
     if not emp_user:
         return redirect('login')
     try:
-        data = User.objects.get(username=emp_user)
-    except User.DoesNotExist:
-        data = SuperAdmin.objects.get(username=emp_user)
+        data = User.objects.get(username = emp_user)
+        department= data.department
+    except:
+        data = SuperAdmin.objects.get(username = emp_user)
+        department=None
 
     try:
         acc_db = user_access_db.objects.get(role=data.role)
@@ -6580,7 +6616,7 @@ def view_alarm_log(request):
         from_time_parsed.strftime('%H:%M'),
         to_time_parsed.strftime('%H:%M'),
         organization,
-        data.department,
+        department,
         data.username,
         selected_equipment
     )
@@ -6681,7 +6717,7 @@ def generate_alaram_log_pdf(request, records, from_date, to_date, from_time, to_
         footer_left_top = "Sunwell"
         footer_left_bottom = "ESTDAS v1.0"
         footer_center = f"Printed By - {username} on {current_time}"
-        footer_right_top = department.footer_note
+        footer_text_right_top = department.footer_note if department else " "
         # footer_right_bottom = f"Page {page_num} of {total_pages}"
         
         # Draw footer at the bottom of the page
@@ -6689,7 +6725,7 @@ def generate_alaram_log_pdf(request, records, from_date, to_date, from_time, to_
         canvas.drawString(30, 45, footer_left_top)
         canvas.drawString(30, 35, footer_left_bottom)
         canvas.drawCentredString(300, 40, footer_center)
-        canvas.drawRightString(570, 45, footer_right_top)
+        canvas.drawRightString(570, 45, footer_text_right_top)
         # canvas.drawRightString(570, 35, footer_right_bottom)  
 
     # Main function to generate PDF

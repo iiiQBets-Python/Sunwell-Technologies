@@ -272,7 +272,7 @@ class AppSettings(models.Model):
     #App settings fields
 
     # Email settings fields
-    email_sys_set = models.CharField(max_length=10, default='Enable', null=True)
+    email_sys_set = models.BooleanField(default=False)
     email_host = models.CharField(max_length=100, null=True)
     email_host_user = models.EmailField(null=True)
     email_host_password = models.CharField(max_length=100, null=True)
@@ -280,7 +280,7 @@ class AppSettings(models.Model):
     email_signature = models.TextField(blank=True, null=True)
 
     # SMS settings fields
-    sms_sys_set = models.CharField(max_length=10, default='Enable', null=True)
+    sms_sys_set = models.BooleanField(default=False)
     comm_port = models.CharField(max_length=10, blank=True, null=True)
     parity = models.CharField(max_length=10, blank=True, null=True)
     baud_rate = models.CharField(max_length=10, blank=True, null=True)

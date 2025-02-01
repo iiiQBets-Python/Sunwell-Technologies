@@ -12,3 +12,13 @@
 2025-01-28 18:52:53,004 - Darshan is getting TypeError on accessing download_backup: cannot unpack non-iterable NoneType object
 2025-01-28 18:57:46,590 - Darshan is getting ValueError on accessing equipment_configure: Field 'total_temp_sensors' expected a number but got ''.
 2025-01-28 18:58:34,020 - Darshan is getting ValueError on accessing equipment_configure: Field 'total_temp_sensors' expected a number but got ''.
+2025-01-30 10:46:59,219 - Sunwell is getting AttributeError on accessing view_log: 'SuperAdmin' object has no attribute 'department'
+2025-01-30 10:53:29,164 - Sunwell is getting AttributeError on accessing view_log: 'SuperAdmin' object has no attribute 'department'
+2025-01-30 10:59:17,176 - Sunwell is getting AttributeError on accessing view_log: 'NoneType' object has no attribute 'footer_note'
+2025-01-30 14:51:25,721 - Sunwell is getting AttributeError on accessing Equipment_Audit_log: 'SuperAdmin' object has no attribute 'department'
+2025-01-30 15:02:50,835 - Sunwell is getting AttributeError on accessing alaram_Audit_log: 'function' object has no attribute 'header_note'
+2025-01-30 15:04:21,018 - Sunwell is getting AttributeError on accessing email_Audit_log: 'SuperAdmin' object has no attribute 'department'
+2025-01-30 15:05:16,837 - Sunwell is getting AttributeError on accessing email_Audit_log: 'NoneType' object has no attribute 'header_note'
+2025-01-30 15:06:26,352 - Sunwell is getting NameError on accessing email_Audit_log: 
+handle_pageBegin args=() name 'department_name' is not defined
+2025-01-30 15:11:21,725 - Sunwell is getting AttributeError on accessing sms_Audit_log: 'NoneType' object has no attribute 'header_note'

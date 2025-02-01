@@ -84,6 +84,7 @@ DATABASES = {
 
 # MSSQL Database Connection
 
+#Read DB Details from .env file
 # DATABASES = {
 #     'default': {
 #         'ENGINE': 'mssql',

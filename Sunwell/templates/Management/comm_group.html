@@ -5,24 +5,8 @@
 {% block styles %}
     {{ block.super }}
     <link rel="stylesheet" href="{% static 'css/Management/comm_group.css' %}">
+    <link rel="stylesheet" href="{% static 'alert_msg/alert_msg.css' %}">
     <style>
-        .floating-alert {
-            position: fixed;
-            top: -100px; /* Hidden above the view initially */
-            right: 40%;
-            z-index: 1050;
-            width: auto;
-            padding: 10px 20px;
-            border-radius: 5px;
-            background-color: #28a745; /* Green background for success */
-            color: white;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-            transition: top 0.5s ease-in-out; /* Smooth transition for appearing */
-        }
-    
-        .floating-alert.show {
-            top: 100px; /* Slide down to be visible */
-        }
         /* Add responsive styles */
         @media (width: 768px) {
             .d-flex.justify-content-between.align-items-center.mt-3 {
@@ -101,15 +85,13 @@
 
 {% block content %}
 <div class="container mt-2 table-container fade-in">
-    {% if messages %}
-  <div class="alert alert-dismissible">
-    {% for message in messages %}
-      <div class="alert alert-{{ message.tags }}">
-        {{ message|safe }}
-      </div>
-    {% endfor %}
-  </div>
-{% endif %}
+    <div id="floating-alert-success" class="floating-alert-success">
+        <span id="floating-alert-success-message"></span>
+    </div>
+    
+    <div id="floating-alert-error" class="floating-alert-error">
+        <span id="floating-alert-error-message"></span>
+    </div>
     <!-- <div class="d-flex justify-content-end mb-2">
         <button type="button" class="btn btn-primary">
             space for the others icons
@@ -303,6 +285,7 @@
         modalInstance.show();
     });
 });
+
 </script>
 {% block scripts %}
   {{ block.super }}
@@ -368,6 +351,58 @@ document.getElementById('adminUserModal').addEventListener('hidden.bs.modal', fu
     });
 
   </script>
+
+  {% if messages %}
+    {% for message in messages %}
+        {% if 'success' in message.tags %}
+            <script>
+                document.addEventListener('DOMContentLoaded', function () {
+                    var successAlertElement = document.getElementById('floating-alert-success');
+                    var successMessage = document.getElementById('floating-alert-success-message');
+
+                    // Set the success message and display the floating alert
+                    successMessage.textContent = "{{ message|safe }}";
+                    successAlertElement.style.display = 'block';
+                    successAlertElement.classList.add('show');
+
+                    // Hide the success alert automatically after 3 seconds
+                    setTimeout(function () {
+                        successAlertElement.classList.remove('show');
+                        setTimeout(() => {
+                            successAlertElement.style.display = 'none';
+                        }, 500); // Extra delay for smooth transition
+                    }, 3000); 
+                });
+            </script>
+        {% endif %}
+    {% endfor %}
+{% endif %}
+
+{% if messages %}
+    {% for message in messages %}
+        {% if 'error' in message.tags %}
+            <script>
+                document.addEventListener('DOMContentLoaded', function () {
+                    var errorAlertElement = document.getElementById('floating-alert-error');
+                    var errorMessage = document.getElementById('floating-alert-error-message');
+
+                    // Set the error message and display the floating alert
+                    errorMessage.textContent = "{{ message|safe }}";
+                    errorAlertElement.style.display = 'block';
+                    errorAlertElement.classList.add('show');
+
+                    // Hide the error alert automatically after 3 seconds
+                    setTimeout(function () {
+                        errorAlertElement.classList.remove('show');
+                        setTimeout(() => {
+                            errorAlertElement.style.display = 'none';
+                        }, 500); // Extra delay for smooth transition
+                    }, 3000); 
+                });
+            </script>
+        {% endif %}
+    {% endfor %}
+{% endif %}
   {% endblock %}
 {% endblock content %}
 

@@ -1,4 +1,3 @@
-
 {% extends "Base/base.html" %}
 {% load static %}
 
@@ -135,7 +134,7 @@
     <div class="scrollable-container">
         <div class="row card-details" id="gridView">
             {% for equipment in equipment_data %}
-            <div class="col-12 col-md-6 col-lg-3 card-wrapper" data-status="{{ equipment.status|lower }}" data-department-id="{{ equipment.department_id }}">
+            <div class="col-12 col-md-6 col-lg-3 card-wrapper" data-id="{{ equipment.id }}"  data-status="{{ equipment.status|lower }}" data-department-id="{{ equipment.department_id }}">
                 <div class="card">
                     <div class="card-header">
                         <h5 class="card-title mb-0">{{ equipment.name }}</h5>
@@ -144,7 +143,7 @@
                         <div class="card-content">
                             <div class="row">
                                 <div class="col-6"><strong>Status</strong></div>
-                                <div class="col-6">
+                                <div class="col-6 status">
                                     {% if equipment.status == 'Online' %}
                                         <i class="fa-regular fa-circle-check" style="color: #28a745;"></i> Online
                                     {% else %}
@@ -153,7 +152,7 @@
                                 </div>
                             </div>
                             <div class="row">
-                                <div class="col-6"><strong>Pending Alarms</strong></div>
+                                <div class="col-6 pending-review" ><strong>Pending Alarms</strong></div>
                                 <div class="col-6"><i class="fas fa-exclamation-triangle icon-yellow"></i> Alarms ({{ equipment.pending_review }})</div>
                             </div>
                             <div class="row">
@@ -254,8 +253,8 @@
             const equipmentData = data.equipment_data
             equipmentData.forEach(equipment => {
                
-                const card = document.querySelector(`.card-wrapper[data-id="${equipment.id}"]`);
-                const tableRow = document.querySelector(`tr[data-id="${equipment.id}"]`);
+                const card = document.querySelector(.card-wrapper[data-id="${equipment.id}"]);
+                const tableRow = document.querySelector(tr[data-id="${equipment.id}"]);
 
                 
                 if (card) {
@@ -264,16 +263,16 @@
                         equipment.status === 'Online' 
                         ? '<i class="fa-regular fa-circle-check" style="color: #28a745;"></i> Online' 
                         : '<i class="fa-regular fa-circle-stop" style="color: #d20f0f;"></i> Offline';
-                    card.querySelector('.pending-review').textContent = `Alarms (${equipment.pending_review})`;
+                    card.querySelector('.pending-review').textContent = Alarms (${equipment.pending_review});
                 }
 
                 // Update table row content if it exists
                 if (tableRow) {
                     tableRow.querySelector('.status').innerHTML = 
-                        equipment.status === 'Online' 
+                        equipment.status === 'Offline' 
                         ? '<i class="fa-regular fa-circle-check" style="color: #28a745;"></i> Online' 
                         : '<i class="fa-regular fa-circle-stop" style="color: #d20f0f;"></i> Offline';
-                    tableRow.querySelector('.pending-review').textContent = `Alarms (${equipment.pending_review})`;
+                    tableRow.querySelector('.pending-review').textContent = Alarms (${equipment.pending_review});
                 }
             });
         })
@@ -368,7 +367,7 @@ window.onload = fetchEquipmentData;
     
             // Update the visible records count
             const recordsInfo = document.getElementById("records-info");
-            recordsInfo.textContent = `(Records Found: ${visibleCount})`;
+            recordsInfo.textContent = (Records Found: ${visibleCount});
         }
     
         // Event listener for department dropdown change
@@ -381,7 +380,7 @@ window.onload = fetchEquipmentData;
         // Filter by status and update the URL
         function filterByStatus(status) {
             const dropdownButton = document.getElementById("roleFilterDropdown");
-            dropdownButton.innerHTML = `${status.charAt(0).toUpperCase() + status.slice(1)}`;
+            dropdownButton.innerHTML = ${status.charAt(0).toUpperCase() + status.slice(1)};
     
             // Update the URL query parameter
             const url = new URL(window.location.href);
@@ -423,5 +422,3 @@ window.onload = fetchEquipmentData;
   </script>
   {% endblock %}
 {% endblock content %}
-
-

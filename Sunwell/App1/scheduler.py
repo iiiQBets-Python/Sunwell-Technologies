@@ -65,6 +65,7 @@ def send_scheduled_emails():
                 try:
                     print(f"[DEBUG] send_scheduled_emails triggered at {datetime.now()}")
                     print(f"[DEBUG] Registered Jobs: {[job.id for job in scheduler.get_jobs()]}")
+                    
                     send_mail(
                         subject=subject,
                         message=message,

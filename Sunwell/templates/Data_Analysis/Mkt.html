@@ -1,5 +1,4 @@
 
-
 {% extends "Base/base.html" %}
 {% load static %}
 {% block title %} --::: ESTDAS :::-- {% endblock %}
@@ -7,128 +6,151 @@
     {{ block.super }}
     <link rel="stylesheet" href="{% static 'css/data_analysis/Mkt.css' %}">
     <style>
-      /* Add responsive styles */
-      @media (max-width: 992px) {
+    /* Add responsive styles */
+    @media (max-width: 992px) {
         .table-container {
             background-color:#ffff;
             border-radius: 10px;
             padding: 10px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            /* box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); */
             max-width: 100%;
             display: flex;
             flex-direction: column;
             overflow-y: auto;
             height: 75vh;
+        }  
+        .custom-label {
+            flex-direction: column;
+            align-items: stretch;
         }
-    
-          
-          .custom-label {
-              flex-direction: column;
-              align-items: stretch;
-          }
-          
-          .custom-label > div {
-              margin-top: 10px;
-          }
-          
-          .d-flex.justify-content-end.align-items-center {
-              flex-direction: column;
-              align-items: stretch !important;
-          }
-          
-          .d-flex.input-group {
-              width: 100% !important;
-              margin-bottom: 10px;
-          }
-          
-          .btn-primary {
-              width: 100%;
-          }
-      }
+        .custom-label > div {
+            margin-top: 10px;
+        }
+        .d-flex.justify-content-end.align-items-center {
+            flex-direction: column;
+            align-items: stretch !important;
+        }
+        .d-flex.input-group {
+            width: 100% !important;
+            margin-bottom: 10px;
+        }
+        .btn-primary {
+            width: 100%;
+        }
+    }
 
-      @media (max-width: 767px) { 
-          .pagination {
-              margin-top: 10px;
-          }
-           
-          .d-flex.justify-content-between.align-items-center.mt-3 {
-              flex-direction: column;
-              align-items: stretch !important;
-          }
-          
-          .d-flex.justify-content-between.align-items-center.mt-3 > div {
-              text-align: center;
-              margin: 5px 0;
-          }
-          
-          #adminUserModal .modal_departement {
-              max-width: 95%;
-              margin: 1.75rem auto;
-          }
-      }
+    @media (max-width: 767px) { 
+        .pagination {
+            margin-top: 10px;
+        }
+        
+        .d-flex.justify-content-between.align-items-center.mt-3 {
+            flex-direction: column;
+            align-items: stretch !important;
+        }
+        
+        .d-flex.justify-content-between.align-items-center.mt-3 > div {
+            text-align: center;
+            margin: 5px 0;
+        }
+        
+        #adminUserModal .modal_departement {
+            max-width: 95%;
+            margin: 1.75rem auto;
+        }
+    }
 
-      @media (max-width: 576px) {
-          .entries-info, .pagination {
-              justify-content: center;
-              margin-top: 10px;
-          }
-          
-          #adminUserModal .modal_departement {
-              margin: 0.5rem;
-          }
-          
-          .form-buttons {
-              flex-direction: column;
-          }
-          
-          .form-buttons .btn {
-              width: 100%;
-              margin-bottom: 10px;
-          }
-      }
-
-      .hide-table {
-        display: none; /* Table is hidden by default */
+    @media (max-width: 576px) {
+        .container {
+            overflow-y: auto !important
+        }
+        .content {
+            flex-grow: 1;
+            height: 74vh;
+        }
+        .entries-info, .pagination {
+            justify-content: center;
+            margin-top: 10px;
+        }  
+        #adminUserModal .modal_departement {
+            margin: 0.5rem;
+        }  
+        .form-buttons {
+            flex-direction: column;
+        }  
+        .form-buttons .btn {
+            width: 100%;
+            margin-bottom: 10px;
+        }
+    }
+      
+    h3{
+        text-align: center;
+    }
+    .input-container #page-size {
+        /* max-width: 150px; */
+        /* padding: 8px; */
+        display: inline-block;
+    }
+    .button-group {
+        display: flex;
+        justify-content: flex-start;
+        align-items: center;
+        padding: 0 5px;
+    }
+    .button-group .btn {
+        margin-left: 10px;
+    }
+    body, input, select, button, textarea {
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+        text-rendering: optimizeLegibility;
+    }
+    .hide-table {
+        display: none;
+        margin-bottom: 50px;
       }
   </style>
 {% endblock styles %}
 
 {% block content %} 
 <div class="container mt-2 table-container fade-in">
-    <h3 class=" text-center">MKT Analysis</h3>
+    <h3 class="text-center">MKT Analysis</h3>
     <div class="form-container mt-2">
-        <form class="row g-4 form-row" target="_blank">
-            <div class="form-group col-md-3">
+        <form class="row g-1 form-row" action="{% url 'Mkt_analysis' %}" method="GET" target="_blank">
+            <div class="form-group col-lg-3 col-md-3">
                 <div class="input-container">
                     <input type="date" class="form-control" name="from-date" id="fromDate" placeholder=" ">
                     <label for="fromDate" class="form-label">From Date</label>
                 </div>
             </div>
-            <div class="form-group col-md-3">
+            <div class="form-group col-lg-3 col-md-3">
                 <div class="input-container">
                     <input type="date" class="form-control" name="to-date" id="toDate" placeholder=" ">
                     <label for="toDate" class="form-label">To Date</label>
                 </div>
             </div>
-            <div class="form-group col-md-2">
+            <div class="form-group col-lg-2 col-md-3">
                 <div class="input-container">
                     <select id="equipment" class="form-control" name="equipment" placeholder=" " required>
                         <option value="" disabled selected>Select Equipment</option>
-                            <option value="EQP/001">EQP/001</option>
-                            <option value="EQP/002">EQP/002</option>
-                            <option value="EQP/003">EQP/003</option>
+                        {% for equipment in equipments %}
+                            <option value="{{ equipment.id}}">{{ equipment.equip_name }}  </option>
+                        {% endfor %}
                     </select>
                     <label for="equipment" class="form-label">Equipment</label>
                 </div>
             </div>
-            <div class="form-group col-md-2">
+            <div class="form-group col-lg-2 col-md-3">
                 <div class="input-container">
-                    <select id="Action" class="form-control" name="action" placeholder=" " required>
+                    {% comment %} <select id="Action" class="form-control" name="action" placeholder=" " required>
                         <option value="" disabled selected>Select Action</option>
                             <option value="Daily">Daily</option>
                             <option value="Weekly">Weekly</option>
                             <option value="Monthly">Monthly</option>
                     </select>
+                    <label for="action" class="form-label">Action</label> {% endcomment %}
+                    <input type="text" class="form-control" id="action" placeholder=" " value="Daily" readonly name="action">
                     <label for="action" class="form-label">Action</label>
                 </div>
             </div>
@@ -144,161 +166,152 @@
         </form>
     </div>
     <div class="hide-table">
-        <div class="d-flex justify-content-between align-items-center custom-label mb-1" style="font-weight: bold; padding: 5px 10px; background-color: rgb(235, 235, 235);">
-            <h5 style="margin: 0; margin-bottom: 5px;">Equipment Parameter</h5>
-            <div class="d-flex justify-content-end align-items-center">
-                <div class="d-flex input-group " style="width: 200px;">
-                    <span class="input-group-text"><i class="fas fa-search"></i></span>
-                    <input type="text" id="searchBar" class="form-control" placeholder="Search here..">
-                </div>
-                
-            </div> 
+        <div class="table-container">
+            <div class="table-wrapper">
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th><input type="checkbox" id="selectAll"></th>
+                            <th scope="col">Name</th>
+                            <th scope="col">Unit</th>
+                        </tr>
+                    </thead>
+                    <tbody id="form-data-table">
+                        <tr>
+                            <td><input type="checkbox" class="row-checkbox" name="comm_checkbox"></td>
+                            <td>Temperature1</td>
+                            <td>°C</td>
+                        </tr>
+                        <tr>
+                            <td><input type="checkbox" class="row-checkbox" name="comm_checkbox"></td>
+                            <td>Temperature2</td>
+                            <td>°C</td>
+                        </tr>
+                        <tr>
+                            <td><input type="checkbox" class="row-checkbox" name="comm_checkbox"></td>
+                            <td>Temperature1</td>
+                            <td>°C</td>
+                        </tr>
+                        <tr>
+                            <td><input type="checkbox" class="row-checkbox" name="comm_checkbox"></td>
+                            <td>Temperature2</td>
+                            <td>°C</td>
+                        </tr>
+                        <tr>
+                            <td><input type="checkbox" class="row-checkbox" name="comm_checkbox"></td>
+                            <td>Temperature1</td>
+                            <td>°C</td>
+                        </tr>
+                        <tr>
+                            <td><input type="checkbox" class="row-checkbox" name="comm_checkbox"></td>
+                            <td>Temperature2</td>
+                            <td>°C</td>
+                        </tr>
+                        <tr>
+                            <td><input type="checkbox" class="row-checkbox" name="comm_checkbox"></td>
+                            <td>Temperature1</td>
+                            <td>°C</td>
+                        </tr>
+                        <tr>
+                            <td><input type="checkbox" class="row-checkbox" name="comm_checkbox"></td>
+                            <td>Temperature2</td>
+                            <td>°C</td>
+                        </tr>
+                        <tr>
+                            <td><input type="checkbox" class="row-checkbox" name="comm_checkbox"></td>
+                            <td>Temperature1</td>
+                            <td>°C</td>
+                        </tr>
+                        <tr>
+                            <td><input type="checkbox" class="row-checkbox" name="comm_checkbox"></td>
+                            <td>Temperature2</td>
+                            <td>°C</td>
+                        </tr>
+                        <tr>
+                            <td><input type="checkbox" class="row-checkbox" name="comm_checkbox"></td>
+                            <td>Temperature1</td>
+                            <td>°C</td>
+                        </tr>
+                        <tr>
+                            <td><input type="checkbox" class="row-checkbox" name="comm_checkbox"></td>
+                            <td>Temperature2</td>
+                            <td>°C</td>
+                        </tr>
+                        <tr>
+                            <td><input type="checkbox" class="row-checkbox" name="comm_checkbox"></td>
+                            <td>Temperature1</td>
+                            <td>°C</td>
+                        </tr>
+                        <tr>
+                            <td><input type="checkbox" class="row-checkbox" name="comm_checkbox"></td>
+                            <td>Temperature2</td>
+                            <td>°C</td>
+                        </tr>
+                        <tr>
+                            <td><input type="checkbox" class="row-checkbox" name="comm_checkbox"></td>
+                            <td>Temperature1</td>
+                            <td>°C</td>
+                        </tr>
+                        <tr>
+                            <td><input type="checkbox" class="row-checkbox" name="comm_checkbox"></td>
+                            <td>Temperature2</td>
+                            <td>°C</td>
+                        </tr>
+                        <tr>
+                            <td><input type="checkbox" class="row-checkbox" name="comm_checkbox"></td>
+                            <td>Temperature1</td>
+                            <td>°C</td>
+                        </tr>
+                        <tr>
+                            <td><input type="checkbox" class="row-checkbox" name="comm_checkbox"></td>
+                            <td>Temperature2</td>
+                            <td>°C</td>
+                        </tr>
+                        <tr>
+                            <td><input type="checkbox" class="row-checkbox" name="comm_checkbox"></td>
+                            <td>Temperature1</td>
+                            <td>°C</td>
+                        </tr>
+                        <tr>
+                            <td><input type="checkbox" class="row-checkbox" name="comm_checkbox"></td>
+                            <td>Temperature2</td>
+                            <td>°C</td>
+                        </tr>
+                        <tr>
+                            <td><input type="checkbox" class="row-checkbox" name="comm_checkbox"></td>
+                            <td>Temperature1</td>
+                            <td>°C</td>
+                        </tr>
+                        <tr>
+                            <td><input type="checkbox" class="row-checkbox" name="comm_checkbox"></td>
+                            <td>Temperature2</td>
+                            <td>°C</td>
+                        </tr>
+                        <tr>
+                            <td><input type="checkbox" class="row-checkbox" name="comm_checkbox"></td>
+                            <td>Temperature1</td>
+                            <td>°C</td>
+                        </tr>
+                        <tr>
+                            <td><input type="checkbox" class="row-checkbox" name="comm_checkbox"></td>
+                            <td>Temperature2</td>
+                            <td>°C</td>
+                        </tr>
+                        <tr>
+                            <td><input type="checkbox" class="row-checkbox" name="comm_checkbox"></td>
+                            <td>Temperature1</td>
+                            <td>°C</td>
+                        </tr>
+                        <tr>
+                            <td><input type="checkbox" class="row-checkbox" name="comm_checkbox"></td>
+                            <td>Temperature2</td>
+                            <td>°C</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
         </div>
-        <div class="table-wrapper">
-            <table class="table table-bordered">
-                <thead>
-                    <tr>
-                        <th><input type="checkbox" id="selectAll"></th>
-                        <th scope="col">Name</th>
-                        <th scope="col">Unit</th>
-                    </tr>
-                </thead>
-                <tbody id="form-data-table" class="scrollable-tbody">
-                    <tr>
-                        <td><input type="checkbox" class="row-checkbox" name="comm_checkbox"></td>
-                        <td>Temperature1</td>
-                        <td>°C</td>
-                    </tr>
-                    <tr>
-                        <td><input type="checkbox" class="row-checkbox" name="comm_checkbox"></td>
-                        <td>Temperature2</td>
-                        <td>°C</td>
-                    </tr>
-                    <tr>
-                        <td><input type="checkbox" class="row-checkbox" name="comm_checkbox"></td>
-                        <td>Temperature1</td>
-                        <td>°C</td>
-                    </tr>
-                    <tr>
-                        <td><input type="checkbox" class="row-checkbox" name="comm_checkbox"></td>
-                        <td>Temperature2</td>
-                        <td>°C</td>
-                    </tr>
-                    <tr>
-                        <td><input type="checkbox" class="row-checkbox" name="comm_checkbox"></td>
-                        <td>Temperature1</td>
-                        <td>°C</td>
-                    </tr>
-                    <tr>
-                        <td><input type="checkbox" class="row-checkbox" name="comm_checkbox"></td>
-                        <td>Temperature2</td>
-                        <td>°C</td>
-                    </tr>
-                    <tr>
-                        <td><input type="checkbox" class="row-checkbox" name="comm_checkbox"></td>
-                        <td>Temperature1</td>
-                        <td>°C</td>
-                    </tr>
-                    <tr>
-                        <td><input type="checkbox" class="row-checkbox" name="comm_checkbox"></td>
-                        <td>Temperature2</td>
-                        <td>°C</td>
-                    </tr>
-                    <tr>
-                        <td><input type="checkbox" class="row-checkbox" name="comm_checkbox"></td>
-                        <td>Temperature1</td>
-                        <td>°C</td>
-                    </tr>
-                    <tr>
-                        <td><input type="checkbox" class="row-checkbox" name="comm_checkbox"></td>
-                        <td>Temperature2</td>
-                        <td>°C</td>
-                    </tr>
-                    <tr>
-                        <td><input type="checkbox" class="row-checkbox" name="comm_checkbox"></td>
-                        <td>Temperature1</td>
-                        <td>°C</td>
-                    </tr>
-                    <tr>
-                        <td><input type="checkbox" class="row-checkbox" name="comm_checkbox"></td>
-                        <td>Temperature2</td>
-                        <td>°C</td>
-                    </tr>
-                    <tr>
-                        <td><input type="checkbox" class="row-checkbox" name="comm_checkbox"></td>
-                        <td>Temperature1</td>
-                        <td>°C</td>
-                    </tr>
-                    <tr>
-                        <td><input type="checkbox" class="row-checkbox" name="comm_checkbox"></td>
-                        <td>Temperature2</td>
-                        <td>°C</td>
-                    </tr>
-                    <tr>
-                        <td><input type="checkbox" class="row-checkbox" name="comm_checkbox"></td>
-                        <td>Temperature1</td>
-                        <td>°C</td>
-                    </tr>
-                    <tr>
-                        <td><input type="checkbox" class="row-checkbox" name="comm_checkbox"></td>
-                        <td>Temperature2</td>
-                        <td>°C</td>
-                    </tr>
-                    <tr>
-                        <td><input type="checkbox" class="row-checkbox" name="comm_checkbox"></td>
-                        <td>Temperature1</td>
-                        <td>°C</td>
-                    </tr>
-                    <tr>
-                        <td><input type="checkbox" class="row-checkbox" name="comm_checkbox"></td>
-                        <td>Temperature2</td>
-                        <td>°C</td>
-                    </tr>
-                    <tr>
-                        <td><input type="checkbox" class="row-checkbox" name="comm_checkbox"></td>
-                        <td>Temperature1</td>
-                        <td>°C</td>
-                    </tr>
-                    <tr>
-                        <td><input type="checkbox" class="row-checkbox" name="comm_checkbox"></td>
-                        <td>Temperature2</td>
-                        <td>°C</td>
-                    </tr>
-                    <tr>
-                        <td><input type="checkbox" class="row-checkbox" name="comm_checkbox"></td>
-                        <td>Temperature1</td>
-                        <td>°C</td>
-                    </tr>
-                    <tr>
-                        <td><input type="checkbox" class="row-checkbox" name="comm_checkbox"></td>
-                        <td>Temperature2</td>
-                        <td>°C</td>
-                    </tr>
-                    <tr>
-                        <td><input type="checkbox" class="row-checkbox" name="comm_checkbox"></td>
-                        <td>Temperature1</td>
-                        <td>°C</td>
-                    </tr>
-                    <tr>
-                        <td><input type="checkbox" class="row-checkbox" name="comm_checkbox"></td>
-                        <td>Temperature2</td>
-                        <td>°C</td>
-                    </tr>
-                    <tr>
-                        <td><input type="checkbox" class="row-checkbox" name="comm_checkbox"></td>
-                        <td>Temperature1</td>
-                        <td>°C</td>
-                    </tr>
-                    <tr>
-                        <td><input type="checkbox" class="row-checkbox" name="comm_checkbox"></td>
-                        <td>Temperature2</td>
-                        <td>°C</td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>  
     </div>
-   
 </div>
 
 {% block scripts %}

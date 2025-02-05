@@ -70,7 +70,7 @@ class CommGroup(models.Model):
     
 
 class Department(models.Model):
-    department_name = models.CharField( max_length=50, null=False)
+    department_name = models.CharField(unique=True, max_length=50, null=False)
     commGroup = models.ForeignKey(CommGroup, on_delete=models.CASCADE)
     header_note = models.CharField(max_length=100, null=True)
     footer_note = models.CharField(max_length=100, null=True)
@@ -141,6 +141,7 @@ class User(models.Model):
     created_at = models.DateTimeField(null=True)
     last_password_change = models.DateTimeField(default=now)
     account_lock=models.BooleanField(default=False)
+    failed_attempts = models.IntegerField(default=0)
     
     def set_password(self, raw_password):
         self.password = make_password(raw_password)
@@ -335,9 +336,9 @@ class Equipment(models.Model):
     ]
 
     department=models.ForeignKey(Department, null=True, on_delete=models.SET_NULL)
-    equip_name = models.CharField(max_length=255)
+    equip_name = models.CharField(max_length=255, unique=True)
     status = models.CharField(max_length=10, choices=EQUIPMENT_STATUS_CHOICES)
-    ip_address = models.GenericIPAddressField()
+    ip_address = models.GenericIPAddressField(unique=True)
     interval = models.IntegerField()
     equipment_type = models.CharField(max_length=255)
     door_access_type = models.CharField(max_length=15, choices=EQUIPMENT_ACCESS_CHOICES)
@@ -372,6 +373,7 @@ class Equipment(models.Model):
 
 class PLCUser(models.Model):
     equipment = models.ForeignKey(Equipment, on_delete=models.CASCADE, related_name="plc_users")
+    code = models.IntegerField(null=True, unique=True)
     username = models.CharField(max_length=255)
 
     def __str__(self):
@@ -643,6 +645,23 @@ class emailalert(models.Model):
     code_1071 = models.BooleanField(default=False, help_text="RH 9 Within Limit")
     code_1072 = models.BooleanField(default=False, help_text="RH 10 Within Limit")
 
+
+    code_2001 = models.BooleanField(default=False, help_text="Door Access By User 1")
+    code_2002 = models.BooleanField(default=False, help_text="Door Access By User 2")
+    code_2003 = models.BooleanField(default=False, help_text="Door Access By User 3")
+    code_2004 = models.BooleanField(default=False, help_text="Door Access By User 4")
+    code_2005 = models.BooleanField(default=False, help_text="Door Access By User 5")
+    code_2006 = models.BooleanField(default=False, help_text="Door Access By User 6")
+    code_2007 = models.BooleanField(default=False, help_text="Door Access By User 7")
+    code_2008 = models.BooleanField(default=False, help_text="Door Access By User 8")
+    code_2009 = models.BooleanField(default=False, help_text="Door Access By User 9")
+    code_2010 = models.BooleanField(default=False, help_text="Door Access By User 10")
+    code_2011 = models.BooleanField(default=False, help_text="Door Access By User 11")
+    code_2012 = models.BooleanField(default=False, help_text="Door Access By User 12")
+    code_2013 = models.BooleanField(default=False, help_text="Door Access By User 13")
+    code_2014 = models.BooleanField(default=False, help_text="Door Access By User 14")
+    code_2015 = models.BooleanField(default=False, help_text="Door Access By User 15")
+
     
 
 
@@ -735,3 +754,20 @@ class smsalert(models.Model):
     code_1070 = models.BooleanField(default=False, help_text="RH 8 Within Limit")
     code_1071 = models.BooleanField(default=False, help_text="RH 9 Within Limit")
     code_1072 = models.BooleanField(default=False, help_text="RH 10 Within Limit")
+
+
+    code_2001 = models.BooleanField(default=False, help_text="Door Access By User 1")
+    code_2002 = models.BooleanField(default=False, help_text="Door Access By User 2")
+    code_2003 = models.BooleanField(default=False, help_text="Door Access By User 3")
+    code_2004 = models.BooleanField(default=False, help_text="Door Access By User 4")
+    code_2005 = models.BooleanField(default=False, help_text="Door Access By User 5")
+    code_2006 = models.BooleanField(default=False, help_text="Door Access By User 6")
+    code_2007 = models.BooleanField(default=False, help_text="Door Access By User 7")
+    code_2008 = models.BooleanField(default=False, help_text="Door Access By User 8")
+    code_2009 = models.BooleanField(default=False, help_text="Door Access By User 9")
+    code_2010 = models.BooleanField(default=False, help_text="Door Access By User 10")
+    code_2011 = models.BooleanField(default=False, help_text="Door Access By User 11")
+    code_2012 = models.BooleanField(default=False, help_text="Door Access By User 12")
+    code_2013 = models.BooleanField(default=False, help_text="Door Access By User 13")
+    code_2014 = models.BooleanField(default=False, help_text="Door Access By User 14")
+    code_2015 = models.BooleanField(default=False, help_text="Door Access By User 15")

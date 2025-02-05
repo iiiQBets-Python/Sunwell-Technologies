@@ -22,3 +22,37 @@
 2025-01-30 15:06:26,352 - Sunwell is getting NameError on accessing email_Audit_log: 
 handle_pageBegin args=() name 'department_name' is not defined
 2025-01-30 15:11:21,725 - Sunwell is getting AttributeError on accessing sms_Audit_log: 'NoneType' object has no attribute 'header_note'
+2025-02-02 11:12:35,403 - Darshan is getting NameError on accessing department: name 'ValidationError' is not defined
+2025-02-04 16:12:35,460 - Darshan is getting TypeError on accessing Mkt_analysis: Mkt_analysis() missing 9 required positional arguments: 'records', 'from_date', 'to_date', 'from_time', 'to_time', 'organization', 'department', 'username', and 'selected_equipment'
+2025-02-04 16:13:25,791 - Darshan is getting TypeError on accessing Mkt_analysis: Mkt_analysis() missing 8 required positional arguments: 'from_date', 'to_date', 'from_time', 'to_time', 'organization', 'department', 'username', and 'selected_equipment'
+2025-02-04 16:13:57,001 - Darshan is getting TypeError on accessing Mkt_analysis: strptime() argument 1 must be str, not None
+2025-02-04 16:17:21,341 - Darshan is getting TypeError on accessing Mkt_analysis: strptime() argument 1 must be str, not None
+2025-02-04 16:19:09,809 - Darshan is getting AttributeError on accessing Mkt_analysis: 'function' object has no attribute 'exists'
+2025-02-04 16:24:28,531 - Darshan is getting TypeError on accessing Mkt_analysis: 
+handle_pageBegin args=() generate_mkt_log_pdf.<locals>.create_page() takes 1 positional argument but 2 were given
+2025-02-04 16:25:58,679 - Darshan is getting DoesNotExist on accessing Mkt_analysis: 
+handle_pageBegin args=() Equipment matching query does not exist.
+2025-02-04 16:31:35,201 - Darshan is getting DoesNotExist on accessing Mkt_analysis: 
+handle_pageBegin args=() Equipment matching query does not exist.
+2025-02-04 16:31:50,739 - Darshan is getting DoesNotExist on accessing Mkt_analysis: 
+handle_pageBegin args=() Equipment matching query does not exist.
+2025-02-04 16:32:08,171 - Darshan is getting DoesNotExist on accessing Mkt_analysis: 
+handle_pageBegin args=() Equipment matching query does not exist.
+2025-02-04 16:35:16,196 - Darshan is getting DoesNotExist on accessing Mkt_analysis: 
+handle_pageBegin args=() Equipment matching query does not exist.
+2025-02-04 17:02:16,238 - Darshan is getting FieldError on accessing Mkt_analysis: Cannot resolve keyword 'equipment' into field. Choices are: date, equip_name, equip_name_id, id, rh_1, rh_10, rh_2, rh_3, rh_4, rh_5, rh_6, rh_7, rh_8, rh_9, rh_high_alarm, rh_high_alert, rh_low_alarm, rh_low_alert, set_rh, set_temp, t_high_alarm, t_high_alert, t_low_alarm, t_low_alert, time, tmp_1, tmp_10, tmp_2, tmp_3, tmp_4, tmp_5, tmp_6, tmp_7, tmp_8, tmp_9
+2025-02-04 18:16:54,903 - Darshan is getting TypeError on accessing Mkt_analysis: generate_mkt_log_pdf() missing 2 required positional arguments: 'selected_equipment' and 'results'
+2025-02-04 18:18:33,434 - Darshan is getting TypeError on accessing Mkt_analysis: generate_mkt_log_pdf() missing 2 required positional arguments: 'selected_equipment' and 'results'
+2025-02-04 18:18:48,616 - Darshan is getting TypeError on accessing Mkt_analysis: generate_mkt_log_pdf() missing 2 required positional arguments: 'selected_equipment' and 'results'
+2025-02-04 18:20:25,284 - Darshan is getting NameError on accessing Mkt_analysis: name 'from_time' is not defined
+2025-02-04 18:20:47,663 - Darshan is getting NameError on accessing Mkt_analysis: 
+handle_pageBegin args=() name 'from_time' is not defined
+2025-02-04 18:21:49,113 - Darshan is getting IndexError on accessing Mkt_analysis: 
+spanning problem in <Table@0x207B7B3D340 11 rows x 4 cols(tallest row 27)> with cell(0,0) containing
+'Channel' list index out of range
+2025-02-05 13:44:19,354 - Darshan is getting TemplateSyntaxError on accessing Mkt_analysis: Invalid block tag on line 186: 'endfor', expected 'endblock'. Did you forget to register or load this tag?
+2025-02-05 13:45:12,952 - Darshan is getting TypeError on accessing Mkt_analysis: 'int' object is not iterable
+2025-02-05 13:48:13,603 - Darshan is getting UnboundLocalError on accessing Mkt_analysis: cannot access local variable 'eqp_sensor' where it is not associated with a value
+2025-02-05 16:05:21,936 - Anonymous is getting UnboundLocalError on accessing login: cannot access local variable 'user' where it is not associated with a value
+2025-02-05 16:05:36,315 - Anonymous is getting UnboundLocalError on accessing login: cannot access local variable 'user' where it is not associated with a value
+2025-02-05 16:08:55,690 - Anonymous is getting TypeError on accessing login: 'int' object is not subscriptable

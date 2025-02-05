@@ -4378,3 +4378,638 @@
 2025-02-01 14:15:28,415 - Darshan is created record in App1_useractivitylog.
 2025-02-01 14:15:28,422 - Anonymous is deleting record in django_session.
 2025-02-01 14:15:28,520 - Anonymous is accessing /.
+2025-02-02 11:11:23,180 - Anonymous is accessing /admin/.
+2025-02-02 11:11:23,639 - Anonymous is accessing /admin/login/.
+2025-02-02 11:11:32,090 - Anonymous is accessing /.
+2025-02-02 11:11:32,446 - Anonymous is accessing /favicon.ico.
+2025-02-02 11:11:41,298 - Anonymous is accessing /.
+2025-02-02 11:11:42,263 - Darshan is created record in App1_useractivitylog.
+2025-02-02 11:11:42,279 - Darshan is created record in django_session.
+2025-02-02 11:11:42,351 - Darshan is accessing /dashboard/.
+2025-02-02 11:11:43,400 - Darshan is accessing /media/crsco.webp.
+2025-02-02 11:11:46,551 - Darshan is accessing /comm_group/.
+2025-02-02 11:11:52,360 - Darshan is accessing /department/.
+2025-02-02 11:11:57,713 - Darshan is accessing /admin/.
+2025-02-02 11:11:57,725 - Darshan is accessing /admin/login/.
+2025-02-02 11:12:00,647 - Darshan is accessing /admin/login/.
+2025-02-02 11:12:01,377 - Darshan is created record in django_session.
+2025-02-02 11:12:01,568 - Darshan is deleting record in django_session.
+2025-02-02 11:12:01,719 - Darshan is updated record in auth_user.
+2025-02-02 11:12:01,722 - Darshan is updated record in django_session.
+2025-02-02 11:12:01,848 - Darshan is accessing /admin/.
+2025-02-02 11:12:06,453 - Darshan is accessing /admin/App1/department/.
+2025-02-02 11:12:06,735 - Darshan is accessing /admin/jsi18n/.
+2025-02-02 11:12:13,392 - Darshan is accessing /admin/App1/department/.
+2025-02-02 11:12:14,177 - Darshan is accessing /admin/App1/department/.
+2025-02-02 11:12:14,275 - Darshan is created record in django_admin_log.
+2025-02-02 11:12:14,368 - Darshan is created record in django_admin_log.
+2025-02-02 11:12:14,441 - Darshan is created record in django_admin_log.
+2025-02-02 11:12:14,445 - Darshan is deleting record in App1_department.
+2025-02-02 11:12:14,445 - Darshan is deleting record in App1_department.
+2025-02-02 11:12:14,445 - Darshan is deleting record in App1_department.
+2025-02-02 11:12:14,524 - Darshan is accessing /admin/App1/department/.
+2025-02-02 11:12:14,575 - Darshan is accessing /admin/jsi18n/.
+2025-02-02 11:12:17,246 - Darshan is accessing /department/.
+2025-02-02 11:12:35,395 - Darshan is accessing /department/.
+2025-02-02 11:13:10,568 - Darshan is accessing /department/.
+2025-02-02 11:13:10,624 - Darshan is accessing /department/.
+2025-02-02 11:14:47,937 - Darshan is accessing /department/.
+2025-02-02 11:14:48,625 - Darshan is accessing /department/.
+2025-02-02 11:14:48,831 - Darshan is accessing /department/.
+2025-02-02 11:16:45,207 - Darshan is accessing /department/.
+2025-02-02 11:16:45,222 - Darshan is accessing /department/.
+2025-02-02 11:20:47,693 - Darshan is accessing /department/.
+2025-02-02 11:20:48,259 - Darshan is accessing /department/.
+2025-02-02 11:20:56,758 - Darshan is accessing /department/.
+2025-02-02 11:20:56,979 - Darshan is created record in App1_department.
+2025-02-02 11:20:57,044 - Darshan is created record in App1_useractivitylog.
+2025-02-02 11:20:57,052 - Darshan is accessing /department/.
+2025-02-02 11:26:24,029 - Darshan is accessing /users/.
+2025-02-02 11:26:56,590 - Darshan is accessing /users/.
+2025-02-02 11:27:00,040 - Darshan is accessing /users/.
+2025-02-02 11:27:25,947 - Darshan is accessing /app_setings/.
+2025-02-02 11:27:26,627 - Darshan is accessing /media/crsco.webp.
+2025-02-02 11:27:54,823 - Darshan is accessing /users/.
+2025-02-02 11:27:56,478 - Darshan is created record in App1_user.
+2025-02-02 11:27:57,568 - Darshan is created record in App1_passwordhistory.
+2025-02-02 11:27:57,622 - Darshan is created record in App1_useractivitylog.
+2025-02-02 11:27:57,630 - Darshan is accessing /users/.
+2025-02-02 11:28:20,288 - Darshan is accessing /edit_user/3/.
+2025-02-02 11:28:20,487 - Darshan is updated record in App1_user.
+2025-02-02 11:28:20,551 - Darshan is created record in App1_passwordhistory.
+2025-02-02 11:28:20,628 - Darshan is created record in App1_useractivitylog.
+2025-02-02 11:28:20,639 - Darshan is accessing /users/.
+2025-02-02 12:01:02,866 - Darshan is accessing /logout/.
+2025-02-02 12:01:03,280 - Darshan is created record in App1_useractivitylog.
+2025-02-02 12:01:03,283 - Anonymous is deleting record in django_session.
+2025-02-02 12:01:03,396 - Anonymous is accessing /logout/.
+2025-02-02 12:01:03,400 - Anonymous is accessing /.
+2025-02-02 12:01:12,167 - Anonymous is accessing /.
+2025-02-02 12:01:13,100 - Darshan is created record in App1_useractivitylog.
+2025-02-02 12:01:13,104 - Darshan is created record in django_session.
+2025-02-02 12:01:13,200 - Darshan is accessing /dashboard/.
+2025-02-02 12:01:14,191 - Darshan is accessing /media/crsco.webp.
+2025-02-02 12:01:19,239 - Darshan is accessing /get-equipment-data/.
+2025-02-02 12:01:20,123 - Darshan is accessing /get-equipment-data/.
+2025-02-02 12:01:24,242 - Darshan is accessing /get-equipment-data/.
+2025-02-02 12:01:25,139 - Darshan is accessing /get-equipment-data/.
+2025-02-02 12:01:29,248 - Darshan is accessing /get-equipment-data/.
+2025-02-02 12:01:30,130 - Darshan is accessing /get-equipment-data/.
+2025-02-02 12:01:34,240 - Darshan is accessing /get-equipment-data/.
+2025-02-02 12:01:35,122 - Darshan is accessing /get-equipment-data/.
+2025-02-02 12:01:35,678 - Darshan is accessing /dashboard/.
+2025-02-02 12:01:41,656 - Darshan is accessing /get-equipment-data/.
+2025-02-02 12:01:42,633 - Darshan is accessing /get-equipment-data/.
+2025-02-02 12:01:46,655 - Darshan is accessing /get-equipment-data/.
+2025-02-02 12:01:47,626 - Darshan is accessing /get-equipment-data/.
+2025-02-02 12:01:51,655 - Darshan is accessing /get-equipment-data/.
+2025-02-02 12:01:52,616 - Darshan is accessing /get-equipment-data/.
+2025-02-02 12:01:53,582 - Darshan is accessing /about_us/.
+2025-02-02 12:08:40,988 - Darshan is accessing /Mkt_analysis/.
+2025-02-02 12:09:18,570 - Darshan is accessing /Mkt_analysis/.
+2025-02-02 12:09:44,957 - Darshan is accessing /Mkt_analysis/.
+2025-02-02 13:16:25,003 - Anonymous is accessing /logout/.
+2025-02-02 13:16:25,030 - Anonymous is accessing /.
+2025-02-03 10:18:49,894 - Anonymous is accessing /.
+2025-02-03 10:18:50,394 - Anonymous is accessing /favicon.ico.
+2025-02-03 10:18:59,309 - Anonymous is accessing /.
+2025-02-03 10:19:00,289 - Darshan is created record in App1_useractivitylog.
+2025-02-03 10:19:00,299 - Darshan is created record in django_session.
+2025-02-03 10:19:00,382 - Darshan is accessing /dashboard/.
+2025-02-03 10:19:01,325 - Darshan is accessing /media/crsco.webp.
+2025-02-03 11:28:11,581 - Anonymous is accessing /.
+2025-02-03 11:28:23,662 - Anonymous is accessing /.
+2025-02-03 11:28:26,450 - Anonymous is accessing /favicon.ico.
+2025-02-03 11:30:02,973 - Anonymous is accessing /.
+2025-02-03 11:30:04,146 - Darshan is created record in App1_useractivitylog.
+2025-02-03 11:30:04,151 - Darshan is created record in django_session.
+2025-02-03 11:30:04,287 - Darshan is accessing /dashboard/.
+2025-02-03 11:30:05,532 - Darshan is accessing /media/crsco.webp.
+2025-02-03 11:30:08,090 - Darshan is accessing /comm_group/.
+2025-02-03 14:13:48,868 - Anonymous is accessing /.
+2025-02-03 14:13:57,069 - Anonymous is accessing /.
+2025-02-03 14:13:57,977 - Darshan is created record in App1_useractivitylog.
+2025-02-03 14:13:57,982 - Darshan is created record in django_session.
+2025-02-03 14:13:58,062 - Darshan is accessing /dashboard/.
+2025-02-03 14:13:58,824 - Darshan is accessing /media/crsco.webp.
+2025-02-03 14:15:59,074 - Darshan is accessing /app_setings/.
+2025-02-03 14:16:24,075 - Darshan is accessing /admin/.
+2025-02-03 14:16:24,231 - Darshan is accessing /admin/login/.
+2025-02-03 14:16:27,862 - Darshan is accessing /admin/login/.
+2025-02-03 14:16:28,587 - Darshan is created record in django_session.
+2025-02-03 14:16:28,751 - Darshan is deleting record in django_session.
+2025-02-03 14:16:28,900 - Darshan is updated record in auth_user.
+2025-02-03 14:16:28,904 - Darshan is updated record in django_session.
+2025-02-03 14:16:28,975 - Darshan is accessing /admin/.
+2025-02-03 14:16:33,590 - Darshan is accessing /admin/App1/appsettings/.
+2025-02-03 14:16:33,905 - Darshan is accessing /admin/jsi18n/.
+2025-02-03 14:16:34,979 - Darshan is accessing /admin/App1/appsettings/1/change/.
+2025-02-03 14:16:35,112 - Darshan is accessing /admin/jsi18n/.
+2025-02-03 14:47:20,971 - Anonymous is accessing /logout/.
+2025-02-03 14:47:20,980 - Anonymous is accessing /.
+2025-02-03 15:11:51,991 - Darshan is accessing /.
+2025-02-03 15:11:59,009 - Darshan is accessing /.
+2025-02-03 15:11:59,742 - Anonymous is deleting record in django_session.
+2025-02-03 15:12:00,023 - Darshan is created record in App1_useractivitylog.
+2025-02-03 15:12:00,028 - Darshan is created record in django_session.
+2025-02-03 15:12:00,121 - Darshan is accessing /dashboard/.
+2025-02-03 15:12:00,189 - Darshan is accessing /media/crsco.webp.
+2025-02-03 15:15:42,102 - Darshan is accessing /Mkt_analysis/.
+2025-02-03 16:48:29,262 - Darshan is accessing /Mkt_analysis/.
+2025-02-03 16:48:50,681 - Darshan is accessing /Mkt_analysis/.
+2025-02-03 17:29:47,138 - Darshan is accessing /dashboard/.
+2025-02-03 18:27:09,045 - Darshan is accessing /organization/.
+2025-02-03 18:27:15,055 - Darshan is accessing /app_setings/.
+2025-02-03 18:27:23,231 - Darshan is accessing /comm_group/.
+2025-02-03 18:45:06,895 - Darshan is accessing /users/.
+2025-02-03 18:45:18,083 - Darshan is accessing /edit_user/2/.
+2025-02-03 18:45:18,294 - Darshan is updated record in App1_user.
+2025-02-03 18:45:18,417 - Darshan is deleting record in App1_passwordhistory.
+2025-02-03 18:45:18,578 - Darshan is created record in App1_passwordhistory.
+2025-02-03 18:45:18,692 - Darshan is created record in App1_useractivitylog.
+2025-02-03 18:45:18,696 - Darshan is accessing /users/.
+2025-02-03 18:45:25,159 - Darshan is accessing /logout/.
+2025-02-03 18:45:25,344 - Darshan is created record in App1_useractivitylog.
+2025-02-03 18:45:25,349 - Anonymous is deleting record in django_session.
+2025-02-03 18:45:25,431 - Anonymous is accessing /.
+2025-02-03 18:45:38,056 - Anonymous is accessing /.
+2025-02-03 18:45:38,797 - Anonymous is created record in django_session.
+2025-02-03 18:45:50,907 - Anonymous is accessing /.
+2025-02-03 18:45:51,630 - Anonymous is deleting record in django_session.
+2025-02-03 18:45:51,929 - Prasanna is created record in App1_useractivitylog.
+2025-02-03 18:45:51,937 - Prasanna is created record in django_session.
+2025-02-03 18:45:52,024 - Prasanna is accessing /dashboard/.
+2025-02-03 18:46:01,314 - Prasanna is accessing /logout/.
+2025-02-03 18:46:01,495 - Prasanna is created record in App1_useractivitylog.
+2025-02-03 18:46:01,512 - Anonymous is deleting record in django_session.
+2025-02-03 18:46:01,624 - Anonymous is accessing /.
+2025-02-04 10:04:41,326 - Anonymous is accessing /.
+2025-02-04 10:04:41,960 - Anonymous is accessing /favicon.ico.
+2025-02-04 10:04:49,636 - Anonymous is accessing /.
+2025-02-04 10:04:50,630 - Darshan is created record in App1_useractivitylog.
+2025-02-04 10:04:50,653 - Darshan is created record in django_session.
+2025-02-04 10:04:50,781 - Darshan is accessing /dashboard/.
+2025-02-04 10:04:52,335 - Darshan is accessing /media/crsco.webp.
+2025-02-04 10:09:11,257 - Darshan is accessing /department/.
+2025-02-04 10:10:59,663 - Darshan is accessing /department/.
+2025-02-04 10:11:26,133 - Darshan is accessing /comm_group/.
+2025-02-04 10:17:15,132 - Darshan is accessing /comm_group/.
+2025-02-04 10:17:16,265 - Darshan is accessing /media/crsco.webp.
+2025-02-04 10:17:17,511 - Darshan is accessing /favicon.ico.
+2025-02-04 10:18:00,437 - Darshan is accessing /role_permission/.
+2025-02-04 10:22:47,227 - Darshan is accessing /role_permission/.
+2025-02-04 10:27:42,564 - Darshan is accessing /users/.
+2025-02-04 10:36:24,692 - Anonymous is accessing /.
+2025-02-04 10:36:26,346 - Anonymous is accessing /favicon.ico.
+2025-02-04 10:36:37,166 - Anonymous is accessing /.
+2025-02-04 10:36:38,783 - Anonymous is created record in django_session.
+2025-02-04 10:36:49,970 - Anonymous is accessing /.
+2025-02-04 10:36:50,707 - Anonymous is updated record in django_session.
+2025-02-04 10:37:00,598 - Anonymous is accessing /.
+2025-02-04 10:37:02,481 - Anonymous is updated record in App1_user.
+2025-02-04 10:37:02,490 - Anonymous is updated record in django_session.
+2025-02-04 10:37:10,963 - Anonymous is accessing /.
+2025-02-04 10:37:20,762 - Darshan is accessing /users/.
+2025-02-04 10:37:28,107 - Darshan is accessing /edit_user/2/.
+2025-02-04 10:37:28,304 - Darshan is updated record in App1_user.
+2025-02-04 10:37:28,314 - Darshan is deleting record in App1_passwordhistory.
+2025-02-04 10:37:28,490 - Darshan is created record in App1_passwordhistory.
+2025-02-04 10:37:28,577 - Darshan is created record in App1_useractivitylog.
+2025-02-04 10:37:28,584 - Darshan is accessing /users/.
+2025-02-04 10:37:44,844 - Anonymous is accessing /.
+2025-02-04 10:37:50,650 - Anonymous is accessing /.
+2025-02-04 10:37:51,599 - Anonymous is updated record in App1_user.
+2025-02-04 10:37:51,604 - Anonymous is updated record in django_session.
+2025-02-04 10:38:08,017 - Darshan is accessing /users/.
+2025-02-04 10:38:14,195 - Darshan is accessing /edit_user/2/.
+2025-02-04 10:38:14,392 - Darshan is updated record in App1_user.
+2025-02-04 10:38:14,399 - Darshan is deleting record in App1_passwordhistory.
+2025-02-04 10:38:14,602 - Darshan is created record in App1_passwordhistory.
+2025-02-04 10:38:14,691 - Darshan is created record in App1_useractivitylog.
+2025-02-04 10:38:14,699 - Darshan is accessing /users/.
+2025-02-04 10:38:31,215 - Anonymous is accessing /.
+2025-02-04 10:38:32,564 - Anonymous is deleting record in django_session.
+2025-02-04 10:38:32,834 - Prasanna is created record in App1_useractivitylog.
+2025-02-04 10:38:32,840 - Prasanna is created record in django_session.
+2025-02-04 10:38:32,955 - Prasanna is accessing /dashboard/.
+2025-02-04 10:38:33,784 - Prasanna is accessing /media/crsco.webp.
+2025-02-04 10:38:41,660 - Prasanna is accessing /logout/.
+2025-02-04 10:38:41,843 - Prasanna is created record in App1_useractivitylog.
+2025-02-04 10:38:41,847 - Anonymous is deleting record in django_session.
+2025-02-04 10:38:41,950 - Anonymous is accessing /.
+2025-02-04 10:38:50,370 - Anonymous is accessing /.
+2025-02-04 10:38:52,031 - Anonymous is created record in django_session.
+2025-02-04 10:38:58,244 - Anonymous is accessing /.
+2025-02-04 10:38:59,908 - Anonymous is updated record in django_session.
+2025-02-04 10:39:06,016 - Anonymous is accessing /.
+2025-02-04 10:39:07,895 - Anonymous is updated record in App1_user.
+2025-02-04 10:39:07,902 - Anonymous is updated record in django_session.
+2025-02-04 10:39:11,808 - Darshan is accessing /users/.
+2025-02-04 10:39:15,040 - Darshan is accessing /edit_user/2/.
+2025-02-04 10:39:15,236 - Darshan is updated record in App1_user.
+2025-02-04 10:39:15,248 - Darshan is deleting record in App1_passwordhistory.
+2025-02-04 10:39:15,406 - Darshan is created record in App1_passwordhistory.
+2025-02-04 10:39:15,486 - Darshan is created record in App1_useractivitylog.
+2025-02-04 10:39:15,506 - Darshan is accessing /users/.
+2025-02-04 10:39:20,663 - Anonymous is accessing /.
+2025-02-04 10:39:29,359 - Anonymous is accessing /.
+2025-02-04 10:39:30,305 - Anonymous is updated record in App1_user.
+2025-02-04 10:39:30,312 - Anonymous is updated record in django_session.
+2025-02-04 10:39:37,404 - Darshan is accessing /users/.
+2025-02-04 10:39:42,311 - Darshan is accessing /edit_user/2/.
+2025-02-04 10:39:42,524 - Darshan is updated record in App1_user.
+2025-02-04 10:39:42,538 - Darshan is deleting record in App1_passwordhistory.
+2025-02-04 10:39:42,711 - Darshan is created record in App1_passwordhistory.
+2025-02-04 10:39:42,811 - Darshan is created record in App1_useractivitylog.
+2025-02-04 10:39:42,824 - Darshan is accessing /users/.
+2025-02-04 10:39:46,376 - Anonymous is accessing /.
+2025-02-04 10:40:00,231 - Anonymous is accessing /.
+2025-02-04 10:40:01,773 - Anonymous is deleting record in django_session.
+2025-02-04 10:40:02,078 - Prasanna is created record in App1_useractivitylog.
+2025-02-04 10:40:02,084 - Prasanna is created record in django_session.
+2025-02-04 10:40:02,221 - Prasanna is accessing /dashboard/.
+2025-02-04 11:39:43,995 - Darshan is accessing /logout/.
+2025-02-04 11:39:44,425 - Darshan is created record in App1_useractivitylog.
+2025-02-04 11:39:44,425 - Anonymous is deleting record in django_session.
+2025-02-04 11:39:44,535 - Anonymous is accessing /.
+2025-02-04 11:40:08,005 - Prasanna is accessing /logout/.
+2025-02-04 11:40:08,199 - Prasanna is created record in App1_useractivitylog.
+2025-02-04 11:40:08,205 - Anonymous is deleting record in django_session.
+2025-02-04 11:40:08,305 - Anonymous is accessing /.
+2025-02-04 11:54:53,182 - Anonymous is accessing /.
+2025-02-04 11:55:07,692 - Anonymous is accessing /.
+2025-02-04 11:55:08,532 - Anonymous is updated record in App1_user.
+2025-02-04 11:55:08,538 - Anonymous is created record in django_session.
+2025-02-04 11:55:21,862 - Anonymous is accessing /.
+2025-02-04 11:55:22,589 - Anonymous is deleting record in django_session.
+2025-02-04 11:55:22,851 - Darshan is created record in App1_useractivitylog.
+2025-02-04 11:55:22,855 - Darshan is created record in django_session.
+2025-02-04 11:55:22,961 - Darshan is accessing /dashboard/.
+2025-02-04 11:55:23,750 - Darshan is accessing /media/crsco.webp.
+2025-02-04 11:56:27,467 - Darshan is accessing /app_setings/.
+2025-02-04 11:56:33,998 - Darshan is accessing /save_app_settings/.
+2025-02-04 11:56:34,186 - Darshan is updated record in App1_appsettings.
+2025-02-04 11:56:35,280 - Darshan is accessing /app_setings/.
+2025-02-04 11:56:38,123 - Darshan is accessing /logout/.
+2025-02-04 11:56:38,310 - Darshan is created record in App1_useractivitylog.
+2025-02-04 11:56:38,313 - Anonymous is deleting record in django_session.
+2025-02-04 11:56:38,447 - Anonymous is accessing /.
+2025-02-04 11:56:44,956 - Anonymous is accessing /.
+2025-02-04 11:56:45,887 - Darshan is created record in App1_useractivitylog.
+2025-02-04 11:56:45,891 - Darshan is created record in django_session.
+2025-02-04 11:56:46,006 - Darshan is accessing /dashboard/.
+2025-02-04 13:03:39,984 - Darshan is accessing /logout/.
+2025-02-04 13:03:40,164 - Darshan is created record in App1_useractivitylog.
+2025-02-04 13:03:40,168 - Anonymous is deleting record in django_session.
+2025-02-04 13:03:40,294 - Anonymous is accessing /.
+2025-02-04 16:12:27,960 - Anonymous is accessing /.
+2025-02-04 16:12:29,122 - Darshan is created record in App1_useractivitylog.
+2025-02-04 16:12:29,146 - Darshan is created record in django_session.
+2025-02-04 16:12:29,231 - Darshan is accessing /dashboard/.
+2025-02-04 16:12:30,209 - Darshan is accessing /media/crsco.webp.
+2025-02-04 16:12:35,460 - Darshan is accessing /Mkt_analysis/.
+2025-02-04 16:13:25,791 - Darshan is accessing /Mkt_analysis/.
+2025-02-04 16:13:56,999 - Darshan is accessing /Mkt_analysis/.
+2025-02-04 16:17:21,331 - Darshan is accessing /Mkt_analysis/.
+2025-02-04 16:19:09,804 - Darshan is accessing /Mkt_analysis/.
+2025-02-04 16:24:28,526 - Darshan is accessing /Mkt_analysis/.
+2025-02-04 16:25:56,866 - Darshan is accessing /Mkt_analysis/.
+2025-02-04 16:31:34,653 - Darshan is accessing /Mkt_analysis/.
+2025-02-04 16:31:50,464 - Darshan is accessing /Mkt_analysis/.
+2025-02-04 16:32:03,729 - Darshan is accessing /dashboard/.
+2025-02-04 16:32:07,844 - Darshan is accessing /Mkt_analysis/.
+2025-02-04 16:32:35,508 - Darshan is accessing /email_Audit_log/.
+2025-02-04 16:35:15,913 - Darshan is accessing /Mkt_analysis/.
+2025-02-04 16:35:50,049 - Darshan is accessing /Mkt_analysis/.
+2025-02-04 16:36:21,676 - Darshan is accessing /Mkt_analysis/.
+2025-02-04 16:42:42,720 - Darshan is accessing /Mkt_analysis/.
+2025-02-04 16:42:44,380 - Darshan is accessing /Mkt_analysis/.
+2025-02-04 16:42:45,071 - Darshan is accessing /Mkt_analysis/.
+2025-02-04 17:02:03,439 - Darshan is accessing /Mkt_analysis/.
+2025-02-04 17:02:16,231 - Darshan is accessing /Mkt_analysis/.
+2025-02-04 17:04:47,325 - Darshan is accessing /Mkt_analysis/.
+2025-02-04 17:04:51,539 - Darshan is accessing /Mkt_analysis/.
+2025-02-04 17:06:06,822 - Darshan is accessing /Mkt_analysis/.
+2025-02-04 17:24:32,591 - Darshan is accessing /Mkt_analysis/.
+2025-02-04 17:26:43,882 - Darshan is accessing /Mkt_analysis/.
+2025-02-04 17:27:03,047 - Darshan is accessing /Mkt_analysis/.
+2025-02-04 17:27:31,338 - Darshan is accessing /Mkt_analysis/.
+2025-02-04 17:27:42,331 - Darshan is accessing /Mkt_analysis/.
+2025-02-04 17:28:05,641 - Darshan is accessing /Mkt_analysis/.
+2025-02-04 17:28:23,668 - Darshan is accessing /Mkt_analysis/.
+2025-02-04 18:13:45,555 - Darshan is accessing /.
+2025-02-04 18:13:54,302 - Darshan is accessing /.
+2025-02-04 18:13:55,043 - Anonymous is deleting record in django_session.
+2025-02-04 18:13:55,268 - Darshan is created record in App1_useractivitylog.
+2025-02-04 18:13:55,272 - Darshan is created record in django_session.
+2025-02-04 18:13:55,342 - Darshan is accessing /dashboard/.
+2025-02-04 18:13:56,187 - Darshan is accessing /media/crsco.webp.
+2025-02-04 18:13:59,670 - Darshan is accessing /Mkt_analysis/.
+2025-02-04 18:16:54,891 - Darshan is accessing /Mkt_analysis/.
+2025-02-04 18:18:33,427 - Darshan is accessing /Mkt_analysis/.
+2025-02-04 18:18:45,261 - Darshan is accessing /Mkt_analysis/.
+2025-02-04 18:18:46,093 - Darshan is accessing /Mkt_analysis/.
+2025-02-04 18:18:48,602 - Darshan is accessing /Mkt_analysis/.
+2025-02-04 18:20:22,603 - Darshan is accessing /Mkt_analysis/.
+2025-02-04 18:20:25,271 - Darshan is accessing /Mkt_analysis/.
+2025-02-04 18:20:47,062 - Darshan is accessing /Mkt_analysis/.
+2025-02-04 18:21:48,714 - Darshan is accessing /Mkt_analysis/.
+2025-02-04 18:26:00,724 - Darshan is accessing /view_log/.
+2025-02-04 18:26:04,030 - Darshan is accessing /view_log/.
+2025-02-04 18:26:24,638 - Darshan is accessing /view_log/.
+2025-02-04 18:26:29,804 - Darshan is accessing /view_log/.
+2025-02-04 18:26:42,613 - Darshan is accessing /admin/.
+2025-02-04 18:26:42,786 - Darshan is accessing /admin/login/.
+2025-02-04 18:26:48,094 - Darshan is accessing /admin/login/.
+2025-02-04 18:26:48,824 - Darshan is created record in django_session.
+2025-02-04 18:26:48,997 - Darshan is deleting record in django_session.
+2025-02-04 18:26:49,152 - Darshan is updated record in auth_user.
+2025-02-04 18:26:49,156 - Darshan is updated record in django_session.
+2025-02-04 18:26:49,224 - Darshan is accessing /admin/.
+2025-02-04 18:26:52,870 - Darshan is accessing /admin/App1/temperaturehumidityrecord/.
+2025-02-04 18:26:53,141 - Darshan is accessing /admin/jsi18n/.
+2025-02-04 18:26:54,642 - Darshan is accessing /admin/App1/temperaturehumidityrecord/47/change/.
+2025-02-04 18:26:55,106 - Darshan is accessing /admin/jsi18n/.
+2025-02-04 18:27:00,294 - Darshan is accessing /admin/App1/equipment/.
+2025-02-04 18:27:00,422 - Darshan is accessing /admin/jsi18n/.
+2025-02-04 18:30:21,559 - Darshan is accessing /Mkt_analysis/.
+2025-02-04 18:34:10,230 - Darshan is accessing /Mkt_analysis/.
+2025-02-04 18:35:42,186 - Darshan is accessing /view_log/.
+2025-02-04 18:35:42,258 - Darshan is accessing /media/crsco.webp.
+2025-02-04 18:35:44,932 - Darshan is accessing /Mkt_analysis/.
+2025-02-04 18:35:55,541 - Darshan is accessing /admin/App1/temperaturehumidityrecord/.
+2025-02-04 18:35:55,657 - Darshan is accessing /admin/jsi18n/.
+2025-02-04 18:36:01,049 - Darshan is accessing /Mkt_analysis/.
+2025-02-04 18:36:23,860 - Darshan is accessing /Mkt_analysis/.
+2025-02-04 18:37:01,773 - Darshan is accessing /Mkt_analysis/.
+2025-02-04 18:37:22,680 - Darshan is accessing /Mkt_analysis/.
+2025-02-04 18:37:38,000 - Darshan is accessing /Mkt_analysis/.
+2025-02-04 18:37:56,600 - Darshan is accessing /Mkt_analysis/.
+2025-02-04 18:38:04,278 - Darshan is accessing /admin/App1/temperaturehumidityrecord/47/change/.
+2025-02-04 18:38:04,412 - Darshan is accessing /admin/jsi18n/.
+2025-02-04 19:38:22,966 - Darshan is accessing /logout/.
+2025-02-04 19:38:25,040 - Darshan is created record in App1_useractivitylog.
+2025-02-04 19:38:25,040 - Anonymous is deleting record in django_session.
+2025-02-04 19:38:25,103 - Anonymous is accessing /.
+2025-02-05 09:57:37,584 - Anonymous is accessing /.
+2025-02-05 09:57:38,182 - Anonymous is accessing /favicon.ico.
+2025-02-05 09:57:45,939 - Anonymous is accessing /.
+2025-02-05 09:57:46,874 - Darshan is created record in App1_useractivitylog.
+2025-02-05 09:57:46,889 - Darshan is created record in django_session.
+2025-02-05 09:57:46,958 - Darshan is accessing /dashboard/.
+2025-02-05 09:57:47,887 - Darshan is accessing /media/crsco.webp.
+2025-02-05 09:57:52,685 - Darshan is accessing /equipment_configure/.
+2025-02-05 09:58:40,355 - Darshan is accessing /equipment_configure/.
+2025-02-05 10:01:53,583 - Darshan is accessing /equipment_configure/.
+2025-02-05 10:01:58,634 - Darshan is accessing /dashboard/.
+2025-02-05 10:02:06,383 - Darshan is accessing /comm_group/.
+2025-02-05 10:02:13,963 - Darshan is accessing /equipment_configure/.
+2025-02-05 10:02:29,769 - Darshan is accessing /equipment_configure/.
+2025-02-05 10:02:48,568 - Darshan is accessing /equipment_configure/.
+2025-02-05 10:02:49,232 - Darshan is accessing /equipment_configure/.
+2025-02-05 10:02:57,090 - Darshan is accessing /equipment_configure/.
+2025-02-05 10:02:57,393 - Darshan is accessing /media/crsco.webp.
+2025-02-05 10:03:15,394 - Darshan is accessing /equipment_configure/.
+2025-02-05 10:03:15,993 - Darshan is accessing /equipment_configure/.
+2025-02-05 10:03:40,343 - Darshan is accessing /equipment_configure/.
+2025-02-05 10:03:40,880 - Darshan is accessing /equipment_configure/.
+2025-02-05 10:03:41,079 - Darshan is accessing /equipment_configure/.
+2025-02-05 10:03:41,291 - Darshan is accessing /equipment_configure/.
+2025-02-05 10:03:41,495 - Darshan is accessing /equipment_configure/.
+2025-02-05 10:03:41,866 - Darshan is accessing /equipment_configure/.
+2025-02-05 10:03:42,043 - Darshan is accessing /equipment_configure/.
+2025-02-05 10:03:42,584 - Darshan is accessing /equipment_configure/.
+2025-02-05 10:03:42,750 - Darshan is accessing /equipment_configure/.
+2025-02-05 10:03:52,998 - Darshan is accessing /equipment_configure/.
+2025-02-05 10:04:05,873 - Darshan is accessing /department/.
+2025-02-05 10:05:27,970 - Darshan is accessing /department/.
+2025-02-05 10:05:28,689 - Darshan is accessing /department/.
+2025-02-05 10:05:29,133 - Darshan is accessing /department/.
+2025-02-05 10:05:34,393 - Darshan is accessing /department/.
+2025-02-05 10:05:34,624 - Darshan is accessing /media/crsco.webp.
+2025-02-05 10:05:47,762 - Darshan is accessing /equipment_configure/.
+2025-02-05 10:05:57,390 - Darshan is accessing /equipment_configure/.
+2025-02-05 10:06:25,483 - Darshan is accessing /equipment_configure/.
+2025-02-05 10:06:33,617 - Darshan is accessing /about_us/.
+2025-02-05 10:06:37,239 - Darshan is accessing /dashboard/.
+2025-02-05 10:06:57,920 - Darshan is accessing /dashboard/.
+2025-02-05 10:08:02,937 - Darshan is accessing /dashboard/.
+2025-02-05 11:23:57,984 - Darshan is accessing /logout/.
+2025-02-05 11:23:58,385 - Darshan is created record in App1_useractivitylog.
+2025-02-05 11:23:58,389 - Anonymous is deleting record in django_session.
+2025-02-05 11:23:58,449 - Anonymous is accessing /.
+2025-02-05 12:33:48,557 - Anonymous is accessing /.
+2025-02-05 12:33:55,073 - Anonymous is accessing /.
+2025-02-05 12:33:56,023 - Darshan is created record in App1_useractivitylog.
+2025-02-05 12:33:56,026 - Darshan is created record in django_session.
+2025-02-05 12:33:56,112 - Darshan is accessing /dashboard/.
+2025-02-05 12:33:57,241 - Darshan is accessing /media/crsco.webp.
+2025-02-05 12:34:14,261 - Darshan is accessing /department/.
+2025-02-05 12:51:11,519 - Darshan is accessing /department/.
+2025-02-05 12:51:23,594 - Darshan is accessing /department/.
+2025-02-05 12:51:27,354 - Darshan is accessing /department/.
+2025-02-05 12:51:37,727 - Darshan is accessing /department/.
+2025-02-05 12:55:45,962 - Darshan is accessing /dashboard/.
+2025-02-05 12:55:46,747 - Darshan is accessing /media/crsco.webp.
+2025-02-05 12:55:55,802 - Darshan is accessing /dashboard/.
+2025-02-05 12:56:05,479 - Darshan is accessing /dashboard/.
+2025-02-05 12:58:19,792 - Darshan is accessing /dashboard/.
+2025-02-05 12:58:20,818 - Darshan is accessing /media/crsco.webp.
+2025-02-05 12:58:39,061 - Darshan is accessing /dashboard/.
+2025-02-05 12:58:44,652 - Darshan is accessing /equipment_configure/.
+2025-02-05 12:58:46,341 - Darshan is accessing /equipment_setting/9/.
+2025-02-05 13:14:22,132 - Darshan is accessing /equipment_setting/9/.
+2025-02-05 13:14:22,428 - Darshan is accessing /equipment_setting/9/.
+2025-02-05 13:14:22,965 - Darshan is accessing /equipment_setting/9/.
+2025-02-05 13:14:23,147 - Darshan is accessing /equipment_setting/9/.
+2025-02-05 13:14:28,125 - Darshan is accessing /equipment_configure/.
+2025-02-05 13:14:30,926 - Darshan is accessing /equipment_configure/.
+2025-02-05 13:14:32,046 - Darshan is accessing /equipment_configure/.
+2025-02-05 13:14:34,345 - Darshan is accessing /organization/.
+2025-02-05 13:14:52,864 - Darshan is accessing /organization/.
+2025-02-05 13:14:53,182 - Darshan is accessing /media/crsco.webp.
+2025-02-05 13:14:55,259 - Darshan is accessing /app_setings/.
+2025-02-05 13:14:56,055 - Darshan is accessing /comm_group/.
+2025-02-05 13:15:17,506 - Darshan is accessing /Mkt_analysis/.
+2025-02-05 13:28:07,997 - Darshan is accessing /Mkt_analysis/.
+2025-02-05 13:32:16,518 - Darshan is accessing /Mkt_analysis/.
+2025-02-05 13:32:21,938 - Darshan is accessing /Mkt_analysis/.
+2025-02-05 13:32:50,880 - Darshan is accessing /Mkt_analysis/.
+2025-02-05 13:33:08,441 - Darshan is accessing /Mkt_analysis/.
+2025-02-05 13:39:40,129 - Darshan is accessing /Mkt_analysis/.
+2025-02-05 13:39:43,334 - Darshan is accessing /Mkt_analysis/.
+2025-02-05 13:40:09,176 - Darshan is accessing /Mkt_analysis/.
+2025-02-05 13:42:37,924 - Darshan is accessing /Mkt_analysis/.
+2025-02-05 13:44:19,304 - Darshan is accessing /Mkt_analysis/.
+2025-02-05 13:45:12,845 - Darshan is accessing /Mkt_analysis/.
+2025-02-05 13:47:34,208 - Darshan is accessing /Mkt_analysis/.
+2025-02-05 13:48:13,599 - Darshan is accessing /Mkt_analysis/.
+2025-02-05 13:49:48,887 - Darshan is accessing /Mkt_analysis/.
+2025-02-05 13:49:55,730 - Darshan is accessing /Mkt_analysis/.
+2025-02-05 13:52:37,353 - Darshan is accessing /Mkt_analysis/.
+2025-02-05 13:52:43,050 - Darshan is accessing /Mkt_analysis/.
+2025-02-05 13:59:32,792 - Darshan is accessing /Mkt_analysis/.
+2025-02-05 13:59:35,775 - Darshan is accessing /Mkt_analysis/.
+2025-02-05 13:59:39,134 - Darshan is accessing /Mkt_analysis/.
+2025-02-05 13:59:42,931 - Darshan is accessing /Mkt_analysis/.
+2025-02-05 13:59:45,362 - Darshan is accessing /Mkt_analysis/.
+2025-02-05 13:59:47,832 - Darshan is accessing /Mkt_analysis/.
+2025-02-05 13:59:50,216 - Darshan is accessing /Mkt_analysis/.
+2025-02-05 13:59:52,629 - Darshan is accessing /Mkt_analysis/.
+2025-02-05 14:04:06,241 - Darshan is accessing /Mkt_analysis/.
+2025-02-05 14:04:16,109 - Darshan is accessing /Mkt_analysis/.
+2025-02-05 14:04:22,610 - Darshan is accessing /Mkt_analysis/.
+2025-02-05 14:17:03,686 - Darshan is accessing /Mkt_analysis/.
+2025-02-05 14:17:21,153 - Darshan is accessing /Mkt_analysis/.
+2025-02-05 14:17:27,352 - Darshan is accessing /Mkt_analysis/.
+2025-02-05 14:17:31,845 - Darshan is accessing /Mkt_analysis/.
+2025-02-05 14:17:36,013 - Darshan is accessing /Mkt_analysis/.
+2025-02-05 14:25:29,910 - Darshan is accessing /Mkt_analysis/.
+2025-02-05 14:25:35,196 - Darshan is accessing /comm_group/.
+2025-02-05 15:23:13,275 - Anonymous is accessing /.
+2025-02-05 15:23:14,663 - Anonymous is accessing /favicon.ico.
+2025-02-05 15:23:21,911 - Anonymous is accessing /.
+2025-02-05 15:23:22,742 - Sunwell is created record in App1_useractivitylog.
+2025-02-05 15:23:22,745 - Sunwell is created record in django_session.
+2025-02-05 15:23:22,824 - Sunwell is accessing /dashboard/.
+2025-02-05 15:23:23,728 - Sunwell is accessing /media/crsco.webp.
+2025-02-05 15:23:27,122 - Sunwell is accessing /logout/.
+2025-02-05 15:23:27,294 - Sunwell is created record in App1_useractivitylog.
+2025-02-05 15:23:27,298 - Anonymous is deleting record in django_session.
+2025-02-05 15:23:27,369 - Anonymous is accessing /.
+2025-02-05 15:23:33,743 - Anonymous is accessing /.
+2025-02-05 15:23:34,484 - Anonymous is created record in django_session.
+2025-02-05 15:23:39,978 - Anonymous is accessing /.
+2025-02-05 15:23:44,755 - Anonymous is accessing /.
+2025-02-05 15:24:06,197 - Anonymous is accessing /forgot_password/.
+2025-02-05 15:53:44,663 - Anonymous is accessing /.
+2025-02-05 15:53:44,884 - Anonymous is accessing /favicon.ico.
+2025-02-05 15:53:55,075 - Anonymous is accessing /.
+2025-02-05 15:54:03,936 - Anonymous is accessing /.
+2025-02-05 15:54:11,012 - Darshan is accessing /comm_group/.
+2025-02-05 15:54:12,945 - Darshan is accessing /users/.
+2025-02-05 15:54:20,012 - Darshan is accessing /edit_user/2/.
+2025-02-05 15:54:20,092 - Darshan is updated record in App1_user.
+2025-02-05 15:54:20,106 - Darshan is deleting record in App1_passwordhistory.
+2025-02-05 15:54:20,236 - Darshan is created record in App1_passwordhistory.
+2025-02-05 15:54:20,311 - Darshan is created record in App1_useractivitylog.
+2025-02-05 15:54:20,317 - Darshan is updated record in django_session.
+2025-02-05 15:54:20,401 - Darshan is accessing /users/.
+2025-02-05 15:54:25,865 - Anonymous is accessing /.
+2025-02-05 15:54:37,008 - Anonymous is accessing /.
+2025-02-05 15:54:37,747 - Anonymous is updated record in django_session.
+2025-02-05 15:54:57,223 - Darshan is accessing /app_setings/.
+2025-02-05 15:55:53,097 - Darshan is accessing /users/.
+2025-02-05 15:56:20,147 - Anonymous is accessing /.
+2025-02-05 15:56:20,885 - Anonymous is deleting record in django_session.
+2025-02-05 15:56:21,365 - Prasanna is created record in App1_useractivitylog.
+2025-02-05 15:56:21,370 - Prasanna is created record in django_session.
+2025-02-05 15:56:21,456 - Prasanna is accessing /dashboard/.
+2025-02-05 15:56:22,174 - Prasanna is accessing /media/crsco.webp.
+2025-02-05 15:56:24,665 - Prasanna is accessing /logout/.
+2025-02-05 15:56:24,828 - Prasanna is created record in App1_useractivitylog.
+2025-02-05 15:56:24,831 - Anonymous is deleting record in django_session.
+2025-02-05 15:56:24,912 - Anonymous is accessing /.
+2025-02-05 15:56:29,595 - Anonymous is accessing /.
+2025-02-05 15:56:30,413 - Anonymous is created record in django_session.
+2025-02-05 15:56:35,492 - Anonymous is accessing /.
+2025-02-05 15:56:36,259 - Anonymous is updated record in django_session.
+2025-02-05 15:56:41,895 - Anonymous is accessing /.
+2025-02-05 15:56:42,660 - Anonymous is updated record in django_session.
+2025-02-05 15:56:46,155 - Anonymous is accessing /.
+2025-02-05 15:56:47,158 - Anonymous is updated record in django_session.
+2025-02-05 15:56:50,582 - Anonymous is accessing /.
+2025-02-05 15:56:51,498 - Anonymous is updated record in App1_user.
+2025-02-05 15:56:51,501 - Anonymous is updated record in django_session.
+2025-02-05 15:56:58,917 - Anonymous is accessing /.
+2025-02-05 15:57:07,141 - Darshan is accessing /users/.
+2025-02-05 15:57:13,691 - Darshan is accessing /edit_user/2/.
+2025-02-05 15:57:13,877 - Darshan is updated record in App1_user.
+2025-02-05 15:57:13,888 - Darshan is deleting record in App1_passwordhistory.
+2025-02-05 15:57:14,017 - Darshan is created record in App1_passwordhistory.
+2025-02-05 15:57:14,094 - Darshan is created record in App1_useractivitylog.
+2025-02-05 15:57:14,097 - Darshan is updated record in django_session.
+2025-02-05 15:57:14,170 - Darshan is accessing /users/.
+2025-02-05 15:57:27,301 - Anonymous is accessing /.
+2025-02-05 15:57:28,228 - Anonymous is updated record in App1_user.
+2025-02-05 15:57:28,233 - Anonymous is updated record in django_session.
+2025-02-05 15:57:35,809 - Darshan is accessing /users/.
+2025-02-05 15:57:38,841 - Darshan is accessing /edit_user/2/.
+2025-02-05 15:57:39,027 - Darshan is updated record in App1_user.
+2025-02-05 15:57:39,039 - Darshan is deleting record in App1_passwordhistory.
+2025-02-05 15:57:39,181 - Darshan is created record in App1_passwordhistory.
+2025-02-05 15:57:39,257 - Darshan is created record in App1_useractivitylog.
+2025-02-05 15:57:39,263 - Darshan is updated record in django_session.
+2025-02-05 15:57:39,345 - Darshan is accessing /users/.
+2025-02-05 15:57:44,348 - Anonymous is accessing /.
+2025-02-05 15:57:50,650 - Anonymous is accessing /.
+2025-02-05 15:57:51,466 - Anonymous is updated record in App1_user.
+2025-02-05 15:57:51,471 - Anonymous is updated record in django_session.
+2025-02-05 15:58:55,867 - Darshan is accessing /users/.
+2025-02-05 16:03:04,006 - Darshan is accessing /users/.
+2025-02-05 16:03:09,392 - Darshan is accessing /app_setings/.
+2025-02-05 16:03:15,170 - Darshan is accessing /save_app_settings/.
+2025-02-05 16:03:15,352 - Darshan is updated record in App1_appsettings.
+2025-02-05 16:03:16,402 - Darshan is accessing /app_setings/.
+2025-02-05 16:04:58,850 - Darshan is accessing /users/.
+2025-02-05 16:05:10,388 - Darshan is accessing /edit_user/2/.
+2025-02-05 16:05:10,600 - Darshan is updated record in App1_user.
+2025-02-05 16:05:10,676 - Darshan is updated record in App1_user.
+2025-02-05 16:05:10,691 - Darshan is deleting record in App1_passwordhistory.
+2025-02-05 16:05:10,830 - Darshan is created record in App1_passwordhistory.
+2025-02-05 16:05:10,913 - Darshan is created record in App1_useractivitylog.
+2025-02-05 16:05:10,931 - Darshan is accessing /users/.
+2025-02-05 16:05:14,326 - Darshan is accessing /users/.
+2025-02-05 16:05:21,934 - Anonymous is accessing /.
+2025-02-05 16:05:36,314 - Anonymous is accessing /.
+2025-02-05 16:08:39,370 - Anonymous is accessing /.
+2025-02-05 16:08:45,000 - Darshan is accessing /users/.
+2025-02-05 16:08:54,943 - Anonymous is accessing /.
+2025-02-05 17:03:16,989 - Darshan is accessing /logout/.
+2025-02-05 17:03:17,389 - Darshan is created record in App1_useractivitylog.
+2025-02-05 17:03:17,392 - Anonymous is deleting record in django_session.
+2025-02-05 17:03:17,478 - Anonymous is accessing /.
+2025-02-05 17:09:14,968 - Anonymous is accessing /logout/.
+2025-02-05 17:09:14,978 - Anonymous is accessing /.
+2025-02-05 19:21:57,388 - Anonymous is accessing /.
+2025-02-05 19:21:58,548 - Anonymous is updated record in App1_user.
+2025-02-05 19:21:58,561 - Anonymous is updated record in django_session.
+2025-02-05 19:22:10,212 - Anonymous is accessing /.
+2025-02-05 19:22:11,154 - Anonymous is updated record in App1_user.
+2025-02-05 19:22:11,158 - Anonymous is updated record in django_session.
+2025-02-05 19:22:16,450 - Anonymous is accessing /.
+2025-02-05 19:22:17,403 - Anonymous is updated record in App1_user.
+2025-02-05 19:22:17,506 - Anonymous is updated record in App1_user.
+2025-02-05 19:22:17,512 - Anonymous is updated record in django_session.
+2025-02-05 19:22:30,082 - Anonymous is accessing /.
+2025-02-05 19:22:30,998 - Darshan is updated record in App1_user.
+2025-02-05 19:22:31,070 - Darshan is created record in App1_useractivitylog.
+2025-02-05 19:22:31,086 - Darshan is created record in django_session.
+2025-02-05 19:22:31,178 - Darshan is accessing /dashboard/.
+2025-02-05 19:22:32,209 - Darshan is accessing /media/crsco.webp.
+2025-02-05 19:22:34,772 - Darshan is accessing /users/.
+2025-02-05 19:22:40,219 - Darshan is accessing /edit_user/2/.
+2025-02-05 19:22:40,398 - Darshan is updated record in App1_user.
+2025-02-05 19:22:40,485 - Darshan is updated record in App1_user.
+2025-02-05 19:22:40,498 - Darshan is deleting record in App1_passwordhistory.
+2025-02-05 19:22:40,652 - Darshan is created record in App1_passwordhistory.
+2025-02-05 19:22:40,728 - Darshan is created record in App1_useractivitylog.
+2025-02-05 19:22:40,753 - Darshan is accessing /users/.
+2025-02-05 19:22:44,706 - Anonymous is accessing /.
+2025-02-05 19:22:48,914 - Anonymous is accessing /.
+2025-02-05 19:22:49,827 - Anonymous is updated record in App1_user.
+2025-02-05 19:22:49,831 - Anonymous is updated record in django_session.
+2025-02-05 19:22:58,175 - Anonymous is accessing /.
+2025-02-05 19:22:58,956 - Anonymous is deleting record in django_session.
+2025-02-05 19:22:59,191 - Prasanna is updated record in App1_user.
+2025-02-05 19:22:59,263 - Prasanna is created record in App1_useractivitylog.
+2025-02-05 19:22:59,271 - Prasanna is created record in django_session.
+2025-02-05 19:22:59,363 - Prasanna is accessing /dashboard/.
+2025-02-05 19:23:00,179 - Prasanna is accessing /media/crsco.webp.
+2025-02-05 19:23:02,949 - Prasanna is accessing /logout/.
+2025-02-05 19:23:03,100 - Prasanna is created record in App1_useractivitylog.
+2025-02-05 19:23:03,103 - Anonymous is deleting record in django_session.
+2025-02-05 19:23:03,196 - Anonymous is accessing /.
+2025-02-05 19:23:10,972 - Anonymous is accessing /.
+2025-02-05 19:23:11,861 - Anonymous is updated record in App1_user.
+2025-02-05 19:23:11,866 - Anonymous is created record in django_session.

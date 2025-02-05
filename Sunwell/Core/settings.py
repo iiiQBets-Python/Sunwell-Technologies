@@ -93,8 +93,17 @@ DATABASES = {
 #         'PASSWORD': os.getenv('DATABASE_PASSWORD', 'default_password'),
 #         'HOST': os.getenv('DATABASE_HOST', 'localhost'),
 #         'PORT': os.getenv('DATABASE_PORT', '5432'),
+
+        
 #     }
 # }
+
+# print("Database Details:")
+# print("NAME:", os.getenv('DATABASE_NAME'))
+# print("USER:", os.getenv('DATABASE_USER'))
+# print("PASSWORD:", os.getenv('DATABASE_PASSWORD'))
+# print("HOST:", os.getenv('DATABASE_HOST'))
+# print("PORT:", os.getenv('DATABASE_PORT'))
 
 # DATABASES = {
 #     'default': {

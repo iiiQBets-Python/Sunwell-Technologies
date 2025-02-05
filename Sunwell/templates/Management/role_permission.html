@@ -206,8 +206,9 @@
                     {% csrf_token %}
                     <div class="row">
                         <div class="col-md-12 form-group">                    
-                            <input type="text" class="form-control" id="role"  name="role" maxlength="50" placeholder=" " autocomplete="off">
+                            <input type="text" class="form-control" id="role"  name="role" maxlength="50" placeholder=" " autocomplete="off"  oninput="Checkrolename()">
                             <label for="role" class="form-label">Role</label>
+                            <div id="usernameError" class="text-danger"></div>
                         </div>
 
                         <div class="col-md-12 form-group">                
@@ -341,6 +342,55 @@
                 backdrop.remove(); // Remove any lingering backdrops
             });
         });
+    });
+
+    function getExistingUsernames() {
+        const tableRows = document.querySelectorAll('#form-data-table tr');
+        const usernames = [];
+        tableRows.forEach(row => {
+            const usernameCell = row.querySelector('td:nth-child(2)'); 
+            if (usernameCell) {
+                usernames.push(usernameCell.textContent.trim());
+            }
+        });
+  
+        return usernames;
+    }
+  
+    function Checkrolename(){
+          const inputUsername = document.getElementById('role').value;
+        const usernameErrorDiv = document.getElementById('usernameError');
+        const existingUsernames = getExistingUsernames();
+        const saveButton=document.getElementById('submitform')
+  
+        if (existingUsernames.includes(inputUsername)) {
+            usernameErrorDiv.textContent = 'This Role Already Exists.';
+            saveButton.disabled = true;
+        } else {
+            usernameErrorDiv.textContent = '';
+            saveButton.disabled = false; 
+        }
+      }
+      function resetFormAndErrors(modalId) {
+        const modal = document.querySelector(modalId);
+        if (modal) {
+            const form = modal.querySelector('form');
+            if (form) {
+                form.reset(); 
+                const customErrorDivs = modal.querySelectorAll('.text-danger');
+                customErrorDivs.forEach(div => {
+                    div.textContent = '';
+                });
+                form.classList.remove('was-validated'); 
+            }
+        }
+    }
+    document.querySelectorAll('[data-bs-dismiss="modal"]').forEach(button => {
+        button.addEventListener('click', () => resetFormAndErrors(`#${button.closest('.modal').id}`));
+    });
+
+    document.querySelectorAll('.modal').forEach(modal => {
+        modal.addEventListener('hidden.bs.modal', () => resetFormAndErrors(`#${modal.id}`));
     });
 
 </script>

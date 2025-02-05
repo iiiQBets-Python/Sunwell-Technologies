@@ -219,8 +219,9 @@
                         <div class="tab-pane fade show active" id="department" role="tabpanel">
                             <div class="row">
                                 <div class="col-md-6 form-group">
-                                    <input type="text" class="form-control" id="departmentName" name="departmentName" maxlength="15" placeholder=" " required oninput="setCustomValidity('')" oninvalid="setCustomValidity('Please Enter Department Name')">
+                                    <input type="text" class="form-control" id="departmentName" name="departmentName" maxlength="15" placeholder=" " required oninput="setCustomValidity('')" oninvalid="setCustomValidity('Please Enter Department Name')" onblur="checkdepartmentname()">
                                     <label for="departmentName" class="form-label">Department Name*</label>
+                                    <div id="usernameError" class="text-danger"></div>
                                 </div>
                                 <div class="col-md-6 form-group">
                                     <select class="form-select" id="commGroup" name="commGroup" placeholder=" " required oninput="setCustomValidity('')" oninvalid="setCustomValidity('Please Select CommGroup')">
@@ -553,7 +554,7 @@
                     </div>
                     <div class="form-buttons mt-3 text-center">
                         <button class="btn btn-outline-danger" data-bs-dismiss="modal">Close</button>
-                        <button class="btn btn-outline-success" type="submit">Save</button>
+                        <button class="btn btn-outline-success" type="submit" id="submitform" >Save</button>
                     </div>
                 </form>
             </div>
@@ -1005,6 +1006,67 @@
             });
         });
         
+    });
+
+
+    function getExistingUsernames() {
+        const tableRows = document.querySelectorAll('#form-data-table tr');
+        const usernames = [];
+        tableRows.forEach(row => {
+            const usernameCell = row.querySelector('td:nth-child(2)'); 
+            if (usernameCell) {
+                usernames.push(usernameCell.textContent.trim());
+            }
+        });
+  
+        return usernames;
+    }
+
+
+    function checkdepartmentname(){
+        const inputUsername = document.getElementById('departmentName').value;
+      const usernameErrorDiv = document.getElementById('usernameError');
+      const existingUsernames = getExistingUsernames();
+      const saveButton=document.getElementById('submitform')
+
+      if (existingUsernames.includes(inputUsername)) {
+          usernameErrorDiv.textContent = 'The Department Name Already Exists.';
+          saveButton.disabled = true;
+      } else {
+          usernameErrorDiv.textContent = '';
+          saveButton.disabled = false; 
+      }
+    }
+
+    function resetFormAndErrors() {
+        const forms = document.querySelectorAll('.modal form');
+        forms.forEach(form => {
+            form.reset(); 
+            form.classList.remove('was-validated'); 
+        });
+  
+     
+        const errorDivs = document.querySelectorAll('.text-danger');
+        errorDivs.forEach(div => {
+            div.textContent = '';
+        });
+  
+    
+        const modals = document.querySelectorAll('.modal');
+        modals.forEach(modal => {
+            const modalInstance = bootstrap.Modal.getInstance(modal);
+            if (modalInstance) {
+                modalInstance.reset(); 
+            }
+        });
+    }
+    document.querySelectorAll('[data-bs-dismiss="modal"]').forEach(button => {
+        button.addEventListener('click', resetFormAndErrors);
+    });
+  
+  
+    document.querySelectorAll('.modal').forEach(modal => {
+        modal.addEventListener('hidden.bs.modal', resetFormAndErrors);
     });
 
 </script>

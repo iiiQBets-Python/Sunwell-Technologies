@@ -199,12 +199,14 @@
                     {% csrf_token %}
                     <div class="row">
                         <div class="col-sm-12 form-group">
-                            <input type="text" class="form-control" id="comm_name" name="comm_name" maxlength="50" placeholder=" " required>
+                            <input type="text" class="form-control" id="comm_name" name="comm_name" maxlength="50" placeholder=" " required oninput="checkUsernameAvailability()">
                             <label for="comm_name" class="form-label">Comm.Group Name</label>
+                            <div id="usernameError" class="text-danger"></div>
                         </div>
                         <div class="col-sm-12 form-group">
-                            <input type="number" class="form-control" id="comm_code" name="comm_code" maxlength="10" placeholder=" " required>
+                            <input type="number" class="form-control" id="comm_code" name="comm_code" maxlength="10" placeholder=" " required oninput="checkcodeAvailability()">
                             <label for="comm_code" class="form-label">Comm.Group Code</label>
+                            <div id="codeerror" class="text-danger"></div>
                         </div>
                         <div class="col-sm-12 form-group">
                             <input type="text" class="form-control" id="softKey" name="softKey" maxlength="50" placeholder=" " required value="{{ soft_key }}" readonly>
@@ -285,6 +287,104 @@
         modalInstance.show();
     });
 });
+
+
+function getExistingUsernames() {
+    const tableRows = document.querySelectorAll('#form-data-table tr');
+    const usernames = [];
+    tableRows.forEach(row => {
+        const usernameCell = row.querySelector('td:nth-child(3)'); 
+        if (usernameCell) {
+            usernames.push(usernameCell.textContent.trim());
+        }
+    });
+
+    return usernames;
+}
+
+
+
+
+function checkUsernameAvailability() {
+   
+   const inputUsername = document.getElementById('comm_name').value;
+   const usernameErrorDiv = document.getElementById('usernameError');
+   const existingUsernames = getExistingUsernames();
+   const saveButton=document.getElementById('saveButton')
+
+   if (existingUsernames.includes(inputUsername)) {
+       usernameErrorDiv.textContent = 'This name is already existing.';
+       saveButton.disabled = true;
+   } else {
+       usernameErrorDiv.textContent = '';
+       saveButton.disabled = false; 
+   }
+}
+
+
+function getExistingcode() {
+    const tableRows = document.querySelectorAll('#form-data-table tr');
+    const usernames = [];
+    tableRows.forEach(row => {
+        const usernameCell = row.querySelector('td:nth-child(2)'); 
+        if (usernameCell) {
+            usernames.push(usernameCell.textContent.trim());
+        }
+    });
+
+    return usernames;
+}
+
+
+
+
+function checkcodeAvailability() {
+   
+   const inputUsername = document.getElementById('comm_code').value;
+   const usernameErrorDiv = document.getElementById('codeerror');
+   const existingUsernames = getExistingcode();
+   const saveButton=document.getElementById('saveButton')
+
+   if (existingUsernames.includes(inputUsername)) {
+       usernameErrorDiv.textContent = 'This code is already existing.';
+       saveButton.disabled = true;
+   } else {
+       usernameErrorDiv.textContent = '';
+       saveButton.disabled = false; 
+   }
+}
+
+
+document.getElementById('adminUserModal').addEventListener('hidden.bs.modal', function () {
+  
+    var form = document.getElementById('adminUserForm');
+    if (form) {
+        form.reset(); 
+    }
+    var usernameErrorDiv = document.getElementById('usernameError');
+    if (usernameErrorDiv) {
+        usernameErrorDiv.textContent = '';
+    }
+
+    var codediv = document.getElementById('codeerror');
+    if (codediv) {
+        codediv.textContent = '';
+    }
+    var validationIcon = document.getElementById('validationIcon');
+    var activationKeyMessage = document.getElementById('activationKeyMessage');
+    if (validationIcon) {
+        validationIcon.innerHTML = '';  
+    }
+    if (activationKeyMessage) {
+        activationKeyMessage.textContent = '';
+        activationKeyMessage.style.color = '';  
+    }
+    var saveButton = document.getElementById('saveButton');
+    if (saveButton) {
+        saveButton.disabled = true; 
+    }
+});
+
 
 </script>
 {% block scripts %}

@@ -56,3 +56,54 @@ spanning problem in <Table@0x207B7B3D340 11 rows x 4 cols(tallest row 27)> with 
 2025-02-05 16:05:21,936 - Anonymous is getting UnboundLocalError on accessing login: cannot access local variable 'user' where it is not associated with a value
 2025-02-05 16:05:36,315 - Anonymous is getting UnboundLocalError on accessing login: cannot access local variable 'user' where it is not associated with a value
 2025-02-05 16:08:55,690 - Anonymous is getting TypeError on accessing login: 'int' object is not subscriptable
+2025-02-07 12:00:37,207 - Darshan is getting TemplateSyntaxError on accessing Mkt_analysis: Invalid filter: 'dict'
+2025-02-07 12:01:16,153 - Darshan is getting TemplateSyntaxError on accessing Mkt_analysis: Invalid filter: 'dict'
+2025-02-07 12:01:17,823 - Darshan is getting TemplateSyntaxError on accessing Mkt_analysis: Invalid filter: 'dict'
+2025-02-07 12:01:20,793 - Darshan is getting TemplateSyntaxError on accessing Mkt_analysis: Invalid filter: 'dict'
+2025-02-07 12:18:01,563 - Darshan is getting TemplateSyntaxError on accessing Mkt_analysis: Could not parse the remainder: '(equipment.total_temp_sensors)' from 'range(equipment.total_temp_sensors)'
+2025-02-07 12:18:03,257 - Darshan is getting TemplateSyntaxError on accessing Mkt_analysis: Could not parse the remainder: '(equipment.total_temp_sensors)' from 'range(equipment.total_temp_sensors)'
+2025-02-07 12:18:03,667 - Darshan is getting TemplateSyntaxError on accessing Mkt_analysis: Could not parse the remainder: '(equipment.total_temp_sensors)' from 'range(equipment.total_temp_sensors)'
+2025-02-07 12:18:03,835 - Darshan is getting TemplateSyntaxError on accessing Mkt_analysis: Could not parse the remainder: '(equipment.total_temp_sensors)' from 'range(equipment.total_temp_sensors)'
+2025-02-08 10:48:15,205 - Darshan is getting Http404 on accessing django.views.static.serve: “D:\iiiQbets\2024\Projects\Sunwell Technologies\New folder (2)\Sunwell\Sunwell\media\LOGO_JPEG_-_Copy.jpg” does not exist
+2025-02-08 10:50:37,185 - Darshan is getting Http404 on accessing django.views.static.serve: “D:\iiiQbets\2024\Projects\Sunwell Technologies\New folder (2)\Sunwell\Sunwell\media\LOGO_JPEG_-_Copy.jpg” does not exist
+2025-02-08 10:50:41,160 - Darshan is getting Http404 on accessing django.views.static.serve: “D:\iiiQbets\2024\Projects\Sunwell Technologies\New folder (2)\Sunwell\Sunwell\media\LOGO_JPEG_-_Copy.jpg” does not exist
+2025-02-08 10:54:14,103 - Darshan is getting Http404 on accessing django.views.static.serve: “D:\iiiQbets\2024\Projects\Sunwell Technologies\New folder (2)\Sunwell\Sunwell\media\LOGO_JPEG_-_Copy.jpg” does not exist
+2025-02-08 10:54:21,424 - Darshan is getting Http404 on accessing django.views.static.serve: “D:\iiiQbets\2024\Projects\Sunwell Technologies\New folder (2)\Sunwell\Sunwell\media\LOGO_JPEG_-_Copy.jpg” does not exist
+2025-02-08 11:09:15,678 - Darshan is getting Http404 on accessing django.views.static.serve: “D:\iiiQbets\2024\Projects\Sunwell Technologies\New folder (2)\Sunwell\Sunwell\media\LOGO_JPEG_-_Copy.jpg” does not exist
+2025-02-08 11:20:32,298 - Darshan is getting Http404 on accessing django.views.static.serve: “D:\iiiQbets\2024\Projects\Sunwell Technologies\New folder (2)\Sunwell\Sunwell\media\LOGO_JPEG_-_Copy.jpg” does not exist
+2025-02-08 11:20:34,990 - Darshan is getting Http404 on accessing django.views.static.serve: “D:\iiiQbets\2024\Projects\Sunwell Technologies\New folder (2)\Sunwell\Sunwell\media\LOGO_JPEG_-_Copy.jpg” does not exist
+2025-02-08 11:20:52,079 - Darshan is getting Http404 on accessing django.views.static.serve: “D:\iiiQbets\2024\Projects\Sunwell Technologies\New folder (2)\Sunwell\Sunwell\media\LOGO_JPEG_-_Copy.jpg” does not exist
+2025-02-08 11:35:28,691 - Darshan is getting Http404 on accessing django.views.static.serve: “D:\iiiQbets\2024\Projects\Sunwell Technologies\New folder (2)\Sunwell\Sunwell\media\LOGO_JPEG_-_Copy.jpg” does not exist
+2025-02-08 11:35:31,296 - Darshan is getting Http404 on accessing django.views.static.serve: “D:\iiiQbets\2024\Projects\Sunwell Technologies\New folder (2)\Sunwell\Sunwell\media\LOGO_JPEG_-_Copy.jpg” does not exist
+2025-02-08 11:36:18,169 - Darshan is getting Http404 on accessing django.views.static.serve: “D:\iiiQbets\2024\Projects\Sunwell Technologies\New folder (2)\Sunwell\Sunwell\media\LOGO_JPEG_-_Copy.jpg” does not exist
+2025-02-08 11:36:32,560 - Darshan is getting Http404 on accessing django.views.static.serve: “D:\iiiQbets\2024\Projects\Sunwell Technologies\New folder (2)\Sunwell\Sunwell\media\LOGO_JPEG_-_Copy.jpg” does not exist
+2025-02-08 11:36:56,180 - Prasanna is getting Http404 on accessing django.views.static.serve: “D:\iiiQbets\2024\Projects\Sunwell Technologies\New folder (2)\Sunwell\Sunwell\media\LOGO_JPEG_-_Copy.jpg” does not exist
+2025-02-08 11:40:49,609 - Darshan is getting Http404 on accessing django.views.static.serve: “D:\iiiQbets\2024\Projects\Sunwell Technologies\New folder (2)\Sunwell\Sunwell\media\LOGO_JPEG_-_Copy.jpg” does not exist
+2025-02-08 11:40:51,144 - Darshan is getting Http404 on accessing django.views.static.serve: “D:\iiiQbets\2024\Projects\Sunwell Technologies\New folder (2)\Sunwell\Sunwell\media\LOGO_JPEG_-_Copy.jpg” does not exist
+2025-02-08 12:19:01,235 - Darshan is getting AttributeError on accessing Mkt_analysis: 'NumberedCanvas' object has no attribute 'pages'
+2025-02-08 12:21:43,553 - Darshan is getting AttributeError on accessing Mkt_analysis: 'NumberedCanvas' object has no attribute 'pages'
+2025-02-08 12:33:54,649 - Darshan is getting AttributeError on accessing Mkt_analysis: 'dict' object has no attribute 'date'
+2025-02-08 12:35:00,707 - Darshan is getting AttributeError on accessing Mkt_analysis: 'dict' object has no attribute 'date'
+2025-02-08 12:37:33,305 - Darshan is getting AttributeError on accessing Mkt_analysis: 'dict' object has no attribute 'date'
+2025-02-08 12:37:34,312 - Darshan is getting AttributeError on accessing Mkt_analysis: 'dict' object has no attribute 'date'
+2025-02-08 12:37:34,673 - Darshan is getting AttributeError on accessing Mkt_analysis: 'dict' object has no attribute 'date'
+2025-02-08 12:37:35,056 - Darshan is getting AttributeError on accessing Mkt_analysis: 'dict' object has no attribute 'date'
+2025-02-08 12:37:35,410 - Darshan is getting AttributeError on accessing Mkt_analysis: 'dict' object has no attribute 'date'
+2025-02-08 12:42:25,232 - Darshan is getting AttributeError on accessing Mkt_analysis: 'dict' object has no attribute 'date'
+2025-02-08 12:42:26,407 - Darshan is getting AttributeError on accessing Mkt_analysis: 'dict' object has no attribute 'date'
+2025-02-08 12:42:27,121 - Darshan is getting AttributeError on accessing Mkt_analysis: 'dict' object has no attribute 'date'
+2025-02-08 12:42:27,776 - Darshan is getting AttributeError on accessing Mkt_analysis: 'dict' object has no attribute 'date'
+2025-02-08 12:42:28,468 - Darshan is getting AttributeError on accessing Mkt_analysis: 'dict' object has no attribute 'date'
+2025-02-08 12:42:31,753 - Darshan is getting AttributeError on accessing Mkt_analysis: 'dict' object has no attribute 'date'
+2025-02-08 12:44:37,416 - Darshan is getting TypeError on accessing Mkt_analysis: generate_mkt_log_pdf.<locals>.mkt_table() takes 0 positional arguments but 1 was given
+2025-02-08 12:45:54,795 - Darshan is getting AttributeError on accessing Mkt_analysis: 'dict' object has no attribute 'time'
+2025-02-08 12:46:38,675 - Darshan is getting KeyError on accessing Mkt_analysis: 'time'
+2025-02-08 12:47:40,703 - Darshan is getting NameError on accessing Mkt_analysis: 
+handle_pageBegin args=() cannot access free variable 'records_from_time' where it is not associated with a value in enclosing scope
+2025-02-08 12:52:44,389 - Darshan is getting KeyError on accessing Mkt_analysis: 'startdate'
+2025-02-08 13:42:43,904 - Darshan is getting TypeError on accessing Mkt_analysis: the resolved dtypes are not compatible with add.reduce. Resolved (dtype('<U1'), dtype('<U1'), dtype('<U2'))
+2025-02-08 13:43:26,323 - Darshan is getting TypeError on accessing Mkt_analysis: the resolved dtypes are not compatible with add.reduce. Resolved (dtype('<U1'), dtype('<U1'), dtype('<U2'))
+2025-02-08 13:53:39,356 - Darshan is getting DoesNotExist on accessing Mkt_analysis: Equipment matching query does not exist.
+2025-02-08 18:34:17,573 - Darshan is getting IndexError on accessing Mkt_analysis: list assignment index out of range
+2025-02-10 18:47:26,946 - Darshan is getting OSError on accessing Mkt_analysis: 
+handle_pageBegin args=() Cannot open resource "D:\iiiQbets\2024\Projects\Sunwell Technologies\New folder (2)\Sunwell\Sunwell\media\iiiQ_-_logo_Yl3uP17.png"

@@ -6,6 +6,12 @@
     {{ block.super }}
     <link rel="stylesheet" href="{% static 'css/data_analysis/Mkt.css' %}">
     <style>
+        .sensor-row {
+            display: none; /* Hide all rows initially */
+        }
+        .table-header {
+            display: none; /* Hide the table header initially */
+          }
     /* Add responsive styles */
     @media (max-width: 992px) {
         .table-container {
@@ -143,18 +149,18 @@
             </div>
             <div class="form-group col-lg-2 col-md-3">
                 <div class="input-container">
-                    {% comment %} <select id="Action" class="form-control" name="action" placeholder=" " required>
-                        <option value="" disabled selected>Select Action</option>
+                    <select id="Action" class="form-control" name="action" placeholder=" " required>
+                        <option value="" selected>Select Action</option>
                             <option value="Daily">Daily</option>
                             <option value="Weekly">Weekly</option>
                             <option value="Monthly">Monthly</option>
                     </select>
-                    <label for="action" class="form-label">Action</label> {% endcomment %}
-                    <input type="text" class="form-control" id="action" placeholder=" " value="Daily" readonly name="action">
+                    <label for="action" class="form-label">Action</label>
+                    {% comment %} <input type="text" class="form-control" id="action" placeholder=" " value="Daily" readonly name="action"> {% endcomment %}
                     <label for="action" class="form-label">Action</label>
                 </div>
             </div>
-
+            
             <div class="form-group col-md-2 mb-0">
                 <div class="input-container">
                     <div class="button-group">
@@ -169,7 +175,7 @@
         <div class="table-container">
             <div class="table-wrapper">
                 <table class="table table-bordered">
-                    <thead>
+                    <thead class="table-header">
                         <tr>
                             <th><input type="checkbox" id="selectAll"></th>
                             <th scope="col">Name</th>
@@ -177,137 +183,20 @@
                         </tr>
                     </thead>
                     <tbody id="form-data-table">
-                        <tr>
-                            <td><input type="checkbox" class="row-checkbox" name="comm_checkbox"></td>
-                            <td>Temperature1</td>
-                            <td>°C</td>
-                        </tr>
-                        <tr>
-                            <td><input type="checkbox" class="row-checkbox" name="comm_checkbox"></td>
-                            <td>Temperature2</td>
-                            <td>°C</td>
-                        </tr>
-                        <tr>
-                            <td><input type="checkbox" class="row-checkbox" name="comm_checkbox"></td>
-                            <td>Temperature1</td>
-                            <td>°C</td>
-                        </tr>
-                        <tr>
-                            <td><input type="checkbox" class="row-checkbox" name="comm_checkbox"></td>
-                            <td>Temperature2</td>
-                            <td>°C</td>
-                        </tr>
-                        <tr>
-                            <td><input type="checkbox" class="row-checkbox" name="comm_checkbox"></td>
-                            <td>Temperature1</td>
-                            <td>°C</td>
-                        </tr>
-                        <tr>
-                            <td><input type="checkbox" class="row-checkbox" name="comm_checkbox"></td>
-                            <td>Temperature2</td>
-                            <td>°C</td>
-                        </tr>
-                        <tr>
-                            <td><input type="checkbox" class="row-checkbox" name="comm_checkbox"></td>
-                            <td>Temperature1</td>
-                            <td>°C</td>
-                        </tr>
-                        <tr>
-                            <td><input type="checkbox" class="row-checkbox" name="comm_checkbox"></td>
-                            <td>Temperature2</td>
-                            <td>°C</td>
-                        </tr>
-                        <tr>
-                            <td><input type="checkbox" class="row-checkbox" name="comm_checkbox"></td>
-                            <td>Temperature1</td>
-                            <td>°C</td>
-                        </tr>
-                        <tr>
-                            <td><input type="checkbox" class="row-checkbox" name="comm_checkbox"></td>
-                            <td>Temperature2</td>
-                            <td>°C</td>
-                        </tr>
-                        <tr>
-                            <td><input type="checkbox" class="row-checkbox" name="comm_checkbox"></td>
-                            <td>Temperature1</td>
-                            <td>°C</td>
-                        </tr>
-                        <tr>
-                            <td><input type="checkbox" class="row-checkbox" name="comm_checkbox"></td>
-                            <td>Temperature2</td>
-                            <td>°C</td>
-                        </tr>
-                        <tr>
-                            <td><input type="checkbox" class="row-checkbox" name="comm_checkbox"></td>
-                            <td>Temperature1</td>
-                            <td>°C</td>
-                        </tr>
-                        <tr>
-                            <td><input type="checkbox" class="row-checkbox" name="comm_checkbox"></td>
-                            <td>Temperature2</td>
-                            <td>°C</td>
-                        </tr>
-                        <tr>
-                            <td><input type="checkbox" class="row-checkbox" name="comm_checkbox"></td>
-                            <td>Temperature1</td>
-                            <td>°C</td>
-                        </tr>
-                        <tr>
-                            <td><input type="checkbox" class="row-checkbox" name="comm_checkbox"></td>
-                            <td>Temperature2</td>
-                            <td>°C</td>
-                        </tr>
-                        <tr>
-                            <td><input type="checkbox" class="row-checkbox" name="comm_checkbox"></td>
-                            <td>Temperature1</td>
-                            <td>°C</td>
-                        </tr>
-                        <tr>
-                            <td><input type="checkbox" class="row-checkbox" name="comm_checkbox"></td>
-                            <td>Temperature2</td>
-                            <td>°C</td>
-                        </tr>
-                        <tr>
-                            <td><input type="checkbox" class="row-checkbox" name="comm_checkbox"></td>
-                            <td>Temperature1</td>
-                            <td>°C</td>
-                        </tr>
-                        <tr>
-                            <td><input type="checkbox" class="row-checkbox" name="comm_checkbox"></td>
-                            <td>Temperature2</td>
-                            <td>°C</td>
-                        </tr>
-                        <tr>
-                            <td><input type="checkbox" class="row-checkbox" name="comm_checkbox"></td>
-                            <td>Temperature1</td>
-                            <td>°C</td>
-                        </tr>
-                        <tr>
-                            <td><input type="checkbox" class="row-checkbox" name="comm_checkbox"></td>
-                            <td>Temperature2</td>
-                            <td>°C</td>
-                        </tr>
-                        <tr>
-                            <td><input type="checkbox" class="row-checkbox" name="comm_checkbox"></td>
-                            <td>Temperature1</td>
-                            <td>°C</td>
-                        </tr>
-                        <tr>
-                            <td><input type="checkbox" class="row-checkbox" name="comm_checkbox"></td>
-                            <td>Temperature2</td>
-                            <td>°C</td>
-                        </tr>
-                        <tr>
-                            <td><input type="checkbox" class="row-checkbox" name="comm_checkbox"></td>
-                            <td>Temperature1</td>
-                            <td>°C</td>
-                        </tr>
-                        <tr>
-                            <td><input type="checkbox" class="row-checkbox" name="comm_checkbox"></td>
-                            <td>Temperature2</td>
-                            <td>°C</td>
-                        </tr>
-                    </tbody>
+                        {% for equipment in equipments %}
+                            {% for sensor_number in equipment.sensor_range %}
+                                <tr class="sensor-row" data-equipment-id="{{ equipment.id }}">
+                                    <td><input type="checkbox" class="row-checkbox" name="selected_sensors[]" value="{{ sensor_number|add:1 }}"></td>
+                                    <td>Temperature {{ sensor_number|add:1 }}</td>
+                                    <td>°C</td>
+                                </tr>
+                            {% endfor %}
+                        {% empty %}
+                            <tr>
+                                <td colspan="3">No sensors available</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>                                       
                 </table>
             </div>
         </div>
@@ -326,6 +215,103 @@
         // Show the table
         document.querySelector(".hide-table").style.display = "block";
     });
+
+    // Table details filter based on total sensors of selected equipment
+        document.getElementById("filter-btn").addEventListener("click", function () {
+            let equipmentDropdown = document.getElementById("equipment");
+        
+            // Validate equipment selection
+            if (!equipmentDropdown.value) {
+                equipmentDropdown.setCustomValidity("Please select an equipment before filtering.");
+                equipmentDropdown.reportValidity(); // Shows the custom error
+                return;
+            } else {
+                equipmentDropdown.setCustomValidity(""); // Clears any previous errors
+            }
+        
+            // Hide all rows initially
+            document.querySelectorAll(".sensor-row").forEach(row => {
+                row.style.display = "none";
+            });
+        
+            // Show only the rows for the selected equipment
+            document.querySelectorAll(`.sensor-row[data-equipment-id="${equipmentDropdown.value}"]`).forEach(row => {
+                row.style.display = "table-row";
+            });
+        
+            // Show the table and thead
+            document.querySelector(".hide-table").style.display = "block";
+            document.querySelector(".table-header").style.display = "table-header-group"; // Show the header
+        });
+        
+        // Remove validation message when user selects an equipment
+        document.getElementById("equipment").addEventListener("change", function () {
+            this.setCustomValidity(""); // Clears validation message
+        });
+    
+        
+    // checkbox selection script
+    document.addEventListener("DOMContentLoaded", function () {
+        const selectAllCheckbox = document.getElementById("selectAll");
+        const rowCheckboxes = document.querySelectorAll(".row-checkbox");
+    
+        // Function to toggle all checkboxes based on header checkbox
+        selectAllCheckbox.addEventListener("change", function () {
+            rowCheckboxes.forEach(checkbox => {
+                checkbox.checked = selectAllCheckbox.checked;
+            });
+        });
+    
+        // Update "Select All" checkbox when individual checkboxes are clicked
+        rowCheckboxes.forEach(checkbox => {
+            checkbox.addEventListener("change", function () {
+                // If any checkbox is unchecked, uncheck "Select All"
+                if (!this.checked) {
+                    selectAllCheckbox.checked = false;
+                }
+                // If all checkboxes are checked, check "Select All"
+                else if (document.querySelectorAll(".row-checkbox:checked").length === rowCheckboxes.length) {
+                    selectAllCheckbox.checked = true;
+                }
+            });
+        });
+    });
+
+    // Script to include selected sensors to form
+
+    document.addEventListener("DOMContentLoaded", function () {
+        const form = document.querySelector("form");
+    
+        form.addEventListener("submit", function (event) {
+            const selectedSensors = Array.from(
+                document.querySelectorAll(".row-checkbox:checked")
+            ).map((checkbox) => checkbox.value);
+    
+            // Remove previous hidden inputs for selected sensors
+            document.querySelectorAll(".sensor-input").forEach(input => input.remove());
+    
+            if (selectedSensors.length === 0) {
+                event.preventDefault();
+                alert("Please select at least one sensor.");
+                return;
+            }
+    
+            // Append selected sensors as hidden inputs
+            selectedSensors.forEach(sensor => {
+                const input = document.createElement("input");
+                input.type = "hidden";
+                input.name = "selected_sensors[]";
+                input.value = sensor;
+                input.classList.add("sensor-input");
+                form.appendChild(input);
+            });
+        });
+    });
+    
+    
+    
+    
+    
 </script>
 
 {% endblock %}

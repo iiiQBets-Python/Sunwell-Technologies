@@ -1,3 +1,5 @@
+
+
 {% extends "Base/base.html" %}
 {% load static %}
 
@@ -253,8 +255,8 @@
             const equipmentData = data.equipment_data
             equipmentData.forEach(equipment => {
                
-                const card = document.querySelector(.card-wrapper[data-id="${equipment.id}"]);
-                const tableRow = document.querySelector(tr[data-id="${equipment.id}"]);
+                const card = document.querySelector(`.card-wrapper[data-id="${equipment.id}"]`);
+                const tableRow = document.querySelector(`tr[data-id="${equipment.id}"]`);
 
                 
                 if (card) {
@@ -263,7 +265,7 @@
                         equipment.status === 'Online' 
                         ? '<i class="fa-regular fa-circle-check" style="color: #28a745;"></i> Online' 
                         : '<i class="fa-regular fa-circle-stop" style="color: #d20f0f;"></i> Offline';
-                    card.querySelector('.pending-review').textContent = Alarms (${equipment.pending_review});
+                    card.querySelector('.pending-review').textContent = `Pending Alarms`;
                 }
 
                 // Update table row content if it exists
@@ -272,14 +274,12 @@
                         equipment.status === 'Offline' 
                         ? '<i class="fa-regular fa-circle-check" style="color: #28a745;"></i> Online' 
                         : '<i class="fa-regular fa-circle-stop" style="color: #d20f0f;"></i> Offline';
-                    tableRow.querySelector('.pending-review').textContent = Alarms (${equipment.pending_review});
+                    // tableRow.querySelector('.pending-review').textContent = `Alarms (${equipment.pending_review})`;
                 }
             });
         })
         .catch(error => console.error('Error fetching equipment data:', error));
 }
-
-// Automatically fetch data every 5 seconds
 setInterval(fetchEquipmentData, 5000);
 
 // Fetch data once on page load
@@ -367,7 +367,7 @@ window.onload = fetchEquipmentData;
     
             // Update the visible records count
             const recordsInfo = document.getElementById("records-info");
-            recordsInfo.textContent = (Records Found: ${visibleCount});
+            recordsInfo.textContent = `(Records Found: ${visibleCount})`;
         }
     
         // Event listener for department dropdown change
@@ -380,7 +380,7 @@ window.onload = fetchEquipmentData;
         // Filter by status and update the URL
         function filterByStatus(status) {
             const dropdownButton = document.getElementById("roleFilterDropdown");
-            dropdownButton.innerHTML = ${status.charAt(0).toUpperCase() + status.slice(1)};
+            dropdownButton.innerHTML = `${status.charAt(0).toUpperCase() + status.slice(1)}`;
     
             // Update the URL query parameter
             const url = new URL(window.location.href);
@@ -422,3 +422,5 @@ window.onload = fetchEquipmentData;
   </script>
   {% endblock %}
 {% endblock content %}
+
+

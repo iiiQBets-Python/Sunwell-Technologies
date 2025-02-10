@@ -367,8 +367,8 @@ class Equipment(models.Model):
     online = models.BooleanField(null=True, default=False)
 
 
-    def __int__(self):
-        return self.id
+    def __str__(self):
+        return self.equip_name
 
 
 class PLCUser(models.Model):
@@ -435,7 +435,7 @@ class TemperatureHumidityRecord(models.Model):
     rh_10 = models.FloatField(blank=True, null=True)
 
     def __str__(self):
-        return f"Date: {self.date}, Time: {self.time}"
+        return f"Eqp: {self.equip_name}, Date: {self.date}, Time: {self.time}"
 
 
 class PasswordHistory(models.Model):

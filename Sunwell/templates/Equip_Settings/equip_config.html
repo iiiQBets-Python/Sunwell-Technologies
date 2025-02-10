@@ -7,7 +7,6 @@
 {% block styles %}
     {{ block.super }}
     <link rel="stylesheet" href="{% static 'css/Settings/equipment_config.css' %}">
-    <link rel="stylesheet" href="{% static 'alert_msg/alert_msg.css' %}">
     <style>
          .floating-alert {
           position: fixed;
@@ -150,13 +149,12 @@
 
 {% block content %}
 <div class="container mt-2 table-container fade-in">
-    <div id="floating-alert-success" class="floating-alert-success">
-        <span id="floating-alert-success-message"></span>
-    </div>
-    
-    <div id="floating-alert-error" class="floating-alert-error">
-        <span id="floating-alert-error-message"></span>
-    </div>
+    <div 
+    id="floating-alert" 
+    class="floating-alert" 
+    data-show="{% if messages %}{% for message in messages %}{% if 'success' in message.tags %}true{% endif %}{% endfor %}{% endif %}">
+    Equipment saved successfully!
+</div>
 
     <div class="d-flex justify-content-end mb-2">
         <div class="dropdown role-filter">
@@ -198,9 +196,7 @@
                 <input type="text" id="searchBar" class="form-control" placeholder="Search here..">
             </div>
             <div class="d-flex">
-                {% if data.role == 'Super Admin' or acc_db.e_conf_a %}
-                <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#adminUserModal"> Add </button>
-                {% endif %}
+                <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#adminUserModal"> Add </button> 
             </div>
         </div>
     </div>
@@ -213,19 +209,16 @@
                     <th scope="col">Equipment Name</th>
                     <th scope="col">IP Address</th>
                     <th scope="col">Status</th>
-                    {% if data.role == 'Super Admin' or acc_db.e_conf_e %}
                     <th scope="col">Action</th>
-                    {% endif %}
                 </tr>
             </thead>
             <tbody id="form-data-table" class="scrollable-tbody">
                 {% for equipment in equipment_list %}
                 <tr data-department-id="{{ equipment.department.id }}">
                     <td><input type="checkbox" class="row-checkbox" name="comm_checkbox"></td>
-                    <td>{% if data.role == 'Super Admin' or acc_db.e_set_v %}<a href="{% url 'equipment_setting' equipment.id %}">{% endif %}{{ equipment.equip_name }}</a></td>
+                    <td><a href="{% url 'equipment_setting' equipment.id %}">{{ equipment.equip_name }}</a></td>
                     <td>{{ equipment.ip_address }} </td>
                     <td>{{ equipment.status|title }}</td>
-                    {% if data.role == 'Super Admin' or acc_db.e_conf_e %}
                     <td>
                         <div class="dropdown">
                             <a class="dropdown-item btn-edit" data-id="{{ equipment.id }}" data-is-connected="{{ equipment.is_connected }}" data-bs-toggle="modal" data-bs-target="#editEquipmentModal-{{ equipment.id }}">
@@ -233,8 +226,7 @@
                             </a>
                         </div>
                         
-                    </td>
-                    {% endif %}
+                      </td>
                 </tr>
                 {% endfor %}
             </tbody>
@@ -381,6 +373,8 @@
                             <input type="text" class="form-control" name="edit_equipname" value="{{ equipment.equip_name }}" maxlength="50" required oninput="setCustomValidity('')" oninvalid="setCustomValidity('Please Enter Equipment Name')">
                             <label for="edit_equipname" class="form-label">Equipment Name</label>
                         </div>
+                        <input type="hidden" id="plc-users-{{ equipment.id }}" value='{{ equipment.plc_users_json|safe }}'>
+                    <input type="hidden" id="biometric-users-{{ equipment.id }}" value='{{ equipment.biometric_users_json|safe }}'>
                         <div class="col-md-4 form-group">
                             <select class="form-control" name="edit_equipStatus" required>
                                 <option value="active" {% if equipment.status == 'active' %} selected {% endif %}>Active</option>
@@ -420,40 +414,17 @@
                         </div>
                         
                         <div class="col-md-12 form-group">
-                            <select class="form-control" name="edit_doorAccessType" required>
+                            <select class="form-control edit-door-access-type" name="edit_doorAccessType" data-equipment-id="{{ equipment.id }}" required>
                                 <option value="none" {% if equipment.door_access_type == 'none' %} selected {% endif %}>None</option>
                                 <option value="plc" {% if equipment.door_access_type == 'plc' %} selected {% endif %}>PLC</option>
                                 <option value="biometric" {% if equipment.door_access_type == 'biometric' %} selected {% endif %}>Biometric</option>
                             </select>
                             <label for="edit_doorAccessType" class="form-label">Door Access Type</label>
                         </div>
-                    </div>
-
-                    <!-- Dynamic Inputs for PLC and Biometric Users -->
-                    <div id="dynamic-fields-{{ equipment.id }}">
-                        {% if plc_users %}
-                            <div class="row">
-                                {% for user in plc_users %}
-                                    <div class="col-md-6 form-group">
-                                        <input type="text" class="form-control" name="edit_plc_user_{{ forloop.counter }}" value="{{ user.username }}" placeholder="PLC User {{ forloop.counter }}">
-                                        <label for="edit_plc_user_{{ forloop.counter }}" class="form-label">PLC User {{ forloop.counter }}</label>
-                                    </div>
-                                {% endfor %}
-                            </div>
-                        {% elif biometric_users %}
-                            <div class="row">
-                                {% for user in biometric_users %}
-                                    <div class="col-md-6 form-group">
-                                        <input type="text" class="form-control" name="edit_biometric_user_{{ forloop.counter }}" value="{{ user.username }}" placeholder="Biometric User {{ forloop.counter }}">
-                                        <label for="edit_biometric_user_{{ forloop.counter }}" class="form-label">Biometric User {{ forloop.counter }}</label>
-                                    </div>
-                                    <div class="col-md-6 form-group">
-                                        <input type="text" class="form-control" name="edit_biometric_card_{{ forloop.counter }}" value="{{ user.card_number }}" placeholder="Card Number {{ forloop.counter }}">
-                                        <label for="edit_biometric_card_{{ forloop.counter }}" class="form-label">Card Number {{ forloop.counter }}"></label>
-                                    </div>
-                                {% endfor %}
-                            </div>
-                        {% endif %}
+                        
+                        <!-- Dynamic Fields for PLC or Biometric Users -->
+                        <div id="edit-dynamic-fields-{{ equipment.id }}" class="edit-dynamic-fields"></div>
+                        
                     </div>
 
                     <div class="modal-footer">
@@ -470,8 +441,63 @@
 
 
 <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+
 <script>
-    $(document).ready(function() {
+document.addEventListener("DOMContentLoaded", function () {
+    document.querySelectorAll(".edit-door-access-type").forEach(function(selectElement) {
+        selectElement.addEventListener("change", function () {
+            const equipmentId = this.getAttribute("data-equipment-id");
+            const dynamicFieldsContainer = document.getElementById(`edit-dynamic-fields-${equipmentId}`);
+            const selectedValue = this.value;
+            dynamicFieldsContainer.innerHTML = "";
+            if (selectedValue === "none") {
+                console.log("No fields to display for 'None'");
+            } else {
+                let userData = [];
+                try {
+                    const dataElement = document.getElementById(`${selectedValue}-users-${equipmentId}`);
+                    userData = dataElement ? JSON.parse(dataElement.value) : [];
+                } catch (error) {
+                    console.error("Error parsing user data:", error);
+                }
+                let contentHtml = '';
+                for (let i = 0; i < 15; i++) {
+                    const user = userData[i] || { fields: { username: '', card_number: '' }};
+                    const userIndex = i + 1;
+                    if (i % 2 === 0) {
+                        contentHtml += '<div class="row">';
+                    }
+                    contentHtml += `
+                        <div class="col-md-6 form-group">
+                            <input type="text" class="form-control" name="${selectedValue}_user_username_${userIndex}" value="${user.fields.username}" placeholder="${selectedValue} User ${userIndex}">
+                            <label class="form-label">${selectedValue} User ${userIndex}</label>
+                        </div>`;
+                    if (selectedValue === 'biometric') {
+                        contentHtml += `
+                            <div class="col-md-6 form-group">
+                                <input type="text" class="form-control" name="${selectedValue}_user_card_number_${userIndex}" value="${user.fields.card_number}" placeholder="Card Number ${userIndex}">
+                                <label class="form-label">Card Number ${userIndex}</label>
+                            </div>`;
+                    }
+                    if (i % 2 !== 0 || i === 14) {
+                        contentHtml += '</div>';
+                    }
+                }
+
+                dynamicFieldsContainer.innerHTML = contentHtml;
+            }
+        });
+        if (selectElement.value) selectElement.dispatchEvent(new Event("change"));
+    });
+});
+
+
+
+    </script>
+    
+    
+<script>
+     $(document).ready(function() {
         $('#door-access-type').on('change', function() {
             var selectedValue = $(this).val();
             var $additionalInputs = $('#additional-inputs');
@@ -495,7 +521,7 @@
                         '<label for="biometric_banner_text" class="form-label">Biometric Banner Text</label>' +
                     '</div>' +
                     '<div class="col-md-12 form-group">' +
-                        '<input type="text" class="form-control ip-address" id="biometric_ip_address" name="biometric_ip_address" placeholder=" ">' +
+                        '<input type="text" class="form-control" id="biometric_ip_address" name="biometric_ip_address" placeholder=" ">' +
                         '<label for="biometric_ip_address" class="form-label">Biometric IP Address</label>' +
                     '</div>'
                 );
@@ -687,7 +713,7 @@
             return {
                 status: data.status,
                 interval: data.interval || 5,  // Default interval if not provided
-                equiptype: data.equiptype || 'Unknown'  // Default equipment type if not provided
+                equiptype: data.equiptype || 'Unknown',  // Default equipment type if not provided
                 sensors : data.sensors
             };
         })
@@ -1160,58 +1186,6 @@ document.addEventListener("DOMContentLoaded", function() {
 
 </script>
 
-
-{% if messages %}
-    {% for message in messages %}
-        {% if 'success' in message.tags %}
-            <script>
-                document.addEventListener('DOMContentLoaded', function () {
-                    var successAlertElement = document.getElementById('floating-alert-success');
-                    var successMessage = document.getElementById('floating-alert-success-message');
-
-                    // Set the success message and display the floating alert
-                    successMessage.textContent = "{{ message|safe }}";
-                    successAlertElement.style.display = 'block';
-                    successAlertElement.classList.add('show');
-
-                    // Hide the success alert automatically after 3 seconds
-                    setTimeout(function () {
-                        successAlertElement.classList.remove('show');
-                        setTimeout(() => {
-                            successAlertElement.style.display = 'none';
-                        }, 500); // Extra delay for smooth transition
-                    }, 3000); 
-                });
-            </script>
-        {% endif %}
-    {% endfor %}
-{% endif %}
-
-{% if messages %}
-    {% for message in messages %}
-        {% if 'error' in message.tags %}
-            <script>
-                document.addEventListener('DOMContentLoaded', function () {
-                    var errorAlertElement = document.getElementById('floating-alert-error');
-                    var errorMessage = document.getElementById('floating-alert-error-message');
-
-                    // Set the error message and display the floating alert
-                    errorMessage.textContent = "{{ message|safe }}";
-                    errorAlertElement.style.display = 'block';
-                    errorAlertElement.classList.add('show');
-
-                    // Hide the error alert automatically after 3 seconds
-                    setTimeout(function () {
-                        errorAlertElement.classList.remove('show');
-                        setTimeout(() => {
-                            errorAlertElement.style.display = 'none';
-                        }, 500); // Extra delay for smooth transition
-                    }, 3000); 
-                });
-            </script>
-        {% endif %}
-    {% endfor %}
-{% endif %}
 
     
     {% endblock %}

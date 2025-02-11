@@ -383,7 +383,7 @@
                             <label for="edit_equipStatus" class="form-label">Status</label>
                         </div>
                         <div class="col-md-8 form-group">
-                            <input type="text" class="form-control ip-address" name="edit_ipaddress" id="edit_ipaddress_{{ equipment.id }}" value="{{ equipment.ip_address }}" required oninput="setCustomValidity('')" oninvalid="setCustomValidity('Please Enter IP Address')">
+                            <input type="text" class="form-control ip-address" name="edit_ipaddress" id="edit_ipaddress_{{ equipment.id }}" value="{{ equipment.ip_address }}" required oninput="setCustomValidity('')" oninvalid="setCustomValidity('Please Enter IP Address')" readonly>
                             <label for="edit_ipaddress" class="form-label">IP Address</label>
                         </div>
                         
@@ -469,13 +469,13 @@ document.addEventListener("DOMContentLoaded", function () {
                     }
                     contentHtml += `
                         <div class="col-md-6 form-group">
-                            <input type="text" class="form-control" name="${selectedValue}_user_username_${userIndex}" value="${user.fields.username}" placeholder="${selectedValue} User ${userIndex}">
-                            <label class="form-label">${selectedValue} User ${userIndex}</label>
+                            <input type="text" class="form-control" name="${selectedValue}_user_username_${userIndex}" value="${user.fields.username}" placeholder="">
+                            <label class="form-label">User ${userIndex}</label>
                         </div>`;
                     if (selectedValue === 'biometric') {
                         contentHtml += `
                             <div class="col-md-6 form-group">
-                                <input type="text" class="form-control" name="${selectedValue}_user_card_number_${userIndex}" value="${user.fields.card_number}" placeholder="Card Number ${userIndex}">
+                                <input type="text" class="form-control" name="${selectedValue}_user_card_number_${userIndex}" value="${user.fields.card_number}" placeholder="">
                                 <label class="form-label">Card Number ${userIndex}</label>
                             </div>`;
                     }
@@ -509,7 +509,7 @@ document.addEventListener("DOMContentLoaded", function () {
                     $additionalInputs.append(
                         '<div class="col-md-6 form-group">' +
                             '<input type="text" class="form-control" id="plc_user_' + i + '" name="plc_user_' + i + '" placeholder=" ">' +
-                            '<label for="plc_user_' + i + '" class="form-label">Door Access User ' + i + '</label>' +
+                            '<label for="plc_user_' + i + '" class="form-label">User ' + i + '</label>' +
                         '</div>'
                     );
                 }
@@ -532,7 +532,7 @@ document.addEventListener("DOMContentLoaded", function () {
                         '<div class="row mb-3">' +
                             '<div class="col-md-6 form-group">' +
                                 '<input type="text" class="form-control" id="biometric_user_' + i + '" name="biometric_user_' + i + '" placeholder=" ">' +
-                                '<label for="biometric_user_' + i + '" class="form-label">Biometric User ' + i + '</label>' +
+                                '<label for="biometric_user_' + i + '" class="form-label">User ' + i + '</label>' +
                             '</div>' +
                             '<div class="col-md-6 form-group">' +
                                 '<input type="text" class="form-control" id="biometric_card_' + i + '" name="biometric_card_' + i + '" placeholder=" ">' +

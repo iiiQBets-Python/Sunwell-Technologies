@@ -6396,3 +6396,491 @@
 2025-02-10 18:47:43,847 - Darshan is accessing /organization/.
 2025-02-10 18:47:43,893 - Darshan is accessing /media/iiiQ_-_logo.png.
 2025-02-10 18:47:45,297 - Darshan is accessing /Mkt_analysis/.
+2025-02-10 18:54:09,439 - Darshan is accessing /Mkt_analysis/.
+2025-02-10 18:54:09,543 - Darshan is accessing /media/iiiQ_-_logo.png.
+2025-02-10 18:54:18,161 - Darshan is accessing /Mkt_analysis/.
+2025-02-10 18:57:33,182 - Darshan is accessing /Mkt_analysis/.
+2025-02-10 18:58:06,556 - Darshan is accessing /Mkt_analysis/.
+2025-02-10 19:02:37,754 - Darshan is accessing /Mkt_analysis/.
+2025-02-10 19:03:20,724 - Darshan is accessing /Mkt_analysis/.
+2025-02-11 09:38:40,999 - Darshan is accessing /Mkt_analysis/.
+2025-02-11 09:38:42,786 - Darshan is accessing /favicon.ico.
+2025-02-11 10:20:50,168 - Darshan is accessing /admin/.
+2025-02-11 10:20:50,373 - Darshan is accessing /admin/login/.
+2025-02-11 10:20:58,699 - Darshan is accessing /admin/login/.
+2025-02-11 10:20:59,534 - Darshan is created record in django_session.
+2025-02-11 10:20:59,692 - Darshan is deleting record in django_session.
+2025-02-11 10:21:00,776 - Darshan is updated record in auth_user.
+2025-02-11 10:21:00,780 - Darshan is updated record in django_session.
+2025-02-11 10:21:00,854 - Darshan is accessing /admin/.
+2025-02-11 10:21:02,162 - Darshan is accessing /app_setings/.
+2025-02-11 10:21:02,471 - Darshan is accessing /media/iiiQ_-_logo.png.
+2025-02-11 11:21:13,991 - Darshan is accessing /logout/.
+2025-02-11 11:21:14,421 - Darshan is created record in App1_useractivitylog.
+2025-02-11 11:21:14,433 - Anonymous is deleting record in django_session.
+2025-02-11 11:21:14,531 - Anonymous is accessing /.
+2025-02-11 11:48:32,038 - Anonymous is accessing /Mkt_analysis/.
+2025-02-11 11:48:32,222 - Anonymous is accessing /.
+2025-02-11 11:48:37,148 - Anonymous is accessing /Mkt_analysis/.
+2025-02-11 11:48:37,175 - Anonymous is accessing /.
+2025-02-11 11:48:59,717 - Anonymous is accessing /.
+2025-02-11 11:48:59,883 - Anonymous is updated record in App1_user.
+2025-02-11 11:49:01,207 - Anonymous is updated record in App1_user.
+2025-02-11 11:49:01,216 - Anonymous is created record in django_session.
+2025-02-11 11:49:11,011 - Anonymous is accessing /.
+2025-02-11 11:49:11,167 - Anonymous is updated record in App1_user.
+2025-02-11 11:49:12,656 - Anonymous is updated record in App1_user.
+2025-02-11 11:49:12,659 - Anonymous is deleting record in django_session.
+2025-02-11 11:49:12,804 - Darshan is created record in App1_useractivitylog.
+2025-02-11 11:49:12,808 - Darshan is created record in django_session.
+2025-02-11 11:49:12,881 - Darshan is accessing /dashboard/.
+2025-02-11 11:49:14,348 - Darshan is accessing /media/iiiQ_-_logo.png.
+2025-02-11 11:49:19,400 - Darshan is accessing /get-equipment-data/.
+2025-02-11 11:49:20,621 - Darshan is accessing /get-equipment-data/.
+2025-02-11 11:49:24,404 - Darshan is accessing /get-equipment-data/.
+2025-02-11 11:49:25,657 - Darshan is accessing /get-equipment-data/.
+2025-02-11 11:49:29,406 - Darshan is accessing /get-equipment-data/.
+2025-02-11 11:49:30,631 - Darshan is accessing /get-equipment-data/.
+2025-02-11 11:49:34,404 - Darshan is accessing /get-equipment-data/.
+2025-02-11 11:49:35,650 - Darshan is accessing /get-equipment-data/.
+2025-02-11 11:49:39,401 - Darshan is accessing /get-equipment-data/.
+2025-02-11 11:49:40,225 - Darshan is accessing /Mkt_analysis/.
+2025-02-11 11:49:40,685 - Darshan is accessing /get-equipment-data/.
+2025-02-11 11:49:49,492 - Darshan is accessing /Mkt_analysis/.
+2025-02-11 11:50:57,520 - Darshan is accessing /Mkt_analysis/.
+2025-02-11 11:51:05,347 - Darshan is accessing /Mkt_analysis/.
+2025-02-11 11:51:19,206 - Darshan is accessing /Mkt_analysis/.
+2025-02-11 11:52:30,785 - Darshan is accessing /Mkt_analysis/.
+2025-02-11 11:52:31,118 - Darshan is accessing /media/iiiQ_-_logo.png.
+2025-02-11 11:52:44,248 - Darshan is accessing /Mkt_analysis/.
+2025-02-11 11:52:53,161 - Darshan is accessing /Mkt_analysis/.
+2025-02-11 11:54:56,326 - Darshan is accessing /Mkt_analysis/.
+2025-02-11 11:54:56,688 - Darshan is accessing /media/iiiQ_-_logo.png.
+2025-02-11 11:55:09,607 - Darshan is accessing /Mkt_analysis/.
+2025-02-11 11:55:45,629 - Darshan is accessing /Mkt_analysis/.
+2025-02-11 12:00:07,757 - Darshan is accessing /Mkt_analysis/.
+2025-02-11 12:01:06,717 - Darshan is accessing /Mkt_analysis/.
+2025-02-11 12:01:11,295 - Darshan is accessing /Mkt_analysis/.
+2025-02-11 12:01:12,044 - Darshan is accessing /Mkt_analysis/.
+2025-02-11 12:01:31,647 - Darshan is accessing /Mkt_analysis/.
+2025-02-11 12:03:06,321 - Darshan is accessing /Mkt_analysis/.
+2025-02-11 12:03:58,696 - Darshan is accessing /Mkt_analysis/.
+2025-02-11 12:04:51,171 - Darshan is accessing /Mkt_analysis/.
+2025-02-11 12:06:08,714 - Darshan is accessing /Mkt_analysis/.
+2025-02-11 12:06:49,943 - Darshan is accessing /Mkt_analysis/.
+2025-02-11 12:08:35,525 - Darshan is accessing /Mkt_analysis/.
+2025-02-11 12:12:55,819 - Darshan is accessing /Mkt_analysis/.
+2025-02-11 12:12:56,655 - Darshan is accessing /Mkt_analysis/.
+2025-02-11 12:14:51,199 - Darshan is accessing /Mkt_analysis/.
+2025-02-11 12:14:57,172 - Darshan is accessing /Mkt_analysis/.
+2025-02-11 12:43:17,290 - demo is accessing /dashboard/.
+2025-02-11 13:02:05,758 - Darshan is accessing /equipment_configure/.
+2025-02-11 13:08:37,185 - Darshan is accessing /equipment_configure/.
+2025-02-11 13:11:18,798 - Darshan is accessing /equipment_configure/.
+2025-02-11 13:11:24,341 - Darshan is accessing /equipment_configure/.
+2025-02-11 13:11:24,394 - Darshan is accessing /media/iiiQ_-_logo.png.
+2025-02-11 13:13:17,472 - Darshan is accessing /admin/.
+2025-02-11 13:13:17,527 - Darshan is accessing /admin/login/.
+2025-02-11 13:13:21,302 - Darshan is accessing /admin/login/.
+2025-02-11 13:13:22,137 - Darshan is created record in django_session.
+2025-02-11 13:13:22,224 - Darshan is deleting record in django_session.
+2025-02-11 13:13:22,362 - Darshan is updated record in auth_user.
+2025-02-11 13:13:22,365 - Darshan is updated record in django_session.
+2025-02-11 13:13:22,458 - Darshan is accessing /admin/.
+2025-02-11 13:13:27,505 - Darshan is accessing /admin/App1/biometricuser/.
+2025-02-11 13:13:27,761 - Darshan is accessing /admin/jsi18n/.
+2025-02-11 13:13:29,925 - Darshan is accessing /admin/App1/plcuser/.
+2025-02-11 13:13:30,232 - Darshan is accessing /admin/jsi18n/.
+2025-02-11 13:13:47,929 - Darshan is accessing /equipment/edit/11/.
+2025-02-11 13:13:50,037 - Darshan is accessing /equipment_configure/.
+2025-02-11 13:13:50,581 - Darshan is accessing /equipment_configure/.
+2025-02-11 13:13:50,743 - Darshan is accessing /equipment_configure/.
+2025-02-11 13:13:50,927 - Darshan is accessing /equipment_configure/.
+2025-02-11 13:13:51,080 - Darshan is accessing /equipment_configure/.
+2025-02-11 13:13:51,227 - Darshan is accessing /equipment_configure/.
+2025-02-11 13:13:51,398 - Darshan is accessing /equipment_configure/.
+2025-02-11 13:13:51,558 - Darshan is accessing /equipment_configure/.
+2025-02-11 13:13:51,717 - Darshan is accessing /equipment_configure/.
+2025-02-11 13:13:51,893 - Darshan is accessing /equipment_configure/.
+2025-02-11 13:13:52,042 - Darshan is accessing /equipment_configure/.
+2025-02-11 13:13:52,217 - Darshan is accessing /equipment_configure/.
+2025-02-11 13:13:59,696 - Darshan is accessing /equipment/edit/11/.
+2025-02-11 13:13:59,893 - Darshan is updated record in App1_equipment.
+2025-02-11 13:13:59,993 - Darshan is created record in App1_useractivitylog.
+2025-02-11 13:14:00,127 - Darshan is accessing /equipment_configure/.
+2025-02-11 13:14:08,769 - Darshan is accessing /admin/App1/plcuser/.
+2025-02-11 13:14:08,829 - Darshan is accessing /admin/jsi18n/.
+2025-02-11 13:14:09,508 - Darshan is accessing /admin/App1/plcuser/.
+2025-02-11 13:14:09,560 - Darshan is accessing /admin/jsi18n/.
+2025-02-11 13:15:00,949 - Darshan is accessing /admin/App1/plcuser/.
+2025-02-11 13:15:01,906 - Darshan is accessing /admin/App1/plcuser/.
+2025-02-11 13:15:02,335 - Darshan is created record in django_admin_log.
+2025-02-11 13:15:02,417 - Darshan is created record in django_admin_log.
+2025-02-11 13:15:02,528 - Darshan is created record in django_admin_log.
+2025-02-11 13:15:02,632 - Darshan is created record in django_admin_log.
+2025-02-11 13:15:02,709 - Darshan is created record in django_admin_log.
+2025-02-11 13:15:02,777 - Darshan is created record in django_admin_log.
+2025-02-11 13:15:02,859 - Darshan is created record in django_admin_log.
+2025-02-11 13:15:02,962 - Darshan is created record in django_admin_log.
+2025-02-11 13:15:03,039 - Darshan is created record in django_admin_log.
+2025-02-11 13:15:03,105 - Darshan is created record in django_admin_log.
+2025-02-11 13:15:03,179 - Darshan is created record in django_admin_log.
+2025-02-11 13:15:03,258 - Darshan is created record in django_admin_log.
+2025-02-11 13:15:03,334 - Darshan is created record in django_admin_log.
+2025-02-11 13:15:03,413 - Darshan is created record in django_admin_log.
+2025-02-11 13:15:03,497 - Darshan is created record in django_admin_log.
+2025-02-11 13:15:03,497 - Darshan is deleting record in App1_plcuser.
+2025-02-11 13:15:03,497 - Darshan is deleting record in App1_plcuser.
+2025-02-11 13:15:03,497 - Darshan is deleting record in App1_plcuser.
+2025-02-11 13:15:03,497 - Darshan is deleting record in App1_plcuser.
+2025-02-11 13:15:03,497 - Darshan is deleting record in App1_plcuser.
+2025-02-11 13:15:03,497 - Darshan is deleting record in App1_plcuser.
+2025-02-11 13:15:03,497 - Darshan is deleting record in App1_plcuser.
+2025-02-11 13:15:03,497 - Darshan is deleting record in App1_plcuser.
+2025-02-11 13:15:03,497 - Darshan is deleting record in App1_plcuser.
+2025-02-11 13:15:03,497 - Darshan is deleting record in App1_plcuser.
+2025-02-11 13:15:03,497 - Darshan is deleting record in App1_plcuser.
+2025-02-11 13:15:03,497 - Darshan is deleting record in App1_plcuser.
+2025-02-11 13:15:03,497 - Darshan is deleting record in App1_plcuser.
+2025-02-11 13:15:03,497 - Darshan is deleting record in App1_plcuser.
+2025-02-11 13:15:03,497 - Darshan is deleting record in App1_plcuser.
+2025-02-11 13:15:03,609 - Darshan is accessing /admin/App1/plcuser/.
+2025-02-11 13:15:03,650 - Darshan is accessing /admin/jsi18n/.
+2025-02-11 13:15:07,868 - Darshan is accessing /admin/App1/biometricuser/.
+2025-02-11 13:15:07,914 - Darshan is accessing /admin/jsi18n/.
+2025-02-11 13:15:09,570 - Darshan is accessing /admin/App1/plcuser/.
+2025-02-11 13:15:09,609 - Darshan is accessing /admin/jsi18n/.
+2025-02-11 13:15:22,776 - Darshan is accessing /equipment/edit/11/.
+2025-02-11 13:15:22,978 - Darshan is updated record in App1_equipment.
+2025-02-11 13:15:23,086 - Darshan is created record in App1_useractivitylog.
+2025-02-11 13:15:23,128 - Darshan is accessing /equipment_configure/.
+2025-02-11 13:15:26,928 - Darshan is accessing /admin/App1/plcuser/.
+2025-02-11 13:15:26,962 - Darshan is accessing /admin/jsi18n/.
+2025-02-11 13:15:28,137 - Darshan is accessing /admin/App1/plcuser/.
+2025-02-11 13:15:28,184 - Darshan is accessing /admin/jsi18n/.
+2025-02-11 13:15:28,522 - Darshan is accessing /admin/App1/plcuser/.
+2025-02-11 13:15:28,562 - Darshan is accessing /admin/jsi18n/.
+2025-02-11 13:15:28,677 - Darshan is accessing /admin/App1/plcuser/.
+2025-02-11 13:15:28,740 - Darshan is accessing /admin/jsi18n/.
+2025-02-11 13:19:24,395 - Darshan is accessing /equipment_configure/.
+2025-02-11 13:19:24,558 - Darshan is accessing /media/iiiQ_-_logo.png.
+2025-02-11 13:19:32,321 - Darshan is accessing /equipment_configure/.
+2025-02-11 13:19:32,936 - Darshan is accessing /equipment_configure/.
+2025-02-11 13:19:33,377 - Darshan is accessing /equipment_configure/.
+2025-02-11 13:19:33,572 - Darshan is accessing /equipment_configure/.
+2025-02-11 13:22:44,108 - Darshan is accessing /admin/App1/plcuser/add/.
+2025-02-11 13:22:44,587 - Darshan is accessing /admin/jsi18n/.
+2025-02-11 13:22:48,490 - Darshan is accessing /admin/App1/plcuser/.
+2025-02-11 13:32:28,227 - Darshan is accessing /equipment_configure/.
+2025-02-11 13:32:33,821 - Darshan is accessing /equipment/edit/11/.
+2025-02-11 13:32:34,033 - Darshan is updated record in App1_equipment.
+2025-02-11 13:32:34,146 - Darshan is created record in App1_useractivitylog.
+2025-02-11 13:32:34,642 - Darshan is accessing /equipment_configure/.
+2025-02-11 13:32:38,137 - Darshan is accessing /admin/App1/plcuser/.
+2025-02-11 13:32:38,233 - Darshan is accessing /admin/jsi18n/.
+2025-02-11 13:32:39,107 - Darshan is accessing /admin/App1/plcuser/.
+2025-02-11 13:32:39,145 - Darshan is accessing /admin/jsi18n/.
+2025-02-11 13:32:39,491 - Darshan is accessing /admin/App1/plcuser/.
+2025-02-11 13:32:39,645 - Darshan is accessing /admin/jsi18n/.
+2025-02-11 13:32:39,824 - Darshan is accessing /admin/App1/plcuser/.
+2025-02-11 13:32:39,860 - Darshan is accessing /admin/jsi18n/.
+2025-02-11 13:32:39,997 - Darshan is accessing /admin/App1/plcuser/.
+2025-02-11 13:32:40,074 - Darshan is accessing /admin/jsi18n/.
+2025-02-11 13:32:40,156 - Darshan is accessing /admin/App1/plcuser/.
+2025-02-11 13:32:40,191 - Darshan is accessing /admin/jsi18n/.
+2025-02-11 13:32:40,334 - Darshan is accessing /admin/App1/plcuser/.
+2025-02-11 13:32:40,391 - Darshan is accessing /admin/jsi18n/.
+2025-02-11 13:32:40,479 - Darshan is accessing /admin/App1/plcuser/.
+2025-02-11 13:32:40,515 - Darshan is accessing /admin/jsi18n/.
+2025-02-11 13:32:40,659 - Darshan is accessing /admin/App1/plcuser/.
+2025-02-11 13:32:40,700 - Darshan is accessing /admin/jsi18n/.
+2025-02-11 13:32:40,835 - Darshan is accessing /admin/App1/plcuser/.
+2025-02-11 13:32:40,889 - Darshan is accessing /admin/jsi18n/.
+2025-02-11 13:32:40,997 - Darshan is accessing /admin/App1/plcuser/.
+2025-02-11 13:32:41,027 - Darshan is accessing /admin/jsi18n/.
+2025-02-11 13:42:27,861 - Darshan is accessing /equipment/edit/11/.
+2025-02-11 13:42:28,023 - Darshan is updated record in App1_equipment.
+2025-02-11 13:42:28,122 - Darshan is created record in App1_useractivitylog.
+2025-02-11 13:42:28,177 - Darshan is accessing /equipment_configure/.
+2025-02-11 13:42:45,886 - Darshan is accessing /admin/App1/plcuser/.
+2025-02-11 13:42:45,982 - Darshan is accessing /admin/jsi18n/.
+2025-02-11 13:42:46,510 - Darshan is accessing /admin/App1/plcuser/.
+2025-02-11 13:42:46,569 - Darshan is accessing /admin/jsi18n/.
+2025-02-11 13:42:48,606 - Darshan is accessing /admin/App1/plcuser/.
+2025-02-11 13:42:48,663 - Darshan is accessing /admin/jsi18n/.
+2025-02-11 13:42:49,087 - Darshan is accessing /admin/App1/plcuser/.
+2025-02-11 13:42:49,117 - Darshan is accessing /admin/jsi18n/.
+2025-02-11 13:58:41,893 - Darshan is accessing /equipment_configure/.
+2025-02-11 13:58:42,067 - Darshan is accessing /media/iiiQ_-_logo.png.
+2025-02-11 14:00:08,756 - Darshan is accessing /equipment_configure/.
+2025-02-11 14:00:28,646 - Darshan is accessing /equipment_configure/.
+2025-02-11 14:01:08,916 - Darshan is accessing /equipment_configure/.
+2025-02-11 14:01:09,368 - Darshan is accessing /equipment_configure/.
+2025-02-11 14:01:09,832 - Darshan is accessing /equipment_configure/.
+2025-02-11 14:03:21,588 - Darshan is accessing /equipment_configure/.
+2025-02-11 14:04:44,716 - Darshan is accessing /equipment_configure/.
+2025-02-11 14:06:29,902 - Darshan is accessing /equipment/edit/11/.
+2025-02-11 14:06:30,306 - Darshan is updated record in App1_equipment.
+2025-02-11 14:06:30,411 - Darshan is created record in App1_useractivitylog.
+2025-02-11 14:06:30,438 - Darshan is accessing /equipment_configure/.
+2025-02-11 14:10:36,913 - Darshan is accessing /equipment_configure/.
+2025-02-11 14:10:37,546 - Darshan is accessing /equipment_configure/.
+2025-02-11 14:10:43,654 - Darshan is accessing /equipment/edit/11/.
+2025-02-11 14:10:43,836 - Darshan is updated record in App1_equipment.
+2025-02-11 14:10:43,935 - Darshan is created record in App1_plcuser.
+2025-02-11 14:10:44,058 - Darshan is created record in App1_plcuser.
+2025-02-11 14:10:44,156 - Darshan is created record in App1_useractivitylog.
+2025-02-11 14:10:44,170 - Darshan is accessing /equipment_configure/.
+2025-02-11 14:10:57,811 - Darshan is accessing /admin/App1/plcuser/.
+2025-02-11 14:10:57,917 - Darshan is accessing /admin/jsi18n/.
+2025-02-11 14:11:12,870 - Darshan is accessing /equipment/edit/11/.
+2025-02-11 14:11:13,057 - Darshan is updated record in App1_equipment.
+2025-02-11 14:11:13,206 - Darshan is updated record in App1_equipment.
+2025-02-11 14:11:13,328 - Darshan is created record in App1_biometricuser.
+2025-02-11 14:11:13,441 - Darshan is created record in App1_useractivitylog.
+2025-02-11 14:11:13,451 - Darshan is accessing /equipment_configure/.
+2025-02-11 14:11:20,706 - Darshan is accessing /admin/App1/biometricuser/.
+2025-02-11 14:11:20,760 - Darshan is accessing /admin/jsi18n/.
+2025-02-11 14:11:26,606 - Darshan is accessing /admin/App1/plcuser/.
+2025-02-11 14:11:26,646 - Darshan is accessing /admin/jsi18n/.
+2025-02-11 14:11:27,296 - Darshan is accessing /admin/App1/plcuser/.
+2025-02-11 14:11:27,336 - Darshan is accessing /admin/jsi18n/.
+2025-02-11 14:11:27,839 - Darshan is accessing /admin/App1/plcuser/.
+2025-02-11 14:11:27,886 - Darshan is accessing /admin/jsi18n/.
+2025-02-11 14:11:28,316 - Darshan is accessing /admin/App1/plcuser/.
+2025-02-11 14:11:28,356 - Darshan is accessing /admin/jsi18n/.
+2025-02-11 14:11:28,516 - Darshan is accessing /admin/App1/plcuser/.
+2025-02-11 14:11:28,560 - Darshan is accessing /admin/jsi18n/.
+2025-02-11 14:11:29,076 - Darshan is accessing /admin/App1/plcuser/.
+2025-02-11 14:11:29,117 - Darshan is accessing /admin/jsi18n/.
+2025-02-11 14:11:29,250 - Darshan is accessing /admin/App1/plcuser/.
+2025-02-11 14:11:29,306 - Darshan is accessing /admin/jsi18n/.
+2025-02-11 14:21:28,207 - Darshan is accessing /Mkt_analysis/.
+2025-02-11 14:21:34,592 - Darshan is accessing /Mkt_analysis/.
+2025-02-11 14:34:23,823 - Darshan is accessing /Mkt_analysis/.
+2025-02-11 14:35:34,455 - Darshan is accessing /Mkt_analysis/.
+2025-02-11 14:38:13,665 - Darshan is accessing /Mkt_analysis/.
+2025-02-11 14:39:09,935 - Darshan is accessing /Mkt_analysis/.
+2025-02-11 14:39:16,851 - Darshan is accessing /Mkt_analysis/.
+2025-02-11 14:39:19,213 - Darshan is accessing /Mkt_analysis/.
+2025-02-11 14:40:20,605 - Darshan is accessing /Mkt_analysis/.
+2025-02-11 14:45:06,805 - Darshan is accessing /Mkt_analysis/.
+2025-02-11 14:45:43,712 - Darshan is accessing /Mkt_analysis/.
+2025-02-11 14:45:53,196 - Darshan is accessing /Mkt_analysis/.
+2025-02-11 15:18:24,162 - Darshan is accessing /equipment_configure/.
+2025-02-11 15:18:44,124 - Darshan is accessing /equipment/edit/12/.
+2025-02-11 15:18:44,307 - Darshan is updated record in App1_equipment.
+2025-02-11 15:18:44,406 - Darshan is updated record in App1_equipment.
+2025-02-11 15:18:44,527 - Darshan is created record in App1_biometricuser.
+2025-02-11 15:18:44,625 - Darshan is created record in App1_useractivitylog.
+2025-02-11 15:18:44,652 - Darshan is accessing /equipment_configure/.
+2025-02-11 15:18:54,134 - Darshan is accessing /equipment/edit/12/.
+2025-02-11 15:18:54,318 - Darshan is updated record in App1_equipment.
+2025-02-11 15:23:33,804 - Darshan is accessing /equipment/edit/12/.
+2025-02-11 15:23:33,984 - Darshan is updated record in App1_equipment.
+2025-02-11 15:25:19,898 - Darshan is accessing /equipment_configure/.
+2025-02-11 15:25:26,358 - Darshan is accessing /equipment/edit/12/.
+2025-02-11 15:25:26,545 - Darshan is updated record in App1_equipment.
+2025-02-11 15:25:26,645 - Darshan is created record in App1_plcuser.
+2025-02-11 15:25:26,774 - Darshan is created record in App1_plcuser.
+2025-02-11 15:25:26,884 - Darshan is created record in App1_useractivitylog.
+2025-02-11 15:25:26,895 - Darshan is accessing /equipment_configure/.
+2025-02-11 15:25:31,167 - Darshan is accessing /admin/App1/plcuser/.
+2025-02-11 15:25:31,534 - Darshan is accessing /admin/jsi18n/.
+2025-02-11 15:36:06,277 - Darshan is accessing /equipment_configure/.
+2025-02-11 15:36:11,621 - Darshan is accessing /equipment/edit/12/.
+2025-02-11 15:36:11,792 - Darshan is updated record in App1_equipment.
+2025-02-11 15:36:11,811 - Darshan is deleting record in App1_biometricuser.
+2025-02-11 15:36:11,994 - Darshan is updated record in App1_plcuser.
+2025-02-11 15:36:12,094 - Darshan is updated record in App1_plcuser.
+2025-02-11 15:36:12,512 - Darshan is created record in App1_useractivitylog.
+2025-02-11 15:36:12,525 - Darshan is accessing /equipment_configure/.
+2025-02-11 15:37:05,203 - Darshan is accessing /equipment_configure/.
+2025-02-11 15:37:16,258 - Darshan is accessing /equipment/edit/12/.
+2025-02-11 15:37:16,393 - Darshan is updated record in App1_equipment.
+2025-02-11 15:37:16,402 - Darshan is deleting record in App1_plcuser.
+2025-02-11 15:37:16,402 - Darshan is deleting record in App1_plcuser.
+2025-02-11 15:37:16,611 - Darshan is updated record in App1_equipment.
+2025-02-11 15:37:16,699 - Darshan is created record in App1_biometricuser.
+2025-02-11 15:37:16,809 - Darshan is created record in App1_useractivitylog.
+2025-02-11 15:37:16,819 - Darshan is accessing /equipment_configure/.
+2025-02-11 15:38:02,919 - Darshan is accessing /equipment_configure/.
+2025-02-11 15:38:05,181 - Darshan is accessing /equipment_configure/.
+2025-02-11 15:38:05,705 - Darshan is accessing /equipment_configure/.
+2025-02-11 15:38:15,439 - Darshan is accessing /equipment_configure/.
+2025-02-11 15:51:49,992 - Darshan is accessing /Mkt_analysis/.
+2025-02-11 15:54:29,576 - Darshan is accessing /Mkt_analysis/.
+2025-02-11 15:55:26,614 - Darshan is accessing /Mkt_analysis/.
+2025-02-11 15:56:11,844 - Darshan is accessing /Mkt_analysis/.
+2025-02-11 15:57:01,518 - Darshan is accessing /Mkt_analysis/.
+2025-02-11 15:57:01,646 - Darshan is accessing /media/iiiQ_-_logo.png.
+2025-02-11 15:57:44,311 - Darshan is accessing /Mkt_analysis/.
+2025-02-11 15:59:07,443 - Darshan is accessing /Mkt_analysis/.
+2025-02-11 16:00:03,298 - Darshan is accessing /Mkt_analysis/.
+2025-02-11 16:01:06,580 - Darshan is accessing /Mkt_analysis/.
+2025-02-11 16:02:21,924 - Darshan is accessing /Mkt_analysis/.
+2025-02-11 16:02:30,015 - Darshan is accessing /Mkt_analysis/.
+2025-02-11 16:02:38,821 - Darshan is accessing /Mkt_analysis/.
+2025-02-11 16:02:43,877 - Darshan is accessing /Mkt_analysis/.
+2025-02-11 16:02:59,847 - Darshan is accessing /Mkt_analysis/.
+2025-02-11 16:03:00,150 - Darshan is accessing /media/iiiQ_-_logo.png.
+2025-02-11 16:03:09,878 - Darshan is accessing /Mkt_analysis/.
+2025-02-11 16:19:16,192 - Darshan is accessing /Mkt_analysis/.
+2025-02-11 16:19:41,749 - Darshan is accessing /Mkt_analysis/.
+2025-02-11 16:19:41,894 - Darshan is accessing /media/iiiQ_-_logo.png.
+2025-02-11 16:20:09,242 - Darshan is accessing /Mkt_analysis/.
+2025-02-11 16:20:10,265 - Darshan is accessing /Mkt_analysis/.
+2025-02-11 16:20:11,007 - Darshan is accessing /Mkt_analysis/.
+2025-02-11 16:20:11,731 - Darshan is accessing /Mkt_analysis/.
+2025-02-11 16:21:03,497 - Darshan is accessing /Mkt_analysis/.
+2025-02-11 16:24:26,511 - Darshan is accessing /Mkt_analysis/.
+2025-02-11 16:24:48,652 - Darshan is accessing /Mkt_analysis/.
+2025-02-11 16:25:04,754 - Darshan is accessing /Mkt_analysis/.
+2025-02-11 16:30:12,231 - Darshan is accessing /Mkt_analysis/.
+2025-02-11 16:31:16,342 - Darshan is accessing /Mkt_analysis/.
+2025-02-11 16:31:38,749 - Darshan is accessing /Mkt_analysis/.
+2025-02-11 16:31:46,278 - Darshan is accessing /Mkt_analysis/.
+2025-02-11 16:32:29,106 - Darshan is accessing /Mkt_analysis/.
+2025-02-11 16:32:37,191 - Darshan is accessing /Mkt_analysis/.
+2025-02-11 16:32:42,262 - Darshan is accessing /Mkt_analysis/.
+2025-02-11 16:33:30,221 - Darshan is accessing /Mkt_analysis/.
+2025-02-11 16:36:15,157 - Darshan is accessing /Mkt_analysis/.
+2025-02-11 16:36:31,445 - Darshan is accessing /Mkt_analysis/.
+2025-02-11 16:36:36,971 - Darshan is accessing /Mkt_analysis/.
+2025-02-11 16:38:05,493 - Darshan is accessing /Mkt_analysis/.
+2025-02-11 16:38:10,105 - Darshan is accessing /Mkt_analysis/.
+2025-02-11 16:38:52,508 - Darshan is accessing /Mkt_analysis/.
+2025-02-11 16:38:58,808 - Darshan is accessing /Mkt_analysis/.
+2025-02-11 16:39:05,614 - Darshan is accessing /Mkt_analysis/.
+2025-02-11 16:41:16,360 - Darshan is accessing /Mkt_analysis/.
+2025-02-11 16:46:57,657 - Darshan is accessing /Mkt_analysis/.
+2025-02-11 16:47:21,025 - Darshan is accessing /Mkt_analysis/.
+2025-02-11 16:47:21,155 - Darshan is accessing /media/iiiQ_-_logo.png.
+2025-02-11 16:47:50,888 - Darshan is accessing /Mkt_analysis/.
+2025-02-11 16:53:10,389 - Darshan is accessing /Mkt_analysis/.
+2025-02-11 16:53:18,283 - Darshan is accessing /Mkt_analysis/.
+2025-02-11 16:54:09,761 - Darshan is accessing /Mkt_analysis/.
+2025-02-11 16:54:10,316 - Darshan is accessing /Mkt_analysis/.
+2025-02-11 16:54:10,687 - Darshan is accessing /Mkt_analysis/.
+2025-02-11 16:54:20,486 - Darshan is accessing /Mkt_analysis/.
+2025-02-11 16:54:33,923 - Darshan is accessing /Mkt_analysis/.
+2025-02-11 16:54:41,225 - Darshan is accessing /Mkt_analysis/.
+2025-02-11 16:56:25,779 - Darshan is accessing /Mkt_analysis/.
+2025-02-11 16:56:28,374 - Darshan is accessing /Mkt_analysis/.
+2025-02-11 16:56:39,498 - Darshan is accessing /Mkt_analysis/.
+2025-02-11 17:01:54,988 - Darshan is accessing /Mkt_analysis/.
+2025-02-11 17:03:59,105 - Darshan is accessing /Mkt_analysis/.
+2025-02-11 17:06:50,628 - Darshan is accessing /Mkt_analysis/.
+2025-02-11 17:07:03,591 - Darshan is accessing /Mkt_analysis/.
+2025-02-11 17:10:56,820 - Darshan is accessing /Mkt_analysis/.
+2025-02-11 17:11:37,077 - Darshan is accessing /Mkt_analysis/.
+2025-02-11 17:11:53,286 - Darshan is accessing /Mkt_analysis/.
+2025-02-11 17:12:08,543 - Darshan is accessing /Mkt_analysis/.
+2025-02-11 17:15:48,903 - Darshan is accessing /Mkt_analysis/.
+2025-02-11 17:15:57,359 - Darshan is accessing /Mkt_analysis/.
+2025-02-11 17:17:01,146 - Darshan is accessing /Mkt_analysis/.
+2025-02-11 17:17:23,019 - Darshan is accessing /Mkt_analysis/.
+2025-02-11 17:17:39,507 - Darshan is accessing /view_log/.
+2025-02-11 17:17:48,254 - Darshan is accessing /view_log/.
+2025-02-11 17:21:28,940 - Darshan is accessing /view_log/.
+2025-02-11 17:22:02,735 - Darshan is accessing /view_log/.
+2025-02-11 17:24:59,135 - Darshan is accessing /view_log/.
+2025-02-11 17:30:02,360 - Darshan is accessing /view_log/.
+2025-02-11 17:30:19,100 - Darshan is accessing /view_log/.
+2025-02-11 17:31:19,395 - Darshan is accessing /view_log/.
+2025-02-11 17:33:08,492 - Darshan is accessing /view_log/.
+2025-02-11 17:33:29,174 - Darshan is accessing /view_log/.
+2025-02-11 17:35:28,300 - Darshan is accessing /view_log/.
+2025-02-11 17:35:43,127 - Darshan is accessing /view_log/.
+2025-02-11 18:09:40,041 - Darshan is accessing /view_log/.
+2025-02-11 18:12:24,353 - Darshan is accessing /view_log/.
+2025-02-11 18:25:28,496 - Darshan is accessing /logout/.
+2025-02-11 18:25:28,637 - Darshan is created record in App1_useractivitylog.
+2025-02-11 18:25:28,639 - Anonymous is deleting record in django_session.
+2025-02-11 18:25:28,729 - Anonymous is accessing /.
+2025-02-11 18:25:39,391 - Anonymous is accessing /.
+2025-02-11 18:25:39,545 - Anonymous is updated record in App1_user.
+2025-02-11 18:25:40,516 - Anonymous is updated record in App1_user.
+2025-02-11 18:25:40,590 - Darshan is created record in App1_useractivitylog.
+2025-02-11 18:25:40,593 - Darshan is created record in django_session.
+2025-02-11 18:25:40,662 - Darshan is accessing /dashboard/.
+2025-02-11 18:25:42,201 - Darshan is accessing /media/iiiQ_-_logo.png.
+2025-02-11 18:25:47,223 - Darshan is accessing /get-equipment-data/.
+2025-02-11 18:25:48,640 - Darshan is accessing /get-equipment-data/.
+2025-02-11 18:25:51,945 - Darshan is accessing /view_log/.
+2025-02-11 18:25:59,145 - Darshan is accessing /view_log/.
+2025-02-11 18:28:40,075 - Darshan is accessing /view_log/.
+2025-02-11 18:33:26,977 - Darshan is accessing /view_log/.
+2025-02-11 18:34:15,800 - Darshan is accessing /admin/.
+2025-02-11 18:34:15,870 - Darshan is accessing /admin/login/.
+2025-02-11 18:34:21,099 - Darshan is accessing /admin/login/.
+2025-02-11 18:34:21,891 - Darshan is created record in django_session.
+2025-02-11 18:34:21,962 - Darshan is deleting record in django_session.
+2025-02-11 18:34:22,091 - Darshan is updated record in auth_user.
+2025-02-11 18:34:22,095 - Darshan is updated record in django_session.
+2025-02-11 18:34:22,190 - Darshan is accessing /admin/.
+2025-02-11 18:34:42,563 - Darshan is accessing /admin/App1/equipment/.
+2025-02-11 18:34:42,645 - Darshan is accessing /admin/jsi18n/.
+2025-02-11 18:34:43,943 - Darshan is accessing /admin/App1/equipment/add/.
+2025-02-11 18:34:44,027 - Darshan is accessing /admin/jsi18n/.
+2025-02-11 18:35:29,257 - Darshan is accessing /admin/App1/equipment/add/.
+2025-02-11 18:35:29,271 - Darshan is created record in App1_equipment.
+2025-02-11 18:35:29,272 - Darshan is created record in django_admin_log.
+2025-02-11 18:35:29,687 - Darshan is accessing /admin/App1/equipment/.
+2025-02-11 18:35:29,726 - Darshan is accessing /admin/jsi18n/.
+2025-02-11 18:41:31,682 - Darshan is accessing /view_log/.
+2025-02-11 18:41:31,710 - Darshan is accessing /media/iiiQ_-_logo.png.
+2025-02-11 18:41:43,109 - Darshan is accessing /view_log/.
+2025-02-11 18:44:46,858 - Darshan is accessing /view_log/.
+2025-02-11 18:44:55,777 - Darshan is accessing /view_log/.
+2025-02-11 18:45:12,276 - Darshan is accessing /admin/App1/temperaturehumidityrecord/add/.
+2025-02-11 18:45:12,430 - Darshan is accessing /admin/jsi18n/.
+2025-02-11 18:45:56,058 - Darshan is accessing /admin/App1/temperaturehumidityrecord/add/.
+2025-02-11 18:45:56,099 - Darshan is created record in App1_temperaturehumidityrecord.
+2025-02-11 18:45:56,099 - Darshan is created record in django_admin_log.
+2025-02-11 18:45:56,522 - Darshan is accessing /admin/App1/temperaturehumidityrecord/9816/change/.
+2025-02-11 18:45:56,628 - Darshan is accessing /admin/jsi18n/.
+2025-02-11 18:45:58,122 - Darshan is accessing /view_log/.
+2025-02-11 18:46:26,457 - Darshan is accessing /admin/App1/temperaturehumidityrecord/9816/change/.
+2025-02-11 18:46:26,471 - Darshan is updated record in App1_temperaturehumidityrecord.
+2025-02-11 18:46:26,473 - Darshan is created record in django_admin_log.
+2025-02-11 18:46:26,609 - Darshan is accessing /admin/App1/temperaturehumidityrecord/9816/change/.
+2025-02-11 18:46:26,685 - Darshan is accessing /admin/jsi18n/.
+2025-02-11 18:46:28,209 - Darshan is accessing /view_log/.
+2025-02-11 18:46:49,107 - Darshan is accessing /admin/App1/equipment/.
+2025-02-11 18:46:49,249 - Darshan is accessing /admin/jsi18n/.
+2025-02-11 18:46:51,350 - Darshan is accessing /admin/App1/equipment/13/change/.
+2025-02-11 18:46:51,404 - Darshan is accessing /admin/jsi18n/.
+2025-02-11 18:46:59,098 - Darshan is accessing /admin/App1/equipment/13/change/.
+2025-02-11 18:46:59,108 - Darshan is updated record in App1_equipment.
+2025-02-11 18:46:59,108 - Darshan is created record in django_admin_log.
+2025-02-11 18:46:59,208 - Darshan is accessing /admin/App1/equipment/13/change/.
+2025-02-11 18:46:59,258 - Darshan is accessing /admin/jsi18n/.
+2025-02-11 18:47:01,888 - Darshan is accessing /view_log/.
+2025-02-11 18:53:01,153 - Darshan is accessing /admin/App1/equipment/13/change/.
+2025-02-11 18:53:01,169 - Darshan is updated record in App1_equipment.
+2025-02-11 18:53:01,171 - Darshan is created record in django_admin_log.
+2025-02-11 18:53:01,585 - Darshan is accessing /admin/App1/equipment/13/change/.
+2025-02-11 18:53:01,740 - Darshan is accessing /admin/jsi18n/.
+2025-02-11 18:54:19,642 - Darshan is accessing /admin/App1/temperaturehumidityrecord/9816/change/.
+2025-02-11 18:54:19,659 - Darshan is updated record in App1_temperaturehumidityrecord.
+2025-02-11 18:54:19,665 - Darshan is created record in django_admin_log.
+2025-02-11 18:54:20,087 - Darshan is accessing /admin/App1/temperaturehumidityrecord/9816/change/.
+2025-02-11 18:54:20,175 - Darshan is accessing /admin/jsi18n/.
+2025-02-11 18:54:27,259 - Darshan is accessing /view_log/.
+2025-02-11 18:54:44,814 - Darshan is accessing /admin/App1/equipment/13/change/.
+2025-02-11 18:54:44,829 - Darshan is updated record in App1_equipment.
+2025-02-11 18:54:44,829 - Darshan is created record in django_admin_log.
+2025-02-11 18:54:45,016 - Darshan is accessing /admin/App1/equipment/13/change/.
+2025-02-11 18:54:45,114 - Darshan is accessing /admin/jsi18n/.
+2025-02-11 18:54:47,480 - Darshan is accessing /view_log/.
+2025-02-11 18:55:01,380 - Darshan is accessing /admin/App1/equipment/13/change/.
+2025-02-11 18:55:01,391 - Darshan is updated record in App1_equipment.
+2025-02-11 18:55:01,393 - Darshan is created record in django_admin_log.
+2025-02-11 18:55:01,607 - Darshan is accessing /admin/App1/equipment/13/change/.
+2025-02-11 18:55:01,660 - Darshan is accessing /admin/jsi18n/.
+2025-02-11 18:55:05,193 - Darshan is accessing /view_log/.
+2025-02-11 18:55:17,167 - Darshan is accessing /logout/.
+2025-02-11 18:55:17,324 - Darshan is created record in App1_useractivitylog.
+2025-02-11 18:55:17,329 - Anonymous is deleting record in django_session.
+2025-02-11 18:55:17,404 - Anonymous is accessing /.

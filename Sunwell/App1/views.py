@@ -1895,25 +1895,24 @@ def save_app_settings(request):
 # #             return False
 
 import threading
-import time
-import serial
 from datetime import datetime, timedelta, date
 from django.shortcuts import redirect
 from django.contrib import messages
-from .models import AppSettings, Sms_logs
-
+from .models import AppSettings
+from .sms_queue_handler import add_to_sms_queue  # Ensure this is imported
 
 def send_test_sms(request):
     emp_user = request.session.get('username', None)
     if not emp_user:
         return redirect('login')
+
     try:
-        data = User.objects.get(username = emp_user)
+        data = User.objects.get(username=emp_user)
     except:
-        data = SuperAdmin.objects.get(username = emp_user)
-    
+        data = SuperAdmin.objects.get(username=emp_user)
+
     try:
-        acc_db = user_access_db.objects.get(role = data.role)
+        acc_db = user_access_db.objects.get(role=data.role)
     except:
         acc_db = None
 
@@ -1933,83 +1932,7 @@ def send_test_sms(request):
                 messages.error(request, "SMS settings not configured.")
                 return redirect('app_sms_settings')
 
-            lock = threading.Lock()
-
-            def send_sms(scheduled_time=None):
-                ser = None  # Initialize the variable
-                message = "This is test SMS from ESTDAS application"
-                status = "Failed"  # Default to failed; update on success
-                try:
-                    # Initialize the GSM modem connection
-                    ser = serial.Serial(
-                        port=sms_settings.comm_port,
-                        baudrate=int(sms_settings.baud_rate),
-                        bytesize=serial.EIGHTBITS,
-                        parity=serial.PARITY_NONE if sms_settings.parity == 'None' else sms_settings.parity.upper()[0],
-                        stopbits=serial.STOPBITS_ONE if sms_settings.stop_bits == 1 else serial.STOPBITS_TWO,
-                        timeout=2
-                    )
-
-                    def send_command(command, wait_for_response=True, delay=2):
-                        """Send a command to the GSM modem and optionally wait for a response."""
-                        ser.write(command.encode() + b'\r')
-                        ser.flush()
-                        time.sleep(delay)
-                        if wait_for_response:
-                            response = ser.read(1000).decode(errors="ignore").strip()
-                            return response
-                        return ""
-
-                    # Test modem connectivity
-                    if "OK" not in send_command("AT"):
-                        messages.error(request, "Modem not responding to 'AT' command. Check your connection.")
-                        return redirect('app_sms_settings')
-
-                    # Set SMS mode to text
-                    if "OK" not in send_command("AT+CMGF=1"):
-                        messages.error(request, "Failed to set SMS mode to text.")
-                        return redirect('app_sms_settings')
-
-                    # Initiate SMS sending
-                    response = send_command(f'AT+CMGS="{test_sms_number}"', wait_for_response=True, delay=2)
-                    if ">" not in response:
-                        messages.error(request, "Modem did not prompt for message input.")
-                        return redirect('app_sms_settings')
-
-                    # Send the message and terminate with Ctrl+Z
-                    ser.write((message + '\r').encode())
-                    ser.flush()
-                    time.sleep(1)  # Brief pause before sending Ctrl+Z
-                    ser.write(b"\x1A")  # Ctrl+Z to send the SMS
-                    ser.flush()
-
-                    # Wait for final response
-                    time.sleep(5)
-                    response = ser.read(1000).decode(errors="ignore").strip()
-
-                    if "+CMGS" in response and "OK" in response:
-                        messages.success(request, f"Test SMS sent successfully to {test_sms_number}.")
-                        status = "Sent"  # Update status to sent
-                    else:
-                        messages.error(request, f"Failed to send SMS. Detailed response: {response}")
-
-                except Exception as e:
-                    messages.error(request, f"Error sending SMS: {str(e)}")
-                finally:
-                    # Ensure the serial connection is closed
-                    if ser and ser.is_open:
-                        ser.close()
-
-                    # Log SMS details to the database
-                    Sms_logs.objects.create(
-                        time=scheduled_time if scheduled_time else datetime.now().time(),
-                        date=datetime.now().date(),
-                        sys_sms=True,
-                        to_num=test_sms_number,
-                        user_name="Test SMS",
-                        msg_body=message,
-                        status=status
-                    )
+            message = "This is test SMS from ESTDAS application"
 
             # Check if a time is provided
             if test_sms_time:
@@ -2020,24 +1943,31 @@ def send_test_sms(request):
                     delay = (datetime.combine(date.today(), sms_datetime) - datetime.now()).total_seconds()
                     if delay < 0:
                         delay += 86400  # Schedule for the next day
-                    threading.Timer(delay, send_sms, args=[sms_datetime]).start()
+
+                    # Schedule SMS in the queue with delay
+                    number={"name":test_sms_number}
+                    equipment=None
+                    alarm_id=None
+                    sys_sms=True
+                    threading.Timer(delay, add_to_sms_queue, args=[number, message,equipment, alarm_id,  sys_sms]).start()
                     messages.success(request, f"SMS scheduled to {test_sms_number} at {test_sms_time}.")
                 except ValueError:
                     messages.error(request, "Invalid time format. Please use HH:MM.")
                     return redirect('app_sms_settings')
             else:
-                # Send SMS immediately if no time is provided
-                send_sms()
-            messages.success(request, "Test SMS sent Successfully!")
-        except:
-            messages.error(request, "We couldn't send message. Please check your input and try again.")
+                # Send SMS immediately by adding to the queue
+                number={"name":test_sms_number}
+                add_to_sms_queue(number, message,equipment=None, alarm_id=None, sys_sms=True)
+                messages.success(request, "Test SMS sent successfully!")
+
+        except Exception as e:
+            messages.error(request, f"We couldn't send the message. Error: {str(e)}")
 
         return redirect('app_sms_settings')
+
     else:
         messages.error(request, "Invalid request method.")
         return redirect('app_sms_settings')
-
-
 
 def send_test_email(request):
     emp_user = request.session.get('username', None)
@@ -2992,9 +2922,12 @@ def process_alarm_logs(file_path, equipment_id):
                             code=alarm_code.code
                             email_alert=emailalert.objects.get(equipment_name=equipment_id)
                             sms_alert=smsalert.objects.get(equipment_name=equipment_id)
-
+                            ed=0
+                            if dept.email_delay:
+                                ed=dept.email_delay
                             if getattr(email_alert, f'code_{code}'):
-                                thread_email = threading.Thread(target=send_alert_email, args=(alarm_log.id, email_list))
+                                print("Email S")
+                                thread_email = threading.Thread(target=send_alert_email, args=(alarm_log.id, email_list, ed))
                                 thread_email.start()
                                 thread_email.join()
 
@@ -3014,97 +2947,11 @@ def process_alarm_logs(file_path, equipment_id):
 
         except Exception:
             return f"Error processing Alarm Logs"
-
-import serial
-import threading
-import time
-from datetime import datetime
-from django.db import IntegrityError
-serial_lock = threading.Lock() 
-def gsm_message(numbers_dict, message, alarm_id):
-    global serial_lock
-    alarm=Alarm_logs.objects.get(id=alarm_id)
-    equipment=Equipment.objects.get(id=alarm.equipment.id)
-    start_time = time.time()
-    settings=AppSettings.objects.first()
-    try:
-        with serial_lock:  
-            with serial.Serial(port=settings.comm_port, baudrate=settings.baud_rate, timeout=2) as ser:
-                ser.write(b'AT\r')
-                time.sleep(1)
-                response = ser.read_all().decode(errors="ignore").strip()
-                if "OK" not in response:
-                    print("Modem not responding")
-
-                ser.write(b'AT+CMGF=1\r')  
-                time.sleep(1)
-                response = ser.read_all().decode(errors="ignore").strip()
-                for name, number in numbers_dict.items():
-                    ser.write(f'AT+CMGS="{number}"\r'.encode())
-                    time.sleep(2)
-                    response = ser.read_all().decode(errors="ignore").strip()
-
-
-                    if ">" in response:
-                        ser.write((message + '\x1A').encode())  
-                        ser.flush()
-                        time.sleep(5)
-                        response = ser.read_all().decode(errors="ignore").strip()
-
-
-                        status = "Sent" if "+CMGS" in response else "Failed"
-                        Sms_logs.objects.create(
-                            equipment=equipment,
-                            time=datetime.now().time(),
-                            date=datetime.now().date(),
-                            sys_sms=False,
-                            to_num=int(number),
-                            user_name=name,
-                            msg_body=message,
-                            status=status
-                            )
-                    else:
-                        Sms_logs.objects.create(
-                            equipment=equipment,
-                            time=datetime.now().time(),
-                            date=datetime.now().date(),
-                            sys_sms=False,
-                            to_num=int(number),
-                            user_name=name,
-                            msg_body=message,
-                            status="Failed"
-                            )
-
-    except serial.SerialException as e:
-        time.sleep(5)
-        Sms_logs.objects.create(
-            equipment=equipment,
-            time=datetime.now().time(),
-            date=datetime.now().date(),
-            sys_sms=False,
-            to_num=int(number),
-            user_name=name,
-            msg_body=message,
-            status="Failed"
-            )
-    except Exception as e:
-        time.sleep(5)
-        Sms_logs.objects.create(
-            equipment=equipment,
-            time=datetime.now().time(),
-            date=datetime.now().date(),
-            sys_sms=False,
-            to_num=int(number),
-            user_name=name,
-            msg_body=message,
-            status="Failed"
-            )
-    end_time = time.time()  # End time for performance measurement
-    print(f"Total time taken to send all messages: {end_time - start_time} seconds")
-        
+      
 def send_alert_messages(numbers_list, alarm_code):
-    print("SMS TRIGGERED", numbers_list, alarm_code)
+    
     alarm=Alarm_logs.objects.get(id=alarm_code)
+    equipment=alarm.equipment.id
     alarm_id=alarm.id
     app=AppSettings.objects.first()
     equipment_id = alarm.equipment.equip_name
@@ -3202,10 +3049,12 @@ Date and Time: {formatted_datetime}
         elif alarm_code in [2001, 2002, 2003, 2004, 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015]:
             try:
                 plc = PLCUser.objects.get(code=alarm_code)
+                print(34)
                 message = f"""Equipment ID: {equipment_id}
                 Alarm Description: Door Accessed by User {plc.username}
                 Date and Time: {formatted_datetime}"""
             except PLCUser.DoesNotExist:
+                print(12)
                 message = f"Equipment ID: {equipment_id}\nAlarm Description: Unknown User\nDate and Time: {formatted_datetime}"
 
         else:
@@ -3214,7 +3063,7 @@ Alarm Description: {alarm_description}
 Date and Time: {formatted_datetime}"""
 
         
-        gsm_message(numbers_list, message, alarm_id)
+        add_to_sms_queue(numbers_list, message, equipment, alarm_id, False)
         
 
     except Exception as e:
@@ -3222,8 +3071,6 @@ Date and Time: {formatted_datetime}"""
         pass
     finally:
         print("SEnt all messages")
-
-
 def send_alert_email(alarm_id, email_list, email_delay):
     try:
 
@@ -3600,76 +3447,113 @@ def equipment_configure_view(request):
     }
     return render(request, 'Equip_Settings/equip_config.html', context)
     
+from django.shortcuts import render, redirect, get_object_or_404
+from django.contrib import messages
+from django.utils import timezone
+from .models import Equipment, PLCUser, BiometricUser, UserActivityLog
+
 def equipment_edit(request, equipment_id):
     emp_user = request.session.get('username', None)
     if not emp_user:
         return redirect('login')
-    try:
-        data = User.objects.get(username = emp_user)
-    except:
-        data = SuperAdmin.objects.get(username = emp_user)
-    
-    try:
-        acc_db = user_access_db.objects.get(role = data.role)
-    except:
-        acc_db = None
+
     equipment = get_object_or_404(Equipment, id=equipment_id)
-    plc_users = PLCUser.objects.filter(equipment=equipment)
-    biometric_users = BiometricUser.objects.filter(equipment=equipment)
 
     if request.method == 'POST':
-        
-        # Update equipment details from the form
+        # Update Equipment Details
         equipment.equip_name = request.POST.get('edit_equipname')
         equipment.ip_address = request.POST.get('edit_ipaddress')
         equipment.interval = int(request.POST.get('edit_interval'))
         equipment.equipment_type = request.POST.get('edit_equiptype')
         equipment.status = request.POST.get('edit_equipStatus')
         equipment.door_access_type = request.POST.get('edit_doorAccessType')
-    
+
         equipment.save()
-        try:
-        # Attempt to connect to the PLC
+
+        # Handle PLC Users (Update existing or create new)
+        if equipment.door_access_type == 'plc':
             
-            plc = connect_to_plc(equipment.ip_address)  # Assuming `connect_to_plc` takes the IP address directly
-            if plc.get_connected():
-                
-
-                # Write interval to PLC
-                
-                write_interval_to_plc(plc, equipment.interval)  # Call to the function to write the interval
-                messages.success(request, f"Interval {equipment.interval} updated on PLC and saved!")
-
-            else:
-                
-                messages.error(request, f"Could not connect to PLC at {equipment.ip_address}. Please try again.")
-
-        except Exception as e:
-        # Catch any unexpected errors and show an error message
-            
-            messages.error(request, f"An error occurred while updating the PLC interval: {e}")
-       
-
-        try:
-            plc = connect_to_plc(equipment.ip_address)
-            if plc.get_connected():
-                
-                # Start a new background task for the edited equipment
+            try:
+                biometric = BiometricUser.objects.filter(equipment=equipment_id)
+                if biometric.exists():
+                    biometric.delete()  # Delete all matching objects in one query
+                else:
+                    pass
+            except Exception as e:
                 pass
-                # stop_event = threading.Event()  # Create a new stop event
-                # stop_flags[equipment.id] = stop_event  # Track stop event by equipment ID
-                # thread = threading.Thread(target=background_task, args=(equipment, plc, equipment.ip_address, equipment.interval, stop_event))
-                # thread.start()
-            else:
-                messages.error(request, 'Failed to connect to PLC.')
-                return redirect('equipment_configure')
-        except Exception as e:
-            messages.error(request, f"Error during PLC connection: {str(e)}")
-            return redirect('equipment_configure')
+
+            print("Handling PLC Users")
+            existing_plc_users = {user.username: user for user in PLCUser.objects.filter(equipment=equipment)}
+            form_usernames = set()  # Track new users
+
+            code=2001
+            for i in range(1, 16):
+                username = request.POST.get(f'plc_user_username_{i}')  # Fix field name match
+                if username and username.strip():  # Ensure it's not empty
+                    form_usernames.add(username)
+                    if username in existing_plc_users:
+                        plc_user = existing_plc_users[username]
+                        plc_user.save()
+                    else:
+                        PLCUser.objects.create(equipment=equipment, username=username, code=code)
+
+                    code+=1
+
+            # Remove PLC Users that are no longer in the form
+            for user in existing_plc_users.values():
+                if user.username not in form_usernames:
+                    user.delete()
+
+
+        # Handle Biometric Users (Update existing or create new)
+        elif equipment.door_access_type == 'biometric':
+
+            try:
+                plc = PLCUser.objects.filter(equipment=equipment_id)
+                if plc.exists():
+                    plc.delete()  # Delete all matching objects in one query
+                else:
+                    pass
+            except Exception as e:
+                pass
+            biometric_banner_text = request.POST.get('biometric_banner_text')
+            biometric_ip_address = request.POST.get('biometric_ip_address')
+
+            equipment.biometric_banner_text = biometric_banner_text
+            equipment.biometric_ip_address = biometric_ip_address
+            equipment.save()
+
+            existing_biometric_users = {(user.username, user.card_number): user for user in BiometricUser.objects.filter(equipment=equipment)}
+            form_users = set()
+
+            for i in range(1, 16):
+                username = request.POST.get(f'biometric_user_username_{i}')  # Updated name
+                card_number = request.POST.get(f'biometric_user_card_number_{i}')  # Updated name
+
+                if username and card_number and username.strip() and card_number.strip():
+                    form_users.add((username, card_number))
+                    if (username, card_number) in existing_biometric_users:
+                        biometric_user = existing_biometric_users[(username, card_number)]
+                        biometric_user.save()
+                    else:
+                        BiometricUser.objects.create(equipment=equipment, username=username, card_number=card_number)
+
+            # Remove Biometric Users that are no longer in the form
+            for user in existing_biometric_users.values():
+                if (user.username, user.card_number) not in form_users:
+                    user.delete()
+
+
+        # Log the update activity
+        UserActivityLog.objects.create(
+            user=emp_user,
+            log_date=timezone.localtime(timezone.now()).date(),
+            log_time=timezone.localtime(timezone.now()).time(),
+            event_name=f"Edited equipment {equipment.equip_name}"
+        )
 
         messages.success(request, 'Equipment edited successfully!')
         return redirect('equipment_configure')
-
 
 
 def equipment_setting(request, id):
@@ -4179,14 +4063,31 @@ def generate_log_pdf(request, records, from_date, to_date, from_time, to_time, o
         active_humidity_channels = humidity_channels[:total_humidity_sensors]
         
        
-        if total_humidity_sensors== 0 or total_temp_sensors==0:
-            temperature_header = ['T' + str(i+1) for i in range(10)] if active_temperature_channels else ['T' + str(i+1) for i in range(10)]
-        else:
-            temperature_header = ['T' + str(i+1) for i in range(5)] if active_temperature_channels else []
-        if total_humidity_sensors > 0:
-            humidity_header = ['RH' + str(i+1) for i in range(5)] if active_humidity_channels else []
-        else:
+        # if total_humidity_sensors== 0 or total_temp_sensors==0:
+        #     temperature_header = ['T' + str(i+1) for i in range(10)] if active_temperature_channels else ['T' + str(i+1) for i in range(10)]
+        # else:
+        #     temperature_header = ['T' + str(i+1) for i in range(5)] if active_temperature_channels else []
+        # if total_humidity_sensors > 0:
+        #     humidity_header = ['RH' + str(i+1) for i in range(5)] if active_humidity_channels else []
+        # else:
+        #     humidity_header = []
+
+        if total_temp_sensors == 0 and total_humidity_sensors == 0:  # No sensors at all
+            temperature_header = [''] * 10
             humidity_header = []
+
+        elif total_humidity_sensors == 0:  # Only temperature sensors exist
+            temperature_header = ['T' + str(i+1) for i in range(total_temp_sensors)]
+            temperature_header += [''] * (10 - total_temp_sensors)  # Fill remaining slots with empty strings
+            humidity_header = []  # No humidity sensors
+
+        else:  # Both temperature and humidity sensors exist
+            temperature_header = ['T' + str(i+1) for i in range(total_temp_sensors)]
+            temperature_header += [''] * (5 - total_temp_sensors)  # Fill remaining slots with empty strings
+            
+            humidity_header = ['RH' + str(i+1) for i in range(total_humidity_sensors)]
+            humidity_header += [''] * (5 - total_humidity_sensors)  # Fill remaining slots with empty strings
+
 
         if active_humidity_channels:
             data = [
@@ -4580,6 +4481,10 @@ def generate_log_pdf_landscape(request, records, from_date, to_date, from_time, 
         temperature_channels = temperature_channels[:total_temp_sensors]
         humidity_channels = humidity_channels[:total_humidity_sensors]
 
+        # Dynamic header generation
+        temperature_header = ['T' + str(i + 1) for i in range(total_temp_sensors)] + [''] * (10 - total_temp_sensors)
+        humidity_header = ['RH' + str(i + 1) for i in range(total_humidity_sensors)] + [''] * (10 - total_humidity_sensors)
+
         equipment = records.filter(equip_name__equip_name=selected_equipment).first()
         if equipment:
             t_low_alarm = equipment.t_low_alarm
@@ -4597,8 +4502,9 @@ def generate_log_pdf_landscape(request, records, from_date, to_date, from_time, 
         
         # Prepare the main table headers
         data = [
-            [' ', 'Date', 'Time', 'Set', '<---------Temperature(°C)--------->', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', 'Set', '<---------Humidity(%RH)--------->', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '],
-            ['Rec No', 'DD-MM-YYYY', 'HH:MM', 'Temp', 'T1', 'T2', 'T3', 'T4', 'T5', 'T6', 'T7', 'T8', 'T9', 'T10', 'RH', 'RH1', 'RH2', 'RH3', 'RH4', 'RH5', 'RH6', 'RH7', 'RH8', 'RH9', 'RH10']
+            [' ', 'Date', 'Time', 'Set', '<---------Temperature(°C)--------->'] + [''] * 9 + 
+            ['Set', '<---------Humidity(%RH)--------->'] + [''] * 9,
+            ['Rec No', 'DD-MM-YYYY', 'HH:MM', 'Temp'] + temperature_header + ['RH'] + humidity_header
         ]
 
         # Populate the table with filtered records
@@ -6806,7 +6712,9 @@ def Mkt_analysis(request):
 
     if request.method == 'GET':
         selected_sensors = request.GET.getlist('selected_sensors[]')
+        print("form ss", selected_sensors)
         selected_sensors = [int(sensor) for sensor in selected_sensors] if selected_sensors else []
+        print("list ss", selected_sensors)
 
 
     if selected_equipment:
@@ -6825,10 +6733,11 @@ def Mkt_analysis(request):
     )
 
     # Format Data for PDF
-    no_of_sensors=11
-    if selected_equipment is not None:
+    if selected_equipment:
         eqp=Equipment.objects.get(id=selected_equipment)
-        no_of_sensors= eqp.total_temp_sensors +1
+        no_of_sensors= eqp.total_temp_sensors+1
+    else:
+        no_of_sensors=10+1
 
 
     results = []
@@ -6993,45 +6902,49 @@ def generate_mkt_log_pdf(request, records, from_date, to_date, organization, dep
         canvas.drawRightString(800, 45, footer_text_right_top)
 
     def mkt_table():
+        print("nos", no_of_sensors)
+        sensor_headers = [f"T{i}" for i in range(1, no_of_sensors)]
+    
+        header_row1 = ['Rec No', 'Start Date', 'End Date'] + sensor_headers
+        header_row2 = ['', '', ''] + [label for _ in range(1, no_of_sensors) for label in ['Max', 'Min', 'Mean']]
 
-        # Table Data
-        data = [
-            ['Rec No', 'Start Date', 'End Date', 'T1', '', '', 'T2', '', '', 'T3', '', '', 'T4', '', '',
-            'T5', '', '', 'T6', '', '', 'T7', '', '', 'T8', '', '', 'T9', '', '', 'T10', '', ''],
-            ['', '', '', 'Max', 'Min', 'Mean', 'Max', 'Min', 'Mean', 'Max', 'Min', 'Mean', 'Max', 'Min', 'Mean',
-            'Max', 'Min', 'Mean', 'Max', 'Min', 'Mean', 'Max', 'Min', 'Mean', 'Max', 'Min', 'Mean', 'Max', 'Min', 'Mean',
-            'Max', 'Min', 'Mean'],
-        ]
-
+        data = [header_row1, header_row2]
+        print("data", data)
         rec_no = 1
         for record in results:
-            row = [rec_no, record["date"].strftime('%d-%m-%Y'), record["date"].strftime('%d-%m-%Y')] + ["", "", ""] * 10
-            for channel in record["channels"]:
-                channel_number = int(channel["channel"].split('-')[1])  # Extract sensor number (e.g., 2, 6, 10)
-                if channel_number in selected_sensors:
-                    index = 3 + (channel_number - 1) * 3  # Calculate the starting index for this sensor's data
-                    row[index] = str(channel["max"]) if channel["max"] is not None else ""
-                    row[index + 1] = str(channel["min"]) if channel["min"] is not None else ""
-                    row[index + 2] = str(channel["mean"]) if channel["mean"] is not None else ""
+            row = [rec_no, record["date"].strftime('%d-%m-%Y'), record["date"].strftime('%d-%m-%Y')]
+
+            for i in range(1, no_of_sensors + 1):
+                channel_data = next((ch for ch in record["channels"] if int(ch["channel"].split('-')[1]) == i), None)
+
+                if i in selected_sensors and channel_data:
+                    row.extend([
+                        str(channel_data["max"]) if channel_data["max"] is not None else "",
+                        str(channel_data["min"]) if channel_data["min"] is not None else "",
+                        str(channel_data["mean"]) if channel_data["mean"] is not None else ""
+                    ])
+                else:
+                    row.extend(["", "", ""])  # Empty values if sensor is not selected
             
             data.append(row)
+            rec_no += 1
 
+        # Summary rows
+        mkt_row = ["", "MKT (°C)", ""] + [str(channel_aggregated_means.get(f"CH-{i}", {}).get("mkt", "")) for i in range(1, no_of_sensors + 1) for _ in range(3)]
+        avg_temp_row = ["", "AVG TEMP (°C)", ""] + [str(channel_aggregated_means.get(f"CH-{i}", {}).get("avg_mean", "")) for i in range(1, no_of_sensors + 1) for _ in range(3)]
+        dev_temp_row = ["", "DEV AVG TEMP (°C)", ""] + [str(channel_aggregated_means.get(f"CH-{i}", {}).get("deviation", "")) for i in range(1, no_of_sensors + 1) for _ in range(3)]
 
-            rec_no+=1
-
-        mkt_row = ["", "MKT (°C)", ""]
-        avg_temp_row = ["", "AVG TEMP (°C)", ""]
-        dev_temp_row = ["", "DEV AVG TEMP (°C)", ""]
-        for i in range(1, no_of_sensors):
-            stats = channel_aggregated_means.get(f"CH-{i}", {})
-            mkt_row.extend(["", "", str(stats.get("mkt", ""))])
-            avg_temp_row.extend(["", "", str(stats.get("avg_mean", ""))])
-            dev_temp_row.extend(["", "", str(stats.get("deviation", ""))])
         data.append(mkt_row)
         data.append(avg_temp_row)
         data.append(dev_temp_row)
 
+        print("data", data)
 
+        table_spans = []
+        for i in range(no_of_sensors - 1):
+            start_col = 3 + i * 3
+            end_col = start_col + 2
+            table_spans.append(('SPAN', (start_col, 0), (end_col, 0)))
         # Updated Table Style
         table_style = TableStyle([
             ('BACKGROUND', (0, 0), (-1, 0), colors.lightgrey),
@@ -7064,18 +6977,6 @@ def generate_mkt_log_pdf(request, records, from_date, to_date, organization, dep
             # ('GRID', (0, 0), (-1, -1), 0.5, colors.black),
             ('GRID', (0, 0), (-1, -1), 0, colors.transparent),
             # ('GRID', (3, 0), (-1, -1), 0, colors.transparent),
-            
-            # Spanning Equipment Name Header
-            ('SPAN', (3, 0), (5, 0)),  # Merge "Ch-1"
-            ('SPAN', (6, 0), (8, 0)),  # Merge "ch-2"
-            ('SPAN', (9, 0), (11, 0)),  # Merge "ch-3"
-            ('SPAN', (12, 0), (14, 0)),  # Merge "ch-4"
-            ('SPAN', (15, 0), (17, 0)),  # Merge "ch-5"
-            ('SPAN', (18, 0), (20, 0)),  # Merge "ch-6"
-            ('SPAN', (21, 0), (23, 0)),  # Merge "ch-7"
-            ('SPAN', (24, 0), (26, 0)),  # Merge "ch-8"
-            ('SPAN', (27, 0), (29, 0)),  # Merge "ch-9"
-            ('SPAN', (30, 0), (32, 0)),  # Merge "ch-9"
 
             # Vertical line thickness adjustment
             ('LINEBEFORE', (0, 0), (0, -1), 0.5, colors.black),  # Thicker line before sl.no 
@@ -7104,11 +7005,11 @@ def generate_mkt_log_pdf(request, records, from_date, to_date, organization, dep
             ('ALIGN', (24, 0), (26, 0), 'CENTER'),
             ('ALIGN', (27, 0), (29, 0), 'CENTER'),
             ('ALIGN', (30, 0), (32, 0), 'CENTER'),  
-        ])
+        ]+ table_spans)
 
         # Define the table with updated colWidths
         # Define the table with updated colWidths
-        col_widths = [30, 45, 45] + [23] * 30
+        col_widths = [30, 45, 45] + [23] * (no_of_sensors * 3)
 
         # Create table
         table = Table(data, colWidths=col_widths, repeatRows=2)
@@ -7125,6 +7026,7 @@ def generate_mkt_log_pdf(request, records, from_date, to_date, organization, dep
     # Build the document
     doc.build(content, onFirstPage=create_page, onLaterPages=create_page, canvasmaker=NumberedCanvas)
     return response
+
 
 
 def about_us(request):

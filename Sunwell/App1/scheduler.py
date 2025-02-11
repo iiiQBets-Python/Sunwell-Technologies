@@ -8,8 +8,8 @@ import pytz
 import serial
 import time
 from .models import Department, AppSettings, Email_logs, Sms_logs
+from .sms_queue_handler import add_to_sms_queue
 from django.http import JsonResponse
-
 
 scheduler = BackgroundScheduler()
 
@@ -26,7 +26,7 @@ def send_scheduled_notifications():
     # Fetch App Settings
     app_settings = AppSettings.objects.first()
     if not app_settings:
-        return JsonResponse({"status": "error", "message": "App Settings not configured."})
+        return JsonResponse({"status": "error", "message": "No App Setting found"}, status=400) 
 
     # Process Emails if enabled
     if app_settings.email_sys_set:
@@ -45,7 +45,8 @@ def send_scheduled_emails(current_time, app_settings):
     departments = Department.objects.filter(email_time=current_time, email_sys="Enable")
     
     if not departments.exists():
-        return JsonResponse({"status": "error", "message": "No department exists at the specified time"})
+        pass
+        return JsonResponse({"status": "error", "message": "No Departments found at specified time"}, status=400)
 
     # Initialize Email Backend
     try:
@@ -56,8 +57,8 @@ def send_scheduled_emails(current_time, app_settings):
             password=app_settings.email_host_password,
             fail_silently=False,
         )
-    except:
-        pass
+    except Exception as e:
+        return JsonResponse({"status": "error", "message": "No Email Setting found"}, status=400)
 
     for department in departments:
         recipient_list = [
@@ -122,98 +123,29 @@ def send_scheduled_sms(current_time, app_settings):
     departments = Department.objects.filter(sms_time=current_time, sms_sys="Enable")
 
     if not departments.exists():
-        return JsonResponse({"status": "error", "message": "No department exists at the specified time"})
-
-
-    try:
-        # Open Serial Connection to GSM Modem (One-time connection)
-        ser = serial.Serial(
-            port=app_settings.comm_port,  
-            baudrate=int(app_settings.baud_rate),  
-            bytesize=serial.EIGHTBITS,
-            parity=serial.PARITY_NONE if app_settings.parity == 'None' else app_settings.parity.upper()[0],
-            stopbits=serial.STOPBITS_ONE if app_settings.stop_bits == 1 else serial.STOPBITS_TWO,
-            timeout=2
-        )
-
-        # Set SMS mode to text (Only once per session)
-        send_command(ser, "AT+CMGF=1")
-
-    except:
         pass
+        return JsonResponse({"status": "error", "message": "No Departments found at specified time"}, status=400)
+
 
     for department in departments:
-        recipient_details = [
-            (department.user1, department.user1_num),
-            (department.user2, department.user2_num),
-            (department.user3, department.user3_num),
-            (department.user4, department.user4_num),
-            (department.user5, department.user5_num),
-            (department.user6, department.user6_num),
-            (department.user7, department.user7_num),
-            (department.user8, department.user8_num),
-            (department.user9, department.user9_num),
-            (department.user10, department.user10_num),
-        ]
-
-        for user_name, user_number in recipient_details:
-            if user_number:
-                message = f"This is a test SMS from ESTDAS application for {department.department_name or ''} department."
-                status = send_sms(ser, user_number, message)
-
-                # Log SMS details
-                Sms_logs.objects.create(
-                    time=current_time,
-                    date=datetime.now(ist_timezone).date(),
-                    sys_sms=True,
-                    to_num=user_number,
-                    user_name=user_name,
-                    msg_body=message,
-                    status=status
-                )
-    # Close Serial Connection after all SMS are sent
-    if ser and ser.is_open:
-        ser.close()
-
-
-def send_command(ser, command, wait_for_response=True, delay=1):
-
-    ser.write(command.encode() + b'\r')
-    ser.flush()
-    time.sleep(delay)  # Reduced wait time for faster response
-    if wait_for_response:
-        response = ser.read(1000).decode(errors="ignore").strip()
-
-        return response
-    return ""
-
-
-def send_sms(ser, user_number, message):
-
-    try:
-        # Initiate SMS sending
-        response = send_command(ser, f'AT+CMGS="{user_number}"', wait_for_response=True, delay=1)
-        if ">" not in response:
-            raise Exception("Modem did not prompt for message input.")
-
-        # Send the message and terminate with Ctrl+Z
-        ser.write((message + '\r').encode())
-        ser.flush()
-        time.sleep(0.5)  # Reduced pause before sending Ctrl+Z
-        ser.write(b"\x1A")  # Ctrl+Z to send the SMS
-        ser.flush()
-
-        # Wait for final response
-        time.sleep(3)
-        response = ser.read(1000).decode(errors="ignore").strip()
-
-        if "+CMGS" in response and "OK" in response:
-            return "Sent"
-        else:
-            return "Failed"
-
-    except Exception as e:
-        return "Failed"
+        number = {
+            user_name: phone_number
+            for user_name, phone_number in [
+                (department.user1, department.user1_num),
+                (department.user2, department.user2_num),
+                (department.user3, department.user3_num),
+                (department.user4, department.user4_num),
+                (department.user5, department.user5_num),
+                (department.user6, department.user6_num),
+                (department.user7, department.user7_num),
+                (department.user8, department.user8_num),
+                (department.user9, department.user9_num),
+                (department.user10, department.user10_num),
+            ]
+            if user_name  # Ensure that empty names are not included in the dictionary
+        }
+        message = f"This is a test SMS from ESTDAS application for {department.department_name or ''} department."
+        status = add_to_sms_queue( number, message, equipment=None, alarm_id=None, sys_sms=True)
 
 
 def start_notification_scheduler():

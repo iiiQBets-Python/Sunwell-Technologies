@@ -373,7 +373,7 @@ class Equipment(models.Model):
 
 class PLCUser(models.Model):
     equipment = models.ForeignKey(Equipment, on_delete=models.CASCADE, related_name="plc_users")
-    code = models.IntegerField(null=True, unique=True)
+    code = models.IntegerField(null=True)
     username = models.CharField(max_length=255)
 
     def __str__(self):

@@ -48,11 +48,11 @@ class Organization(models.Model):
         self.nod = encoded_nod
 
     def get_nod(self):
-        """Decode and return the number of devices."""
-        if self.nod is None:
-            return 0  # Default value if nod is not set
-        decoded_nod = base64.b64decode(self.nod.encode('utf-8')).decode('utf-8')
-        return int(decoded_nod)
+        try:
+            decoded_nod = base64.b64decode(self.nod.encode('utf-8')).decode('utf-8')
+            return int(decoded_nod)
+        except (ValueError, UnicodeDecodeError):
+            return 0  # Default to 0 or log error as needed
 
     def _str_(self):
         return self.name 
@@ -76,7 +76,7 @@ class Department(models.Model):
     footer_note = models.CharField(max_length=100, null=True)
     report_datetime_stamp = models.BooleanField(default=True, null=True)
     email_sys = models.CharField(max_length=10, default='Enable', null=True)
-    email_delay = models.CharField(default=0, max_length=50, blank=True, null=True)
+    email_delay = models.IntegerField(null=True, blank=True)
     email_time = models.TimeField(blank=True, null=True)
     alert_email_address_1 = models.EmailField(blank=True, null=True)
     alert_email_address_2 = models.EmailField(blank=True, null=True)
@@ -91,7 +91,7 @@ class Department(models.Model):
 
     #sms alerts
     sms_sys = models.CharField(max_length=10, default='Enable', null=True)
-    sms_delay = models.CharField(default=0, max_length=50, blank=True, null=True)
+    sms_delay = models.IntegerField(null=True, blank=True)
     sms_time = models.TimeField(blank=True, null=True)
     user1=models.CharField(max_length=25, null=True, blank=True)
     user1_num=models.BigIntegerField(null=True, blank=True)

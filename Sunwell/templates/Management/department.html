@@ -234,7 +234,7 @@
                                 </div>
                                 <div class="col-md-12 form-group">
                                     <input type="text" class="form-control" id="headerNote" name="headerNote" placeholder=" " required oninput="setCustomValidity('')" oninvalid="setCustomValidity('Please Enter Head Note')">
-                                    <label for="headerNote" class="form-label">Header Note*</label>
+                                    <label for="headerNote" class="form-label">Header Note</label>
                                 </div>
                                 <div class="col-md-12 form-group">
                                     <input type="text" class="form-control" id="footerNote" name="footerNote" placeholder=" " required oninput="setCustomValidity('')" oninvalid="setCustomValidity('Please Enter Footer Note')">
@@ -276,7 +276,7 @@
                                     </div>
                                 </div>
                                 <div class="col-md-6 form-group">
-                                    <input type="text" class="form-control" name="email_delay" id="email_alert" value="{{ department.email_alert }}" placeholder=" ">
+                                    <input type="number" class="form-control" name="email_delay" id="email_alert" value="{{ department.email_alert|default:0 }}" placeholder=" ">
                                     <label for="email_alert" class="form-label">Email Alert Delay</label>
                                 </div>
                                 <div class="col-md-6 form-group">
@@ -285,43 +285,43 @@
                                 </div>
                                 <div class="col-md-6 form-group">
                                     <input type="email" class="form-control" name="email_address_1" id="email_address_1" value="{{ department.alert_email_address_1 }}" placeholder=" " title="Please enter a valid Email">
-                                    <label for="email_address_1" class="form-label">Alert Email Address 1*</label>
+                                    <label for="email_address_1" class="form-label">Alert Email Address 1</label>
                                 </div>
                                 <div class="col-md-6 form-group">
                                     <input type="email" class="form-control" name="email_address_2" id="email_address_2" value="{{ department.alert_email_address_2 }}" placeholder=" " title="Please enter a valid Email">
-                                    <label for="email_address_2" class="form-label">Alert Email Address 2*</label>
+                                    <label for="email_address_2" class="form-label">Alert Email Address 2</label>
                                 </div>
                                 <div class="col-md-6 form-group">
                                     <input type="email" class="form-control" name="email_address_3" id="email_address_3" value="{{ department.alert_email_address_3 }}" placeholder=" " title="Please enter a valid Email">
-                                    <label for="email_address_3" class="form-label">Alert Email Address 3*</label>
+                                    <label for="email_address_3" class="form-label">Alert Email Address 3</label>
                                 </div>
                                 <div class="col-md-6 form-group">
                                     <input type="email" class="form-control" name="email_address_4" id="email_address_4" value="{{ department.alert_email_address_4 }}" placeholder=" " title="Please enter a valid Email">
-                                    <label for="email_address_4" class="form-label">Alert Email Address 4*</label>
+                                    <label for="email_address_4" class="form-label">Alert Email Address 4</label>
                                 </div>
                                 <div class="col-md-6 form-group">
                                     <input type="email" class="form-control" name="email_address_5" id="email_address_5" value="{{ department.alert_email_address_5 }}" placeholder=" " title="Please enter a valid Email">
-                                    <label for="email_address_5" class="form-label">Alert Email Address 5*</label>
+                                    <label for="email_address_5" class="form-label">Alert Email Address 5</label>
                                 </div>
                                 <div class="col-md-6 form-group">
                                     <input type="email" class="form-control" name="email_address_6" id="email_address_6" value="{{ department.alert_email_address_6 }}" placeholder=" " title="Please enter a valid Email">
-                                    <label for="email_address_6" class="form-label">Alert Email Address 6*</label>
+                                    <label for="email_address_6" class="form-label">Alert Email Address 6</label>
                                 </div>
                                 <div class="col-md-6 form-group">
                                     <input type="email" class="form-control" name="email_address_7" id="email_address_7" value="{{ department.alert_email_address_7 }}" placeholder=" " title="Please enter a valid Email">
-                                    <label for="email_address_7" class="form-label">Alert Email Address 7*</label>
+                                    <label for="email_address_7" class="form-label">Alert Email Address 7</label>
                                 </div>
                                 <div class="col-md-6 form-group">
                                     <input type="email" class="form-control" name="email_address_8" id="email_address_8" value="{{ department.alert_email_address_8 }}" placeholder=" " title="Please enter a valid Email">
-                                    <label for="email_address_8" class="form-label">Alert Email Address 8*</label>
+                                    <label for="email_address_8" class="form-label">Alert Email Address 8</label>
                                 </div>
                                 <div class="col-md-6 form-group">
                                     <input type="email" class="form-control" name="email_address_9" id="email_address_9" value="{{ department.alert_email_address_9 }}" placeholder=" " title="Please enter a valid Email">
-                                    <label for="email_address_9" class="form-label">Alert Email Address 9*</label>
+                                    <label for="email_address_9" class="form-label">Alert Email Address 9</label>
                                 </div>
                                 <div class="col-md-6 form-group">
                                     <input type="email" class="form-control" name="email_address_10" id="email_address_10" value="{{ department.alert_email_address_10 }}" placeholder=" " title="Please enter a valid Email">
-                                    <label for="email_address_10" class="form-label">Alert Email Address 10*</label>
+                                    <label for="email_address_10" class="form-label">Alert Email Address 10</label>
                                 </div>
                             </div>
                             <div class="form-buttons mt-3">
@@ -347,11 +347,11 @@
                                     </div>
                                 </div>
                                 <div class="col-md-6 form-group">
-                                    <input type="text" class="form-control" name="sms_delay" id="sms_delay" placeholder=" " >
-                                    <label for="sms_delay" class="form-label">SMS Alert Delay*</label>
+                                    <input type="number" class="form-control" name="sms_delay" id="sms_delay" placeholder=" " value="{{ department.sms_alert|default:0 }}" >
+                                    <label for="sms_delay" class="form-label">SMS Alert Delay</label>
                                 </div>
                                 <div class="col-md-6 form-group">
-                                    <input type="time" class="form-control" name="sms_time" id="sms_time" placeholder=" " >
+                                    <input type="time" class="form-control" name="sms_time" id="sms_time" placeholder=" " value="{{ department.sms_time|date:'H:i' }}">
                                     <label for="sms_time" class="form-label">SMS Time</label>
                                 </div>
                                 <div class="col-md-6 form-group">
@@ -613,7 +613,7 @@
                             </div>
                             <div class="col-md-12 form-group">
                                 <input type="text" class="form-control" id="edit_headerNote" name="edit_headerNote" value="{{ department.header_note|default:'' }}" placeholder=" " required oninput="setCustomValidity('')" oninvalid="setCustomValidity('Please Enter Head Note')">
-                                <label for="edit_headerNote" class="form-label">Header Note*</label>
+                                <label for="edit_headerNote" class="form-label">Header Note</label>
                             </div>
                             <div class="col-md-12 form-group">
                                 <input type="text" class="form-control" id="edit_footerNote" name="edit_footerNote" value="{{ department.footer_note|default:'' }}" placeholder=" " required oninput="setCustomValidity('')" oninvalid="setCustomValidity('Please Enter Footer Note')">
@@ -655,7 +655,7 @@
                                     </div>
                                 </div>
                                 <div class="col-md-6 form-group">
-                                    <input type="text" class="form-control" name="edit_email_delay" id="edit_email_alert" value="{{ department.email_delay|default:'' }}" placeholder=" " >
+                                    <input type="number" class="form-control" name="edit_email_delay" id="edit_email_alert" value="{{ department.email_delay|default:0 }}" placeholder=" " default=0>
                                     <label for="edit_email_alert" class="form-label">Email Alert Delay</label>
                                 </div>
                                 <div class="col-md-6 form-group">
@@ -664,43 +664,43 @@
                                 </div>
                                 <div class="col-md-6 form-group">
                                     <input type="email" class="form-control" name="edit_email_address_1" id="edit_email_address_1" value="{{ department.alert_email_address_1|default:'' }}" placeholder=" " >
-                                    <label for="edit_email_address_1" class="form-label">Alert Email Address 1*</label>
+                                    <label for="edit_email_address_1" class="form-label">Alert Email Address 1</label>
                                 </div>
                                 <div class="col-md-6 form-group">
                                     <input type="email" class="form-control" name="edit_email_address_2" id="edit_email_address_2" value="{{ department.alert_email_address_2|default:'' }}" placeholder=" " >
-                                    <label for="edit_email_address_2" class="form-label">Alert Email Address 2*</label>
+                                    <label for="edit_email_address_2" class="form-label">Alert Email Address 2</label>
                                 </div>
                                 <div class="col-md-6 form-group">
                                     <input type="email" class="form-control" name="edit_email_address_3" id="edit_email_address_3" value="{{ department.alert_email_address_3|default:'' }}" placeholder=" " >
-                                    <label for="edit_email_address_3" class="form-label">Alert Email Address 3*</label>
+                                    <label for="edit_email_address_3" class="form-label">Alert Email Address 3</label>
                                 </div>
                                 <div class="col-md-6 form-group">
                                     <input type="email" class="form-control" name="edit_email_address_4" id="edit_email_address_4" value="{{ department.alert_email_address_4|default:'' }}" placeholder=" " >
-                                    <label for="edit_email_address_4" class="form-label">Alert Email Address 4*</label>
+                                    <label for="edit_email_address_4" class="form-label">Alert Email Address 4</label>
                                 </div>
                                 <div class="col-md-6 form-group">
                                     <input type="email" class="form-control" name="edit_email_address_5" id="edit_email_address_5" value="{{ department.alert_email_address_5|default:'' }}" placeholder=" " >
-                                    <label for="edit_email_address_5" class="form-label">Alert Email Address 5*</label>
+                                    <label for="edit_email_address_5" class="form-label">Alert Email Address 5</label>
                                 </div>
                                 <div class="col-md-6 form-group">
                                     <input type="email" class="form-control" name="edit_email_address_6" id="edit_email_address_6" value="{{ department.alert_email_address_6|default:'' }}" placeholder=" " >
-                                    <label for="edit_email_address_6" class="form-label">Alert Email Address 6*</label>
+                                    <label for="edit_email_address_6" class="form-label">Alert Email Address 6</label>
                                 </div>
                                 <div class="col-md-6 form-group">
                                     <input type="email" class="form-control" name="edit_email_address_7" id="edit_email_address_7" value="{{ department.alert_email_address_7|default:'' }}" placeholder=" " >
-                                    <label for="edit_email_address_7" class="form-label">Alert Email Address 7*</label>
+                                    <label for="edit_email_address_7" class="form-label">Alert Email Address 7</label>
                                 </div>
                                 <div class="col-md-6 form-group">
                                     <input type="email" class="form-control" name="edit_email_address_8" id="edit_email_address_8" value="{{ department.alert_email_address_8|default:'' }}" placeholder=" " >
-                                    <label for="edit_email_address_8" class="form-label">Alert Email Address 8*</label>
+                                    <label for="edit_email_address_8" class="form-label">Alert Email Address 8</label>
                                 </div>
                                 <div class="col-md-6 form-group">
                                     <input type="email" class="form-control" name="edit_email_address_9" id="edit_email_address_9" value="{{ department.alert_email_address_9|default:'' }}" placeholder=" " >
-                                    <label for="edit_email_address_9" class="form-label">Alert Email Address 9*</label>
+                                    <label for="edit_email_address_9" class="form-label">Alert Email Address 9</label>
                                 </div>
                                 <div class="col-md-6 form-group">
                                     <input type="email" class="form-control" name="edit_email_address_10" id="edit_email_address_10" value="{{ department.alert_email_address_10|default:'' }}" placeholder=" " >
-                                    <label for="edit_email_address_10" class="form-label">Alert Email Address 10*</label>
+                                    <label for="edit_email_address_10" class="form-label">Alert Email Address 10</label>
                                 </div>
                                 <div class="form-buttons mt-3">
                                     <button class="btn btn-secondary" type="button" onclick="switchTab('#edit-department-tab-{{ department.id }}')">Back</button>
@@ -725,8 +725,8 @@
                                     </div>
                                 </div>
                                 <div class="col-md-6 form-group">
-                                    <input type="text" class="form-control" name="edit_sms_delay" id="edit_sms_delay" placeholder=" " value="{{ department.sms_delay|default:'' }}">
-                                    <label for="edit_sms_delay" class="form-label">SMS Alert Delay*</label>
+                                    <input type="number" class="form-control" name="edit_sms_delay" id="edit_sms_delay" placeholder=" " value="{{ department.sms_delay|default:0 }}">
+                                    <label for="edit_sms_delay" class="form-label">SMS Alert Delay</label>
                                 </div>
                                 <div class="col-md-6 form-group">
                                     <input type="time" class="form-control" name="edit_sms_time" id="edit_sms_time" placeholder=" " value="{{ department.sms_time|date:'H:i'|default:'' }}">
@@ -822,7 +822,8 @@
                         <div class="tab-pane fade" id="edit-whatsapp-{{ department.id }}" role="tabpanel" aria-labelledby="edit-whatsapp-tab-{{ department.id }}">
                             <div class="container">
                                 <div class="row">
-                                    <div class="col-md-12 form-group d-flex align-items-center ">
+                                    <h6 style="margin-right: 10px;">Coming soon</h6>
+                                    {% comment %} <div class="col-md-12 form-group d-flex align-items-center ">
                                         <h6 style="margin-right: 10px;">Whatsapp Message System:</h6>
                                         <div id="status">
                                             <div class="form-check form-check-inline">
@@ -925,7 +926,7 @@
                                     </div>
                                     <div class="form-buttons mt-3">
                                         <button class="btn btn-secondary" type="button" onclick="switchTab('#edit-sms-tab-{{ department.id }}')">Back</button>
-                                    </div>
+                                    </div> {% endcomment %}
                                 </div>
                             </div>
                         </div>

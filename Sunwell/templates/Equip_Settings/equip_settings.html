@@ -937,112 +937,6 @@ function getCookie(name) {
     });
 
 
-// Reset modal input fields on modal close
-    // document.getElementById('authModal').addEventListener('hidden.bs.modal', function () {
-    //     const inputs = this.querySelectorAll('input');
-    //     inputs.forEach(input => {
-    //         input.value = ''; // Clear input values
-    //     });
-    // });
-
-    // Optionally handle form submission
-    // document.getElementById('authForm').addEventListener('submit', function (e) {
-    //     e.preventDefault(); // Prevent default form submission
-    //     // Add your form submission logic here
-    //     const modal = bootstrap.Modal.getInstance(document.getElementById('authModal'));
-    //     modal.hide(); // Close the modal after submission
-    // });
-
-
-
-//     document.addEventListener("DOMContentLoaded", function () {
-//     const allowedTabs = ['parameters', 'settings']; // Define the allowed tabs
-
-//     function editMode(button) {
-//         const formContainer = button.closest('.tab-pane');
-
-//         // Check if the current tab is allowed
-//         if (!allowedTabs.includes(formContainer.id)) {
-//             alert('Edit mode is not allowed for this tab.');
-//             return;
-//         }
-
-//         // Enable all input and select elements inside the current tab
-//         formContainer.querySelectorAll('input, select').forEach(input => {
-//             input.removeAttribute('readonly');
-//             input.disabled = false;
-//         });
-
-//         // Toggle button visibility
-//         button.classList.add('d-none');
-//         formContainer.querySelector('.save-button').classList.remove('d-none');
-//     }
-
-//     function saveMode(button) {
-//         const formContainer = button.closest('.tab-pane');
-
-//         // Check if the current tab is allowed
-//         if (!allowedTabs.includes(formContainer.id)) {
-//             alert('Save mode is not allowed for this tab.');
-//             return;
-//         }
-
-//         let inputData = {};
-//         inputData['tab_name'] = formContainer.id;
-//         inputData['equipment_ip'] = document.getElementById('ip_address').value; // Example field
-
-//         // Collect input values from the current tab
-//         formContainer.querySelectorAll('input, select').forEach(input => {
-//             inputData[input.name] = input.value;
-//             input.setAttribute('readonly', true);
-//             input.disabled = true;
-//         });
-
-//         // Toggle button visibility
-//         button.classList.add('d-none');
-//         formContainer.querySelector('.edit-button').classList.remove('d-none');
-
-//         // Debugging and sending data to the server
-//         console.log('Data to save:', inputData);
-
-//         fetch("{% url 'save_equipment_settings' %}", {
-//             method: 'POST',
-//             headers: {
-//                 'Content-Type': 'application/json',
-//                 'X-CSRFToken': getCookie('csrftoken')
-//             },
-//             body: JSON.stringify(inputData)
-//         })
-//         .then(response => response.json())
-//         .then(data => {
-//             alert('Data Saved Successfully');
-//         })
-//         .catch(error => {
-//             console.error('Error:', error);
-//             alert('Failed to save data.');
-//         });
-//     }
-
-//     function getCookie(name) {
-//         let cookieValue = null;
-//         if (document.cookie && document.cookie !== '') {
-//             const cookies = document.cookie.split(';');
-//             for (let i = 0; i < cookies.length; i++) {
-//                 const cookie = cookies[i].trim();
-//                 if (cookie.substring(0, name.length + 1) === (name + '=')) {
-//                     cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-//                     break;
-//                 }
-//             }
-//         }
-//         return cookieValue;
-//     }
-
-//     // Attach functions to the global scope for inline event handlers
-//     window.editMode = editMode;
-//     window.saveMode = saveMode;
-// });
-
     // Code for Modal Popup for equipment settings
 
     document.addEventListener('DOMContentLoaded', function() {
@@ -1127,11 +1021,11 @@ function saveparametersMode(button) {
     })
     .then(response => response.json())
     .then(data => {
-        console.log('Success:', data);
+
         alert('Data saved successfully!');
     })
     .catch((error) => {
-        console.error('Error:', error);
+
         alert('Error saving data');
     });
 
@@ -1154,7 +1048,7 @@ function saveMode1(button) {
     let smsAlerts = [];
 
     const ip_address = document.getElementById('ip_address').value;  // Get IP address from input
-    console.log('ip_address')
+
 
     // Collect only checked checkboxes from email alerts
     document.querySelectorAll('.checkbox-list-1 .form-check-input:checked').forEach((checkbox) => {
@@ -1172,7 +1066,7 @@ function saveMode1(button) {
         smsData: { sms: smsAlerts,  },
         ip_address: {ip_address:ip_address}
     };
-    console.log('data to be sent', data)
+
 
     fetch('/save-alert-settings/', {
         method: 'POST',
@@ -1184,7 +1078,7 @@ function saveMode1(button) {
     }).then(response => response.json())
       .then(data => {
         alert("Alert settings saved successfully!");
-          console.log('Success:', data);
+
       })
       .catch((error) => {
           console.error('Error:', error);

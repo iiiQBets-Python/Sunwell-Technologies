@@ -244,35 +244,75 @@
             document.querySelector(".table-header").style.display = "table-header-group"; // Show the header
         });
         
-        // Remove validation message when user selects an equipment
         document.getElementById("equipment").addEventListener("change", function () {
-            this.setCustomValidity(""); // Clears validation message
+            // Clear all previously created hidden inputs for sensors
+            document.querySelectorAll(".sensor-input").forEach(input => input.remove());
+            
+            // Clear checkboxes
+            document.querySelectorAll(".row-checkbox").forEach(checkbox => {
+                checkbox.checked = false;
+            });
+        
+            // Hide all rows initially
+            document.querySelectorAll(".sensor-row").forEach(row => {
+                row.style.display = "none";
+            });
+        
+            // Show only the rows for the selected equipment
+            document.querySelectorAll(`.sensor-row[data-equipment-id="${this.value}"]`).forEach(row => {
+                row.style.display = "table-row";
+            });
+        
+            // Clear the validation message if there was one set previously
+            this.setCustomValidity("");
         });
+        
     
         
     // checkbox selection script
-    document.addEventListener("DOMContentLoaded", function () {
-        const selectAllCheckbox = document.getElementById("selectAll");
-        const rowCheckboxes = document.querySelectorAll(".row-checkbox");
+    document.addEventListener("DOMContentLoaded", function() {
+        // Handle equipment change to reset sensor selections and visibility
+        document.getElementById("equipment").addEventListener("change", function() {
+            // Clear all previously created hidden inputs for sensors
+            document.querySelectorAll(".sensor-input").forEach(input => input.remove());
+            
+            // Clear checkboxes and reset the 'Select All' checkbox
+            document.querySelectorAll(".row-checkbox").forEach(checkbox => {
+                checkbox.checked = false;
+            });
+            document.getElementById("selectAll").checked = false;
     
-        // Function to toggle all checkboxes based on header checkbox
-        selectAllCheckbox.addEventListener("change", function () {
-            rowCheckboxes.forEach(checkbox => {
-                checkbox.checked = selectAllCheckbox.checked;
+            // Hide all rows initially
+            document.querySelectorAll(".sensor-row").forEach(row => {
+                row.style.display = "none";
+            });
+    
+            // Show only the rows for the selected equipment
+            document.querySelectorAll(`.sensor-row[data-equipment-id="${this.value}"]`).forEach(row => {
+                row.style.display = "table-row";
+            });
+    
+            // Clear any set validation messages
+            this.setCustomValidity("");
+        });
+    
+        // Toggle checkboxes within visible sensors based on 'Select All' state
+        document.getElementById("selectAll").addEventListener("change", function() {
+            let equipmentId = document.getElementById("equipment").value;
+            let allCheckboxes = document.querySelectorAll(`.sensor-row[data-equipment-id="${equipmentId}"] .row-checkbox`);
+            
+            allCheckboxes.forEach(checkbox => {
+                checkbox.checked = this.checked;
             });
         });
     
-        // Update "Select All" checkbox when individual checkboxes are clicked
-        rowCheckboxes.forEach(checkbox => {
-            checkbox.addEventListener("change", function () {
-                // If any checkbox is unchecked, uncheck "Select All"
-                if (!this.checked) {
-                    selectAllCheckbox.checked = false;
-                }
-                // If all checkboxes are checked, check "Select All"
-                else if (document.querySelectorAll(".row-checkbox:checked").length === rowCheckboxes.length) {
-                    selectAllCheckbox.checked = true;
-                }
+        // Update 'Select All' checkbox based on individual sensor checkbox changes
+        document.querySelectorAll(".row-checkbox").forEach(checkbox => {
+            checkbox.addEventListener("change", function() {
+                let equipmentId = document.getElementById("equipment").value;
+                let allCheckboxes = document.querySelectorAll(`.sensor-row[data-equipment-id="${equipmentId}"] .row-checkbox`);
+                let allChecked = Array.from(allCheckboxes).every(cb => cb.checked);
+                document.getElementById("selectAll").checked = allChecked;
             });
         });
     });

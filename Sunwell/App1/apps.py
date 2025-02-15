@@ -18,21 +18,16 @@ class EquipSettingsConfig(AppConfig):
         if not cache.get('is_background_task_running'):
             cache.set('is_background_task_running', True, timeout=None)
             self.start_background_task()
-            print("[INFO] Background task started.")
+
             if not hasattr(self, 'scheduler_started'):  # Ensure scheduler is started only once
-                print("[INFO] Initializing scheduled notifications...")
 
                 from .scheduler import start_notification_scheduler
-
                 # Start the single scheduler for both email & SMS
                 start_notification_scheduler()
-
-                print("[INFO] Notification scheduler initialized.")
-
                 self.scheduler_started = True
 
         else:
-            print("[INFO] Background task already running.")
+            pass
 
     def start_background_task(self):
         from .views import background_task_for_all_equipment, stop_event

@@ -25,7 +25,6 @@ sms_thread.start()
 
 def add_to_sms_queue(number, message, equipment, alarm_id, sys_sms):
 
-    print("EQP ", equipment)
     sms_queue.put({
         'number': number,
         'message': message,
@@ -35,7 +34,7 @@ def add_to_sms_queue(number, message, equipment, alarm_id, sys_sms):
     })
   
 def send_sms_from_queue(sms_details):
-    print("SMS Details", sms_details)
+
     number=sms_details["number"]
     message=sms_details["message"]
     equipment=sms_details["equipment"]
@@ -49,7 +48,6 @@ def send_sms_from_queue(sms_details):
     try:
         with sms_lock:  
             settings = AppSettings.objects.first()
-            print(f"Initializing modem on port {settings.comm_port} with baud rate {settings.baud_rate}")
             start_time = time.time()
             with serial.Serial(
                 port=settings.comm_port,
@@ -57,59 +55,58 @@ def send_sms_from_queue(sms_details):
                 bytesize=serial.EIGHTBITS,
                 parity=serial.PARITY_NONE,
                 stopbits=serial.STOPBITS_ONE,
-                timeout=2  
+                timeout=2
             ) as ser:
-                print(f"Serial port {settings.comm_port} opened: {ser.is_open}")
                 ser.write(b'AT\r')  
-                ser.flush()
+                # ser.flush()
                 time.sleep(1)  
                 response = ser.read_all().decode(errors="ignore").strip()
-                print(f"AT command response: {response}")
+
 
                 if "OK" not in response:
-                    print(f"Modem not responding to 'AT' command. Response: {response}")
-                    return
+                    pass
 
                 # Set SMS mode to text
                 ser.write(b'AT+CMGF=1\r')  # Set text mode
-                ser.flush()
+                # ser.flush()
                 time.sleep(1)
                 response = ser.read_all().decode(errors="ignore").strip()
-                print(f"AT+CMGF response: {response}")
+
 
                 if "OK" not in response:
-                    print(f"Failed to set SMS mode. Response: {response}")
-                    return
+                    pass
+                    # return
 
                 for name, num in number.items():
-                    print("type of number:", type(num))
+
                     # int(num)
                     ser.write(f'AT+CMGS="{num}"\r'.encode())
-                    ser.flush()
-                    time.sleep(2)
+                    # ser.flush()
+                    time.sleep(3)
                     response = ser.read_all().decode(errors="ignore").strip()
-                    print(f"AT+CMGS response: {response}")
+
 
                     if ">" not in response:
-                        print(f"Modem did not prompt for SMS message input. Response: {response}")
-                        return
+                        pass
+                        # return
 
                     # Send the message and terminate with Ctrl+Z
                     ser.write((message + '\x1A').encode())  # Ctrl+Z
                     ser.flush()
 
                     # Wait for the final response
-                    time.sleep(5)
+                    time.sleep(8)
                     response = ser.read_all().decode(errors="ignore").strip()
-                    print(f"Final response after sending SMS: {response}")
+
 
                     status = "Sent" if "+CMGS" in response else "Failed"
-                    print(f"SMS status: {status}")
+
                     Sms_logs.objects.create(
                         time=datetime.now().time(),
                         date=datetime.now().date(),
                         sys_sms=sys_sms,
                         to_num=num,
+                        user_name=name,
                         msg_body=message,
                         status=status,
                         equipment=Eqp,
@@ -117,7 +114,6 @@ def send_sms_from_queue(sms_details):
             ser.close()
 
     except Exception as e:
-        print(f"Error while sending SMS: {e}")
         # ser.close()
         Sms_logs.objects.create(
             time=datetime.now().time(),
@@ -129,6 +125,6 @@ def send_sms_from_queue(sms_details):
             equipment=Eqp,
         )
     end_time = time.time()  
-    print(f"Total time taken to send all messages: {end_time - start_time} seconds")
+
     
 

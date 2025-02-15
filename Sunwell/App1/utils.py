@@ -41,10 +41,8 @@ def get_motherboard_serial_number():
         else:
             return None
     except subprocess.CalledProcessError as e:
-        print(f"Error running command: {e}")
         return None
     except Exception as e:
-        print(f"An unexpected error occurred: {e}")
         return None
 
 
@@ -56,7 +54,6 @@ def generate_soft_key():
         input_string = f"IIIQST-{pc_server_serial_no}"
         return encode_to_custom_base62(input_string)
     except Exception as e:
-        print(f"An error occurred while generating the soft key: {e}")
         return None
 
 # Function to decode soft key and retrieve the PC/Server serial number

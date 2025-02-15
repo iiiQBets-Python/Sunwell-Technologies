@@ -137,3 +137,32 @@ spanning problem in <Table@0x21E5E66BE00 12 rows x 18 cols(tallest row 27)> with
 spanning problem in <Table@0x27E566FE1E0 12 rows x 33 cols(tallest row 27)> with cell(0,0) containing
 'Rec No' list index out of range
 2025-02-11 17:30:02,437 - Darshan is getting UnboundLocalError on accessing view_log: cannot access local variable 'equipment' where it is not associated with a value
+2025-02-12 13:22:25,280 - Darshan is getting TypeError on accessing Mkt_analysis: can't multiply sequence by non-int of type 'list'
+2025-02-12 16:43:06,717 - Darshan is getting Error on accessing comm_group: Invalid base64-encoded string: number of data characters (1) cannot be 1 more than a multiple of 4
+2025-02-12 16:54:52,122 - Darshan is getting TypeError on accessing equipment_configure: Organization.get_nod() missing 1 required positional argument: 'self'
+2025-02-12 17:03:03,281 - Darshan is getting NameError on accessing equipment_configure: name 'eqp' is not defined
+2025-02-12 17:03:29,535 - Darshan is getting NameError on accessing equipment_configure: name 'eqp' is not defined
+2025-02-12 17:03:30,381 - Darshan is getting NameError on accessing equipment_configure: name 'eqp' is not defined
+2025-02-12 17:03:33,276 - Darshan is getting NameError on accessing equipment_configure: name 'eqp' is not defined
+2025-02-13 11:48:03,866 - Darshan is getting TemplateSyntaxError on accessing user_access: Could not parse the remainder: '(data.role' from '(data.role'
+2025-02-13 11:48:42,300 - Darshan is getting TemplateSyntaxError on accessing user_access: Could not parse the remainder: '(data.role' from '(data.role'
+2025-02-13 11:48:48,798 - Darshan is getting TemplateSyntaxError on accessing user_access: Could not parse the remainder: '(data.role' from '(data.role'
+2025-02-13 11:48:49,443 - Darshan is getting TemplateSyntaxError on accessing user_access: Could not parse the remainder: '(data.role' from '(data.role'
+2025-02-13 11:48:49,817 - Darshan is getting TemplateSyntaxError on accessing user_access: Could not parse the remainder: '(data.role' from '(data.role'
+2025-02-13 11:48:50,016 - Darshan is getting TemplateSyntaxError on accessing user_access: Could not parse the remainder: '(data.role' from '(data.role'
+2025-02-13 11:48:52,702 - Darshan is getting TemplateSyntaxError on accessing user_access: Could not parse the remainder: '(data.role' from '(data.role'
+2025-02-13 11:48:53,889 - Darshan is getting TemplateSyntaxError on accessing user_access: Could not parse the remainder: '(data.role' from '(data.role'
+2025-02-13 11:48:54,339 - Darshan is getting TemplateSyntaxError on accessing user_access: Could not parse the remainder: '(data.role' from '(data.role'
+2025-02-13 11:48:54,721 - Darshan is getting TemplateSyntaxError on accessing user_access: Could not parse the remainder: '(data.role' from '(data.role'
+2025-02-13 11:48:55,084 - Darshan is getting TemplateSyntaxError on accessing user_access: Could not parse the remainder: '(data.role' from '(data.role'
+2025-02-13 11:48:55,423 - Darshan is getting TemplateSyntaxError on accessing user_access: Could not parse the remainder: '(data.role' from '(data.role'
+2025-02-13 11:48:55,980 - Darshan is getting TemplateSyntaxError on accessing user_access: Could not parse the remainder: '(data.role' from '(data.role'
+2025-02-13 11:49:28,940 - Darshan is getting TemplateSyntaxError on accessing user_access: Invalid block tag on line 217: 'endif', expected 'endblock'. Did you forget to register or load this tag?
+2025-02-13 16:47:15,526 - Sunwell is getting AttributeError on accessing backup: module 'django.contrib.messages' has no attribute 'erro'
+2025-02-13 16:48:06,086 - Sunwell is getting AttributeError on accessing backup: module 'django.contrib.messages' has no attribute 'erro'
+2025-02-13 18:25:40,187 - Sunwell is getting TemplateSyntaxError on accessing dashboard: Could not parse the remainder: ' Admin' from 'Super Admin'
+2025-02-13 18:26:04,660 - Sunwell is getting TemplateSyntaxError on accessing dashboard: Empty variable tag on line 623
+2025-02-14 16:33:01,618 - Sunwell is getting AttributeError on accessing backup: module 'django.contrib.messages' has no attribute 'erro'
+2025-02-14 17:01:54,996 - Darshan is getting AttributeError on accessing edit_backup: type object 'datetime.datetime' has no attribute 'datetime'
+2025-02-14 17:02:53,083 - Darshan is getting AttributeError on accessing edit_backup: type object 'datetime.datetime' has no attribute 'datetime'
+2025-02-14 17:46:43,867 - Darshan is getting Http404 on accessing django.views.static.serve: “D:\iiiQbets\2024\Projects\Sunwell Technologies\New folder (2)\Sunwell\Sunwell\media\iiiQ_-_logo_Lt7Vx2V.png” does not exist

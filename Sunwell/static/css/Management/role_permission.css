@@ -8,7 +8,7 @@
     overflow-x: auto;
     display: flex;
     flex-direction: column;
-    height: auto;
+    height: 85vh;
 }
 .table-wrapper {
     flex: 1;

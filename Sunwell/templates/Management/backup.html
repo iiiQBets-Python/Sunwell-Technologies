@@ -336,6 +336,7 @@
             alert('An error occurred: ' + error.message);
         });
     }
+
     
     function showFloatingAlert() {
         var alertElement = document.getElementById('floating-alert');
@@ -357,6 +358,61 @@
             {% endfor %}
         {% endif %}
     }
+</script>
+
+<script>
+    function fetchEquipmentData() {
+        fetch('/get-equipment-data/')
+            .then(response => response.json())
+            .then(data => {
+                const equipmentData = data.equipment_data;
+    
+                let hasOffline = false;  // Assume all are online
+    
+                equipmentData.forEach(equipment => {
+                    // Find the table row associated with this equipment
+                    const tableRow = document.querySelector(`tr[data-id="${equipment.id}"]`);
+                    if (tableRow) {
+                        const statusCell = tableRow.querySelector('.status');
+    
+                        if (equipment.status.toLowerCase() === 'online') {
+                            statusCell.innerHTML = '<i class="fa-regular fa-circle-check" style="color: #28a745;"></i> Online';
+                            statusCell.setAttribute('data-status', 'online');
+                        } else {
+                            statusCell.innerHTML = '<i class="fa-regular fa-circle-stop" style="color: #d20f0f;"></i> Offline';
+                            statusCell.setAttribute('data-status', 'offline');
+                            hasOffline = true;  // Mark that at least one is offline
+                        }
+                    }
+                });
+    
+                // Update communication status
+                updateCommunicationStatus(hasOffline);
+            })
+            .catch(error => {
+                console.error('Error fetching equipment data:', error);
+                updateCommunicationStatus(true);  // Assume offline if API fails
+            });
+    }
+    
+    function updateCommunicationStatus(hasOffline) {
+    
+        const statusMessage = document.querySelector('.navbar-lower div');
+    
+        if (hasOffline==false) {
+            statusMessage.innerHTML = '<strong style="color: black;">Communication Offline - </strong><strong style="color: #d20f0f;">Equipment Communication Error</strong>';
+            statusMessage.style.color = '#d20f0f';
+        } else {
+            statusMessage.innerHTML = '<strong style="color: black;">Communication Online - </strong><strong style="color: #28a745;">All Equipments Active</strong>';
+            statusMessage.style.color = '#28a745';
+        }
+    }
+    
+    // Refresh data every 5 seconds
+    window.onload = function() {
+        fetchEquipmentData();
+        setInterval(fetchEquipmentData, 5000);
+    };
 </script>
 
 {% endblock scripts %}

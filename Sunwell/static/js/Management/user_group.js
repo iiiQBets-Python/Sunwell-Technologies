@@ -5,10 +5,9 @@ document.getElementById('commGroup').addEventListener('change', function () {
     var departmentSelect = document.getElementById('departmentName');
     var options = departmentSelect.querySelectorAll('option');
 
-    console.log('CommGroup Selected:', commGroupValue);
+
 
     options.forEach(option => {
-        console.log('Option:', option.value, 'CommGroup:', option.dataset.commgroup);
         if (option.value === "") {
             option.style.display = "block";
         } else if (option.dataset.commgroup === commGroupValue) {

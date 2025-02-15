@@ -142,7 +142,7 @@
             {% for i in role_data %}
             <tr>
                 <td><input type="checkbox" class="row-checkbox" name="admin_checkbox"></td>                
-                <td><a href="{% url 'user_access' %}?role={{i.role}}" style="text-decoration: none; color: inherit;">{{i.role}}</a></td>                                
+                <td><a href="{% url 'user_access' %}?role={{i.role}}">{{i.role}}</a></td>                                
                 {% if data.role == 'Super Admin' or acc_db.role_e %}
                 <td>
                     <div class="dropdown">
@@ -289,11 +289,12 @@
                 }
 
                 // Validate Description input
-                if (descriptionInput && descriptionInput.value.trim() === "") {
-                    isValid = false;
-                    descriptionInput.setCustomValidity("Please fill the Description."); // Set custom validation message
-                    descriptionInput.reportValidity(); // Show the validation error
-                } else if (descriptionInput) {
+                //if (descriptionInput && descriptionInput.value.trim() === "") {
+                //    isValid = false;
+                //    descriptionInput.setCustomValidity("Please fill the Description."); // Set custom validation message
+                //    descriptionInput.reportValidity(); // Show the validation error
+                //} else 
+                if (descriptionInput) {
                     descriptionInput.setCustomValidity(""); // Clear any previous validation message
                 }
 

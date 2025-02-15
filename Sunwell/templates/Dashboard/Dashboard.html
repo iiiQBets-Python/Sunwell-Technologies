@@ -265,7 +265,7 @@
                         equipment.status === 'Online' 
                         ? '<i class="fa-regular fa-circle-check" style="color: #28a745;"></i> Online' 
                         : '<i class="fa-regular fa-circle-stop" style="color: #d20f0f;"></i> Offline';
-                    card.querySelector('.pending-review').textContent = `Pending Alarms`;
+                    card.querySelector('.pending-review').innerHTML  = `<strong>Pending Alarms</strong>`;
                 }
 
                 // Update table row content if it exists
@@ -415,6 +415,76 @@ window.onload = fetchEquipmentData;
         // Apply filters on page load
         applyFilters();
     });
+
+
+    // Script for base file Communication text
+    function fetchEquipmentData() {
+        fetch('/get-equipment-data/')
+            .then(response => response.json())
+            .then(data => {
+                const equipmentData = data.equipment_data;
+    
+                if (equipmentData.length === 0) {
+                    updateCommunicationStatus(false, 0);
+                    return;
+                }
+    
+                equipmentData.forEach(equipment => {
+                    const card = document.querySelector(`.card-wrapper[data-id="${equipment.id}"]`);
+                    const tableRow = document.querySelector(`tr[data-id="${equipment.id}"]`);
+    
+                    if (card) {
+                        card.querySelector('.card-title').textContent = equipment.name;
+                        card.querySelector('.status').innerHTML = 
+                            equipment.status === 'Online' 
+                            ? '<i class="fa-regular fa-circle-check" style="color: #28a745;"></i> Online' 
+                            : '<i class="fa-regular fa-circle-stop" style="color: #d20f0f;"></i> Offline';
+                        card.querySelector('.status').setAttribute('data-status', equipment.status.toLowerCase());
+                    }
+    
+                    if (tableRow) {
+                        tableRow.querySelector('.status').innerHTML = 
+                            equipment.status === 'Online' 
+                            ? '<i class="fa-regular fa-circle-check" style="color: #28a745;"></i> Online' 
+                            : '<i class="fa-regular fa-circle-stop" style="color: #d20f0f;"></i> Offline';
+                        tableRow.querySelector('.status').setAttribute('data-status', equipment.status.toLowerCase());
+                    }
+                });
+    
+                updateCommunicationStatus(); 
+            })
+            .catch(error => {
+                console.error('Error fetching equipment data:', error);
+                updateCommunicationStatus(false, 0);
+            });
+    }
+    
+    function updateCommunicationStatus(forceOffline = false, count = null) {
+        const communicationStatusMessage = document.querySelector('.navbar-lower div');
+    
+        if (forceOffline && count === 0) {
+            communicationStatusMessage.innerHTML = '<strong style="color: #d20f0f;">Communication Offline - No Equipment Data Available</strong>';
+            communicationStatusMessage.style.color = '#d20f0f';
+            return;
+        }
+    
+        const statusElements = document.querySelectorAll('.status[data-status]');
+        const allOnline = Array.from(statusElements).every(element => element.getAttribute('data-status').toLowerCase() === 'online');
+    
+        if (allOnline) {
+            communicationStatusMessage.innerHTML = '<strong style="color: black;">Communication Online - </strong><strong style="color: #28a745;">All Equipments Active</strong>';
+            communicationStatusMessage.style.color = '#28a745';
+        } else {
+            communicationStatusMessage.innerHTML = '<strong style="color: black;">Communication Offline - </strong><strong style="color: #d20f0f;"> Equipment Communication Error</strong>';
+            communicationStatusMessage.style.color = '#d20f0f';
+        }
+    }
+    
+    window.onload = function() {
+        fetchEquipmentData();
+        setInterval(fetchEquipmentData, 5000);
+    };
+    
     
     
     

@@ -402,6 +402,19 @@
             /* background-color: rgb(254, 254, 254); */
         }
 
+        .password-toggle-icon {
+            position: absolute;
+            right: 12px; /* Adjust spacing from the right */
+            top: 50%;
+            transform: translateY(-50%);
+            cursor: pointer;
+            color: #dc3c20; /* Highlight color */
+            font-size: 18px;
+            z-index: 10; /* Ensure it stays above the input */
+        }
+        
+        
+
         /* Media Queries for Navbar Responsiveness */
         @media screen and (min-width: 769px) and (max-width: 1024px) {
             .sidebar {
@@ -608,8 +621,9 @@
                                     {{ department.department_name }}
                                 </option>
                             {% empty %}
-                                <option disabled>No accessible departments</option>
+                                <option disabled>Super Admin</option>
                             {% endfor %}
+
                         </select>
                     </div>
                 </div>
@@ -621,7 +635,7 @@
                 </div>
             </div>
             <div class="navbar-lower">
-                <div><b>Communication Offline-Server Service Error/ Data Log Error</b></div>
+                <div><b></b></div>
             </div>
         </div>
         <div class="content">
@@ -644,8 +658,8 @@
             {% endif %}
         </div>
         <div>
-            <p>{{data.username}}</p>
-            <p>{{data.role}}</p>
+            <p><strong> Username: </strong>{{data.username}}</p>
+            <p><strong> Role: </strong>{{data.role}}</p>
             {% if data.role != 'Super Admin' %}
             <a href="#" data-bs-toggle="modal" data-bs-target="#change_pass" style="text-decoration: none;">Change Password</a>
             {% endif %}            
@@ -666,13 +680,20 @@
                                     <label for="username">Login Name:</label>
                                     <input type="text" name="username" id="username" class="form-control" required>
                                 </div>
-                                <div class="mt-1">
+                                <div class="mt-1 position-relative">
                                     <label for="old_pass">Old Password:</label>
-                                    <input type="password" name="old_pass" id="old_pass" class="form-control" required>
+                                    <div class="input-group">
+                                        <input type="password" name="old_pass" id="old_pass" class="form-control" required>
+                                        <span class="fa fa-fw fa-eye-slash password-toggle-icon" toggle="#old_pass"></span>
+                                    </div>
                                 </div>
-                                <div class="mt-1">
+                                
+                                <div class="mt-1 position-relative">
                                     <label for="new_pass">New Password:</label>
-                                    <input type="password" minlength="8" maxlength="15" name="new_pass" id="new_pass" class="form-control" required>
+                                    <div class="input-group">
+                                        <input type="password" minlength="8" maxlength="15" name="new_pass" id="new_pass" class="form-control" required oninput="setCustomValidity('')" oninvalid="setCustomValidity('Password must be 8-15 characters long and include at least one special character.')">
+                                        <span class="fa fa-fw fa-eye-slash password-toggle-icon" toggle="#new_pass"></span>
+                                    </div>
                                 </div>
                                 <div class="mt-2" style="text-align: center;">                                                                        
                                     <a href="#" onclick="handleFileUpload(event)" class="btn btn-sm btn-primary" id="pass_sub" style="width: 100px; display: inline-block;">Submit</a>
@@ -753,7 +774,7 @@
                     // Redirect to login page
                     window.location.href = "{% url 'login' %}"; 
                 } else {
-                    alert('Error: Something went wrong.');
+                    alert('Error:' +data.message);
                 }
             } else {
                 alert('Error: No message received.');
@@ -1045,7 +1066,6 @@
     document.addEventListener("DOMContentLoaded", function () {
         let timeout;
         const timeoutDuration = {{ timeoutduration }}; 
-        console.log("Timeout Duration:", timeoutDuration);
         function resetTimer() {
             clearTimeout(timeout);
             timeout = setTimeout(logout, timeoutDuration * 60 * 1000); 
@@ -1063,6 +1083,64 @@
 
         resetTimer();
     });
+
+
+    // Scripts for Communication Offline and Online
+
+    function fetchEquipmentData1() {
+        fetch('/get-equipment-data/')
+            .then(response => response.json())
+            .then(data => {
+                const equipmentData = data.equipment_data;
+                const allOnline = equipmentData.length > 0 && equipmentData.every(equipment => equipment.status === 'Online');
+                updateCommunicationStatus(allOnline); // Pass the status directly to the update function
+            })
+            .catch(error => {
+                console.error('Error fetching equipment data:', error);
+                updateCommunicationStatus(false); // Assume offline if there's an error
+            });
+    }
+    
+    
+    function updateCommunicationStatus(allOnline) {
+        const communicationStatusMessage = document.querySelector('.navbar-lower div');
+    
+        if (allOnline) {
+            communicationStatusMessage.innerHTML = '<strong style="color: black;">Communication Online - </strong><strong style="color: #28a745;">All Equipments Active</strong>';;
+            communicationStatusMessage.style.color = '#28a745'; 
+        } else {
+            communicationStatusMessage.innerHTML = '<strong style="color: black;">Communication Offline - </strong><strong style="color: #d20f0f;"> Equipment Communication Error</strong>';
+            communicationStatusMessage.style.color = '#d20f0f'; 
+        }
+    }
+    
+    
+    window.onload = function() {
+        fetchEquipmentData1();
+        setInterval(fetchEquipmentData, 5000);
+    };
+
+
+    //Password toggle function
+
+    document.addEventListener("DOMContentLoaded", function () {
+        document.querySelectorAll(".password-toggle-icon").forEach(icon => {
+            icon.addEventListener("click", function () {
+                let passwordField = document.getElementById(this.getAttribute("data-target"));
+                if (passwordField) {
+                    // Toggle password visibility
+                    passwordField.type = passwordField.type === "password" ? "text" : "password";
+                    
+                    // Toggle icon
+                    this.classList.toggle("fa-eye");
+                    this.classList.toggle("fa-eye-slash");
+                }
+            });
+        });
+    });
+    
+    
+    
 </script>
     {% block scripts %}
     {% endblock %}

@@ -10,6 +10,16 @@
     <link rel="stylesheet" href="{% static 'alert_msg/alert_msg.css' %}">
     <style>
         /* Add responsive styles */
+
+        .password-toggle-icon {
+          position: absolute;
+          right: 20px;
+          top: 50%;
+          transform: translateY(-50%);
+          cursor: pointer;
+          color: #dc3c20;
+        }
+      
         @media (width: 768px) {
             .d-flex.justify-content-between.align-items-center.mt-3 {
                 flex-direction: row; 
@@ -244,6 +254,7 @@
             <div class="col-md-6 form-group">
               <input type="password" class="form-control" id="password" name="password" minlength="8" maxlength="15" placeholder=" " required oninput="setCustomValidity('')" oninvalid="setCustomValidity('Password must be 8-15 characters long and include at least one special character.')">
               <label for="password" class="form-label">Password*</label>
+              <span toggle="#password" class="fa fa-fw fa-eye-slash password-toggle-icon"></span>
             </div>
             <div class="col-md-6 form-group">
               <input type="number" class="form-control" id="passwordDuration" name="passwordDuration" value="{{ password_duration }}" placeholder=" " required readonly>
@@ -288,17 +299,19 @@
                     {% endif %}
                 {% endfor %}
               </select>
-              <h6>Status</h6>
-              <div id="status">
+              <label for="departmentName" class="form-label">Department</label>
+              <div id="status" class="d-flex align-items-center mt-3">
+                <label class="me-2">Status:</label>
                 <div class="form-check form-check-inline">
-                  <input class="form-check-input" type="radio" name="status" id="statusActive" value="Active" checked required>
-                  <label class="form-check-label" for="statusActive">Active</label>
+                    <input class="form-check-input" type="radio" name="status" id="statusActive" value="Active" checked required>
+                    <label class="form-check-label" for="statusActive">Active</label>
                 </div>
                 <div class="form-check form-check-inline">
-                  <input class="form-check-input" type="radio" name="status" id="statusInactive" value="Inactive">
-                  <label class="form-check-label" for="statusInactive">Inactive</label>
+                    <input class="form-check-input" type="radio" name="status" id="statusInactive" value="Inactive">
+                    <label class="form-check-label" for="statusInactive">Inactive</label>
                 </div>
-              </div>
+            </div>
+            
             </div>
             <div class="col-md-6 form-group">
               <select class="form-select" name="accessibleDepartment" multiple required oninput="setCustomValidity('')" oninvalid="setCustomValidity('Please Select Accessible Department')">
@@ -347,15 +360,10 @@
             <div class="col-md-6 form-group">
               <input type="password" class="form-control" id="editPassword-{{ user.id }}" name="editPassword" value="{{ user.password }}" placeholder="" minlength="8" maxlength="15" required oninput="setCustomValidity('')" oninvalid="setCustomValidity('Please write the Valide Password')">
               <label for="editPassword-{{ user.id }}" class="form-label">Password*</label>
+              <span toggle="#editPassword-{{ user.id }}" class="fa fa-fw fa-eye-slash password-toggle-icon"></span>
             </div>
             <div class="col-md-6 form-group">
               <input type="number" class="form-control" id="editpasswordDuration-{{ user.id }}" name="editpasswordDuration" value="{{ user.password_duration }}" placeholder=" " required readonly>
-              {% comment %} <select class="form-select" id="editpasswordDuration-{{ user.id }}" name="editpasswordDuration" required>
-                <option value="30" {% if user.password_duration == 30 %}selected{% endif %}>30 Days</option>
-                <option value="60" {% if user.password_duration == 60 %}selected{% endif %}>60 Days</option>
-                <option value="90" {% if user.password_duration == 90 %}selected{% endif %}>90 Days</option>
-                <option value="120" {% if user.password_duration == 120 %}selected{% endif %}>120 Days</option>
-              </select> {% endcomment %}
               <label for="editpasswordDuration-{{ user.id }}" class="form-label">Set Password Duration in Days</label>
             </div>
             <div class="col-md-6 form-group">
@@ -394,17 +402,18 @@
             
               <label for="editdepartmentName-{{ user.id }}" class="form-label">Department*</label>
             
-              <h6>Status</h6>
-              <div id="status">
+              <div id="status" class="d-flex align-items-center mt-3">
+                <label class="me-2">Status:</label>
                 <div class="form-check form-check-inline">
-                  <input class="form-check-input" type="radio" name="editstatus" id="statusActive-{{ user.id }}" value="Active" {% if user.status == 'Active' %}checked{% endif %} required>
-                  <label class="form-check-label" for="statusActive">Active</label>
+                    <input class="form-check-input" type="radio" name="editstatus" id="statusActive-{{ user.id }}" value="Active" {% if user.status == 'Active' %}checked{% endif %} required>
+                    <label class="form-check-label" for="statusActive-{{ user.id }}">Active</label>
                 </div>
                 <div class="form-check form-check-inline">
-                  <input class="form-check-input" type="radio" name="editstatus" id="statusInactive-{{ user.id }}" value="Inactive" {% if user.status == 'Inactive' %}checked{% endif %}>
-                  <label class="form-check-label" for="statusInactive">Inactive</label>
+                    <input class="form-check-input" type="radio" name="editstatus" id="statusInactive-{{ user.id }}" value="Inactive" {% if user.status == 'Inactive' %}checked{% endif %}>
+                    <label class="form-check-label" for="statusInactive-{{ user.id }}">Inactive</label>
                 </div>
               </div>
+            
               {% if data.role == 'Super Admin' or data.role == 'Admin' %}
               <div class="form-check mt-3">
                 <input class="form-check-input" type="checkbox" name="editAccountLock" id="accountLocked-{{ user.id }}" {% if user.account_lock %}checked{% endif %}>
@@ -613,6 +622,141 @@ document.addEventListener("DOMContentLoaded", function () {
   });
 });
 
+
+//Password toggle function
+
+  document.addEventListener("DOMContentLoaded", function () {
+    document.querySelectorAll('.btn-edit').forEach(button => {
+      button.addEventListener("click", function () {
+        const modalId = this.getAttribute("data-bs-target");
+        const modal = document.querySelector(modalId);
+        if (modal) {
+          new bootstrap.Modal(modal).show(); // Explicitly show the modal
+        }
+      });
+    });
+
+    // Password Toggle Functionality
+    document.querySelectorAll(".password-toggle-icon").forEach(icon => {
+      icon.addEventListener("click", function () {
+        let passwordField = document.querySelector(this.getAttribute("toggle"));
+        if (passwordField) {
+          passwordField.type = passwordField.type === "password" ? "text" : "password";
+          this.classList.toggle("fa-eye");
+          this.classList.toggle("fa-eye-slash");
+        }
+      });
+    });
+  });
+
+
+  //modal close script
+  document.addEventListener("DOMContentLoaded", function () {
+    document.querySelectorAll('.btn-edit').forEach(button => {
+      button.addEventListener("click", function () {
+        const modalId = this.getAttribute("data-bs-target");
+        const modal = document.querySelector(modalId);
+        if (modal) {
+          let modalInstance = new bootstrap.Modal(modal);
+          modalInstance.show();
+  
+          // Ensure modal is removed properly when closed
+          modal.addEventListener('hidden.bs.modal', function () {
+            modal.classList.remove('show');
+            document.body.classList.remove('modal-open');
+            let modalBackdrop = document.querySelector('.modal-backdrop');
+            if (modalBackdrop) {
+              modalBackdrop.remove();
+            }
+  
+            // **Reset the form fields when the modal closes**
+            let form = modal.querySelector("form");
+            if (form) {
+              form.reset();
+            }
+          });
+        }
+      });
+    });
+  
+    // Handle "Close" button inside the modal
+    document.querySelectorAll(".modal .btn-danger").forEach(button => {
+      button.addEventListener("click", function () {
+        let modal = button.closest(".modal");
+        if (modal) {
+          let modalInstance = bootstrap.Modal.getInstance(modal);
+          if (modalInstance) {
+            modalInstance.hide();
+          }
+  
+          // **Clear form fields**
+          let form = modal.querySelector("form");
+          if (form) {
+            form.reset();
+          }
+  
+          // Remove backdrop manually if it remains
+          setTimeout(() => {
+            let modalBackdrop = document.querySelector('.modal-backdrop');
+            if (modalBackdrop) {
+              modalBackdrop.remove();
+            }
+          }, 300);
+        }
+      });
+    });
+  
+    // Handle "X" button to close modal and clear form
+    document.querySelectorAll('.modal .btn-close').forEach(button => {
+      button.addEventListener("click", function () {
+        let modal = button.closest('.modal');
+        if (modal) {
+          let modalInstance = bootstrap.Modal.getInstance(modal);
+          modalInstance.hide();
+  
+          // **Clear form fields**
+          let form = modal.querySelector("form");
+          if (form) {
+            form.reset();
+          }
+  
+          // Remove backdrop manually if it doesn't disappear
+          setTimeout(() => {
+            let modalBackdrop = document.querySelector('.modal-backdrop');
+            if (modalBackdrop) {
+              modalBackdrop.remove();
+            }
+          }, 300);
+        }
+      });
+    });
+  
+    // Handle ESC key press to properly close modal and remove overlay
+    document.addEventListener('keydown', function (event) {
+      if (event.key === "Escape") {
+        let openModal = document.querySelector('.modal.show');
+        if (openModal) {
+          let modalInstance = bootstrap.Modal.getInstance(openModal);
+          modalInstance.hide();
+  
+          // **Clear form fields**
+          let form = openModal.querySelector("form");
+          if (form) {
+            form.reset();
+          }
+  
+          setTimeout(() => {
+            let modalBackdrop = document.querySelector('.modal-backdrop');
+            if (modalBackdrop) {
+              modalBackdrop.remove();
+            }
+          }, 300);
+        }
+      }
+    });
+  });
+  
+  
 
 </script>
 

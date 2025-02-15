@@ -197,15 +197,22 @@
     <form  method="post" >
         {% csrf_token %}
             <div class="secrow d-flex justify-content-between align-items-center">
-            {% if data.role == 'Super Admin' or acc_db.role_e %}
+            {% comment %} {% if data.role == 'Super Admin' or acc_db.role_e %}
                 <label>Role = {{ role }}</label>
                 <button type="submit" class="btn btn-primary btn-sm mb-2">Save Changes</button>
-            </div> 
-            <!-- {% if data.role == 'Admin' and  role_dt.role == 'Admin' %}
-            {% else %}
-            {% endif %} -->
+            {% endif %} {% endcomment %}
+
+            {% if data.role == 'Super Admin' %}
+                <label>Role = {{ role }}</label>
+                <button type="submit" class="btn btn-primary btn-sm mb-2">Save Changes</button>
+            {% elif data.role != role and acc_db.role_e %}
+                <label>Role = {{ role }}</label>
+                <button type="submit" class="btn btn-primary btn-sm mb-2">Save Changes</button>
+            {% endif %}
+                                
             
-        {% endif %}
+
+        </div> 
         <div class="table-wrapper">
             <table class="table">
                 <thead>
@@ -219,14 +226,6 @@
                     </tr>
                 </thead>
                 <tbody id="form-data-table">
-                    <tr class="main-row" data-group="realtime">
-                        <td><h4>Dashboard</h4></td>
-                        <td class="checkbox-cell"><input type="checkbox"></td>
-                        <td class="checkbox-cell"><input type="checkbox"></td>
-                        <td class="checkbox-cell"><input type="checkbox"></td>
-                        <td></td>
-                        <td></td>
-                    </tr>
                     
                     <tr class="main-row" data-group="management">
                         <td><h4>Management</h4></td>
@@ -293,7 +292,7 @@
                         <td class="checkbox-cell"></td>
                         <td class="checkbox-cell"></td>
                     </tr>
-                    <tr class="sub-row management">
+                    {% comment %} <tr class="sub-row management">
                         <td><h5>Restore</h5></td>
                         <td class="checkbox-cell"><input type="checkbox" name="res_v" {% if role_dt and role_dt.res_v %} checked {% endif %}></td>
                         <td class="checkbox-cell"><input type="checkbox" name="res_a" {% if role_dt and role_dt.res_a %} checked {% endif %}></td>
@@ -308,7 +307,7 @@
                         <td class="checkbox-cell"><input type="checkbox" name="sys_e" {% if role_dt and role_dt.sys_e %} checked {% endif %}></td>
                         <td class="checkbox-cell"></td>
                         <td class="checkbox-cell"></td>
-                    </tr>
+                    </tr> {% endcomment %}
 
                     <tr class="main-row" data-group="config">
                         <td><h4>Equip Settings</h4></td>
@@ -374,7 +373,7 @@
                         <td class="checkbox-cell"><input type="checkbox" name="mkt_p" {% if role_dt and role_dt.mkt_p %} checked {% endif %}></td>
                         <td class="checkbox-cell"></td>
                     </tr>
-                    <tr class="main-row" data-group="realtime">
+                    {% comment %} <tr class="main-row" data-group="realtime">
                         <td><h4>Live Data</h4></td>
                         <td class="checkbox-cell"><input type="checkbox"></td>
                         <td></td>
@@ -414,7 +413,7 @@
                         <td class="checkbox-cell"></td>
                         <td class="checkbox-cell"></td>
                       
-                    </tr>
+                    </tr> {% endcomment %}
                     
                     <tr class="main-row" data-group="audit_logs">
                         <td><h4>Audit Logss</h4></td>
@@ -472,10 +471,9 @@
 
 
 {% if success_msg %}
-<script>     
+<script>
     window.onload = function () {
-        alert("{{  success_msg|safe }}");                
-        window.location.href = "{% url 'role_permission' %}";
+        alert("{{ success_msg|safe }}");
     };
 </script>
 {% endif %}

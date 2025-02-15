@@ -61,7 +61,7 @@ def user_login(request):
         username = request.POST.get('username')
         password = request.POST.get('password')
         app_settings = AppSettings.objects.first()
-        max_attempts = app_settings.lockcount
+        max_attempts = app_settings.lockcount if app_settings else 3
         
         if 'failed_attempts' not in request.session:
             request.session['failed_attempts'] = {}
@@ -220,7 +220,7 @@ def change_pass(request):
             error_msg = 'Please enter valid credentials.'
             return render(request, 'Base/login.html', {'error_msg': error_msg})     
 
-
+@csrf_exempt
 def change_pass_2(request): 
     username = request.session.get('username') 
     data = User.objects.get(username=username)   
@@ -547,6 +547,7 @@ def comm_group(request):
 
             # Calculate the new total devices and save it to Organization’s nod
             current_nod = organization.get_nod()
+           
             
             total_devices = current_nod + device_count
             organization.set_nod(total_devices)
@@ -1380,9 +1381,10 @@ def user_access(request):
     except:
         role_dt = None
 
+    success_msg = None 
+
 
     if request.method == 'POST':
-
 
 
         def get_bool(value):
@@ -1590,7 +1592,7 @@ def user_access(request):
             )
 
             success_msg = 'Roles and permissions are updated.'
-            return render(request, 'Management/user_group.html', {'organization': organization, 'data': data, 'acc_db': acc_db, 'role_dt':role_dt, 'success_msg': success_msg})
+            return render(request, 'Management/user_group.html', {'organization': organization, 'data': data, 'acc_db': acc_db, 'role': role, 'role_dt':role_dt, 'success_msg': success_msg})
 
         else:
             acc_db_new = user_access_db(
@@ -1660,7 +1662,15 @@ def user_access(request):
             )
 
             success_msg = 'Roles and permissions are added.'
-            return redirect('role_permission')
+            return render(request, 'Management/user_group.html', {
+            'organization': organization,
+            'data': data,
+            'acc_db': acc_db,
+            'role_dt': role_dt,
+            'role': role,
+            'success_msg': success_msg
+        })
+
     
     return render(request, 'Management/user_group.html', {'organization': organization, 'data':data, 'acc_db':acc_db, 'role_dt':role_dt, 'role':role})
 
@@ -1852,54 +1862,13 @@ def save_app_settings(request):
     return JsonResponse({'status': 'error', 'message': 'Invalid request'}, status=400)
 
 
-# from datetime import datetime, timedelta, date
-# from .models import AppSettings
-# from concurrent.futures import ThreadPoolExecutor
-# import serial.tools.list_ports
-# import concurrent.futures
-# import serial
-# import time
-# from django.shortcuts import redirect
-# from django.contrib import messages
-# from .models import AppSettings  # Adjust this import based on your actual model location
-
-# # def setup_modem(ser):
-# #     commands = [
-# #         b'AT\r',
-# #         b'AT+CSQ\r',
-# #         b'AT+IPR?\r',
-# #         b'AT+COPS?\r',
-# #         b'AT+CMGF=1\r'
-# #     ]
-# #     for cmd in commands:
-# #         ser.write(cmd)
-# #         time.sleep(1)
-# #         response = ser.read_all().decode('utf-8', errors='ignore').strip()
-
-# # def send_sms(ser, number, message, lock):
-# #     with lock:
-# #         try:
-# #             ser.write(f'AT+CMGS="{number}"\r'.encode())
-# #             ser.flush()
-# #             time.sleep(1)  # Allow time for the modem to respond with '>'
-# #             prompt = ser.read_until(b'>').decode(errors="ignore").strip()
-# #             if prompt.endswith('>'):
-# #                 ser.write((message + '\x1A').encode())  # End with Ctrl+Z
-# #                 ser.flush()
-# #                 time.sleep(5)  # Wait for message to be sent
-# #                 final_response = ser.read_all().decode(errors="ignore").strip()
-# #                 return "+CMGS" in final_response
-# #             else:
-# #                 return False
-# #         except Exception as e:
-# #             return False
-
 import threading
 from datetime import datetime, timedelta, date
 from django.shortcuts import redirect
 from django.contrib import messages
 from .models import AppSettings
 from .sms_queue_handler import add_to_sms_queue  # Ensure this is imported
+import pytz
 
 def send_test_sms(request):
     emp_user = request.session.get('username', None)
@@ -1945,7 +1914,7 @@ def send_test_sms(request):
                         delay += 86400  # Schedule for the next day
 
                     # Schedule SMS in the queue with delay
-                    number={"name":test_sms_number}
+                    number={"N/A":test_sms_number}
                     equipment=None
                     alarm_id=None
                     sys_sms=True
@@ -2011,6 +1980,8 @@ def send_test_email(request):
             settings.EMAIL_HOST_PASSWORD = email_settings['EMAIL_HOST_PASSWORD']
             settings.EMAIL_PORT = email_settings['EMAIL_PORT']
 
+            ist_timezone = pytz.timezone("Asia/Kolkata")
+            current_time = datetime.now(ist_timezone).time()
             # Function to send the email
             def send_email():
                 try:
@@ -2021,8 +1992,11 @@ def send_test_email(request):
                         recipient_list=[recipient_email],
                         fail_silently=False,
                     )
+
                     # Log successful email attempt
                     Email_logs.objects.create(
+                        time=current_time,
+                        date=datetime.now(ist_timezone).date(),
                         equipment=None,  # Assuming None is set for no specific equipment
                         sys_mail=True,
                         to_email=recipient_email,
@@ -2033,6 +2007,8 @@ def send_test_email(request):
                 except Exception as e:
                     # Log failed email attempt
                     Email_logs.objects.create(
+                        time=current_time,
+                        date=datetime.now(ist_timezone).date(),
                         equipment=None,  # Assuming None is set for no specific equipment
                         sys_mail=True,
                         to_email=recipient_email,
@@ -2077,188 +2053,9 @@ def send_test_email(request):
         return HttpResponse("Invalid request method.", status=405)
 
 
-
-    
-
-# def perform_backup():
-#     backup_setting = BackupSettings.objects.last()
-#     if not backup_setting:
-#         return "failure", "No backup settings found."
-
-#     current_time = datetime.now().strftime("%d%m%Y_%H%M")
-#     backup_filename = f"ESTDAS_{current_time}.bak"
-
-#     local_backup_file_path = os.path.join(backup_setting.local_path, backup_filename)
-#     remote_backup_file_path = os.path.join(backup_setting.remote_path, backup_filename) if backup_setting.remote_path else None
-
-#     # Remove all existing .bak files in the local path
-#     for file_name in os.listdir(backup_setting.local_path):
-#         if file_name.endswith(".bak"):
-#             os.remove(os.path.join(backup_setting.local_path, file_name))
-
-#     # Remove all existing .bak files in the remote path if it exists
-#     if backup_setting.remote_path:
-#         for file_name in os.listdir(backup_setting.remote_path):
-#             if file_name.endswith(".bak"):
-#                 os.remove(os.path.join(backup_setting.remote_path, file_name))
-
-#     db_settings = settings.DATABASES['default']
-#     db_name = db_settings['NAME']
-#     db_user = db_settings['USER']
-#     db_password = db_settings['PASSWORD']
-#     db_host = db_settings['HOST']
-
-#     local_backup_command = (
-#         f"sqlcmd -S {db_host} -U {db_user} -P {db_password} "
-#         f"-Q \"BACKUP DATABASE [{db_name}] TO DISK = N'{local_backup_file_path}'\""
-#     )
-    
-#     try:
-#         subprocess.run(local_backup_command, check=True, shell=True)
-
-#         if backup_setting.remote_path:
-#             remote_backup_command = (
-#                 f"sqlcmd -S {db_host} -U {db_user} -P {db_password} "
-#                 f"-Q \"BACKUP DATABASE [{db_name}] TO DISK = N'{remote_backup_file_path}'\""
-#             )
-#             subprocess.run(remote_backup_command, check=True, shell=True)
-            
-#         return "success", "Backup successful"
-#     except subprocess.CalledProcessError as e:
-#         return "failure", f"Backup failed: {str(e)}"
-
-# def download_backup(request):
-#     emp_user = request.session.get('username', None)
-        # if not emp_user:
-        #         return redirect('login')
-#     try:
-#         data = User.objects.get(username = emp_user)
-#     except:
-#         data = SuperAdmin.objects.get(username=emp_user)
-#     status, message = perform_backup()
-    
-#     UserActivityLog.objects.create(
-#         user=emp_user,
-#         log_date=timezone.localtime(timezone.now()).date(),
-#         log_time=timezone.localtime(timezone.now()).time(),
-#         event_name=f"Downloaded database backup"
-#     )
-#     return JsonResponse({"status": status, "message": message})
-
-# def backup(request):
-
-#     emp_user = request.session.get('username', None)
-#     try:
-#         data = User.objects.get(username = emp_user)
-#     except:
-#         data = SuperAdmin.objects.get(username=emp_user)
-    
-#     try:
-#         acc_db = user_access_db.objects.get(role = data.role)
-#     except:
-#         acc_db = None
-
-
-#     if request.method == 'POST':
-#         local_path = request.POST.get('backup-local-path')
-#         remote_path = request.POST.get('backup-remote-path')
-#         backup_time = request.POST.get('backup-time')
-
-#         # Create or update the backup settings
-#         backup_setting= BackupSettings(
-#             local_path=local_path,
-#                 remote_path = remote_path,
-#                 backup_time= backup_time
-#         )
-#         backup_setting.save()
-
-#         # Log the backup settings update
-#         UserActivityLog.objects.create(
-#             user=emp_user,
-#             log_date=timezone.localtime(timezone.now()).date(),
-#             log_time=timezone.localtime(timezone.now()).time(),
-#             event_name="Added backup settings"
-#         )
-
-#         messages.success(request, 'Backup settings saved successfully!')
-#         return redirect('backup')
-    
-#     backup_setting = BackupSettings.objects.first()
-#     context={
-        
-#         'data':data,
-#         'acc_db':acc_db,
-#         'backup_setting': backup_setting
-#     }
-#       # Get the first or handle appropriately
-    
-#     return render(request, 'Management/backup.html', context)
-
-# def edit_backup(request, id):
-
-#     emp_user = request.session.get('username', None)
-        # if not emp_user:
-        # return redirect('login')
-#     try:
-#         data = User.objects.get(username = emp_user)
-#     except:
-#         data = SuperAdmin.objects.get(username=emp_user)
-    
-#     try:
-#         acc_db = user_access_db.objects.get(role = data.role)
-#     except:
-#         acc_db = None
-
-#     backup_setting = BackupSettings.objects.first()
-#     if request.method == 'POST':
-        
-#         backup_setting.local_path = request.POST.get('backup-local-path')
-#         backup_setting.remote_path = request.POST.get('backup-remote-path')
-#         backup_setting.backup_time = request.POST.get('backup-time')
-
-#         backup_setting.save()
-
-#         # Log the backup settings update
-#         UserActivityLog.objects.create(
-#             user=emp_user,
-#             log_date=timezone.localtime(timezone.now()).date(),
-#             log_time=timezone.localtime(timezone.now()).time(),
-#             event_name="Updated backup settings"
-#         )
-
-#         messages.success(request, 'Updated Backup settings successfully!')
-#         return redirect('backup')
-    
-#     context={
-#         'backup_setting':backup_setting, 'data':data, 'acc_db':acc_db
-#     }
-
-#     # Fetch the existing backup settings (if any)
-#       # Get the first or handle appropriately
-#     return render(request, 'Management/edit_backup.html', context)
-
-
-# def schedule_daily_backup():
-
-#     backup_setting = BackupSettings.objects.last()
-#     if backup_setting and backup_setting.backup_time:
-        
-#         backup_time_str = backup_setting.backup_time.strftime("%H:%M")
-
-
-#         # Schedule backup at the specified time
-#         schedule.every().day.at(backup_time_str).do(perform_backup)
-
-#         while True:
-#             schedule.run_pending()
-#             time.sleep(1)
-
-# def start_backup_scheduler():
-
-#     backup_thread = threading.Thread(target=schedule_daily_backup, daemon=True)
-#     backup_thread.start()
-
-# start_backup_scheduler()
+from django.utils import timezone
+from django.contrib import messages
+import datetime
 
 def backup(request):
     emp_user = request.session.get('username', None)
@@ -2276,21 +2073,26 @@ def backup(request):
         acc_db = None
 
     if request.method == 'POST':
+        local_path = request.POST.get('backup-local-path', '').strip()
+        remote_path = request.POST.get('backup-remote-path', '').strip()
+        backup_time_str = request.POST.get('backup-time', '').strip()
+
+        if backup_time_str:
+            try:
+                backup_time = datetime.strptime(backup_time_str, "%H:%M").time()
+            except ValueError:
+                messages.error(request, "Invalid time format. Please enter a valid time.")
+                return redirect('backup')
+        else:
+            backup_time = None
+
         try:
-            local_path = request.POST.get('backup-local-path')
-            remote_path = request.POST.get('backup-remote-path')
-            backup_time = request.POST.get('backup-time')
+            backup_setting, created = BackupSettings.objects.get_or_create(defaults={'local_path': local_path, 'remote_path': remote_path, 'backup_time': backup_time})
+            backup_setting.local_path = local_path
+            backup_setting.remote_path = remote_path
+            backup_setting.backup_time = backup_time
+            backup_setting.save()
 
-            # Create or update the backup settings
-            backup_setting, created = BackupSettings.objects.update_or_create(
-                defaults={
-                    'local_path': local_path,
-                    'remote_path': remote_path,
-                    'backup_time': backup_time,
-                }
-            )
-
-            # Log the backup settings update
             UserActivityLog.objects.create(
                 user=emp_user,
                 log_date=timezone.localtime(timezone.now()).date(),
@@ -2299,11 +2101,10 @@ def backup(request):
             )
 
             messages.success(request, 'Backup settings saved successfully!')
-        except:
-            messages.erro(request, f"We couldn't save Backup Settings. Please check your input and try again.")
+        except Exception as e:
+            messages.error(request, f"We couldn't save Backup Settings due to an error: {str(e)}")
         return redirect('backup')
 
-    # Fetch the first backup settings record if it exists
     backup_setting = BackupSettings.objects.first()
     context = {
         'data': data,
@@ -2328,18 +2129,25 @@ def edit_backup(request, id):
     except user_access_db.DoesNotExist:
         acc_db = None
 
-    # Fetch the existing backup settings or create a new one
-    backup_setting, created = BackupSettings.objects.get_or_create()
+    backup_setting = get_object_or_404(BackupSettings, id=id)
 
     if request.method == 'POST':
+        local_path = request.POST.get('backup-local-path', '').strip()
+        remote_path = request.POST.get('backup-remote-path', '').strip()
+        backup_time_str = request.POST.get('backup-time', '').strip()
+
+        if backup_time_str:
+            try:
+                backup_setting.backup_time = datetime.strptime(backup_time_str, "%H:%M").time()
+            except ValueError:
+                messages.error(request, "Invalid time format. Please enter a valid time.")
+                return redirect('edit_backup', id=id)
+
         try:
-        # Update backup settings
-            backup_setting.local_path = request.POST.get('backup-local-path')
-            backup_setting.remote_path = request.POST.get('backup-remote-path')
-            backup_setting.backup_time = request.POST.get('backup-time')
+            backup_setting.local_path = local_path
+            backup_setting.remote_path = remote_path
             backup_setting.save()
 
-            # Log the backup settings update
             UserActivityLog.objects.create(
                 user=emp_user,
                 log_date=timezone.localtime(timezone.now()).date(),
@@ -2348,8 +2156,8 @@ def edit_backup(request, id):
             )
 
             messages.success(request, 'Updated Backup settings successfully!')
-        except:
-            messages.error(request, f"Failed to updated Backup Setting details. Please check your input and try again.")
+        except Exception as e:
+            messages.error(request, f"Failed to update Backup Setting details due to an error: {str(e)}")
         return redirect('backup')
 
     context = {
@@ -2727,16 +2535,10 @@ def background_task_for_all_equipment(interval):
 
 
 
-from django.db import IntegrityError
-import requests
-
-import os
 import csv
-import requests
 from datetime import datetime
 from django.db import IntegrityError
 from .models import TemperatureHumidityRecord, Equipment
-
 import os
 import requests
 import uuid
@@ -2924,15 +2726,18 @@ def process_alarm_logs(file_path, equipment_id):
                             sms_alert=smsalert.objects.get(equipment_name=equipment_id)
                             ed=0
                             if dept.email_delay:
+                                int(dept.email_delay)
                                 ed=dept.email_delay
                             if getattr(email_alert, f'code_{code}'):
-                                print("Email S")
                                 thread_email = threading.Thread(target=send_alert_email, args=(alarm_log.id, email_list, ed))
                                 thread_email.start()
                                 thread_email.join()
-
+                            sd=0
+                            if dept.sms_delay:
+                                int(dept.sms_delay)
+                                sd=dept.sms_delay
                             if getattr(sms_alert, f'code_{code}'):
-                                thread_sms = threading.Thread(target=send_alert_messages, args=(user_data, alarm_log.id))
+                                thread_sms = threading.Thread(target=send_alert_messages, args=(user_data, alarm_log.id, sd))
                                 thread_sms.start()
                                 thread_sms.join()
                                 # send_alert_messages(user_data, alarm_log.id)
@@ -2948,8 +2753,8 @@ def process_alarm_logs(file_path, equipment_id):
         except Exception:
             return f"Error processing Alarm Logs"
       
-def send_alert_messages(numbers_list, alarm_code):
-    
+def send_alert_messages(numbers_list, alarm_code, delay):
+    time.sleep(delay * 60)
     alarm=Alarm_logs.objects.get(id=alarm_code)
     equipment=alarm.equipment.id
     alarm_id=alarm.id
@@ -3049,12 +2854,10 @@ Date and Time: {formatted_datetime}
         elif alarm_code in [2001, 2002, 2003, 2004, 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015]:
             try:
                 plc = PLCUser.objects.get(code=alarm_code)
-                print(34)
                 message = f"""Equipment ID: {equipment_id}
                 Alarm Description: Door Accessed by User {plc.username}
                 Date and Time: {formatted_datetime}"""
             except PLCUser.DoesNotExist:
-                print(12)
                 message = f"Equipment ID: {equipment_id}\nAlarm Description: Unknown User\nDate and Time: {formatted_datetime}"
 
         else:
@@ -3067,23 +2870,22 @@ Date and Time: {formatted_datetime}"""
         
 
     except Exception as e:
-        print(f"Error during Connecting to GSM Modem: {str(e)}")
         pass
-    finally:
-        print("SEnt all messages")
+
 def send_alert_email(alarm_id, email_list, email_delay):
+    time.sleep(email_delay * 60)
     try:
 
         if email_delay and email_delay.isdigit():
             delay_minutes = int(email_delay)
-            time.sleep(delay_minutes * 60)  # Convert minutes to seconds
+            time.sleep(delay_minutes * 60)  
 
         alarm = Alarm_logs.objects.get(id=alarm_id)
         email_settings = get_email_settings(request)
         subject = 'Sun Well Alarm Alerts'
         equipment_id = alarm.equipment.equip_name
         alarm_code = alarm.alarm_code.code
-        alarm_description = alarm.alarm_code.alarm_log  # Verify this field
+        alarm_description = alarm.alarm_code.alarm_log  
         date_field = alarm.date
         time_field = alarm.time
         combined_datetime = datetime.combine(date_field, time_field)
@@ -3101,7 +2903,6 @@ def send_alert_email(alarm_id, email_list, email_delay):
             ip_address = alarm.equipment.ip_address
             plc = connect_to_plc(ip_address)
             if plc.get_connected():
-                # Assuming the PLC read functions and snap7 utilization are correctly defined elsewhere
                 data = read_plc_data(plc, 19, 8, 4)
                 High_Temp = snap7.util.get_real(data, 0)
                 data = read_plc_data(plc, 19, 4, 4)
@@ -3111,7 +2912,7 @@ def send_alert_email(alarm_id, email_list, email_delay):
                 if alarm_code in [1001, 1021, 1011]:
                     data = read_plc_data(plc, 4, 4, 4)
                     pv = snap7.util.get_real(data, 0)
-                    message = f"""PV:{pv}
+                    message = f"""PV: {pv:.1f}
 SV:{sv}
 LL:{low_Temp}
 HL:{High_Temp}
@@ -3124,7 +2925,7 @@ Date and Time: {formatted_datetime}"""
                     message = f"""Equipment ID: {equipment_id}
 Alarm Description: {alarm_description}
 Date and Time: {formatted_datetime}
-PV:{pv}
+PV: {pv:.1f}
 SV:{sv}
 LL:{low_Temp}
 HL:{High_Temp}""" 
@@ -3134,7 +2935,7 @@ HL:{High_Temp}"""
                     message = f"""Equipment ID: {equipment_id}
 Alarm Description: {alarm_description}
 Date and Time: {formatted_datetime}
-PV:{pv}
+PV: {pv:.1f}
 SV:{sv}
 LL:{low_Temp}
 HL:{High_Temp}"""
@@ -3144,7 +2945,7 @@ HL:{High_Temp}"""
                     message = f"""Equipment ID: {equipment_id}
 Alarm Description: {alarm_description}
 Date and Time: {formatted_datetime}
-PV:{pv}
+PV: {pv:.1f}
 SV:{sv}
 LL:{low_Temp}
 HL:{High_Temp}"""
@@ -3154,7 +2955,7 @@ HL:{High_Temp}"""
                     message = f"""Equipment ID: {equipment_id}
 Alarm Description: {alarm_description}
 Date and Time: {formatted_datetime}
-PV:{pv}
+PV: {pv:.1f}
 Sv:{sv}
 LL:{low_Temp}
 HL:{High_Temp}"""
@@ -3165,7 +2966,7 @@ HL:{High_Temp}"""
 Equipment ID: {equipment_id}
 Alarm Description: {alarm_description}
 Date and Time: {formatted_datetime}
-PV:{pv}
+PV: {pv:.1f}
 Sv:{sv}
 LL:{low_Temp}
 HL:{High_Temp}"""
@@ -3192,13 +2993,11 @@ Date and Time: {formatted_datetime}"""
                 subject=subject,
                 message=message,
                 from_email=email_settings['EMAIL_HOST_USER'],
-                recipient_list=email_list,  # Sending to all recipients at once
+                recipient_list=email_list,  
                 fail_silently=False,
             )
             end_time = time.time()
             duration = end_time - start_time
-
-            # Log success for each recipient
             for recipient in email_list:
                 Email_logs.objects.create(
                     equipment=alarm.equipment,
@@ -3210,12 +3009,7 @@ Date and Time: {formatted_datetime}"""
                     email_body=message,
                     status="Sent"
                 )
-
-            
-            
-
         except Exception as e:
-            # Log failure for each recipient
             for recipient in email_list:
                 Email_logs.objects.create(
                     equipment=alarm.equipment,
@@ -3299,8 +3093,15 @@ def equipment_configure_view(request):
         acc_db = None
 
     organization = Organization.objects.first()
-    
+    Eqp=Equipment.objects.count()
+    print("EQP count", Eqp)
     if request.method == 'POST':
+        nod=organization.get_nod()
+        print("NOD count", nod)
+        if Eqp>=nod:
+            print("EQP exceeds NOD count")
+            messages.error(request, "Number of Equipments exceeded for Comm Group Activation key!")
+            return redirect('equipment_configure')
         equip_name = request.POST.get('equipname')
         status = request.POST.get('equipStatus')
         ip_address = request.POST.get('ipaddress')
@@ -3392,15 +3193,6 @@ def equipment_configure_view(request):
                
                 write_interval_to_plc(plc, interval)  # This should call the function now
                 messages.success(request, f"Interval {interval} updated on PLC and saved!")
-                success, message = download_process_logs(ip_address, equipment.id)
-                if success:
-                    messages.success(request, f"Alarm logs downloaded successfully: {message}")
-                else:
-                    messages.error(request, f"Failed to download alarm logs: {message}")
-
-                # Call write_interval_to_plc function here
-                
-
             else:
                 
                 messages.error(request, 'Failed to connect to PLC.')
@@ -3482,7 +3274,7 @@ def equipment_edit(request, equipment_id):
             except Exception as e:
                 pass
 
-            print("Handling PLC Users")
+            
             existing_plc_users = {user.username: user for user in PLCUser.objects.filter(equipment=equipment)}
             form_usernames = set()  # Track new users
 
@@ -3590,14 +3382,13 @@ def equipment_setting(request, id):
         equipmentwrite = None
         email=None
         sms=None
-        print("No Equipmentwrite objects found for the given equipment ID.")
+
     except EquipParameter.DoesNotExist:
         
         equipment_parameters = None
-        print("No EquipParameter object found for the given equipment ID.")
+
     else:
-       
-        print("Equipmentwrite and EquipParameter objects retrieved successfully.")
+        pass
 
     temperature_settings = []
     for i in range(1, equipment.total_temp_sensors + 1):
@@ -3788,7 +3579,7 @@ def view_log(request):
 
 def generate_log_pdf(request, records, from_date, to_date, from_time, to_time, organization, department, username, selected_equipment):
     response = HttpResponse(content_type='application/pdf')
-    response['Content-Disposition'] = 'inline; filename="equipment_log_report.pdf"'
+    response['Content-Disposition'] = 'inline; filename="Data_log_report.pdf"'
 
     doc = SimpleDocTemplate(response, pagesize=A4, rightMargin=30, leftMargin=30, topMargin=160, bottomMargin=60)
     styles = getSampleStyleSheet()
@@ -4206,7 +3997,7 @@ def generate_log_pdf(request, records, from_date, to_date, from_time, to_time, o
 
 def generate_log_pdf_landscape(request, records, from_date, to_date, from_time, to_time, organization, department, username, selected_equipment):
     response = HttpResponse(content_type='application/pdf')
-    response['Content-Disposition'] = 'inline; filename="equipment_log_report.pdf"'
+    response['Content-Disposition'] = 'inline; filename="Data_log_report.pdf"'
     
     doc = SimpleDocTemplate(response, pagesize=landscape(A4), rightMargin=30, leftMargin=30, topMargin=160, bottomMargin=60)
     styles = getSampleStyleSheet()
@@ -5249,8 +5040,6 @@ def generate_equipment_log_pdf(request, records, from_date, to_date, from_time, 
     # Build the document
     doc.build(content, onFirstPage=create_page, onLaterPages=create_page, canvasmaker=NumberedCanvas )
     return response
-
-
 
 
 from django.shortcuts import render
@@ -6712,9 +6501,7 @@ def Mkt_analysis(request):
 
     if request.method == 'GET':
         selected_sensors = request.GET.getlist('selected_sensors[]')
-        print("form ss", selected_sensors)
         selected_sensors = [int(sensor) for sensor in selected_sensors] if selected_sensors else []
-        print("list ss", selected_sensors)
 
 
     if selected_equipment:
@@ -6808,7 +6595,7 @@ def generate_mkt_log_pdf(request, records, from_date, to_date, organization, dep
     response = HttpResponse(content_type='application/pdf')
     response['Content-Disposition'] = 'inline; filename="MKT_Analysis.pdf"'
 
-    doc = SimpleDocTemplate(response, pagesize=landscape(A4), rightMargin=4, leftMargin=2, topMargin=180, bottomMargin=60)
+    doc = SimpleDocTemplate(response, pagesize=landscape(A4), rightMargin=4, leftMargin=2, topMargin=150, bottomMargin=60)
     styles = getSampleStyleSheet()
 
     from_time = "00:00"
@@ -6867,22 +6654,22 @@ def generate_mkt_log_pdf(request, records, from_date, to_date, organization, dep
             canvas.drawImage(logo_path, 730, 550, width=80, height=30)
 
         canvas.setLineWidth(0.2)
-        canvas.line(20, 525, 820, 525)
+        canvas.line(25, 535, 820, 535)
 
         canvas.setFont("Helvetica-Bold", 12)
-        canvas.drawString(320, 500, "Mean Kinetic Temperature")
+        canvas.drawString(320, 520, "Mean Kinetic Temperature")
 
         canvas.setFont("Helvetica-Bold", 10)
-        canvas.drawString(30, 480, f"Filter From: {from_date} {from_time}")
-        canvas.drawString(670, 480, f"Filter To: {to_date} {to_time}")
+        canvas.drawString(30, 500, f"Filter From: {from_date} {from_time}")
+        canvas.drawString(670, 500, f"Filter To: {to_date} {to_time}")
 
-        canvas.drawString(30, 460, f"Records From: {records_from_date} {records_from_time}")
-        canvas.drawString(670, 460, f"Records To: {records_to_date} {records_to_time}")
+        canvas.drawString(30, 480, f"Records From: {records_from_date} {records_from_time}")
+        canvas.drawString(670, 480, f"Records To: {records_to_date} {records_to_time}")
 
         canvas.setFont("Helvetica-Bold", 10)
         equipment=Equipment.objects.get(id=selected_equipment)
         equipment_display = f"Equipment Name: {equipment.equip_name}" 
-        canvas.drawString(30, 440, equipment_display)
+        canvas.drawString(30, 460, equipment_display)
 
         # canvas.drawString(670, 440, "Parameter Name: kinemtic")
 
@@ -6902,49 +6689,58 @@ def generate_mkt_log_pdf(request, records, from_date, to_date, organization, dep
         canvas.drawRightString(800, 45, footer_text_right_top)
 
     def mkt_table():
-        print("nos", no_of_sensors)
-        sensor_headers = [f"T{i}" for i in range(1, no_of_sensors)]
-    
-        header_row1 = ['Rec No', 'Start Date', 'End Date'] + sensor_headers
-        header_row2 = ['', '', ''] + [label for _ in range(1, no_of_sensors) for label in ['Max', 'Min', 'Mean']]
 
-        data = [header_row1, header_row2]
-        print("data", data)
+        # Table Data
+        temperature_headers = []
+        for i in range(1, no_of_sensors):
+            temperature_headers.append('')  # Empty column before
+            temperature_headers.append(f'T{i}')  # Sensor column
+            temperature_headers.append('')  # Empty column after
+
+        # Fill remaining slots to maintain 10 sensors
+        temperature_headers += [''] * (3 * (10 - len(temperature_headers) // 3))
+
+
+        sub_headers = []
+        for i in range(1, no_of_sensors):
+            sub_headers.extend(['Max', 'Min', 'Mean'])
+        sub_headers += [''] * (3 * (10 - len(temperature_headers)))  # Fill remaining columns with empty values
+
+        # **Table Header**
+        data = [
+            ['Rec No', 'Start Date', 'End Date'] + temperature_headers,  # Main header row
+            ['', '', ''] + sub_headers  # Sub header row
+        ]
+
         rec_no = 1
         for record in results:
-            row = [rec_no, record["date"].strftime('%d-%m-%Y'), record["date"].strftime('%d-%m-%Y')]
-
-            for i in range(1, no_of_sensors + 1):
-                channel_data = next((ch for ch in record["channels"] if int(ch["channel"].split('-')[1]) == i), None)
-
-                if i in selected_sensors and channel_data:
-                    row.extend([
-                        str(channel_data["max"]) if channel_data["max"] is not None else "",
-                        str(channel_data["min"]) if channel_data["min"] is not None else "",
-                        str(channel_data["mean"]) if channel_data["mean"] is not None else ""
-                    ])
-                else:
-                    row.extend(["", "", ""])  # Empty values if sensor is not selected
+            row = [rec_no, record["date"].strftime('%d-%m-%Y'), record["date"].strftime('%d-%m-%Y')] + ["", "", ""] * 10
+            for channel in record["channels"]:
+                channel_number = int(channel["channel"].split('-')[1])  # Extract sensor number (e.g., 2, 6, 10)
+                if channel_number in selected_sensors:
+                    index = 3 + (channel_number - 1) * 3  # Calculate the starting index for this sensor's data
+                    row[index] = str(channel["max"]) if channel["max"] is not None else ""
+                    row[index + 1] = str(channel["min"]) if channel["min"] is not None else ""
+                    row[index + 2] = str(channel["mean"]) if channel["mean"] is not None else ""
             
             data.append(row)
-            rec_no += 1
 
-        # Summary rows
-        mkt_row = ["", "MKT (°C)", ""] + [str(channel_aggregated_means.get(f"CH-{i}", {}).get("mkt", "")) for i in range(1, no_of_sensors + 1) for _ in range(3)]
-        avg_temp_row = ["", "AVG TEMP (°C)", ""] + [str(channel_aggregated_means.get(f"CH-{i}", {}).get("avg_mean", "")) for i in range(1, no_of_sensors + 1) for _ in range(3)]
-        dev_temp_row = ["", "DEV AVG TEMP (°C)", ""] + [str(channel_aggregated_means.get(f"CH-{i}", {}).get("deviation", "")) for i in range(1, no_of_sensors + 1) for _ in range(3)]
 
+            rec_no+=1
+
+        mkt_row = ["", "MKT (°C)", ""]
+        avg_temp_row = ["", "AVG TEMP (°C)", ""]
+        dev_temp_row = ["", "DEV AVG TEMP (°C)", ""]
+        for i in range(1, no_of_sensors):
+            stats = channel_aggregated_means.get(f"CH-{i}", {})
+            mkt_row.extend(["", "", str(stats.get("mkt", ""))])
+            avg_temp_row.extend(["", "", str(stats.get("avg_mean", ""))])
+            dev_temp_row.extend(["", "", str(stats.get("deviation", ""))])
         data.append(mkt_row)
         data.append(avg_temp_row)
         data.append(dev_temp_row)
 
-        print("data", data)
 
-        table_spans = []
-        for i in range(no_of_sensors - 1):
-            start_col = 3 + i * 3
-            end_col = start_col + 2
-            table_spans.append(('SPAN', (start_col, 0), (end_col, 0)))
         # Updated Table Style
         table_style = TableStyle([
             ('BACKGROUND', (0, 0), (-1, 0), colors.lightgrey),
@@ -6953,30 +6749,24 @@ def generate_mkt_log_pdf(request, records, from_date, to_date, organization, dep
             ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
             ('FONTNAME', (0, 0), (-1, 1), 'Helvetica-Bold'),
             ('FONTSIZE', (0, 0), (-1, -1), 7.5),
-            ('ALIGN', (3, -3), (-1, -1), 'CENTER'),  # Align summary rows under Mean columns
+            ('ALIGN', (3, -3), (-1, -1), 'CENTER'),
             ('FONTNAME', (0, -3), (-1, -1), 'Helvetica'),
             ('FONTSIZE', (0, -3), (-1, -1), 8),
-            # Merge row headings into "Start Date" and "End Date"
             ('SPAN', (1, -3), (2, -3)),  # Merge for MKT
-            ('SPAN', (1, -2), (2, -2)),  # Merge for AVE TEMP
+            ('SPAN', (1, -2), (2, -2)),  # Merge for AVG TEMP
             ('SPAN', (1, -1), (2, -1)),  # Merge for DEV TEMP
-            # Center align merged cells
             ('ALIGN', (1, -3), (2, -1), 'CENTER'),
             ('VALIGN', (1, -3), (2, -1), 'MIDDLE'),
-            # Add horizontal lines for headings and summary rows
             ('LINEABOVE', (0, 0), (-1, 0), 0.5, colors.black),
-            ('LINEBELOW', (0, 0), (-1, 0), 0.5, colors.black),  # Line below the header row
-            ('LINEBELOW', (0, 1), (-1, 1), 0.5, colors.black),  # Line below the sub-header row
-            ('LINEBELOW', (0, -4), (-1, -4), 0.5, colors.black),  # Line above summary rows
+            ('LINEBELOW', (0, 0), (-1, 0), 0.5, colors.black),
+            ('LINEBELOW', (0, 1), (-1, 1), 0.5, colors.black),
+            ('LINEBELOW', (0, -4), (-1, -4), 0.5, colors.black),
             ('LINEBELOW', (0, -1), (-1, -1), 0.5, colors.black),
-            # Style for summary rows
             ('TEXTCOLOR', (1, -3), (2, -1), colors.black),
             ('FONTNAME', (1, -3), (2, -1), 'Helvetica'),
             ('FONTSIZE', (1, -3), (2, -1), 9),
             ('BOTTOMPADDING', (0, 0), (-1, 0), 12),
-            # ('GRID', (0, 0), (-1, -1), 0.5, colors.black),
             ('GRID', (0, 0), (-1, -1), 0, colors.transparent),
-            # ('GRID', (3, 0), (-1, -1), 0, colors.transparent),
 
             # Vertical line thickness adjustment
             ('LINEBEFORE', (0, 0), (0, -1), 0.5, colors.black),  # Thicker line before sl.no 
@@ -7004,12 +6794,13 @@ def generate_mkt_log_pdf(request, records, from_date, to_date, organization, dep
             ('ALIGN', (21, 0), (23, 0), 'CENTER'),
             ('ALIGN', (24, 0), (26, 0), 'CENTER'),
             ('ALIGN', (27, 0), (29, 0), 'CENTER'),
-            ('ALIGN', (30, 0), (32, 0), 'CENTER'),  
-        ]+ table_spans)
+            ('ALIGN', (30, 0), (32, 0), 'CENTER'),
+            
+        ])
 
         # Define the table with updated colWidths
         # Define the table with updated colWidths
-        col_widths = [30, 45, 45] + [23] * (no_of_sensors * 3)
+        col_widths = [30, 45, 45] + [23] * len(temperature_headers)
 
         # Create table
         table = Table(data, colWidths=col_widths, repeatRows=2)

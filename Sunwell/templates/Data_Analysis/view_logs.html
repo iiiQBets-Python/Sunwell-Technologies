@@ -214,23 +214,23 @@
                 </div>
             </div>
             
-            <div class="form-group col-md-4">
+            {% comment %} <div class="form-group col-md-4">
                 <div class="input-container">
-                    {% comment %} <select id="parameterType" class="form-control" name="Parameter" placeholder=" " required>
+                    <select id="parameterType" class="form-control" name="Parameter" placeholder=" " required>
                         <option selected>Both</option>
                         <option>Temperature</option>
                         <option>Humidity</option>
                         <!-- Add more options as needed -->
                     </select>
-                    <label for="parameterType" class="form-label">Parameter Type</label> {% endcomment %}
+                    <label for="parameterType" class="form-label">Parameter Type</label>
                 </div>
-            </div>
+            </div> {% endcomment %}
             
             <div class="form-group col-md-4 d-flex align-items-end">
                 {% if data.role == 'Super Admin' or acc_db.v_log_p %} 
-                <button type="submit" name="generate_pdf" class="btn btn-primary w-50">Print</button>
+                <button type="submit" name="generate_pdf" class="btn btn-outline-primary w-50">Print</button>
                 {% endif %}
-                <button type="submit" class="btn btn-primary w-50 ms-2">Graph</button>
+                <button type="submit" class="btn btn-outline-primary w-50 ms-2">Graph</button>
             </div>
         </form>
     </div>

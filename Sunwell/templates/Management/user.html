@@ -252,9 +252,11 @@
               <label for="loginName" class="form-label">Login Name*</label>
             </div>
             <div class="col-md-6 form-group">
-              <input type="password" class="form-control" id="password" name="password" minlength="8" maxlength="15" placeholder=" " required oninput="setCustomValidity('')" oninvalid="setCustomValidity('Password must be 8-15 characters long and include at least one special character.')">
+              <input type="password" class="form-control" id="password" name="password" minlength="8" maxlength="15" placeholder="" required 
+                     pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[^a-zA-Z\d]).{8,}" 
+                     oninput="validatePassword()" title="Password must be 8-15 characters long and include at least one uppercase letter, one lowercase letter, one number, and one special character.">
               <label for="password" class="form-label">Password*</label>
-              <span toggle="#password" class="fa fa-fw fa-eye-slash password-toggle-icon"></span>
+          <span toggle="#password" class="fa fa-fw fa-eye-slash password-toggle-icon"></span>
             </div>
             <div class="col-md-6 form-group">
               <input type="number" class="form-control" id="passwordDuration" name="passwordDuration" value="{{ password_duration }}" placeholder=" " required readonly>
@@ -462,6 +464,32 @@
     window.location.href = url.toString();
 }
 
+function validatePassword() {
+  var passwordInput = document.getElementById('password');
+  console.log("Passowrd",  password.value)
+  var regex = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[^a-zA-Z\d]).{8,15}$/;
+  
+  if (!regex.test(passwordInput.value)) {
+      passwordInput.setCustomValidity('Password must be 8-15 characters long and include at least one uppercase letter, one lowercase letter, one number, and one special character.');
+  } else {
+      passwordInput.setCustomValidity('');
+  }
+}
+
+function togglePasswordVisibility() {
+  var passwordInput = document.getElementById('password');
+  var toggleIcon = document.querySelector('[toggle="#password"]');
+  
+  if (passwordInput.type === 'password') {
+      passwordInput.type = 'text';
+      toggleIcon.classList.remove('fa-eye-slash');
+      toggleIcon.classList.add('fa-eye');
+  } else {
+      passwordInput.type = 'password';
+      toggleIcon.classList.remove('fa-eye');
+      toggleIcon.classList.add('fa-eye-slash');
+  }
+}
 
 
 

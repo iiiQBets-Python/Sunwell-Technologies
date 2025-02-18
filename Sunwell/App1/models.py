@@ -439,17 +439,21 @@ class TemperatureHumidityRecord(models.Model):
 
 
 class PasswordHistory(models.Model):
-    user = models.ForeignKey(User, null=True, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, null=True, blank=True, on_delete=models.CASCADE)
+    superuser = models.ForeignKey(SuperAdmin, null=True, blank=True, on_delete=models.CASCADE)
     password = models.CharField(max_length=128, null=True)  
     created_at = models.DateTimeField(auto_now_add=True, null=True) 
 
     def save(self, *args, **kwargs):
         if not self.password.startswith('pbkdf2_'):
             self.password = make_password(self.password)
-       
-        user_passwords = PasswordHistory.objects.filter(user=self.user).order_by('created_at')
 
-        
+        if self.user:
+            user_passwords = PasswordHistory.objects.filter(user=self.user).order_by('created_at')
+        else:
+            user_passwords = PasswordHistory.objects.filter(superuser=self.superuser).order_by('created_at')
+
+        # Ensure only the last 3 passwords are stored
         if user_passwords.count() >= 3:
             user_passwords.first().delete()  
 
@@ -457,11 +461,13 @@ class PasswordHistory(models.Model):
 
     def check_password(self, raw_password):
         return check_password(raw_password, self.password)
-    
-    def __str__(self):
-        return self.user.username
-    
 
+    def _str_(self):
+        if self.user:
+            return self.user.username
+        elif self.superuser:
+            return self.superuser.username
+        return "Unknown User"
     
 class Alarm_codes(models.Model):
     alarm_log=models.CharField(max_length=100, null=True)

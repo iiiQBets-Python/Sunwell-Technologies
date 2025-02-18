@@ -254,13 +254,6 @@
             </div>
         </div>
         <div class="col-md-3">
-            <label for="status" class="form-label">Status</label>
-            <select name="status" id="status" class="form-select" readonly>
-                <option value="online" {% if equipment.status == "Yes" %}selected{% endif %}>Online</option>
-                <option value="offline" {% if equipment.status != "Yes" %}selected{% endif %}>Offline</option>
-            </select>
-        </div>
-        <div class="col-md-3">
             <label for="loginInterval" class="form-label">Login Interval</label>
             <div class="d-flex align-items-center">
                 <input type="number" class="form-control me-2" id="loginInterval" value="{{ equipment.interval }}" min="1" max="480">
@@ -561,7 +554,7 @@
                                 <td>{{ entry.time|time:"H:i" }}</td>
                                 <td>{{ entry.label }}</td>
                                 <td>{{ entry.value }}</td>
-                                <td></td>
+                                <td>{{ entry.status }}</td>
                             </tr>
                             {% endfor %}
                         {% else %}

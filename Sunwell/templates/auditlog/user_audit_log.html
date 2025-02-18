@@ -147,15 +147,13 @@
             margin-right: 20px;
         }
         .btn-primary {
-            background-color: #00796b;
-            border-color: #00796b;
             font-weight: 600;
             padding: 10px 20px;
             border-radius: 5px;
             transition: background-color 0.3s;
         }
         .btn-primary:hover {
-            background-color: #004d40;
+            background-color:rgb(40, 141, 205);
         }
         .btn-container {
             display: flex;
@@ -259,22 +257,14 @@
 
                 <div class="row mb-4">
                     <div class="col-md-6 d-flex align-items-center">
-                        <label class="form-check-label" for="logDate">OrderBy :</label>
-                        <div class="form-check">
-                            <input class="form-check-input" type="radio" name="orderBy" id="logDate" value="logDate" checked>
-                            <label class="form-check-label" for="logDate">Log Date</label>
-                        </div>
-                        <div class="form-check">
-                            <input class="form-check-input" type="radio" name="orderBy" id="unsorted" value="unsorted">
-                            <label class="form-check-label" for="unsorted">Unsorted</label>
-                        </div>
+                        
                     </div>
                 </div>
 
                 <div class="btn-container">
                     <input type="hidden" name="generate_pdf" value="1">
                     {% if data.role == 'Super Admin' or acc_db.u_act_p %}
-                    <button type="submit" class="btn btn-primary">Print</button>
+                    <button type="submit" class="btn btn-outline-primary">Print</button>
                     {% endif %}
                 </div>                
 

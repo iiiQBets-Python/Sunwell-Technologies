@@ -50,6 +50,10 @@ from django.views.decorators.csrf import csrf_exempt
 def base(request):
     return render(request, 'Base/base.html', )
 
+
+
+
+
 from datetime import timedelta
 from django.utils import timezone
 from django.contrib.auth.hashers import check_password
@@ -282,44 +286,65 @@ def forgot_password(request):
         new_password = request.POST.get('forgot_new_password')
         confirm_password = request.POST.get('forgot_confirm_password')
 
-        
-        for user in User.objects.all():
-            if check_password(login_name, user.login_name):
-                user = user
+      
+        user = None
+        is_superadmin = False
+
+       
+        for u in User.objects.all():
+            if check_password(login_name, u.login_name):
+                user = u
                 break
 
-        password_history = PasswordHistory.objects.filter(user=user).order_by('-created_at')[:3]
+        if user is None:
+            for admin in SuperAdmin.objects.all():
+                if admin.username == login_name:
+                    user = admin
+                    is_superadmin = True
+                    break
 
+        if not user:
+            return JsonResponse({'message': 'User not found.'}, status=404)
+
+       
+        if is_superadmin:
+            password_history = PasswordHistory.objects.filter(superuser=user).order_by('-created_at')[:3]
+            user.password=new_password
+            user.save()
+        else:
+            password_history = PasswordHistory.objects.filter(user=user).order_by('-created_at')[:3]
+
+      
         if not any(history.check_password(old_password) for history in password_history):
             return JsonResponse({'message': 'The old password does not match any of the last 3 passwords.'}, status=403)
 
         if new_password != confirm_password:
             return JsonResponse({'message': 'New password and confirm password do not match.'}, status=400)
 
+       
         if any(history.check_password(new_password) for history in password_history):
             return JsonResponse({'message': 'New password cannot be the same as any of the last 3 passwords.'}, status=400)
 
-        # Hash and set the new password
-        hashed_new_password = make_password(new_password)
-        user.password = hashed_new_password
-        user.pass_change = True
-        user.created_at = timezone.now()
-        user.last_password_change=now()
-        user.save()
+        if is_superadmin is False:
+            hashed_new_password = make_password(new_password)
+            user.password = hashed_new_password
+            user.save()
+        
+        
+        if is_superadmin:
+            PasswordHistory.objects.create(superuser=user, password=new_password)
+        else:
+            PasswordHistory.objects.create(user=user, password=new_password)
 
-        # Update password history
-        PasswordHistory.objects.create(user=user, password=new_password)
-
-        # Log the password reset event (optional)
+        
         UserActivityLog.objects.create(
             user=user.username,
             log_date=timezone.localtime(timezone.now()).date(),
             log_time=timezone.localtime(timezone.now()).time(),
             event_name=f"User {user.username} reset password"
         )
-
-        # Redirect to login page with a success message
         return JsonResponse({'message':"Your password has been reset successfully. Please log in with your new password."})
+
     return render(request, 'Base/login.html')
 
 
@@ -3094,12 +3119,12 @@ def equipment_configure_view(request):
 
     organization = Organization.objects.first()
     Eqp=Equipment.objects.count()
-    print("EQP count", Eqp)
+
     if request.method == 'POST':
         nod=organization.get_nod()
-        print("NOD count", nod)
+
         if Eqp>=nod:
-            print("EQP exceeds NOD count")
+
             messages.error(request, "Number of Equipments exceeded for Comm Group Activation key!")
             return redirect('equipment_configure')
         equip_name = request.POST.get('equipname')
@@ -3351,12 +3376,43 @@ def equipment_edit(request, equipment_id):
 def equipment_setting(request, id):
 
     emp_user = request.session.get('username', None)
+    equipmentwrite=None
     if not emp_user:
         return redirect('login')
     try:
         data = User.objects.get(username = emp_user)
+        try:
+            today = timezone.localdate()
+            
+            one_day_ago = today - timedelta(days=1)
+
+            equipmentwrite = Equipmentwrite.objects.filter(equipment=id, date__gte=one_day_ago)
+
+            # equipment_parameters = EquipParameter.objects.get(equipment=id)
+            
+        except Equipmentwrite.DoesNotExist:
+            
+            equipmentwrite = None
+            email=None
+            sms=None
     except:
         data = SuperAdmin.objects.get(username = emp_user)
+        try:
+            today = timezone.localdate()
+            
+            one_day_ago = today - timedelta(days=1)
+
+            eq=Equipmentwrite.objects.first()
+
+            equipmentwrite = Equipmentwrite.objects.filter(equipment=id)
+
+            # equipment_parameters = EquipParameter.objects.get(equipment=id)
+            
+        except Equipmentwrite.DoesNotExist:
+            
+            equipmentwrite = None
+            email=None
+            sms=None
     
     try:
         acc_db = user_access_db.objects.get(role = data.role)
@@ -3374,7 +3430,7 @@ def equipment_setting(request, id):
     l=logs.count()
     alert_instance=emailalert.objects.get(equipment_name=id)
     try:
-        equipmentwrite = Equipmentwrite.objects.filter(equipment=id)
+        # equipmentwrite = Equipmentwrite.objects.filter(equipment=id)
         equipment_parameters = EquipParameter.objects.get(equipment=id)
         
     except Equipmentwrite.DoesNotExist:

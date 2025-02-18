@@ -4,7 +4,7 @@ from threading import local
 
 # Configure activity logger
 activity_logger = logging.getLogger('view_logger')
-activity_handler = logging.FileHandler('user_activity.log')
+activity_handler = logging.FileHandler('Activity.log')
 activity_formatter = logging.Formatter('%(asctime)s - %(message)s')
 activity_handler.setFormatter(activity_formatter)
 activity_logger.addHandler(activity_handler)
@@ -12,7 +12,7 @@ activity_logger.setLevel(logging.INFO)
 
 # Configure error logger
 error_logger = logging.getLogger('error_logger')
-error_handler = logging.FileHandler('user_error.log')
+error_handler = logging.FileHandler('Error.log')
 error_formatter = logging.Formatter('%(asctime)s - %(message)s')
 error_handler.setFormatter(error_formatter)
 error_logger.addHandler(error_handler)

@@ -33,7 +33,7 @@
         .sidebar {
             width: 250px;
             height: 100%;
-            background: #000d1d;
+            background: #7ddbef;
             position: fixed;
             top: 0;
             left: 0;
@@ -90,7 +90,8 @@
             transition: all 0.3s ease;
         }
         .sidebar a {
-            color: #ffff;
+            color: #1e5460;
+            font-size: 1.1rem;
             text-decoration: none;
             display: block;
             padding: 10px;
@@ -101,7 +102,8 @@
             color: #f3411c !important;
         } */
         .sidebar a:hover{
-            color: #f3411c;
+            color:rgb(255, 255, 255);
+            
         }
         .sidebar .submenu {
             margin-left: 20px;
@@ -123,7 +125,8 @@
             font-size: 0.9em;
         }
         .sidebar .submenu a.active {
-            color: #f3411c !important;
+            color:rgb(255, 255, 255) !important;
+            background: #ffffff
             font-weight: bold;
         }
         .main-content {
@@ -396,7 +399,8 @@
             display: none;
         }
         .highlight {
-            color: #f3411c !important; /* Text color */
+            color: #036da9 !important; /* Text color */
+            background: #ffffff !important;
             /*font-weight: bold;  Optional: make it bold */
             border-left: 0px solid #f3411c; /* Optional: add a left border */
             /* background-color: rgb(254, 254, 254); */
@@ -492,7 +496,7 @@
 <body>
 <div class="container-fluid">
     <div class="sidebar" id="sidebar">
-        <img src="{% static 'images/Base/Sunwell_logo.jpg' %}" alt="Your Logo" class="sidebar-logo">
+        <img src="{% static 'images/Base/Sunwell.png' %}" alt="Your Logo" class="sidebar-logo">
         <ul class="sidebar-menu">
             <li><a href="{% url 'dashboard' %}"><i class="fas fa-home"></i> <b> Dashboard</b></a></li>
             <li>

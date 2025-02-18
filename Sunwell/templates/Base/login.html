@@ -15,7 +15,7 @@
         }
 
         .bg {
-            background-image: url('{% static "images/Base/background.jpg" %}');
+            background: url('{% static "images/Base/new_bg.jpg" %}') no-repeat center center fixed;
             height: 100%;
             background-position: center;
             background-repeat: no-repeat;
@@ -47,18 +47,20 @@
             font-weight: bold;
             font-family: 'Montserrat', sans-serif; 
             font-size: 2em; 
-            background:linear-gradient(180deg, #ffffff, #db3d3d); 
+            color: #ffffff;
+            /*background:linear-gradient(180deg, #ffffff, ##0491f7); 
             -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
+            -webkit-text-fill-color: transparent; */
         }
 
         .cmp-text p {
             font-family: 'Roboto', sans-serif; 
             font-size: 1.2em;
-            background:linear-gradient(120deg, #ff8888, #f5f5f5); 
-            /* background:linear-gradient(120deg, #ffffff, #ff8888);  */
+            color: #ffffff;
+            /* background:linear-gradient(120deg, #ff8888, ##0491f7); 
+             background:linear-gradient(120deg, #ffffff, #ff8888);  
             -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
+            -webkit-text-fill-color: transparent;*/
         }
 
         .login-container {
@@ -66,11 +68,12 @@
             top: 45%;
             left: 80%;
             transform: translate(-50%, -50%);
-            background-color: rgba(255, 255, 255, 0);
+            background-color:rgba(195, 195, 195, 0.4);
             padding: 30px;
             border-radius: 25px;
             box-shadow: 0px 0px 10px 0px rgba(0, 0, 0, 0);
             width: 30%;
+            backdrop-filter: blur(25px);
         }
 
         .login-container h1 {
@@ -95,7 +98,7 @@
             line-height: 2rem;
             text-align: center;
             pointer-events: none;
-            color: #f61700;
+            color: #0491f7;
         }
 
         .login-container .form-control:focus {
@@ -105,7 +108,7 @@
 
         .login {
             font-size: 50px;
-            color: #dc3c20;
+            color: #ffffff;
             font-weight: bold;
         }
 
@@ -135,7 +138,7 @@
         .did-floating-input:not(:placeholder-shown) ~ .did-floating-label {
             top: -15px;
             font-size: 15px;
-            color: #f61700;
+            color: #0491f7;
             font-weight: bold;
         }
 
@@ -278,9 +281,9 @@
 </head>
 <body>
     <div class="bg">
-        <div class="logo-container">
+        {% comment %} <div class="logo-container">
             <img src="{% static 'images/Base/Sunwell_logo.jpg' %}" alt="Company Logo">
-        </div>
+        </div> {% endcomment %}
         <div class="cmp-text">
             <h4>ESTDAS v1.0</h4>
             <p>Electronic Super Track and Data Acquisition System </p>
@@ -357,11 +360,12 @@
                     <div class="mt-1 position-relative">
                         <label for="new_pass">New Password:</label>
                         <div class="position-relative">
-                            <input type="password" minlength="8" maxlength="15" name="new_pass" id="new_pass" class="form-control password-input" required>
+                            <input type="password" minlength="8" maxlength="15" name="new_pass" id="new_pass" class="form-control password-input" oninput="validateNewPassword()"  required>
                             <span class="password-toggle-icon" data-target="new_pass">
                                 <i class="fa fa-eye-slash"></i>
                             </span>
                         </div>
+                        <div id="newPasswordError" class="invalid-feedback" style="display: none;"></div>
                     </div>
                     <div class="mt-2" style="text-align: center;">
                         <button type="submit" class="btn btn-sm btn-primary" style="width: 100px; display: inline-block;" onclick="submitChangePasswordForm()">Submit</button>
@@ -400,21 +404,23 @@
                         <div class="mt-1">
                             <label for="forgot_new_password">New Password:</label>
                             <div class="position-relative">
-                                <input type="password" name="forgot_new_password" id="forgot_new_password" class="form-control password-input" minlength="8" maxlength="15" required>
+                                <input type="password" name="forgot_new_password" id="forgot_new_password" class="form-control password-input" minlength="8" maxlength="15" oninput="validatePasswordInput('forgot_new_password', 'newPasswordError')" required>
                                 <span class="password-toggle-icon" data-target="forgot_new_password">
                                     <i class="fa fa-eye-slash"></i>
                                 </span>
                             </div>
+                            <div id="newPasswordError" class="invalid-feedback"></div>
                         </div>
                 
                         <div class="mt-1">
                             <label for="forgot_confirm_password">Confirm New Password:</label>
                             <div class="position-relative">
-                                <input type="password" name="forgot_confirm_password" id="forgot_confirm_password" class="form-control password-input" minlength="8" maxlength="15" required>
+                                <input type="password" name="forgot_confirm_password" id="forgot_confirm_password" class="form-control password-input" minlength="8" maxlength="15" oninput="validatePasswordInput('forgot_new_password', 'newPasswordError')" required>
                                 <span class="password-toggle-icon" data-target="forgot_confirm_password">
                                     <i class="fa fa-eye-slash"></i>
                                 </span>
                             </div>
+                            <div id="confirmPasswordError" class="invalid-feedback"></div>
                         </div>
                         <div class="mt-2 text-center">
                             <button type="button" class="btn btn-sm btn-primary" style="width: 100px; display: inline-block;" onclick="submitForgotPasswordForm()">Submit</button>
@@ -631,7 +637,71 @@
         });
         
             
+        function validatePassword(password) {
+            const regex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+            return regex.test(password);
+        }
         
+        function validatePasswordInput(inputId, errorId) {
+            const input = document.getElementById(inputId);
+            const error = document.getElementById(errorId);
+            if (!validatePassword(input.value)) {
+                error.textContent = "Password must contain at least 8 characters, including uppercase, lowercase, numbers, and special characters.";
+                error.style.display = 'block';
+            } else {
+                error.style.display = 'none';
+            }
+        }
+        
+        function matchPasswords() {
+            const newPassword = document.getElementById('forgot_new_password');
+            const confirmPassword = document.getElementById('forgot_confirm_password');
+            const confirmPasswordError = document.getElementById('confirmPasswordError');
+        
+            if (newPassword.value !== confirmPassword.value) {
+                confirmPasswordError.textContent = "Passwords do not match.";
+                confirmPasswordError.style.display = 'block';
+            } else {
+                confirmPasswordError.style.display = 'none';
+            }
+        }
+        
+        document.getElementById('forgot_new_password').addEventListener('input', function() {
+            validatePasswordInput('forgot_new_password', 'newPasswordError');
+        });
+        
+        document.getElementById('forgot_confirm_password').addEventListener('input', function() {
+            validatePasswordInput('forgot_confirm_password', 'confirmPasswordError');
+            matchPasswords();
+        });   
+
+
+
+        function validateNewPassword() {
+            const newPassword = document.getElementById('new_pass');
+            const newPasswordError = document.getElementById('newPasswordError');
+            const regex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+        
+            if (!regex.test(newPassword.value)) {
+                newPasswordError.textContent = "Password must contain at least 8 characters, including uppercase, lowercase, numbers, and special characters.";
+                newPasswordError.style.display = 'block';
+            } else {
+                newPasswordError.style.display = 'none';
+            }
+        }
+        
+        document.querySelectorAll(".password-toggle-icon").forEach(icon => {
+            icon.addEventListener("click", function () {
+                let passwordField = document.getElementById(this.getAttribute("data-target"));
+                let iconElement = this.querySelector("i");
+        
+                if (passwordField) {
+                    passwordField.type = passwordField.type === "password" ? "text" : "password";
+                    iconElement.classList.toggle("fa-eye");
+                    iconElement.classList.toggle("fa-eye-slash");
+                }
+            });
+        });
     </script>
 </body>
 </html>

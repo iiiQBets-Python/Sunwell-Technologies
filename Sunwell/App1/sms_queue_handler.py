@@ -6,9 +6,11 @@ from .models import AppSettings, Sms_logs, Equipment
 from datetime import datetime
 
 sms_queue = queue.Queue()
-sms_lock = threading.Lock()  
+sms_lock = threading.Lock()
 
 # Background worker for processing SMS
+
+
 def sms_worker():
     """Processes SMS messages in a FIFO order."""
     while True:
@@ -19,9 +21,11 @@ def sms_worker():
         send_sms_from_queue(sms_details)  # Process and send the SMS
         sms_queue.task_done()  # Mark the task as complete
 
+
 # Start the worker thread
 sms_thread = threading.Thread(target=sms_worker, daemon=True)
 sms_thread.start()
+
 
 def add_to_sms_queue(number, message, equipment, alarm_id, sys_sms):
 
@@ -32,21 +36,22 @@ def add_to_sms_queue(number, message, equipment, alarm_id, sys_sms):
         'equipment': equipment,
         'alarm_id': alarm_id,
     })
-  
+
+
 def send_sms_from_queue(sms_details):
 
-    number=sms_details["number"]
-    message=sms_details["message"]
-    equipment=sms_details["equipment"]
-    alarm_id=sms_details["alarm_id"]
-    sys_sms=sms_details["sys_sms"]
-    Eqp=""
+    number = sms_details["number"]
+    message = sms_details["message"]
+    equipment = sms_details["equipment"]
+    alarm_id = sms_details["alarm_id"]
+    sys_sms = sms_details["sys_sms"]
+    Eqp = ""
     if equipment is not None:
-        Eqp=Equipment.objects.get(id=equipment)
+        Eqp = Equipment.objects.get(id=equipment)
     else:
-        Eqp=None
+        Eqp = None
     try:
-        with sms_lock:  
+        with sms_lock:
             settings = AppSettings.objects.first()
             start_time = time.time()
             with serial.Serial(
@@ -57,11 +62,10 @@ def send_sms_from_queue(sms_details):
                 stopbits=serial.STOPBITS_ONE,
                 timeout=2
             ) as ser:
-                ser.write(b'AT\r')  
+                ser.write(b'AT\r')
                 # ser.flush()
-                time.sleep(1)  
+                time.sleep(1)
                 response = ser.read_all().decode(errors="ignore").strip()
-
 
                 if "OK" not in response:
                     pass
@@ -71,7 +75,6 @@ def send_sms_from_queue(sms_details):
                 # ser.flush()
                 time.sleep(1)
                 response = ser.read_all().decode(errors="ignore").strip()
-
 
                 if "OK" not in response:
                     pass
@@ -85,7 +88,6 @@ def send_sms_from_queue(sms_details):
                     time.sleep(3)
                     response = ser.read_all().decode(errors="ignore").strip()
 
-
                     if ">" not in response:
                         pass
                         # return
@@ -97,7 +99,6 @@ def send_sms_from_queue(sms_details):
                     # Wait for the final response
                     time.sleep(8)
                     response = ser.read_all().decode(errors="ignore").strip()
-
 
                     status = "Sent" if "+CMGS" in response else "Failed"
 
@@ -124,7 +125,4 @@ def send_sms_from_queue(sms_details):
             status="Failed",
             equipment=Eqp,
         )
-    end_time = time.time()  
-
-    
-
+    end_time = time.time()

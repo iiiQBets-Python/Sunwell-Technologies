@@ -14,11 +14,19 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='passwordhistory',
             name='superuser',
-            field=models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, to='App1.superadmin'),
+            field=models.ForeignKey(
+                blank=True,
+                null=True,
+                on_delete=django.db.models.deletion.CASCADE,
+                to='App1.superadmin'),
         ),
         migrations.AlterField(
             model_name='passwordhistory',
             name='user',
-            field=models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, to='App1.user'),
+            field=models.ForeignKey(
+                blank=True,
+                null=True,
+                on_delete=django.db.models.deletion.CASCADE,
+                to='App1.user'),
         ),
     ]

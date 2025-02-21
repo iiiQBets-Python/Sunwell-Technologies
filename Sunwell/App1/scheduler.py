@@ -21,17 +21,19 @@ def send_scheduled_notifications():
 
     # Get current time in IST
     ist_timezone = pytz.timezone("Asia/Kolkata")
-    current_time = datetime.now(ist_timezone).time().replace(second=0, microsecond=0)
+    current_time = datetime.now(
+        ist_timezone).time().replace(second=0, microsecond=0)
 
     # Fetch App Settings
     app_settings = AppSettings.objects.first()
     if not app_settings:
-        return JsonResponse({"status": "error", "message": "No App Setting found"}, status=400) 
+        return JsonResponse(
+            {"status": "error", "message": "No App Setting found"}, status=400)
 
     # Process Emails if enabled
     if app_settings.email_sys_set:
         send_scheduled_emails(current_time, app_settings)
-    
+
     # Process SMS if enabled
     if app_settings.sms_sys_set:
         send_scheduled_sms(current_time, app_settings)
@@ -42,11 +44,13 @@ def send_scheduled_emails(current_time, app_settings):
     ist_timezone = pytz.timezone("Asia/Kolkata")
 
     # Fetch departments scheduled for emails
-    departments = Department.objects.filter(email_time=current_time, email_sys="Enable")
-    
+    departments = Department.objects.filter(
+        email_time=current_time, email_sys="Enable")
+
     if not departments.exists():
         pass
-        return JsonResponse({"status": "error", "message": "No Departments found at specified time"}, status=400)
+        return JsonResponse(
+            {"status": "error", "message": "No Departments found at specified time"}, status=400)
 
     # Initialize Email Backend
     try:
@@ -58,7 +62,8 @@ def send_scheduled_emails(current_time, app_settings):
             fail_silently=False,
         )
     except Exception as e:
-        return JsonResponse({"status": "error", "message": "No Email Setting found"}, status=400)
+        return JsonResponse(
+            {"status": "error", "message": "No Email Setting found"}, status=400)
 
     for department in departments:
         recipient_list = [
@@ -78,7 +83,9 @@ def send_scheduled_emails(current_time, app_settings):
 
         if recipient_list:
             subject = f"ESTDAS - Test mail for {department.department_name}"
-            message = f"This is a test email from ESTDAS application for {department.department_name or ''} department \n\n{app_settings.email_signature or ''}"
+            message = f"This is a test email from ESTDAS application for {
+                department.department_name or ''} department \n\n{
+                app_settings.email_signature or ''}"
 
             for recipient in recipient_list:
                 try:
@@ -90,7 +97,7 @@ def send_scheduled_emails(current_time, app_settings):
                         connection=email_backend,
                         fail_silently=False,
                     )
-                    
+
                     # Log success
                     Email_logs.objects.create(
                         time=current_time,
@@ -115,17 +122,19 @@ def send_scheduled_emails(current_time, app_settings):
                         status="Failed",
                     )
 
+
 def send_scheduled_sms(current_time, app_settings):
 
     ist_timezone = pytz.timezone("Asia/Kolkata")
 
     # Fetch departments scheduled for SMS
-    departments = Department.objects.filter(sms_time=current_time, sms_sys="Enable")
+    departments = Department.objects.filter(
+        sms_time=current_time, sms_sys="Enable")
 
     if not departments.exists():
         pass
-        return JsonResponse({"status": "error", "message": "No Departments found at specified time"}, status=400)
-
+        return JsonResponse(
+            {"status": "error", "message": "No Departments found at specified time"}, status=400)
 
     for department in departments:
         number = {
@@ -144,8 +153,14 @@ def send_scheduled_sms(current_time, app_settings):
             ]
             if user_name  # Ensure that empty names are not included in the dictionary
         }
-        message = f"This is a test SMS from ESTDAS application for {department.department_name or ''} department."
-        status = add_to_sms_queue( number, message, equipment=None, alarm_id=None, sys_sms=True)
+        message = f"This is a test SMS from ESTDAS application for {
+            department.department_name or ''} department."
+        status = add_to_sms_queue(
+            number,
+            message,
+            equipment=None,
+            alarm_id=None,
+            sys_sms=True)
 
 
 def start_notification_scheduler():

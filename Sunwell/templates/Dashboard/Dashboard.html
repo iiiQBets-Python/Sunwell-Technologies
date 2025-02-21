@@ -418,16 +418,13 @@ window.onload = fetchEquipmentData;
 
 
     // Script for base file Communication text
+
     function fetchEquipmentData() {
-        fetch('/get-equipment-data/')
+        fetch('/get-equipment-data/') // Endpoint to fetch equipment data
             .then(response => response.json())
             .then(data => {
                 const equipmentData = data.equipment_data;
-    
-                if (equipmentData.length === 0) {
-                    updateCommunicationStatus(false, 0);
-                    return;
-                }
+                let allOnline = true;
     
                 equipmentData.forEach(equipment => {
                     const card = document.querySelector(`.card-wrapper[data-id="${equipment.id}"]`);
@@ -439,7 +436,10 @@ window.onload = fetchEquipmentData;
                             equipment.status === 'Online' 
                             ? '<i class="fa-regular fa-circle-check" style="color: #28a745;"></i> Online' 
                             : '<i class="fa-regular fa-circle-stop" style="color: #d20f0f;"></i> Offline';
-                        card.querySelector('.status').setAttribute('data-status', equipment.status.toLowerCase());
+    
+                        if (equipment.status !== 'Online') {
+                            allOnline = false; // If any equipment is offline, set allOnline to false
+                        }
                     }
     
                     if (tableRow) {
@@ -447,43 +447,32 @@ window.onload = fetchEquipmentData;
                             equipment.status === 'Online' 
                             ? '<i class="fa-regular fa-circle-check" style="color: #28a745;"></i> Online' 
                             : '<i class="fa-regular fa-circle-stop" style="color: #d20f0f;"></i> Offline';
-                        tableRow.querySelector('.status').setAttribute('data-status', equipment.status.toLowerCase());
                     }
                 });
     
-                updateCommunicationStatus(); 
+                // Update communication status in Base.html
+                updateCommunicationStatus(allOnline);
             })
-            .catch(error => {
-                console.error('Error fetching equipment data:', error);
-                updateCommunicationStatus(false, 0);
-            });
+            .catch(error => console.error('Error fetching equipment data:', error));
     }
     
-    function updateCommunicationStatus(forceOffline = false, count = null) {
-        const communicationStatusMessage = document.querySelector('.navbar-lower div');
-    
-        if (forceOffline && count === 0) {
-            communicationStatusMessage.innerHTML = '<strong style="color: #d20f0f;">Communication Offline - No Equipment Data Available</strong>';
-            communicationStatusMessage.style.color = '#d20f0f';
-            return;
-        }
-    
-        const statusElements = document.querySelectorAll('.status[data-status]');
-        const allOnline = Array.from(statusElements).every(element => element.getAttribute('data-status').toLowerCase() === 'online');
-    
-        if (allOnline) {
-            communicationStatusMessage.innerHTML = '<strong style="color: black;">Communication Online - </strong><strong style="color: #28a745;">All Equipments Active</strong>';
-            communicationStatusMessage.style.color = '#28a745';
-        } else {
-            communicationStatusMessage.innerHTML = '<strong style="color: black;">Communication Offline - </strong><strong style="color: #d20f0f;"> Equipment Communication Error</strong>';
-            communicationStatusMessage.style.color = '#d20f0f';
+    // Function to update Base.html navbar-lower text dynamically
+    function updateCommunicationStatus(allOnline) {
+        const communicationStatus = document.getElementById('communication-status');
+        if (communicationStatus) {
+            if (allOnline) {
+                communicationStatus.innerHTML = "<b>Communication Online - All Equipments Active</b>";
+            } else {
+                communicationStatus.innerHTML = "<b>Communication Offline - Equipment Communication Error</b>";
+            }
         }
     }
     
-    window.onload = function() {
-        fetchEquipmentData();
-        setInterval(fetchEquipmentData, 5000);
-    };
+    // Fetch data once on page load
+    window.onload = fetchEquipmentData;
+    
+    // Fetch data every 5 seconds to check status updates
+    setInterval(fetchEquipmentData, 5000);
     
     
     

@@ -16,7 +16,8 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='Alarm_codes',
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
+                ('id', models.BigAutoField(auto_created=True,
+                 primary_key=True, serialize=False, verbose_name='ID')),
                 ('alarm_log', models.CharField(max_length=100, null=True)),
                 ('code', models.IntegerField(unique=True)),
                 ('remarks', models.TextField(null=True)),
@@ -25,7 +26,8 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='AppSettings',
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
+                ('id', models.BigAutoField(auto_created=True,
+                 primary_key=True, serialize=False, verbose_name='ID')),
                 ('email_sys_set', models.BooleanField(default=False)),
                 ('email_host', models.CharField(max_length=100, null=True)),
                 ('email_host_user', models.EmailField(max_length=254, null=True)),
@@ -38,24 +40,31 @@ class Migration(migrations.Migration):
                 ('baud_rate', models.CharField(blank=True, max_length=10, null=True)),
                 ('data_bits', models.IntegerField(blank=True, null=True)),
                 ('stop_bits', models.IntegerField(blank=True, null=True)),
-                ('flow_control', models.CharField(blank=True, max_length=10, null=True)),
+                ('flow_control', models.CharField(
+                    blank=True, max_length=10, null=True)),
                 ('passwordchange', models.IntegerField(null=True)),
                 ('lockcount', models.IntegerField(null=True)),
                 ('autologouttime', models.IntegerField(null=True)),
-                ('whatsapp_comm_port', models.CharField(blank=True, max_length=10, null=True)),
-                ('whatsapp_parity', models.CharField(blank=True, max_length=10, null=True)),
-                ('whatsapp_baud_rate', models.CharField(blank=True, max_length=10, null=True)),
+                ('whatsapp_comm_port', models.CharField(
+                    blank=True, max_length=10, null=True)),
+                ('whatsapp_parity', models.CharField(
+                    blank=True, max_length=10, null=True)),
+                ('whatsapp_baud_rate', models.CharField(
+                    blank=True, max_length=10, null=True)),
                 ('whatsapp_data_bits', models.IntegerField(blank=True, null=True)),
                 ('whatsapp_stop_bits', models.IntegerField(blank=True, null=True)),
-                ('whatsapp_flow_control', models.CharField(blank=True, max_length=10, null=True)),
+                ('whatsapp_flow_control', models.CharField(
+                    blank=True, max_length=10, null=True)),
             ],
         ),
         migrations.CreateModel(
             name='BackupSettings',
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
+                ('id', models.BigAutoField(auto_created=True,
+                 primary_key=True, serialize=False, verbose_name='ID')),
                 ('local_path', models.CharField(max_length=255)),
-                ('remote_path', models.CharField(blank=True, max_length=255, null=True)),
+                ('remote_path', models.CharField(
+                    blank=True, max_length=255, null=True)),
                 ('backup_time', models.TimeField(blank=True, null=True)),
                 ('created_at', models.DateTimeField(auto_now_add=True)),
             ],
@@ -64,7 +73,8 @@ class Migration(migrations.Migration):
             name='CommGroup',
             fields=[
                 ('CommGroup_name', models.CharField(max_length=50, unique=True)),
-                ('CommGroup_code', models.CharField(max_length=10, primary_key=True, serialize=False)),
+                ('CommGroup_code', models.CharField(
+                    max_length=10, primary_key=True, serialize=False)),
                 ('soft_key', models.CharField(max_length=255)),
                 ('activation_key', models.CharField(max_length=255, unique=True)),
             ],
@@ -72,9 +82,12 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='Organization',
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('name', models.CharField(default='Sunwell Technologies', max_length=255)),
-                ('email', models.EmailField(default='sunwelltechno@gmail.com', max_length=254)),
+                ('id', models.BigAutoField(auto_created=True,
+                 primary_key=True, serialize=False, verbose_name='ID')),
+                ('name', models.CharField(
+                    default='Sunwell Technologies', max_length=255)),
+                ('email', models.EmailField(
+                    default='sunwelltechno@gmail.com', max_length=254)),
                 ('phoneNo', models.CharField(max_length=15, null=True)),
                 ('address', models.TextField(null=True)),
                 ('logo', models.ImageField(blank=True, null=True, upload_to='')),
@@ -84,7 +97,8 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='SuperAdmin',
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
+                ('id', models.BigAutoField(auto_created=True,
+                 primary_key=True, serialize=False, verbose_name='ID')),
                 ('username', models.CharField(max_length=30, unique=True)),
                 ('email_id', models.EmailField(max_length=254)),
                 ('password', models.CharField(max_length=255)),
@@ -94,7 +108,8 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='user_access_db',
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
+                ('id', models.BigAutoField(auto_created=True,
+                 primary_key=True, serialize=False, verbose_name='ID')),
                 ('role', models.CharField(max_length=50)),
                 ('org_v', models.BooleanField(default=False)),
                 ('org_a', models.BooleanField(default=False)),
@@ -174,7 +189,8 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='User_role',
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
+                ('id', models.BigAutoField(auto_created=True,
+                 primary_key=True, serialize=False, verbose_name='ID')),
                 ('role', models.CharField(max_length=50, unique=True)),
                 ('description', models.TextField()),
             ],
@@ -182,7 +198,8 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='UserActivityLog',
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
+                ('id', models.BigAutoField(auto_created=True,
+                 primary_key=True, serialize=False, verbose_name='ID')),
                 ('user', models.CharField(max_length=30)),
                 ('log_date', models.DateField(default=django.utils.timezone.now)),
                 ('log_time', models.TimeField(default=django.utils.timezone.now)),
@@ -192,26 +209,42 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='Department',
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
+                ('id', models.BigAutoField(auto_created=True,
+                 primary_key=True, serialize=False, verbose_name='ID')),
                 ('department_name', models.CharField(max_length=50, unique=True)),
                 ('header_note', models.CharField(max_length=100, null=True)),
                 ('footer_note', models.CharField(max_length=100, null=True)),
-                ('report_datetime_stamp', models.BooleanField(default=True, null=True)),
-                ('email_sys', models.CharField(default='Enable', max_length=10, null=True)),
-                ('email_delay', models.CharField(blank=True, default=0, max_length=50, null=True)),
+                ('report_datetime_stamp', models.BooleanField(
+                    default=True, null=True)),
+                ('email_sys', models.CharField(
+                    default='Enable', max_length=10, null=True)),
+                ('email_delay', models.CharField(
+                    blank=True, default=0, max_length=50, null=True)),
                 ('email_time', models.TimeField(blank=True, null=True)),
-                ('alert_email_address_1', models.EmailField(blank=True, max_length=254, null=True)),
-                ('alert_email_address_2', models.EmailField(blank=True, max_length=254, null=True)),
-                ('alert_email_address_3', models.EmailField(blank=True, max_length=254, null=True)),
-                ('alert_email_address_4', models.EmailField(blank=True, max_length=254, null=True)),
-                ('alert_email_address_5', models.EmailField(blank=True, max_length=254, null=True)),
-                ('alert_email_address_6', models.EmailField(blank=True, max_length=254, null=True)),
-                ('alert_email_address_7', models.EmailField(blank=True, max_length=254, null=True)),
-                ('alert_email_address_8', models.EmailField(blank=True, max_length=254, null=True)),
-                ('alert_email_address_9', models.EmailField(blank=True, max_length=254, null=True)),
-                ('alert_email_address_10', models.EmailField(blank=True, max_length=254, null=True)),
-                ('sms_sys', models.CharField(default='Enable', max_length=10, null=True)),
-                ('sms_delay', models.CharField(blank=True, default=0, max_length=50, null=True)),
+                ('alert_email_address_1', models.EmailField(
+                    blank=True, max_length=254, null=True)),
+                ('alert_email_address_2', models.EmailField(
+                    blank=True, max_length=254, null=True)),
+                ('alert_email_address_3', models.EmailField(
+                    blank=True, max_length=254, null=True)),
+                ('alert_email_address_4', models.EmailField(
+                    blank=True, max_length=254, null=True)),
+                ('alert_email_address_5', models.EmailField(
+                    blank=True, max_length=254, null=True)),
+                ('alert_email_address_6', models.EmailField(
+                    blank=True, max_length=254, null=True)),
+                ('alert_email_address_7', models.EmailField(
+                    blank=True, max_length=254, null=True)),
+                ('alert_email_address_8', models.EmailField(
+                    blank=True, max_length=254, null=True)),
+                ('alert_email_address_9', models.EmailField(
+                    blank=True, max_length=254, null=True)),
+                ('alert_email_address_10', models.EmailField(
+                    blank=True, max_length=254, null=True)),
+                ('sms_sys', models.CharField(
+                    default='Enable', max_length=10, null=True)),
+                ('sms_delay', models.CharField(
+                    blank=True, default=0, max_length=50, null=True)),
                 ('sms_time', models.TimeField(blank=True, null=True)),
                 ('user1', models.CharField(blank=True, max_length=25, null=True)),
                 ('user1_num', models.BigIntegerField(blank=True, null=True)),
@@ -233,136 +266,244 @@ class Migration(migrations.Migration):
                 ('user9_num', models.BigIntegerField(blank=True, null=True)),
                 ('user10', models.CharField(blank=True, max_length=25, null=True)),
                 ('user10_num', models.BigIntegerField(blank=True, null=True)),
-                ('commGroup', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='App1.commgroup')),
+                ('commGroup', models.ForeignKey(
+                    on_delete=django.db.models.deletion.CASCADE, to='App1.commgroup')),
             ],
         ),
         migrations.CreateModel(
             name='Equipment',
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
+                ('id', models.BigAutoField(auto_created=True,
+                 primary_key=True, serialize=False, verbose_name='ID')),
                 ('equip_name', models.CharField(max_length=255, unique=True)),
-                ('status', models.CharField(choices=[('active', 'Active'), ('inactive', 'Inactive')], max_length=10)),
+                ('status', models.CharField(choices=[
+                 ('active', 'Active'), ('inactive', 'Inactive')], max_length=10)),
                 ('ip_address', models.GenericIPAddressField(unique=True)),
                 ('interval', models.IntegerField()),
                 ('equipment_type', models.CharField(max_length=255)),
-                ('door_access_type', models.CharField(choices=[('none', 'None'), ('plc', 'PLC'), ('biometric', 'Biometric')], max_length=15)),
-                ('biometric_banner_text', models.CharField(blank=True, max_length=255, null=True)),
-                ('biometric_ip_address', models.GenericIPAddressField(blank=True, null=True)),
-                ('set_value', models.DecimalField(blank=True, decimal_places=1, max_digits=3, null=True)),
-                ('low_alarm', models.DecimalField(blank=True, decimal_places=1, max_digits=3, null=True)),
-                ('high_alarm', models.DecimalField(blank=True, decimal_places=1, max_digits=3, null=True)),
-                ('high_alert', models.DecimalField(blank=True, decimal_places=1, max_digits=3, null=True)),
-                ('low_alert', models.DecimalField(blank=True, decimal_places=1, max_digits=3, null=True)),
+                ('door_access_type', models.CharField(choices=[
+                 ('none', 'None'), ('plc', 'PLC'), ('biometric', 'Biometric')], max_length=15)),
+                ('biometric_banner_text', models.CharField(
+                    blank=True, max_length=255, null=True)),
+                ('biometric_ip_address', models.GenericIPAddressField(
+                    blank=True, null=True)),
+                ('set_value', models.DecimalField(blank=True,
+                 decimal_places=1, max_digits=3, null=True)),
+                ('low_alarm', models.DecimalField(blank=True,
+                 decimal_places=1, max_digits=3, null=True)),
+                ('high_alarm', models.DecimalField(blank=True,
+                 decimal_places=1, max_digits=3, null=True)),
+                ('high_alert', models.DecimalField(blank=True,
+                 decimal_places=1, max_digits=3, null=True)),
+                ('low_alert', models.DecimalField(blank=True,
+                 decimal_places=1, max_digits=3, null=True)),
                 ('cooling', models.BooleanField(default=True, null=True)),
                 ('total_temp_sensors', models.IntegerField(blank=True, null=True)),
-                ('set_value_hum', models.DecimalField(blank=True, decimal_places=1, max_digits=3, null=True)),
-                ('low_alarm_hum', models.DecimalField(blank=True, decimal_places=1, max_digits=3, null=True)),
-                ('high_alarm_hum', models.DecimalField(blank=True, decimal_places=1, max_digits=3, null=True)),
-                ('high_alert_hum', models.DecimalField(blank=True, decimal_places=1, max_digits=3, null=True)),
-                ('low_alert_hum', models.DecimalField(blank=True, decimal_places=1, max_digits=3, null=True)),
+                ('set_value_hum', models.DecimalField(
+                    blank=True, decimal_places=1, max_digits=3, null=True)),
+                ('low_alarm_hum', models.DecimalField(
+                    blank=True, decimal_places=1, max_digits=3, null=True)),
+                ('high_alarm_hum', models.DecimalField(
+                    blank=True, decimal_places=1, max_digits=3, null=True)),
+                ('high_alert_hum', models.DecimalField(
+                    blank=True, decimal_places=1, max_digits=3, null=True)),
+                ('low_alert_hum', models.DecimalField(
+                    blank=True, decimal_places=1, max_digits=3, null=True)),
                 ('cooling_hum', models.BooleanField(default=True, null=True)),
                 ('total_humidity_sensors', models.IntegerField(blank=True, null=True)),
                 ('online', models.BooleanField(default=False, null=True)),
-                ('department', models.ForeignKey(null=True, on_delete=django.db.models.deletion.SET_NULL, to='App1.department')),
+                ('department',
+                 models.ForeignKey(null=True,
+                                   on_delete=django.db.models.deletion.SET_NULL,
+                                   to='App1.department')),
             ],
         ),
         migrations.CreateModel(
             name='emailalert',
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('code_1001', models.BooleanField(default=False, help_text='Temp 1 Low Alarm')),
-                ('code_1002', models.BooleanField(default=False, help_text='Temp 2 Low Alarm')),
-                ('code_1003', models.BooleanField(default=False, help_text='Temp 3 Low Alarm')),
-                ('code_1004', models.BooleanField(default=False, help_text='Temp 4 Low Alarm')),
-                ('code_1005', models.BooleanField(default=False, help_text='Temp 5 Low Alarm')),
-                ('code_1006', models.BooleanField(default=False, help_text='Temp 6 Low Alarm')),
-                ('code_1007', models.BooleanField(default=False, help_text='Temp 7 Low Alarm')),
-                ('code_1008', models.BooleanField(default=False, help_text='Temp 8 Low Alarm')),
-                ('code_1009', models.BooleanField(default=False, help_text='Temp 9 Low Alarm')),
-                ('code_1010', models.BooleanField(default=False, help_text='Temp 10 Low Alarm')),
-                ('code_1011', models.BooleanField(default=False, help_text='Temp 1 High Alarm')),
-                ('code_1012', models.BooleanField(default=False, help_text='Temp 2 High Alarm')),
-                ('code_1013', models.BooleanField(default=False, help_text='Temp 3 High Alarm')),
-                ('code_1014', models.BooleanField(default=False, help_text='Temp 4 High Alarm')),
-                ('code_1015', models.BooleanField(default=False, help_text='Temp 5 High Alarm')),
-                ('code_1016', models.BooleanField(default=False, help_text='Temp 6 High Alarm')),
-                ('code_1017', models.BooleanField(default=False, help_text='Temp 7 High Alarm')),
-                ('code_1018', models.BooleanField(default=False, help_text='Temp 8 High Alarm')),
-                ('code_1019', models.BooleanField(default=False, help_text='Temp 9 High Alarm')),
-                ('code_1020', models.BooleanField(default=False, help_text='Temp 10 High Alarm')),
-                ('code_1021', models.BooleanField(default=False, help_text='Temp 1 Within Limit')),
-                ('code_1022', models.BooleanField(default=False, help_text='Temp 2 Within Limit')),
-                ('code_1023', models.BooleanField(default=False, help_text='Temp 3 Within Limit')),
-                ('code_1024', models.BooleanField(default=False, help_text='Temp 4 Within Limit')),
-                ('code_1025', models.BooleanField(default=False, help_text='Temp 5 Within Limit')),
-                ('code_1026', models.BooleanField(default=False, help_text='Temp 6 Within Limit')),
-                ('code_1027', models.BooleanField(default=False, help_text='Temp 7 Within Limit')),
-                ('code_1028', models.BooleanField(default=False, help_text='Temp 8 Within Limit')),
-                ('code_1029', models.BooleanField(default=False, help_text='Temp 9 Within Limit')),
-                ('code_1030', models.BooleanField(default=False, help_text='Temp 10 Within Limit')),
-                ('code_1031', models.BooleanField(default=False, help_text='CS 1 Circuit Fail')),
-                ('code_1032', models.BooleanField(default=False, help_text='CS 2 Circuit Fail')),
-                ('code_1033', models.BooleanField(default=False, help_text='Dry Heater Circuit Fail')),
-                ('code_1034', models.BooleanField(default=False, help_text='Mains Power Fail')),
-                ('code_1035', models.BooleanField(default=False, help_text='Mains Power Resume')),
-                ('code_1036', models.BooleanField(default=False, help_text='LT Thermostat Trip')),
-                ('code_1037', models.BooleanField(default=False, help_text='HT Thermostat Trip')),
-                ('code_1038', models.BooleanField(default=False, help_text='Door Open')),
-                ('code_1039', models.BooleanField(default=False, help_text='Door Closed')),
-                ('code_1040', models.BooleanField(default=False, help_text='Water Level Low')),
-                ('code_1041', models.BooleanField(default=False, help_text='Water Level OK')),
-                ('code_1042', models.BooleanField(default=False, help_text='RH 1 Low Alarm')),
-                ('code_1043', models.BooleanField(default=False, help_text='RH 2 Low Alarm')),
-                ('code_1044', models.BooleanField(default=False, help_text='RH 3 Low Alarm')),
-                ('code_1045', models.BooleanField(default=False, help_text='RH 4 Low Alarm')),
-                ('code_1046', models.BooleanField(default=False, help_text='RH 5 Low Alarm')),
-                ('code_1047', models.BooleanField(default=False, help_text='RH 6 Low Alarm')),
-                ('code_1048', models.BooleanField(default=False, help_text='RH 7 Low Alarm')),
-                ('code_1049', models.BooleanField(default=False, help_text='RH 8 Low Alarm')),
-                ('code_1050', models.BooleanField(default=False, help_text='RH 9 Low Alarm')),
-                ('code_1051', models.BooleanField(default=False, help_text='RH 10 Low Alarm')),
-                ('code_1053', models.BooleanField(default=False, help_text='RH 1 High Alarm')),
-                ('code_1054', models.BooleanField(default=False, help_text='RH 2 High Alarm')),
-                ('code_1055', models.BooleanField(default=False, help_text='RH 3 High Alarm')),
-                ('code_1056', models.BooleanField(default=False, help_text='RH 4 High Alarm')),
-                ('code_1057', models.BooleanField(default=False, help_text='RH 5 High Alarm')),
-                ('code_1058', models.BooleanField(default=False, help_text='RH 6 High Alarm')),
-                ('code_1059', models.BooleanField(default=False, help_text='RH 7 High Alarm')),
-                ('code_1060', models.BooleanField(default=False, help_text='RH 8 High Alarm')),
-                ('code_1061', models.BooleanField(default=False, help_text='RH 9 High Alarm')),
-                ('code_1062', models.BooleanField(default=False, help_text='RH 10 High Alarm')),
-                ('code_1063', models.BooleanField(default=False, help_text='RH 1 Within Limit')),
-                ('code_1064', models.BooleanField(default=False, help_text='RH 2 Within Limit')),
-                ('code_1065', models.BooleanField(default=False, help_text='RH 3 Within Limit')),
-                ('code_1066', models.BooleanField(default=False, help_text='RH 4 Within Limit')),
-                ('code_1067', models.BooleanField(default=False, help_text='RH 5 Within Limit')),
-                ('code_1068', models.BooleanField(default=False, help_text='RH 6 Within Limit')),
-                ('code_1069', models.BooleanField(default=False, help_text='RH 7 Within Limit')),
-                ('code_1070', models.BooleanField(default=False, help_text='RH 8 Within Limit')),
-                ('code_1071', models.BooleanField(default=False, help_text='RH 9 Within Limit')),
-                ('code_1072', models.BooleanField(default=False, help_text='RH 10 Within Limit')),
-                ('code_2001', models.BooleanField(default=False, help_text='Door Access By User 1')),
-                ('code_2002', models.BooleanField(default=False, help_text='Door Access By User 2')),
-                ('code_2003', models.BooleanField(default=False, help_text='Door Access By User 3')),
-                ('code_2004', models.BooleanField(default=False, help_text='Door Access By User 4')),
-                ('code_2005', models.BooleanField(default=False, help_text='Door Access By User 5')),
-                ('code_2006', models.BooleanField(default=False, help_text='Door Access By User 6')),
-                ('code_2007', models.BooleanField(default=False, help_text='Door Access By User 7')),
-                ('code_2008', models.BooleanField(default=False, help_text='Door Access By User 8')),
-                ('code_2009', models.BooleanField(default=False, help_text='Door Access By User 9')),
-                ('code_2010', models.BooleanField(default=False, help_text='Door Access By User 10')),
-                ('code_2011', models.BooleanField(default=False, help_text='Door Access By User 11')),
-                ('code_2012', models.BooleanField(default=False, help_text='Door Access By User 12')),
-                ('code_2013', models.BooleanField(default=False, help_text='Door Access By User 13')),
-                ('code_2014', models.BooleanField(default=False, help_text='Door Access By User 14')),
-                ('code_2015', models.BooleanField(default=False, help_text='Door Access By User 15')),
-                ('equipment_name', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='App1.equipment')),
+                ('id', models.BigAutoField(auto_created=True,
+                 primary_key=True, serialize=False, verbose_name='ID')),
+                ('code_1001', models.BooleanField(
+                    default=False, help_text='Temp 1 Low Alarm')),
+                ('code_1002', models.BooleanField(
+                    default=False, help_text='Temp 2 Low Alarm')),
+                ('code_1003', models.BooleanField(
+                    default=False, help_text='Temp 3 Low Alarm')),
+                ('code_1004', models.BooleanField(
+                    default=False, help_text='Temp 4 Low Alarm')),
+                ('code_1005', models.BooleanField(
+                    default=False, help_text='Temp 5 Low Alarm')),
+                ('code_1006', models.BooleanField(
+                    default=False, help_text='Temp 6 Low Alarm')),
+                ('code_1007', models.BooleanField(
+                    default=False, help_text='Temp 7 Low Alarm')),
+                ('code_1008', models.BooleanField(
+                    default=False, help_text='Temp 8 Low Alarm')),
+                ('code_1009', models.BooleanField(
+                    default=False, help_text='Temp 9 Low Alarm')),
+                ('code_1010', models.BooleanField(
+                    default=False, help_text='Temp 10 Low Alarm')),
+                ('code_1011', models.BooleanField(
+                    default=False, help_text='Temp 1 High Alarm')),
+                ('code_1012', models.BooleanField(
+                    default=False, help_text='Temp 2 High Alarm')),
+                ('code_1013', models.BooleanField(
+                    default=False, help_text='Temp 3 High Alarm')),
+                ('code_1014', models.BooleanField(
+                    default=False, help_text='Temp 4 High Alarm')),
+                ('code_1015', models.BooleanField(
+                    default=False, help_text='Temp 5 High Alarm')),
+                ('code_1016', models.BooleanField(
+                    default=False, help_text='Temp 6 High Alarm')),
+                ('code_1017', models.BooleanField(
+                    default=False, help_text='Temp 7 High Alarm')),
+                ('code_1018', models.BooleanField(
+                    default=False, help_text='Temp 8 High Alarm')),
+                ('code_1019', models.BooleanField(
+                    default=False, help_text='Temp 9 High Alarm')),
+                ('code_1020', models.BooleanField(
+                    default=False, help_text='Temp 10 High Alarm')),
+                ('code_1021', models.BooleanField(
+                    default=False, help_text='Temp 1 Within Limit')),
+                ('code_1022', models.BooleanField(
+                    default=False, help_text='Temp 2 Within Limit')),
+                ('code_1023', models.BooleanField(
+                    default=False, help_text='Temp 3 Within Limit')),
+                ('code_1024', models.BooleanField(
+                    default=False, help_text='Temp 4 Within Limit')),
+                ('code_1025', models.BooleanField(
+                    default=False, help_text='Temp 5 Within Limit')),
+                ('code_1026', models.BooleanField(
+                    default=False, help_text='Temp 6 Within Limit')),
+                ('code_1027', models.BooleanField(
+                    default=False, help_text='Temp 7 Within Limit')),
+                ('code_1028', models.BooleanField(
+                    default=False, help_text='Temp 8 Within Limit')),
+                ('code_1029', models.BooleanField(
+                    default=False, help_text='Temp 9 Within Limit')),
+                ('code_1030', models.BooleanField(
+                    default=False, help_text='Temp 10 Within Limit')),
+                ('code_1031', models.BooleanField(
+                    default=False, help_text='CS 1 Circuit Fail')),
+                ('code_1032', models.BooleanField(
+                    default=False, help_text='CS 2 Circuit Fail')),
+                ('code_1033', models.BooleanField(
+                    default=False, help_text='Dry Heater Circuit Fail')),
+                ('code_1034', models.BooleanField(
+                    default=False, help_text='Mains Power Fail')),
+                ('code_1035', models.BooleanField(
+                    default=False, help_text='Mains Power Resume')),
+                ('code_1036', models.BooleanField(
+                    default=False, help_text='LT Thermostat Trip')),
+                ('code_1037', models.BooleanField(
+                    default=False, help_text='HT Thermostat Trip')),
+                ('code_1038', models.BooleanField(
+                    default=False, help_text='Door Open')),
+                ('code_1039', models.BooleanField(
+                    default=False, help_text='Door Closed')),
+                ('code_1040', models.BooleanField(
+                    default=False, help_text='Water Level Low')),
+                ('code_1041', models.BooleanField(
+                    default=False, help_text='Water Level OK')),
+                ('code_1042', models.BooleanField(
+                    default=False, help_text='RH 1 Low Alarm')),
+                ('code_1043', models.BooleanField(
+                    default=False, help_text='RH 2 Low Alarm')),
+                ('code_1044', models.BooleanField(
+                    default=False, help_text='RH 3 Low Alarm')),
+                ('code_1045', models.BooleanField(
+                    default=False, help_text='RH 4 Low Alarm')),
+                ('code_1046', models.BooleanField(
+                    default=False, help_text='RH 5 Low Alarm')),
+                ('code_1047', models.BooleanField(
+                    default=False, help_text='RH 6 Low Alarm')),
+                ('code_1048', models.BooleanField(
+                    default=False, help_text='RH 7 Low Alarm')),
+                ('code_1049', models.BooleanField(
+                    default=False, help_text='RH 8 Low Alarm')),
+                ('code_1050', models.BooleanField(
+                    default=False, help_text='RH 9 Low Alarm')),
+                ('code_1051', models.BooleanField(
+                    default=False, help_text='RH 10 Low Alarm')),
+                ('code_1053', models.BooleanField(
+                    default=False, help_text='RH 1 High Alarm')),
+                ('code_1054', models.BooleanField(
+                    default=False, help_text='RH 2 High Alarm')),
+                ('code_1055', models.BooleanField(
+                    default=False, help_text='RH 3 High Alarm')),
+                ('code_1056', models.BooleanField(
+                    default=False, help_text='RH 4 High Alarm')),
+                ('code_1057', models.BooleanField(
+                    default=False, help_text='RH 5 High Alarm')),
+                ('code_1058', models.BooleanField(
+                    default=False, help_text='RH 6 High Alarm')),
+                ('code_1059', models.BooleanField(
+                    default=False, help_text='RH 7 High Alarm')),
+                ('code_1060', models.BooleanField(
+                    default=False, help_text='RH 8 High Alarm')),
+                ('code_1061', models.BooleanField(
+                    default=False, help_text='RH 9 High Alarm')),
+                ('code_1062', models.BooleanField(
+                    default=False, help_text='RH 10 High Alarm')),
+                ('code_1063', models.BooleanField(
+                    default=False, help_text='RH 1 Within Limit')),
+                ('code_1064', models.BooleanField(
+                    default=False, help_text='RH 2 Within Limit')),
+                ('code_1065', models.BooleanField(
+                    default=False, help_text='RH 3 Within Limit')),
+                ('code_1066', models.BooleanField(
+                    default=False, help_text='RH 4 Within Limit')),
+                ('code_1067', models.BooleanField(
+                    default=False, help_text='RH 5 Within Limit')),
+                ('code_1068', models.BooleanField(
+                    default=False, help_text='RH 6 Within Limit')),
+                ('code_1069', models.BooleanField(
+                    default=False, help_text='RH 7 Within Limit')),
+                ('code_1070', models.BooleanField(
+                    default=False, help_text='RH 8 Within Limit')),
+                ('code_1071', models.BooleanField(
+                    default=False, help_text='RH 9 Within Limit')),
+                ('code_1072', models.BooleanField(
+                    default=False, help_text='RH 10 Within Limit')),
+                ('code_2001', models.BooleanField(
+                    default=False, help_text='Door Access By User 1')),
+                ('code_2002', models.BooleanField(
+                    default=False, help_text='Door Access By User 2')),
+                ('code_2003', models.BooleanField(
+                    default=False, help_text='Door Access By User 3')),
+                ('code_2004', models.BooleanField(
+                    default=False, help_text='Door Access By User 4')),
+                ('code_2005', models.BooleanField(
+                    default=False, help_text='Door Access By User 5')),
+                ('code_2006', models.BooleanField(
+                    default=False, help_text='Door Access By User 6')),
+                ('code_2007', models.BooleanField(
+                    default=False, help_text='Door Access By User 7')),
+                ('code_2008', models.BooleanField(
+                    default=False, help_text='Door Access By User 8')),
+                ('code_2009', models.BooleanField(
+                    default=False, help_text='Door Access By User 9')),
+                ('code_2010', models.BooleanField(
+                    default=False, help_text='Door Access By User 10')),
+                ('code_2011', models.BooleanField(
+                    default=False, help_text='Door Access By User 11')),
+                ('code_2012', models.BooleanField(
+                    default=False, help_text='Door Access By User 12')),
+                ('code_2013', models.BooleanField(
+                    default=False, help_text='Door Access By User 13')),
+                ('code_2014', models.BooleanField(
+                    default=False, help_text='Door Access By User 14')),
+                ('code_2015', models.BooleanField(
+                    default=False, help_text='Door Access By User 15')),
+                ('equipment_name', models.ForeignKey(
+                    on_delete=django.db.models.deletion.CASCADE, to='App1.equipment')),
             ],
         ),
         migrations.CreateModel(
             name='Email_logs',
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
+                ('id', models.BigAutoField(auto_created=True,
+                 primary_key=True, serialize=False, verbose_name='ID')),
                 ('time', models.TimeField()),
                 ('date', models.DateField()),
                 ('sys_mail', models.BooleanField(default=False)),
@@ -370,22 +511,31 @@ class Migration(migrations.Migration):
                 ('email_sub', models.CharField(max_length=100, null=True)),
                 ('email_body', models.TextField(null=True)),
                 ('status', models.CharField(max_length=10, null=True)),
-                ('equipment', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, to='App1.equipment')),
+                ('equipment',
+                 models.ForeignKey(blank=True,
+                                   null=True,
+                                   on_delete=django.db.models.deletion.CASCADE,
+                                   to='App1.equipment')),
             ],
         ),
         migrations.CreateModel(
             name='BiometricUser',
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
+                ('id', models.BigAutoField(auto_created=True,
+                 primary_key=True, serialize=False, verbose_name='ID')),
                 ('username', models.CharField(max_length=255)),
                 ('card_number', models.CharField(max_length=255)),
-                ('equipment', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='biometric_users', to='App1.equipment')),
+                ('equipment',
+                 models.ForeignKey(on_delete=django.db.models.deletion.CASCADE,
+                                   related_name='biometric_users',
+                                   to='App1.equipment')),
             ],
         ),
         migrations.CreateModel(
             name='Alarm_logs',
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
+                ('id', models.BigAutoField(auto_created=True,
+                 primary_key=True, serialize=False, verbose_name='ID')),
                 ('time', models.TimeField()),
                 ('date', models.DateField()),
                 ('comments', models.CharField(max_length=255, null=True)),
@@ -393,65 +543,107 @@ class Migration(migrations.Migration):
                 ('ack_date', models.DateField(null=True)),
                 ('ack_time', models.TimeField(null=True)),
                 ('ack_user', models.CharField(max_length=50, null=True)),
-                ('alarm_code', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='App1.alarm_codes', to_field='code')),
-                ('equipment', models.ForeignKey(null=True, on_delete=django.db.models.deletion.CASCADE, to='App1.equipment')),
+                ('alarm_code',
+                 models.ForeignKey(on_delete=django.db.models.deletion.CASCADE,
+                                   to='App1.alarm_codes',
+                                   to_field='code')),
+                ('equipment',
+                 models.ForeignKey(null=True,
+                                   on_delete=django.db.models.deletion.CASCADE,
+                                   to='App1.equipment')),
             ],
         ),
         migrations.CreateModel(
             name='Equipmentwrite',
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
+                ('id', models.BigAutoField(auto_created=True,
+                 primary_key=True, serialize=False, verbose_name='ID')),
                 ('time', models.TimeField()),
                 ('date', models.DateField()),
                 ('label', models.CharField(max_length=50, null=True)),
                 ('value', models.DecimalField(decimal_places=2, max_digits=5)),
                 ('status', models.CharField(max_length=10)),
                 ('login_name', models.CharField(max_length=50, null=True)),
-                ('old_value', models.DecimalField(decimal_places=2, max_digits=5, null=True)),
+                ('old_value', models.DecimalField(
+                    decimal_places=2, max_digits=5, null=True)),
                 ('comment', models.CharField(max_length=200, null=True)),
-                ('equipment', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, to='App1.equipment')),
+                ('equipment',
+                 models.ForeignKey(blank=True,
+                                   null=True,
+                                   on_delete=django.db.models.deletion.CASCADE,
+                                   to='App1.equipment')),
             ],
         ),
         migrations.CreateModel(
             name='EquipParameter',
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('t1color', models.CharField(blank=True, default='black', max_length=20, null=True)),
-                ('t2color', models.CharField(blank=True, default='black', max_length=20, null=True)),
-                ('t3color', models.CharField(blank=True, default='black', max_length=20, null=True)),
-                ('t4color', models.CharField(blank=True, default='black', max_length=20, null=True)),
-                ('t5color', models.CharField(blank=True, default='black', max_length=20, null=True)),
-                ('t6color', models.CharField(blank=True, default='black', max_length=20, null=True)),
-                ('t7color', models.CharField(blank=True, default='black', max_length=20, null=True)),
-                ('t8color', models.CharField(blank=True, default='black', max_length=20, null=True)),
-                ('t9color', models.CharField(blank=True, default='black', max_length=20, null=True)),
-                ('t10color', models.CharField(blank=True, default='black', max_length=20, null=True)),
-                ('rh1color', models.CharField(blank=True, default='black', max_length=20, null=True)),
-                ('rh2color', models.CharField(blank=True, default='black', max_length=20, null=True)),
-                ('rh3color', models.CharField(blank=True, default='black', max_length=20, null=True)),
-                ('rh4color', models.CharField(blank=True, default='black', max_length=20, null=True)),
-                ('rh5color', models.CharField(blank=True, default='black', max_length=20, null=True)),
-                ('rh6color', models.CharField(blank=True, default='black', max_length=20, null=True)),
-                ('rh7color', models.CharField(blank=True, default='black', max_length=20, null=True)),
-                ('rh8color', models.CharField(blank=True, default='black', max_length=20, null=True)),
-                ('rh9color', models.CharField(blank=True, default='black', max_length=20, null=True)),
-                ('rh10color', models.CharField(blank=True, default='black', max_length=20, null=True)),
-                ('equipment', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, to='App1.equipment')),
+                ('id', models.BigAutoField(auto_created=True,
+                 primary_key=True, serialize=False, verbose_name='ID')),
+                ('t1color', models.CharField(blank=True,
+                 default='black', max_length=20, null=True)),
+                ('t2color', models.CharField(blank=True,
+                 default='black', max_length=20, null=True)),
+                ('t3color', models.CharField(blank=True,
+                 default='black', max_length=20, null=True)),
+                ('t4color', models.CharField(blank=True,
+                 default='black', max_length=20, null=True)),
+                ('t5color', models.CharField(blank=True,
+                 default='black', max_length=20, null=True)),
+                ('t6color', models.CharField(blank=True,
+                 default='black', max_length=20, null=True)),
+                ('t7color', models.CharField(blank=True,
+                 default='black', max_length=20, null=True)),
+                ('t8color', models.CharField(blank=True,
+                 default='black', max_length=20, null=True)),
+                ('t9color', models.CharField(blank=True,
+                 default='black', max_length=20, null=True)),
+                ('t10color', models.CharField(blank=True,
+                 default='black', max_length=20, null=True)),
+                ('rh1color', models.CharField(blank=True,
+                 default='black', max_length=20, null=True)),
+                ('rh2color', models.CharField(blank=True,
+                 default='black', max_length=20, null=True)),
+                ('rh3color', models.CharField(blank=True,
+                 default='black', max_length=20, null=True)),
+                ('rh4color', models.CharField(blank=True,
+                 default='black', max_length=20, null=True)),
+                ('rh5color', models.CharField(blank=True,
+                 default='black', max_length=20, null=True)),
+                ('rh6color', models.CharField(blank=True,
+                 default='black', max_length=20, null=True)),
+                ('rh7color', models.CharField(blank=True,
+                 default='black', max_length=20, null=True)),
+                ('rh8color', models.CharField(blank=True,
+                 default='black', max_length=20, null=True)),
+                ('rh9color', models.CharField(blank=True,
+                 default='black', max_length=20, null=True)),
+                ('rh10color', models.CharField(blank=True,
+                 default='black', max_length=20, null=True)),
+                ('equipment',
+                 models.ForeignKey(blank=True,
+                                   null=True,
+                                   on_delete=django.db.models.deletion.CASCADE,
+                                   to='App1.equipment')),
             ],
         ),
         migrations.CreateModel(
             name='PLCUser',
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
+                ('id', models.BigAutoField(auto_created=True,
+                 primary_key=True, serialize=False, verbose_name='ID')),
                 ('code', models.IntegerField(null=True)),
                 ('username', models.CharField(max_length=255)),
-                ('equipment', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='plc_users', to='App1.equipment')),
+                ('equipment',
+                 models.ForeignKey(on_delete=django.db.models.deletion.CASCADE,
+                                   related_name='plc_users',
+                                   to='App1.equipment')),
             ],
         ),
         migrations.CreateModel(
             name='Sms_logs',
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
+                ('id', models.BigAutoField(auto_created=True,
+                 primary_key=True, serialize=False, verbose_name='ID')),
                 ('time', models.TimeField()),
                 ('date', models.DateField()),
                 ('sys_sms', models.BooleanField(default=False)),
@@ -459,106 +651,199 @@ class Migration(migrations.Migration):
                 ('user_name', models.CharField(max_length=100, null=True)),
                 ('msg_body', models.TextField(null=True)),
                 ('status', models.CharField(max_length=10, null=True)),
-                ('equipment', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, to='App1.equipment')),
+                ('equipment',
+                 models.ForeignKey(blank=True,
+                                   null=True,
+                                   on_delete=django.db.models.deletion.CASCADE,
+                                   to='App1.equipment')),
             ],
         ),
         migrations.CreateModel(
             name='smsalert',
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('code_1001', models.BooleanField(default=False, help_text='Temp 1 Low Alarm')),
-                ('code_1002', models.BooleanField(default=False, help_text='Temp 2 Low Alarm')),
-                ('code_1003', models.BooleanField(default=False, help_text='Temp 3 Low Alarm')),
-                ('code_1004', models.BooleanField(default=False, help_text='Temp 4 Low Alarm')),
-                ('code_1005', models.BooleanField(default=False, help_text='Temp 5 Low Alarm')),
-                ('code_1006', models.BooleanField(default=False, help_text='Temp 6 Low Alarm')),
-                ('code_1007', models.BooleanField(default=False, help_text='Temp 7 Low Alarm')),
-                ('code_1008', models.BooleanField(default=False, help_text='Temp 8 Low Alarm')),
-                ('code_1009', models.BooleanField(default=False, help_text='Temp 9 Low Alarm')),
-                ('code_1010', models.BooleanField(default=False, help_text='Temp 10 Low Alarm')),
-                ('code_1011', models.BooleanField(default=False, help_text='Temp 1 High Alarm')),
-                ('code_1012', models.BooleanField(default=False, help_text='Temp 2 High Alarm')),
-                ('code_1013', models.BooleanField(default=False, help_text='Temp 3 High Alarm')),
-                ('code_1014', models.BooleanField(default=False, help_text='Temp 4 High Alarm')),
-                ('code_1015', models.BooleanField(default=False, help_text='Temp 5 High Alarm')),
-                ('code_1016', models.BooleanField(default=False, help_text='Temp 6 High Alarm')),
-                ('code_1017', models.BooleanField(default=False, help_text='Temp 7 High Alarm')),
-                ('code_1018', models.BooleanField(default=False, help_text='Temp 8 High Alarm')),
-                ('code_1019', models.BooleanField(default=False, help_text='Temp 9 High Alarm')),
-                ('code_1020', models.BooleanField(default=False, help_text='Temp 10 High Alarm')),
-                ('code_1021', models.BooleanField(default=False, help_text='Temp 1 Within Limit')),
-                ('code_1022', models.BooleanField(default=False, help_text='Temp 2 Within Limit')),
-                ('code_1023', models.BooleanField(default=False, help_text='Temp 3 Within Limit')),
-                ('code_1024', models.BooleanField(default=False, help_text='Temp 4 Within Limit')),
-                ('code_1025', models.BooleanField(default=False, help_text='Temp 5 Within Limit')),
-                ('code_1026', models.BooleanField(default=False, help_text='Temp 6 Within Limit')),
-                ('code_1027', models.BooleanField(default=False, help_text='Temp 7 Within Limit')),
-                ('code_1028', models.BooleanField(default=False, help_text='Temp 8 Within Limit')),
-                ('code_1029', models.BooleanField(default=False, help_text='Temp 9 Within Limit')),
-                ('code_1030', models.BooleanField(default=False, help_text='Temp 10 Within Limit')),
-                ('code_1031', models.BooleanField(default=False, help_text='CS 1 Circuit Fail')),
-                ('code_1032', models.BooleanField(default=False, help_text='CS 2 Circuit Fail')),
-                ('code_1033', models.BooleanField(default=False, help_text='Dry Heater Circuit Fail')),
-                ('code_1034', models.BooleanField(default=False, help_text='Mains Power Fail')),
-                ('code_1035', models.BooleanField(default=False, help_text='Mains Power Resume')),
-                ('code_1036', models.BooleanField(default=False, help_text='LT Thermostat Trip')),
-                ('code_1037', models.BooleanField(default=False, help_text='HT Thermostat Trip')),
-                ('code_1038', models.BooleanField(default=False, help_text='Door Open')),
-                ('code_1039', models.BooleanField(default=False, help_text='Door Closed')),
-                ('code_1040', models.BooleanField(default=False, help_text='Water Level Low')),
-                ('code_1041', models.BooleanField(default=False, help_text='Water Level OK')),
-                ('code_1042', models.BooleanField(default=False, help_text='RH 1 Low Alarm')),
-                ('code_1043', models.BooleanField(default=False, help_text='RH 2 Low Alarm')),
-                ('code_1044', models.BooleanField(default=False, help_text='RH 3 Low Alarm')),
-                ('code_1045', models.BooleanField(default=False, help_text='RH 4 Low Alarm')),
-                ('code_1046', models.BooleanField(default=False, help_text='RH 5 Low Alarm')),
-                ('code_1047', models.BooleanField(default=False, help_text='RH 6 Low Alarm')),
-                ('code_1048', models.BooleanField(default=False, help_text='RH 7 Low Alarm')),
-                ('code_1049', models.BooleanField(default=False, help_text='RH 8 Low Alarm')),
-                ('code_1050', models.BooleanField(default=False, help_text='RH 9 Low Alarm')),
-                ('code_1051', models.BooleanField(default=False, help_text='RH 10 Low Alarm')),
-                ('code_1053', models.BooleanField(default=False, help_text='RH 1 High Alarm')),
-                ('code_1054', models.BooleanField(default=False, help_text='RH 2 High Alarm')),
-                ('code_1055', models.BooleanField(default=False, help_text='RH 3 High Alarm')),
-                ('code_1056', models.BooleanField(default=False, help_text='RH 4 High Alarm')),
-                ('code_1057', models.BooleanField(default=False, help_text='RH 5 High Alarm')),
-                ('code_1058', models.BooleanField(default=False, help_text='RH 6 High Alarm')),
-                ('code_1059', models.BooleanField(default=False, help_text='RH 7 High Alarm')),
-                ('code_1060', models.BooleanField(default=False, help_text='RH 8 High Alarm')),
-                ('code_1061', models.BooleanField(default=False, help_text='RH 9 High Alarm')),
-                ('code_1062', models.BooleanField(default=False, help_text='RH 10 High Alarm')),
-                ('code_1063', models.BooleanField(default=False, help_text='RH 1 Within Limit')),
-                ('code_1064', models.BooleanField(default=False, help_text='RH 2 Within Limit')),
-                ('code_1065', models.BooleanField(default=False, help_text='RH 3 Within Limit')),
-                ('code_1066', models.BooleanField(default=False, help_text='RH 4 Within Limit')),
-                ('code_1067', models.BooleanField(default=False, help_text='RH 5 Within Limit')),
-                ('code_1068', models.BooleanField(default=False, help_text='RH 6 Within Limit')),
-                ('code_1069', models.BooleanField(default=False, help_text='RH 7 Within Limit')),
-                ('code_1070', models.BooleanField(default=False, help_text='RH 8 Within Limit')),
-                ('code_1071', models.BooleanField(default=False, help_text='RH 9 Within Limit')),
-                ('code_1072', models.BooleanField(default=False, help_text='RH 10 Within Limit')),
-                ('code_2001', models.BooleanField(default=False, help_text='Door Access By User 1')),
-                ('code_2002', models.BooleanField(default=False, help_text='Door Access By User 2')),
-                ('code_2003', models.BooleanField(default=False, help_text='Door Access By User 3')),
-                ('code_2004', models.BooleanField(default=False, help_text='Door Access By User 4')),
-                ('code_2005', models.BooleanField(default=False, help_text='Door Access By User 5')),
-                ('code_2006', models.BooleanField(default=False, help_text='Door Access By User 6')),
-                ('code_2007', models.BooleanField(default=False, help_text='Door Access By User 7')),
-                ('code_2008', models.BooleanField(default=False, help_text='Door Access By User 8')),
-                ('code_2009', models.BooleanField(default=False, help_text='Door Access By User 9')),
-                ('code_2010', models.BooleanField(default=False, help_text='Door Access By User 10')),
-                ('code_2011', models.BooleanField(default=False, help_text='Door Access By User 11')),
-                ('code_2012', models.BooleanField(default=False, help_text='Door Access By User 12')),
-                ('code_2013', models.BooleanField(default=False, help_text='Door Access By User 13')),
-                ('code_2014', models.BooleanField(default=False, help_text='Door Access By User 14')),
-                ('code_2015', models.BooleanField(default=False, help_text='Door Access By User 15')),
-                ('equipment_name', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='App1.equipment')),
+                ('id', models.BigAutoField(auto_created=True,
+                 primary_key=True, serialize=False, verbose_name='ID')),
+                ('code_1001', models.BooleanField(
+                    default=False, help_text='Temp 1 Low Alarm')),
+                ('code_1002', models.BooleanField(
+                    default=False, help_text='Temp 2 Low Alarm')),
+                ('code_1003', models.BooleanField(
+                    default=False, help_text='Temp 3 Low Alarm')),
+                ('code_1004', models.BooleanField(
+                    default=False, help_text='Temp 4 Low Alarm')),
+                ('code_1005', models.BooleanField(
+                    default=False, help_text='Temp 5 Low Alarm')),
+                ('code_1006', models.BooleanField(
+                    default=False, help_text='Temp 6 Low Alarm')),
+                ('code_1007', models.BooleanField(
+                    default=False, help_text='Temp 7 Low Alarm')),
+                ('code_1008', models.BooleanField(
+                    default=False, help_text='Temp 8 Low Alarm')),
+                ('code_1009', models.BooleanField(
+                    default=False, help_text='Temp 9 Low Alarm')),
+                ('code_1010', models.BooleanField(
+                    default=False, help_text='Temp 10 Low Alarm')),
+                ('code_1011', models.BooleanField(
+                    default=False, help_text='Temp 1 High Alarm')),
+                ('code_1012', models.BooleanField(
+                    default=False, help_text='Temp 2 High Alarm')),
+                ('code_1013', models.BooleanField(
+                    default=False, help_text='Temp 3 High Alarm')),
+                ('code_1014', models.BooleanField(
+                    default=False, help_text='Temp 4 High Alarm')),
+                ('code_1015', models.BooleanField(
+                    default=False, help_text='Temp 5 High Alarm')),
+                ('code_1016', models.BooleanField(
+                    default=False, help_text='Temp 6 High Alarm')),
+                ('code_1017', models.BooleanField(
+                    default=False, help_text='Temp 7 High Alarm')),
+                ('code_1018', models.BooleanField(
+                    default=False, help_text='Temp 8 High Alarm')),
+                ('code_1019', models.BooleanField(
+                    default=False, help_text='Temp 9 High Alarm')),
+                ('code_1020', models.BooleanField(
+                    default=False, help_text='Temp 10 High Alarm')),
+                ('code_1021', models.BooleanField(
+                    default=False, help_text='Temp 1 Within Limit')),
+                ('code_1022', models.BooleanField(
+                    default=False, help_text='Temp 2 Within Limit')),
+                ('code_1023', models.BooleanField(
+                    default=False, help_text='Temp 3 Within Limit')),
+                ('code_1024', models.BooleanField(
+                    default=False, help_text='Temp 4 Within Limit')),
+                ('code_1025', models.BooleanField(
+                    default=False, help_text='Temp 5 Within Limit')),
+                ('code_1026', models.BooleanField(
+                    default=False, help_text='Temp 6 Within Limit')),
+                ('code_1027', models.BooleanField(
+                    default=False, help_text='Temp 7 Within Limit')),
+                ('code_1028', models.BooleanField(
+                    default=False, help_text='Temp 8 Within Limit')),
+                ('code_1029', models.BooleanField(
+                    default=False, help_text='Temp 9 Within Limit')),
+                ('code_1030', models.BooleanField(
+                    default=False, help_text='Temp 10 Within Limit')),
+                ('code_1031', models.BooleanField(
+                    default=False, help_text='CS 1 Circuit Fail')),
+                ('code_1032', models.BooleanField(
+                    default=False, help_text='CS 2 Circuit Fail')),
+                ('code_1033', models.BooleanField(
+                    default=False, help_text='Dry Heater Circuit Fail')),
+                ('code_1034', models.BooleanField(
+                    default=False, help_text='Mains Power Fail')),
+                ('code_1035', models.BooleanField(
+                    default=False, help_text='Mains Power Resume')),
+                ('code_1036', models.BooleanField(
+                    default=False, help_text='LT Thermostat Trip')),
+                ('code_1037', models.BooleanField(
+                    default=False, help_text='HT Thermostat Trip')),
+                ('code_1038', models.BooleanField(
+                    default=False, help_text='Door Open')),
+                ('code_1039', models.BooleanField(
+                    default=False, help_text='Door Closed')),
+                ('code_1040', models.BooleanField(
+                    default=False, help_text='Water Level Low')),
+                ('code_1041', models.BooleanField(
+                    default=False, help_text='Water Level OK')),
+                ('code_1042', models.BooleanField(
+                    default=False, help_text='RH 1 Low Alarm')),
+                ('code_1043', models.BooleanField(
+                    default=False, help_text='RH 2 Low Alarm')),
+                ('code_1044', models.BooleanField(
+                    default=False, help_text='RH 3 Low Alarm')),
+                ('code_1045', models.BooleanField(
+                    default=False, help_text='RH 4 Low Alarm')),
+                ('code_1046', models.BooleanField(
+                    default=False, help_text='RH 5 Low Alarm')),
+                ('code_1047', models.BooleanField(
+                    default=False, help_text='RH 6 Low Alarm')),
+                ('code_1048', models.BooleanField(
+                    default=False, help_text='RH 7 Low Alarm')),
+                ('code_1049', models.BooleanField(
+                    default=False, help_text='RH 8 Low Alarm')),
+                ('code_1050', models.BooleanField(
+                    default=False, help_text='RH 9 Low Alarm')),
+                ('code_1051', models.BooleanField(
+                    default=False, help_text='RH 10 Low Alarm')),
+                ('code_1053', models.BooleanField(
+                    default=False, help_text='RH 1 High Alarm')),
+                ('code_1054', models.BooleanField(
+                    default=False, help_text='RH 2 High Alarm')),
+                ('code_1055', models.BooleanField(
+                    default=False, help_text='RH 3 High Alarm')),
+                ('code_1056', models.BooleanField(
+                    default=False, help_text='RH 4 High Alarm')),
+                ('code_1057', models.BooleanField(
+                    default=False, help_text='RH 5 High Alarm')),
+                ('code_1058', models.BooleanField(
+                    default=False, help_text='RH 6 High Alarm')),
+                ('code_1059', models.BooleanField(
+                    default=False, help_text='RH 7 High Alarm')),
+                ('code_1060', models.BooleanField(
+                    default=False, help_text='RH 8 High Alarm')),
+                ('code_1061', models.BooleanField(
+                    default=False, help_text='RH 9 High Alarm')),
+                ('code_1062', models.BooleanField(
+                    default=False, help_text='RH 10 High Alarm')),
+                ('code_1063', models.BooleanField(
+                    default=False, help_text='RH 1 Within Limit')),
+                ('code_1064', models.BooleanField(
+                    default=False, help_text='RH 2 Within Limit')),
+                ('code_1065', models.BooleanField(
+                    default=False, help_text='RH 3 Within Limit')),
+                ('code_1066', models.BooleanField(
+                    default=False, help_text='RH 4 Within Limit')),
+                ('code_1067', models.BooleanField(
+                    default=False, help_text='RH 5 Within Limit')),
+                ('code_1068', models.BooleanField(
+                    default=False, help_text='RH 6 Within Limit')),
+                ('code_1069', models.BooleanField(
+                    default=False, help_text='RH 7 Within Limit')),
+                ('code_1070', models.BooleanField(
+                    default=False, help_text='RH 8 Within Limit')),
+                ('code_1071', models.BooleanField(
+                    default=False, help_text='RH 9 Within Limit')),
+                ('code_1072', models.BooleanField(
+                    default=False, help_text='RH 10 Within Limit')),
+                ('code_2001', models.BooleanField(
+                    default=False, help_text='Door Access By User 1')),
+                ('code_2002', models.BooleanField(
+                    default=False, help_text='Door Access By User 2')),
+                ('code_2003', models.BooleanField(
+                    default=False, help_text='Door Access By User 3')),
+                ('code_2004', models.BooleanField(
+                    default=False, help_text='Door Access By User 4')),
+                ('code_2005', models.BooleanField(
+                    default=False, help_text='Door Access By User 5')),
+                ('code_2006', models.BooleanField(
+                    default=False, help_text='Door Access By User 6')),
+                ('code_2007', models.BooleanField(
+                    default=False, help_text='Door Access By User 7')),
+                ('code_2008', models.BooleanField(
+                    default=False, help_text='Door Access By User 8')),
+                ('code_2009', models.BooleanField(
+                    default=False, help_text='Door Access By User 9')),
+                ('code_2010', models.BooleanField(
+                    default=False, help_text='Door Access By User 10')),
+                ('code_2011', models.BooleanField(
+                    default=False, help_text='Door Access By User 11')),
+                ('code_2012', models.BooleanField(
+                    default=False, help_text='Door Access By User 12')),
+                ('code_2013', models.BooleanField(
+                    default=False, help_text='Door Access By User 13')),
+                ('code_2014', models.BooleanField(
+                    default=False, help_text='Door Access By User 14')),
+                ('code_2015', models.BooleanField(
+                    default=False, help_text='Door Access By User 15')),
+                ('equipment_name', models.ForeignKey(
+                    on_delete=django.db.models.deletion.CASCADE, to='App1.equipment')),
             ],
         ),
         migrations.CreateModel(
             name='TemperatureHumidityRecord',
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
+                ('id', models.BigAutoField(auto_created=True,
+                 primary_key=True, serialize=False, verbose_name='ID')),
                 ('date', models.DateField()),
                 ('time', models.TimeField(blank=True, null=True)),
                 ('set_temp', models.FloatField(blank=True, null=True)),
@@ -591,36 +876,53 @@ class Migration(migrations.Migration):
                 ('rh_8', models.FloatField(blank=True, null=True)),
                 ('rh_9', models.FloatField(blank=True, null=True)),
                 ('rh_10', models.FloatField(blank=True, null=True)),
-                ('equip_name', models.ForeignKey(null=True, on_delete=django.db.models.deletion.SET_NULL, to='App1.equipment')),
+                ('equip_name',
+                 models.ForeignKey(null=True,
+                                   on_delete=django.db.models.deletion.SET_NULL,
+                                   to='App1.equipment')),
             ],
         ),
         migrations.CreateModel(
             name='User',
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
+                ('id', models.BigAutoField(auto_created=True,
+                 primary_key=True, serialize=False, verbose_name='ID')),
                 ('username', models.CharField(max_length=30, unique=True)),
                 ('login_name', models.CharField(max_length=255, unique=True)),
                 ('password', models.CharField(max_length=255)),
                 ('password_duration', models.PositiveIntegerField(default=30)),
                 ('role', models.CharField(max_length=50)),
-                ('status', models.CharField(choices=[('Active', 'Active'), ('Inactive', 'Inactive')], default='Active', max_length=10)),
+                ('status', models.CharField(choices=[
+                 ('Active', 'Active'), ('Inactive', 'Inactive')], default='Active', max_length=10)),
                 ('pass_change', models.BooleanField(default=False)),
                 ('created_at', models.DateTimeField(null=True)),
-                ('last_password_change', models.DateTimeField(default=django.utils.timezone.now)),
+                ('last_password_change', models.DateTimeField(
+                    default=django.utils.timezone.now)),
                 ('account_lock', models.BooleanField(default=False)),
                 ('failed_attempts', models.IntegerField(default=0)),
-                ('accessible_departments', models.ManyToManyField(blank=True, related_name='accessible_departments', to='App1.department')),
-                ('commGroup', models.ForeignKey(null=True, on_delete=django.db.models.deletion.SET_NULL, to='App1.commgroup')),
-                ('department', models.ForeignKey(null=True, on_delete=django.db.models.deletion.SET_NULL, to='App1.department')),
+                ('accessible_departments', models.ManyToManyField(blank=True,
+                 related_name='accessible_departments', to='App1.department')),
+                ('commGroup',
+                 models.ForeignKey(null=True,
+                                   on_delete=django.db.models.deletion.SET_NULL,
+                                   to='App1.commgroup')),
+                ('department',
+                 models.ForeignKey(null=True,
+                                   on_delete=django.db.models.deletion.SET_NULL,
+                                   to='App1.department')),
             ],
         ),
         migrations.CreateModel(
             name='PasswordHistory',
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
+                ('id', models.BigAutoField(auto_created=True,
+                 primary_key=True, serialize=False, verbose_name='ID')),
                 ('password', models.CharField(max_length=128, null=True)),
                 ('created_at', models.DateTimeField(auto_now_add=True, null=True)),
-                ('user', models.ForeignKey(null=True, on_delete=django.db.models.deletion.CASCADE, to='App1.user')),
+                ('user',
+                 models.ForeignKey(null=True,
+                                   on_delete=django.db.models.deletion.CASCADE,
+                                   to='App1.user')),
             ],
         ),
     ]

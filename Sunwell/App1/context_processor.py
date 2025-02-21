@@ -1,5 +1,6 @@
 from .models import SuperAdmin, User, AppSettings
 
+
 def get_super_admin(request):
     login_name = request.session.get('login_name')
     if login_name:
@@ -25,7 +26,7 @@ def get_custom_user(request):
 def sys_auto_logout(request):
     try:
         timeout = AppSettings.objects.first()
-        return {'timeoutduration':timeout.autologouttime if timeout.autologouttime else 5}
+        return {
+            'timeoutduration': timeout.autologouttime if timeout.autologouttime else 5}
     except Exception as e:
-        return {'timeoutduration':5}
-
+        return {'timeoutduration': 5}

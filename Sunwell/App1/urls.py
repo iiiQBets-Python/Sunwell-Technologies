@@ -9,16 +9,23 @@ urlpatterns = [
     path('logout/', user_logout, name='logout'),
 
 
-    #Dashboard URL's
+    # Dashboard URL's
     path('dashboard/', dashboard, name='dashboard'),
     path('get-equipment-data/', get_equipment_data, name='get_equipment_data'),
-    path('save-equipment-settings/', save_equipment_settings, name='save_equipment_settings'),
+    path(
+        'save-equipment-settings/',
+        save_equipment_settings,
+        name='save_equipment_settings'),
     path('save_app_settings/', save_app_settings, name='save_app_settings'),
-    #Management URL's
+    # Management URL's
     path('organization/', organization, name='organization'),
-    path('organization/edit/<int:organization_id>/',edit_organization, name='edit_organization'),
-    path('comm_group/',comm_group, name='comm_group'),
-    path('validate-activation-key/', validate_activation_key, name='validate_activation_key'),
+    path('organization/edit/<int:organization_id>/',
+         edit_organization, name='edit_organization'),
+    path('comm_group/', comm_group, name='comm_group'),
+    path(
+        'validate-activation-key/',
+        validate_activation_key,
+        name='validate_activation_key'),
     path('department/', department, name='department'),
     path('users/', users, name='users'),
     path('role_permission/', role_permission, name='role_permission'),
@@ -26,36 +33,53 @@ urlpatterns = [
     path('app_setings/', app_settings, name='app_settings'),
     path('app_sms_settings/', app_sms_settings, name='app_sms_settings'),
 
-    path('app_setings/send_test_email/', send_test_email, name="send_test_email"),
+    path(
+        'app_setings/send_test_email/',
+        send_test_email,
+        name="send_test_email"),
     path('app_setings/send_test_sms/', send_test_sms, name='send_test_sms'),
-    
+
     path('backup/', backup, name='backup'),
     path('backup/edit/<int:id>/', edit_backup, name='edit_backup'),
     path('download-backup/', download_backup, name='download_backup'),
     path('restore/', restore, name='restore'),
 
-    path('edit_comm_group/<str:comm_code>/', edit_comm_group, name='edit_comm_group'),
-    path('edit_department/<str:department_id>/', edit_department, name='edit_department'),
+    path(
+        'edit_comm_group/<str:comm_code>/',
+        edit_comm_group,
+        name='edit_comm_group'),
+    path('edit_department/<str:department_id>/',
+         edit_department, name='edit_department'),
     path('edit_user/<str:user_id>/', edit_user, name='edit_user'),
     path('edit_role/<int:id>/', edit_role, name='edit_role'),
 
-    
-    
+
+
     # Settings
-    path('equipment_configure/', equipment_configure_view, name='equipment_configure'),
-    path('equipment/edit/<int:equipment_id>/', equipment_edit, name='equipment_edit'),
-    path('equipment_setting/<int:id>/',equipment_setting,name='equipment_setting'),
-    path('save-alert-settings/', save_alert_settings, name='save-alert-settings'),
+    path(
+        'equipment_configure/',
+        equipment_configure_view,
+        name='equipment_configure'),
+    path('equipment/edit/<int:equipment_id>/',
+         equipment_edit, name='equipment_edit'),
+    path(
+        'equipment_setting/<int:id>/',
+        equipment_setting,
+        name='equipment_setting'),
+    path(
+        'save-alert-settings/',
+        save_alert_settings,
+        name='save-alert-settings'),
     path('save-parameters/', save_parameters, name='save_parameters'),
     path('plc_connect/', plc_connect, name='plc_connect'),
     path('plc_disconnect/', plc_disconnect, name='plc_disconnect'),
 
-    #Live data
+    # Live data
     path('livedata_summary/', livedata_summary, name='livedata_summary'),
 
-    #DATA Analysis
-    path('view_log/',view_log,name='view_log'),
-    path('alaram_log/',alaram_log,name='alaram_log'),
+    # DATA Analysis
+    path('view_log/', view_log, name='view_log'),
+    path('alaram_log/', alaram_log, name='alaram_log'),
     path('view_alarm_log/', view_alarm_log, name="view_alarm_log"),
     path('Mkt_analysis/', Mkt_analysis, name="Mkt_analysis"),
 

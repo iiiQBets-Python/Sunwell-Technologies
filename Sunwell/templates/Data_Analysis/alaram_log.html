@@ -227,9 +227,10 @@
                             <input type="text" class="form-control" id="username" value="{{ data.username }}" name="username" readonly >
                             <label for="username" class="form-label">Username</label>
                         </div>
-                        <div class="col-md-12 form-group">                
-                            <input type="password" class="form-control" id="password" required />
+                        <div class="col-md-12 form-group position-relative">
+                            <input type="password" class="form-control" id="password" required placeholder="">
                             <label for="password" class="form-label">Password</label>
+                            <span class="fa fa-eye-slash password-toggle-icon" style="position: absolute; right: 20px; top: 50%; transform: translateY(-50%); cursor: pointer;" onclick="togglePasswordVisibility()"></span>
                         </div>
                         <div class="col-md-12 form-group">                
                             <input type="text" class="form-control" id="Acknowledge" required />
@@ -456,6 +457,23 @@ document.addEventListener("DOMContentLoaded", function () {
     });
 });
 
+
+document.addEventListener("DOMContentLoaded", function () {
+    window.togglePasswordVisibility = function() {
+        const passwordInput = document.getElementById('password');
+        const toggleIcon = document.querySelector('.password-toggle-icon');
+        
+        if (passwordInput.type === 'password') {
+            passwordInput.type = 'text';
+            toggleIcon.classList.remove('fa-eye-slash');
+            toggleIcon.classList.add('fa-eye');
+        } else {
+            passwordInput.type = 'password';
+            toggleIcon.classList.add('fa-eye-slash');
+            toggleIcon.classList.remove('fa-eye');
+        }
+    };
+});
 
 
 </script>

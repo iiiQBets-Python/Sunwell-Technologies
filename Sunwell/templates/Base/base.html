@@ -620,15 +620,27 @@
 
                     <div class="dropdown nav-filter">
                         <select class="form-select" id="departmentSelect" onchange="selectDepartment(this.value)">
-                            {% for department in data.accessible_departments.all %}
-                                <option value="{{ department.id }}" {% if department.id == data.user_department_id %}selected{% endif %}>
-                                    {{ department.department_name }}
-                                </option>
-                            {% empty %}
-                                <option disabled>Super Admin</option>
-                            {% endfor %}
-
+                            {% if data.role == "Super Admin" %}
+                               
+                                    {% for department in acc_dept %}
+                                        <option value="{{ department.id }}" >
+                                            {{ department.department_name }}
+                                        </option>
+                                    {% endfor %}
+                                
+                            {% else %}
+                                {% if data.accessible_departments.all %}
+                                    {% for department in data.accessible_departments.all %}
+                                        <option value="{{ department.id }}" {% if department.id == data.user_department_id %}selected{% endif %}>
+                                            {{ department.department_name }}
+                                        </option>
+                                    {% endfor %}
+                                {% else %}
+                                    
+                                {% endif %}
+                            {% endif %}
                         </select>
+                        
                     </div>
                 </div>
                 <div class="navbar-right">
@@ -639,7 +651,7 @@
                 </div>
             </div>
             <div class="navbar-lower">
-                <div><b></b></div>
+                <div id="communication-status"><b></b></div>
             </div>
         </div>
         <div class="content">
@@ -1090,39 +1102,31 @@
 
 
     // Scripts for Communication Offline and Online
-
-    function fetchEquipmentData1() {
-        fetch('/get-equipment-data/')
-            .then(response => response.json())
-            .then(data => {
-                const equipmentData = data.equipment_data;
-                const allOnline = equipmentData.length > 0 && equipmentData.every(equipment => equipment.status === 'Online');
-                updateCommunicationStatus(allOnline); // Pass the status directly to the update function
-            })
-            .catch(error => {
-                console.error('Error fetching equipment data:', error);
-                updateCommunicationStatus(false); // Assume offline if there's an error
-            });
-    }
+    document.addEventListener("DOMContentLoaded", function () {
+        const communicationStatus = document.getElementById('communication-status');
     
+        function fetchAndUpdateStatus() {
+            fetch('/get-equipment-data/')
+                .then(response => response.json())
+                .then(data => {
+                    const allOnline = data.equipment_data.every(equipment => equipment.status === 'Online');
     
-    function updateCommunicationStatus(allOnline) {
-        const communicationStatusMessage = document.querySelector('.navbar-lower div');
-    
-        if (allOnline) {
-            communicationStatusMessage.innerHTML = '<strong style="color: black;">Communication Online - </strong><strong style="color: #28a745;">All Equipments Active</strong>';;
-            communicationStatusMessage.style.color = '#28a745'; 
-        } else {
-            communicationStatusMessage.innerHTML = '<strong style="color: black;">Communication Offline - </strong><strong style="color: #d20f0f;"> Equipment Communication Error</strong>';
-            communicationStatusMessage.style.color = '#d20f0f'; 
+                    if (allOnline) {
+                        communicationStatus.innerHTML = "<b style='color: black;'>Communication Online - <span style='color: green;'>All Equipments Active</span></b>";
+                    } else {
+                        communicationStatus.innerHTML = "<b style='color: black;'>Communication Offline - <span style='color: red;'>Equipment Communication Error</span></b>";
+                    }
+                })
+                .catch(error => {
+                    console.error('Error fetching equipment status:', error);
+                    communicationStatus.innerHTML = "<b style='color: black;'>Communication Offline - <span style='color: red;'>Trying to fetch data....</span></b>";
+                });
         }
-    }
     
-    
-    window.onload = function() {
-        fetchEquipmentData1();
-        setInterval(fetchEquipmentData, 5000);
-    };
+        fetchAndUpdateStatus(); // Fetch once when page loads
+        setInterval(fetchAndUpdateStatus, 5000); // Refresh every 5 seconds
+    });
+
 
 
     //Password toggle function

@@ -1,10 +1,12 @@
 from App1.models import AppSettings, Department
 
+
 def get_email_settings(request):
     try:
         # Get the selected QC name from the session
-       
-        # Now, filter AppSettings using the Department instance and get the first match
+
+        # Now, filter AppSettings using the Department instance and get the
+        # first match
         app_settings = AppSettings.objects.first()
 
         if app_settings:
@@ -15,7 +17,8 @@ def get_email_settings(request):
                 'EMAIL_PORT': app_settings.email_port,
             }
         else:
-            # Handle case where no AppSettings are found for the selected department
+            # Handle case where no AppSettings are found for the selected
+            # department
             return None
     except Department.DoesNotExist:
         # Handle the case where no department is found

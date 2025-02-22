@@ -332,43 +332,56 @@ window.onload = fetchEquipmentData;
     
         // Function to apply filters based on department and status
         function applyFilters() {
-            // Get the selected status from the URL, default to 'online'
+            // Get the selected status from the URL, default to 'all'
             const urlParams = new URLSearchParams(window.location.search);
             const status = urlParams.get("status") || "all";
-    
+
+            // Get the selected department from localStorage, default to "all"
+            const selectedDepartmentId = localStorage.getItem("selectedDepartmentId") || "all";
+
             // Update the status dropdown button text
             const dropdownButton = document.getElementById("roleFilterDropdown");
-            dropdownButton.innerHTML = `${status.charAt(0).toUpperCase() + status.slice(1)} `;
-    
-            // Get all equipment rows (list view) and cards (grid view)
+            dropdownButton.innerHTML = `${status.charAt(0).toUpperCase() + status.slice(1)}`;
+
+            // Get elements for filtering
             const rows = document.querySelectorAll("#form-data-table tr");
             const cards = document.querySelectorAll(".card-wrapper");
-    
-            let visibleCount = 0;
-    
-            // Unified filter logic for both views
-            [rows, cards].forEach(elements => {
+
+            // Identify the active view
+            const gridView = document.getElementById("gridView").style.display !== "none";
+            const tableView = document.getElementById("tableView").style.display !== "none";
+
+            let visibleCount = 0; // Counter for visible records
+
+            function filterElements(elements) {
                 elements.forEach(element => {
                     const itemStatus = element.getAttribute("data-status");
                     const itemDepartmentId = element.getAttribute("data-department-id");
-    
-                    // Show only if it matches both filters
+
                     if (
                         (status === "all" || itemStatus === status) &&
                         (selectedDepartmentId === "all" || itemDepartmentId === selectedDepartmentId)
                     ) {
-                        element.style.display = ""; // Show
-                        visibleCount++;
+                        element.style.display = ""; // Show element
+                        visibleCount++; // Increase count
                     } else {
-                        element.style.display = "none"; // Hide
+                        element.style.display = "none"; // Hide element
                     }
                 });
-            });
-    
-            // Update the visible records count
-            const recordsInfo = document.getElementById("records-info");
-            recordsInfo.textContent = `(Records Found: ${visibleCount})`;
+            }
+
+            // Apply filtering based on the currently active view
+            if (gridView) {
+                filterElements(cards); // Count only Grid View items
+            } else if (tableView) {
+                filterElements(rows); // Count only Table View items
+            }
+
+            // Update the visible records count dynamically
+            document.getElementById("records-info").textContent = `(Records Found: ${visibleCount})`;
         }
+
+
     
         // Event listener for department dropdown change
         departmentSelect.addEventListener("change", function () {

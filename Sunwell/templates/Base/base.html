@@ -1109,7 +1109,16 @@
             fetch('/get-equipment-data/')
                 .then(response => response.json())
                 .then(data => {
-                    const allOnline = data.equipment_data.every(equipment => equipment.status === 'Online');
+                    const equipmentData = data.equipment_data || [];
+    
+                    // Check if there is no equipment data
+                    if (equipmentData.length === 0) {
+                        communicationStatus.innerHTML = "<b style='color: black;'>Communication Offline - <span style='color: red;'>Equipment Communication Error</span></b>";
+                        return;
+                    }
+    
+                    // Check if all equipment are online
+                    const allOnline = equipmentData.every(equipment => equipment.status === 'Online');
     
                     if (allOnline) {
                         communicationStatus.innerHTML = "<b style='color: black;'>Communication Online - <span style='color: green;'>All Equipments Active</span></b>";
@@ -1123,9 +1132,10 @@
                 });
         }
     
-        fetchAndUpdateStatus(); // Fetch once when page loads
+        fetchAndUpdateStatus(); // Fetch once when the page loads
         setInterval(fetchAndUpdateStatus, 5000); // Refresh every 5 seconds
     });
+    
 
 
 

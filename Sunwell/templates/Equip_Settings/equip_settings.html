@@ -370,35 +370,6 @@
                 </table>
             </div>
 
-            <!-- <div class="row align-items-center mt-3 mb-2">
-                <div class="col-12 col-md-5 justify-content-start align-items-center mb-2 mb-md-0 entries-info">
-                    <span>Show</span>
-                    <select id="entriesPerPage" class="form-select d-inline-block mx-2 entriesPerPage">
-                        <option value="10" selected>10</option>
-                        <option value="15">15</option>
-                        <option value="25">25</option>
-                        <option value="50">50</option>
-                        <option value="100">100</option>
-                    </select>
-                    <span>entries per page</span>
-                </div>
-            
-                <div class="col-12 col-md-3 d-flex justify-content-center align-items-center mb-2 mb-md-0">
-                    <small>Showing <span id="visible-entries">0</span> of <span id="total-entries">0</span> entries</small>
-                </div>
-            
-                <div class="col-12 col-md-4 d-flex justify-content-md-end justify-content-center">
-                    <nav aria-label="Page navigation">
-                        <ul class="pagination mb-0">
-                            <li class="page-item" id="prev-page"><a class="page-link" href="#">Previous</a></li>
-                            <li class="page-item"><a class="page-link" href="#">1</a></li>
-                            <li class="page-item"><a class="page-link" href="#">2</a></li>
-                            <li class="page-item"><a class="page-link" href="#">3</a></li>
-                            <li class="page-item" id="next-page"><a class="page-link" href="#">Next</a></li>
-                        </ul>
-                    </nav>
-                </div>
-            </div>  -->
         </div>
 
 
@@ -417,26 +388,26 @@
                         <div class="mb-3 row">
                             <label class="col-sm-5 col-form-label">Set Value</label>
                             <div class="col-sm-7">
-                                <input type="number" class="form-control" name="temp_set_value" step="0.01" value="{{ equipment.set_value|floatformat:2 }}">
+                                <input type="number" class="form-control" name="temp_set_value" step="0.1" value="{{ equipment.set_value|floatformat:1 }}" readonly>
                             </div>
                             
                         </div>
                         <div class="mb-3 row">
                             <label class="col-sm-5 col-form-label">Low Alarm</label>
                             <div class="col-sm-7">
-                                <input type="number" class="form-control" name="temp_low_alarm" step="0.01" value="{{ equipment.low_alarm|floatformat:2 }}">
+                                <input type="number" class="form-control" name="temp_low_alarm" step="0.1" value="{{ equipment.low_alarm|floatformat:1 }}" readonly>
                             </div>
                         </div>
                         <div class="mb-3 row">
                             <label class="col-sm-5 col-form-label">High Alarm</label>
                             <div class="col-sm-7">
-                                <input type="text" class="form-control" name="temp_high_alarm" step="0.01" value="{{ equipment.high_alarm|floatformat:2 }}">
+                                <input type="text" class="form-control" name="temp_high_alarm" step="0.1" value="{{ equipment.high_alarm|floatformat:1 }}" readonly>
                             </div>
                         </div>
                         <div class="mb-3 row">
                             <label class="col-sm-5 col-form-label">Total Sensor</label>
                             <div class="col-sm-7">
-                                <input type="number" class="form-control" name="temp_sensor"  value="{{ equipment.total_temp_sensors }}">
+                                <input type="number" class="form-control" name="temp_sensor"  value="{{ equipment.total_temp_sensors }}" readonly>
                             </div>
                         </div>
                     </div>
@@ -446,19 +417,19 @@
                         <div class="mb-3 row">
                             <label class="col-sm-5 col-form-label">High Alert</label>
                             <div class="col-sm-7">
-                                <input type="number" name="temp_high_alert" class="form-control" step="0.01" value="{{ equipment.high_alert|floatformat:2 }}">
+                                <input type="number" name="temp_high_alert" class="form-control" step="0.1" value="{{ equipment.high_alert|floatformat:1 }}" readonly>
                             </div>
                         </div>
                         <div class="mb-3 row">
                             <label class="col-sm-5 col-form-label">Low Alert</label>
                             <div class="col-sm-7">
-                                <input type="number" name="temp_low_alert" class="form-control" step="0.01" value="{{ equipment.low_alert|floatformat:2 }}">
+                                <input type="number" name="temp_low_alert" class="form-control" step="0.1" value="{{ equipment.low_alert|floatformat:1 }}" readonly>
                             </div>
                         </div>
                         <div class="mb-3 row">
                             <label class="col-sm-5 col-form-label">Cooling</label>
                             <div class="col-sm-7">
-                                <select class="form-select">
+                                <select class="form-select" readonly>
                                     <option>Yes</option>
                                     <option>No</option>
                                 </select>
@@ -475,25 +446,25 @@
                         <div class="mb-3 row">
                             <label class="col-sm-5 col-form-label">Set Value</label>
                             <div class="col-sm-7">
-                                <input type="number" name="humidity_set_value" step="0.01" class="form-control" value="{{ equipment.set_value_hum|floatformat:2 }}">
+                                <input type="number" name="humidity_set_value" step="0.1" class="form-control" value="{{ equipment.set_value_hum|floatformat:1 }}" readonly>
                             </div>
                         </div>
                         <div class="mb-3 row">
                             <label class="col-sm-5 col-form-label">Low Alarm</label>
                             <div class="col-sm-7">
-                                <input type="number" name="humidity_low_alarm" step="0.01" class="form-control"value="{{ equipment.low_alarm_hum|floatformat:2 }}">
+                                <input type="number" name="humidity_low_alarm" step="0.1" class="form-control"value="{{ equipment.low_alarm_hum|floatformat:1 }}" readonly>
                             </div>
                         </div>
                         <div class="mb-3 row">
                             <label class="col-sm-5 col-form-label">High Alarm</label>
                             <div class="col-sm-7">
-                                <input type="number" name="humidity_high_alarm" step="0.01" class="form-control" value="{{ equipment.high_alarm_hum|floatformat:2 }}">
+                                <input type="number" name="humidity_high_alarm" step="0.1" class="form-control" value="{{ equipment.high_alarm_hum|floatformat:1 }}" readonly>
                             </div>
                         </div>
                         <div class="mb-3 row">
                             <label class="col-sm-5 col-form-label">Total Sensor</label>
                             <div class="col-sm-7">
-                                <input type="number" name="humidity_sensor" class="form-control" value="{{ equipment.total_humidity_sensors }}">
+                                <input type="number" name="humidity_sensor" class="form-control" value="{{ equipment.total_humidity_sensors }}" readonly>
                             </div>
                         </div>
                     </div>
@@ -503,19 +474,19 @@
                         <div class="mb-3 row">
                             <label class="col-sm-5 col-form-label">High Alert</label>
                             <div class="col-sm-7">
-                                <input type="number" name="humidity_high_alert" step="0.01" class="form-control" value="{{ equipment.high_alert_hum|floatformat:2 }}">
+                                <input type="number" name="humidity_high_alert" step="0.1" class="form-control" value="{{ equipment.high_alert_hum|floatformat:1 }}" readonly>
                             </div>
                         </div>
                         <div class="mb-3 row">
                             <label class="col-sm-5 col-form-label">Low Alert</label>
                             <div class="col-sm-7">
-                                <input type="number" name="humidity_low_alert" step="0.01" class="form-control" value="{{ equipment.low_alert_hum|floatformat:2 }}">
+                                <input type="number" name="humidity_low_alert" step="0.1" class="form-control" value="{{ equipment.low_alert_hum|floatformat:1 }}" readonly>
                             </div>
                         </div>
                         <div class="mb-3 row">
                             <label class="col-sm-5 col-form-label">Cooling</label>
                             <div class="col-sm-7">
-                                <select class="form-select">
+                                <select class="form-select" readonly>
                                     <option>Yes</option>
                                     <option>No</option>
                                 </select>
@@ -566,35 +537,7 @@
                     
                 </table>
             </div>
-            <!-- <div class="row align-items-center mt-3 mb-2">
-                <div class="col-12 col-md-5 justify-content-start align-items-center mb-2 mb-md-0 entries-info">
-                    <span>Show</span>
-                    <select id="entriesPerPage" class="form-select d-inline-block mx-2 entriesPerPage">
-                        <option value="10" selected>10</option>
-                        <option value="15">15</option>
-                        <option value="25">25</option>
-                        <option value="50">50</option>
-                        <option value="100">100</option>
-                    </select>
-                    <span>entries per page</span>
-                </div>
             
-                <div class="col-12 col-md-3 d-flex justify-content-center align-items-center mb-2 mb-md-0">
-                    <small>Showing <span id="visible-entries">0</span> of <span id="total-entries">0</span> entries</small>
-                </div>
-            
-                <div class="col-12 col-md-4 d-flex justify-content-md-end justify-content-center">
-                    <nav aria-label="Page navigation">
-                        <ul class="pagination mb-0">
-                            <li class="page-item" id="prev-page"><a class="page-link" href="#">Previous</a></li>
-                            <li class="page-item"><a class="page-link" href="#">1</a></li>
-                            <li class="page-item"><a class="page-link" href="#">2</a></li>
-                            <li class="page-item"><a class="page-link" href="#">3</a></li>
-                            <li class="page-item" id="next-page"><a class="page-link" href="#">Next</a></li>
-                        </ul>
-                    </nav>
-                </div>
-            </div>   -->
         </div>
 
         <div class="tab-pane fade" id="emailsmsalert" role="tabpanel" aria-labelledby="email-sms-alarm-alert-tab" style="padding:15px; background:#ffff;">
@@ -662,7 +605,7 @@
                             <input type="password" class="form-control" id="password" required>
                             <label for="password" class="form-label">Password</label>
                             <span class="fa fa-eye-slash password-toggle-icon" style="position: absolute; right: 20px; top: 50%; transform: translateY(-50%); cursor: pointer;" onclick="togglePasswordVisibility()"></span>
-                        </div>
+                        </div>                        
                         <div class="col-md-12 form-group">
                             <input type="text" class="form-control" id="Comments" required>
                             <label for="Comments" class="form-label">Comments</label>
@@ -951,19 +894,34 @@ function getCookie(name) {
 
     // Function to enable edit mode
     function editMode(button) {
-        toggleEditable(true);
-        button.classList.add('d-none'); // Hide the edit button
-        const saveButton = button.nextElementSibling;
-        saveButton.classList.remove('d-none'); // Show the save button
+        const formContainer = button.closest('.tab-pane');
+
+        // Enable input fields and select dropdowns
+        formContainer.querySelectorAll('input, select').forEach(input => {
+            input.removeAttribute('readonly');
+            input.removeAttribute('disabled');
+        });
+
+        // Hide the edit button and show the save button
+        button.classList.add('d-none'); 
+        formContainer.querySelector('.save-button').classList.remove('d-none'); 
     }
 
     // Function to save changes and disable edit mode
     function saveMode(button) {
-        toggleEditable(false);
-        button.classList.add('d-none'); // Hide the save button
-        const editButton = button.previousElementSibling;
-        editButton.classList.remove('d-none'); // Show the edit button
+        const formContainer = button.closest('.tab-pane');
+
+        // Disable input fields and select dropdowns after saving
+        formContainer.querySelectorAll('input, select').forEach(input => {
+            input.setAttribute('readonly', true);
+            input.setAttribute('disabled', true);
+        });
+
+        // Show the edit button and hide the save button
+        button.classList.add('d-none'); 
+        formContainer.querySelector('.edit-button').classList.remove('d-none'); 
     }
+
 
     // Event listeners for edit buttons
     const editButtons = document.querySelectorAll('.edit-button');
@@ -1108,6 +1066,7 @@ function editMode1(button) {
     document.querySelector('.save-button').classList.remove('d-none');  // Show the save button
 }
 
+
 //Password toggling function
 
 document.addEventListener("DOMContentLoaded", function () {
@@ -1126,6 +1085,7 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     };
 });
+
 
 </script>
 {% endblock %}

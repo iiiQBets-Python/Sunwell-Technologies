@@ -333,7 +333,7 @@
                     <!-- Modal Footer -->
                     <div class="modal-footer">
                         <button type="button" class="btn btn-outline-danger" data-bs-dismiss="modal">Close</button>
-                        <button type="submit" class="btn btn-outline-success">Save</button>
+                        <button type="submit" class="btn btn-outline-success" id="saveButton" disabled>Save</button>
                     </div>
                 </form>
             </div>
@@ -415,7 +415,7 @@
 
                     <div class="modal-footer">
                         <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Close</button>
-                        <button type="submit" class="btn btn-success">Save</button>
+                        <button type="submit" class="btn btn-success" id="editSaveButton-{{ equipment.id }}" disabled>Save</button>
                     </div>
                 </form>
             </div>
@@ -893,8 +893,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 totalPages = Math.ceil(totalEntriesCount / entriesPerPage);
                 currentPage = 1;
                 updateTable();
-                updateRoleCounts(); // Update role counts after filtering
-            }
+                updateRecordsInfo(); 
         
             function updateTable() {
                 const startIndex = (currentPage - 1) * entriesPerPage;
@@ -937,28 +936,12 @@ document.addEventListener("DOMContentLoaded", function () {
             }
         
             function updateRecordsInfo() {
-                document.getElementById('records-info').textContent = `(Records Found: ${totalEntriesCount}, Selected: ${getSelectedRowsCount()})`;
+                // Count only visible rows
+                let visibleRows = document.querySelectorAll("#form-data-table tr:not([style*='display: none'])").length;
+                document.getElementById('records-info').textContent = `(Records Found: ${visibleRows}, Selected: ${getSelectedRowsCount()})`;
+
             }
         
-            function updateRoleCounts() {
-                roleFilterItems.forEach(item => {
-                    const role = item.getAttribute('data-value').toLowerCase();
-                    let roleCount = 0;
-        
-                    // Count rows that match the role
-                    tableRows.forEach(row => {
-                        const statusCell = row.cells[3]; // Assuming status is in the 4th column (index 3)
-                        const rowStatus = statusCell.textContent.toLowerCase();
-        
-                        if (role === 'all' || rowStatus === role) {
-                            roleCount++;
-                        }
-                    });
-        
-                    // Update the count in the dropdown
-                    item.querySelector('.option-count').textContent = `${roleCount}`;
-                });
-            }
         
             selectAllCheckbox.addEventListener('change', function() {
                 const checkboxes = formDataTable.querySelectorAll('input[type="checkbox"]:not(#selectAll)');
@@ -1121,7 +1104,7 @@ document.addEventListener("DOMContentLoaded", function () {
 });
 
 
-///////// Filtering user values from nav bar accessible departments ////////////
+///////// Filtering Equipment values from nav bar accessible departments ////////////
   
 document.addEventListener("DOMContentLoaded", function() {
     const departmentSelect = document.getElementById("departmentSelect");
@@ -1152,7 +1135,17 @@ document.addEventListener("DOMContentLoaded", function() {
         });
 
         // Update the records info based on visible rows
-        document.getElementById("records-info").textContent = `(Records Found: ${visibleRowsCount}, Selected: 0)`;
+                // Count visible rows
+        let visibleRows = 0;
+        rows.forEach(row => {
+            if (row.style.display !== "none") {
+                visibleRows++;
+            }
+        });
+
+        // Update the records info based on visible rows
+        document.getElementById("records-info").textContent = `(Records Found: ${visibleRows}, Selected: 0)`;
+
     }
 
     // Apply the filter based on the selected department ID from localStorage
@@ -1168,6 +1161,96 @@ document.addEventListener("DOMContentLoaded", function() {
     }
 });
 
+document.addEventListener("DOMContentLoaded", function () {
+    // Extract all existing Equipment Names and IP Addresses from the table
+    function getExistingData(columnIndex) {
+        let dataList = [];
+        document.querySelectorAll(`#form-data-table tr td:nth-child(${columnIndex})`).forEach(cell => {
+            let textValue = cell.textContent.trim();
+            if (textValue) {
+                dataList.push(textValue);
+            }
+        });
+        return dataList;
+    }
+
+    const saveButton = document.getElementById("saveButton");
+
+    function validateField(inputField, existingValues, errorMessageId, errorMessageText) {
+        let inputValue = inputField.value.trim();
+        let errorMessage = document.getElementById(errorMessageId);
+
+        if (!errorMessage) {
+            // Create the error message element if not already added
+            errorMessage = document.createElement("small");
+            errorMessage.id = errorMessageId;
+            errorMessage.style.color = "red";
+            errorMessage.style.display = "none";
+            inputField.parentNode.appendChild(errorMessage);
+        }
+
+        if (existingValues.includes(inputValue)) {
+            errorMessage.textContent = errorMessageText;
+            errorMessage.style.display = "block";
+            saveButton.disabled = true;
+        } else {
+            errorMessage.style.display = "none";
+            saveButton.disabled = false;
+        }
+    }
+
+    // Validate Equipment Name
+    document.getElementById("equipname").addEventListener("input", function () {
+        validateField(this, getExistingData(2), "equipname-error-message", "This Equipment Name already exists!");
+    });
+
+    // Validate IP Address
+    document.getElementById("ipaddress").addEventListener("input", function () {
+        validateField(this, getExistingData(3), "ip-error-message", "This IP address already exists!");
+    });
+
+    // Form submission validation
+    document.querySelector("#adminUserModal form").addEventListener("submit", function (event) {
+        let ipValue = document.getElementById("ipaddress").value.trim();
+        let equipValue = document.getElementById("equipname").value.trim();
+        let existingIPs = getExistingData(3);
+        let existingNames = getExistingData(2);
+        let ipErrorMessage = document.getElementById("ip-error-message");
+        let equipErrorMessage = document.getElementById("equipname-error-message");
+
+        let hasError = false;
+
+        if (existingIPs.includes(ipValue)) {
+            ipErrorMessage.textContent = "This IP address already exists!";
+            ipErrorMessage.style.display = "block";
+            hasError = true;
+        }
+
+        if (existingNames.includes(equipValue)) {
+            equipErrorMessage.textContent = "This Equipment Name already exists!";
+            equipErrorMessage.style.display = "block";
+            hasError = true;
+        }
+
+        if (hasError) {
+            event.preventDefault(); // Prevent form submission if errors exist
+            saveButton.disabled = true;
+        }
+    });
+});
+
+document.addEventListener('DOMContentLoaded', function () {
+    const saveButton = document.getElementById('saveButton');
+
+    if (saveButton) {
+        saveButton.disabled = true;  
+    }
+
+    // Ensure the button is also disabled when the modal opens
+    document.getElementById('adminUserModal').addEventListener('shown.bs.modal', function () {
+        saveButton.disabled = true; // Disable the button every time the modal is opened
+    });
+});
 
 
 </script>

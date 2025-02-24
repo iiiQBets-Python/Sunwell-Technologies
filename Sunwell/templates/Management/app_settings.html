@@ -109,7 +109,7 @@
                                 <span class="form-span">Attempts</span>
                             </div>
                             <div class="form-buttons">
-                                <button class="btn btn-outline-danger" type="button">Close</button>
+                                <button class="btn btn-outline-danger" type="button" id="closeAppSettings">Close</button>
                                 <button class="btn btn-outline-success" disabled id="saveAppSettings">Save</button>
                             </div>
                         </div>
@@ -159,7 +159,7 @@
                                 <label class="form-label" for="emailsign">Email Signature</label>
                             </div>
                             <div class="form-buttons">
-                                <button class="btn btn-outline-danger" type="button">Close</button>
+                                <button class="btn btn-outline-danger" type="button" id="closeEmailSettings">Close</button>
                                 <button class="btn btn-outline-success" disabled id="saveEmailSettings">Save</button>
                             </div>
                         </div>
@@ -274,7 +274,7 @@
                                 <label for="flowcontrol" class="form-label">Flow Control</label>
                             </div>
                             <div class="form-buttons">
-                                <button class="btn btn-outline-danger" type="button">Close</button>
+                                <button class="btn btn-outline-danger" type="button" id="closeSmsSettings">Close</button>
                                 <button class="btn btn-outline-success" disabled id="saveSmsSettings">Save</button>
                             </div>
                         </div>
@@ -454,8 +454,6 @@
         .then((data) => {
             alert("Settings saved successfully.");
             window.location.reload()
-            
-            // Disable inputs after successful save
             inputs.forEach((input) => {
                 input.disabled = true;
             });
@@ -480,7 +478,52 @@
     document.getElementById("saveSmsSettings").addEventListener("click", function () {
         sendSettings("sms-settings", "SMS Settings");
     });
-</script>
-        
+    function setupToggleFields(sectionId, editButtonId, closeButtonId, saveButtonId) {
+        const section = document.querySelector(`#${sectionId}`);
+        const inputs = section.querySelectorAll("input, select, textarea");
+        const saveButton = document.getElementById(saveButtonId);
+        const editButton = document.getElementById(editButtonId);
+        const closeButton = document.getElementById(closeButtonId);
+
+       
+        const initialValues = {};
+
+        // Save initial values
+        inputs.forEach((input) => {
+            initialValues[input.name] = input.value;
+        });
+
+        editButton.addEventListener("click", function () {
+            inputs.forEach((input) => {
+                input.disabled = false;
+            });
+            saveButton.disabled = false;
+            closeButton.disabled = false;
+        });
+
+        closeButton.addEventListener("click", function () {
+            inputs.forEach((input) => {
+                // Check if the input is not one of the test fields
+                if (input.id !== "testemail" && input.id !== "testemailtime" && input.id !== "testsms" && input.id !== "testsmstime") {
+                    input.value = initialValues[input.name];  // Revert to initial values
+                    input.disabled = true;  // Disable fields
+                }
+            });
+            saveButton.disabled = true;
+            closeButton.disabled = true;
+        });
+
+        saveButton.addEventListener("click", function () {
+            inputs.forEach((input) => {
+                input.disabled = true;
+            });
+            saveButton.disabled = true;
+            closeButton.disabled = true;
+        });
+    }
+    setupToggleFields("app-settings", "appSettingsEdit", "closeAppSettings", "saveAppSettings");
+    setupToggleFields("email-settings", "emailSettingsEdit", "closeEmailSettings", "saveEmailSettings");
+    setupToggleFields("sms-settings", "smsSettingsEdit", "closeSmsSettings", "saveSmsSettings");
+</script>      
 {% endblock %}
 

@@ -415,7 +415,7 @@
 
                     <div class="modal-footer">
                         <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Close</button>
-                        <button type="submit" class="btn btn-success" id="editSaveButton-{{ equipment.id }}" disabled>Save</button>
+                        <button type="submit" class="btn btn-success" id="editSaveButton-{{ equipment.id }}">Save</button>
                     </div>
                 </form>
             </div>
@@ -893,7 +893,8 @@ document.addEventListener("DOMContentLoaded", function () {
                 totalPages = Math.ceil(totalEntriesCount / entriesPerPage);
                 currentPage = 1;
                 updateTable();
-                updateRecordsInfo(); 
+                updateRecordsInfo(); // Update role counts after filtering
+            }
         
             function updateTable() {
                 const startIndex = (currentPage - 1) * entriesPerPage;
@@ -936,10 +937,8 @@ document.addEventListener("DOMContentLoaded", function () {
             }
         
             function updateRecordsInfo() {
-                // Count only visible rows
                 let visibleRows = document.querySelectorAll("#form-data-table tr:not([style*='display: none'])").length;
                 document.getElementById('records-info').textContent = `(Records Found: ${visibleRows}, Selected: ${getSelectedRowsCount()})`;
-
             }
         
         
@@ -1093,6 +1092,7 @@ document.addEventListener("DOMContentLoaded", function () {
     let hasEquipment = false; 
     rows.forEach(row => {
         const rowDepartment = row.getAttribute('data-department'); 
+        console.log("Department", rowDepartment)
         if (rowDepartment === departmentName) {
             row.style.display = ''; 
             hasEquipment = true; 
@@ -1111,6 +1111,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
     // Retrieve the selected department ID from localStorage; default to "all" if not set
     let selectedDepartmentId = localStorage.getItem("selectedDepartmentId") || "all";
+    document.getElementById('hiddenFieldName').value = selectedDepartmentId;
 
     console.log("selected Department", selectedDepartmentId)
 
@@ -1135,7 +1136,7 @@ document.addEventListener("DOMContentLoaded", function() {
         });
 
         // Update the records info based on visible rows
-                // Count visible rows
+        // Count visible rows
         let visibleRows = 0;
         rows.forEach(row => {
             if (row.style.display !== "none") {

@@ -2,3 +2,5 @@
 2025-02-20 14:07:41,973 - Darshan is getting TemplateSyntaxError on accessing department: 'block' tag with name 'content' appears more than once
 2025-02-22 09:18:07,472 - Darshan is getting DoesNotExist on accessing equipment_setting: emailalert matching query does not exist.
 2025-02-22 09:18:18,526 - Darshan is getting DoesNotExist on accessing equipment_setting: emailalert matching query does not exist.
+2025-02-24 10:50:30,365 - Darshan is getting TypeError on accessing save-alert-settings: attribute name must be string, not 'dict'
+2025-02-24 10:52:15,178 - Darshan is getting TypeError on accessing save-alert-settings: attribute name must be string, not 'dict'

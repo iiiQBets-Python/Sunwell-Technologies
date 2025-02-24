@@ -429,7 +429,7 @@
                         <div class="mb-3 row">
                             <label class="col-sm-5 col-form-label">Cooling</label>
                             <div class="col-sm-7">
-                                <select class="form-select" readonly>
+                                <select class="form-select" disabled>
                                     <option>Yes</option>
                                     <option>No</option>
                                 </select>
@@ -551,7 +551,7 @@
                 <!-- Email Alert Section -->
                 <div class="col-md-6">
                     <div class="mb-3">
-                        <input class="form-check-input" type="checkbox" id="activateEmail">
+                        <input class="form-check-input" type="checkbox" id="activateEmail" disabled>
                         <label class="form-check-label" for="activateEmail">Activate Email Alert</label>
                     </div>
                     
@@ -568,7 +568,7 @@
     
                 <div class="col-md-6">
                     <div class="mb-3">
-                        <input class="form-check-input" type="checkbox" id="activateSms">
+                        <input class="form-check-input" type="checkbox" id="activateSms" disabled>
                         <label class="form-check-label" for="activateSms">Activate SMS Alert</label>
                     </div>
                     <div class="checkbox-list-2">
@@ -1003,13 +1003,13 @@ function saveMode1(button) {
 
 
     // Collect only checked checkboxes from email alerts
-    document.querySelectorAll('.checkbox-list-1 .form-check-input:checked').forEach((checkbox) => {
-        emailAlerts.push(checkbox.id.replace('emailAlert', ''));  // Collecting numeric part of ID
+    document.querySelectorAll('.checkbox-list-1 .form-check-input').forEach((checkbox) => {
+        emailAlerts.push({ id: checkbox.id, checked: checkbox.checked });  // Collecting checkbox state (true or false)
     });
 
-    // Collect only checked checkboxes from SMS alerts
-    document.querySelectorAll('.checkbox-list-2 .form-check-input:checked').forEach((checkbox) => {
-        smsAlerts.push(checkbox.id.replace('smsAlert', ''));  // Collecting numeric part of ID
+    // Collect values from all checkboxes, checked or not, for SMS alerts
+    document.querySelectorAll('.checkbox-list-2 .form-check-input').forEach((checkbox) => {
+        smsAlerts.push({ id: checkbox.id, checked: checkbox.checked });  // Collecting checkbox state (true or false)
     });
 
     // Package each alert list with the IP address

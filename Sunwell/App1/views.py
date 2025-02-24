@@ -1098,8 +1098,7 @@ def edit_department(request, department_id):
 
             # Log the edit event
             UserActivityLog.objects.create(
-                user=User.objects.get(
-                    username=request.session.get('username')),
+                user=emp_user,
                 log_date=timezone.localtime(timezone.now()).date(),
                 log_time=timezone.localtime(timezone.now()).time(),
                 event_name=f"Edited Department {department_name} details"
@@ -3340,7 +3339,7 @@ def equipment_configure_view(request):
         door_access_type = request.POST.get('dooracctype')
         department = request.POST.get('hiddenFieldName')
         sensor = request.POST.get('sensor')
-        dept = Department.objects.get(department_name=department)
+        dept = Department.objects.get(id=department)
         equipment = Equipment(
             equip_name=equip_name,
             status=status,
@@ -3363,7 +3362,6 @@ def equipment_configure_view(request):
             equipment.total_humidity_sensors = sensor
         else:
             equipment.total_humidity_sensors = 0
-        # Handle PLC users if PLC is selected
         if door_access_type == 'plc':
             code = 2001
 
@@ -3739,7 +3737,7 @@ def equipment_setting(request, id):
 
 
 @csrf_exempt
-def save_alert_settings(request):
+def save_alert_settings1(request):
     if request.method == 'POST':
         data = json.loads(request.body)
         email_alerts = data.get('emailData', {}).get('email', [])
@@ -7229,25 +7227,31 @@ def save_alert_settings(request):
         email_alerts = data.get('emailData', {}).get('email', [])
         sms_alerts = data.get('smsData', {}).get('sms', [])
         ip_address = data.get('ip_address', {}).get('ip_address', '')
+        
 
         equipment = Equipment.objects.get(ip_address=ip_address)
         email = emailalert.objects.get(equipment_name=equipment.id)
 
         for i in email_alerts:
-            if hasattr(email, i):
-                setattr(email, i, True)
+            alert_id = i.get('id')
+            alert_checked = i.get('checked')
+            if hasattr(email, alert_id):
+                setattr(email, alert_id, alert_checked)
+            else:
+                print(f"Attribute {alert_id} not found on EmailAlert")
         email.save()
         sms = smsalert.objects.get(equipment_name=equipment.id)
         for i in sms_alerts:
-            if hasattr(sms, i):
-                setattr(sms, i, True)
+            alert_id = i.get('id')
+            alert_checked = i.get('checked')
+            if hasattr(sms, alert_id):
+                setattr(sms, alert_id, alert_checked)
         sms.save()
 
         return JsonResponse(
             {"status": "success", "message": "Alert settings saved successfully."})
     return JsonResponse(
         {"status": "error", "message": "Invalid request"}, status=400)
-
 
 # Constants
 ACTIVATION_ENERGY = 83144  # J/mol (approx. 83.144 kJ/mol)

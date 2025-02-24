@@ -702,6 +702,60 @@
                 }
             });
         });
+
+
+        // Disable right-click context menu
+    document.addEventListener('contextmenu', function (event) {
+        event.preventDefault();            
+    });
+    // Disable F12 and other Developer Tools shortcuts
+    document.addEventListener('keydown', function (event) {
+        // F12
+        if (event.key === 'F12') {
+            event.preventDefault();             
+        }
+
+        // Ctrl+Shift+I or Ctrl+Shift+J (Inspect or Console)
+        if (event.ctrlKey && event.shiftKey && (event.key.toLowerCase() === 'i' || event.key.toLowerCase() === 'j')) {
+            event.preventDefault();                
+        }
+
+        // Ctrl+U (View Source)
+        if (event.ctrlKey && event.key.toLowerCase() === 'u') {
+            event.preventDefault();
+        }
+    });
+
+
+    document.addEventListener("DOMContentLoaded", function () {
+        function togglePassword(event) {
+            let targetId = event.currentTarget.getAttribute("data-target");
+            let passwordField = document.getElementById(targetId);
+            let iconElement = event.currentTarget.querySelector("i");
+    
+            if (passwordField) {
+                passwordField.type = passwordField.type === "password" ? "text" : "password";
+    
+                // Toggle eye icon
+                iconElement.classList.toggle("fa-eye");
+                iconElement.classList.toggle("fa-eye-slash");
+            }
+        }
+    
+        // Apply event listener to all password toggle icons
+        document.querySelectorAll(".password-toggle-icon").forEach(icon => {
+            icon.addEventListener("click", togglePassword);
+        });
+    
+        // Ensure Forgot Password modal toggles work after it opens
+        document.getElementById("forgot_pass").addEventListener("shown.bs.modal", function () {
+            document.querySelectorAll("#forgot_pass .password-toggle-icon").forEach(icon => {
+                icon.removeEventListener("click", togglePassword);
+                icon.addEventListener("click", togglePassword);
+            });
+        });
+    });
+    
     </script>
 </body>
 </html>

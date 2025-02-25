@@ -1,0 +1,115 @@
+.profile-section {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 40px;
+    max-height: 88vh;
+}
+
+.profile-section h1 {
+    font-size: 2rem;
+    margin-bottom: 20px;
+}
+
+.profile-picture-container {
+    position: absolute;
+    top: -105px;
+    left: 0;
+    right: 0;
+    margin: 0 auto;
+    width: 210px;
+    height: 210px;
+    border-radius: 50%;
+    overflow: hidden;
+    border: 2px solid #0066FF;
+    background-color: white;
+}
+
+.profile-picture {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.edit-icon {
+    position: absolute;
+    top: 50px;
+    right: 430px;
+    background-color: green;
+    border-radius: 50%;
+    padding: 10px;
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 5;
+    height: 50px;
+    width: 50px;
+}
+
+.edit-icon i {
+    color: white;
+}
+
+.company-profile-card {
+    border: 2px solid #0066FF;
+    border-radius: 10px;
+    padding: 20px;
+    width: 100%;
+    margin-top: 120px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    position: relative;
+    padding-top: 160px;
+    background-color: rgba(255, 255, 255, 0.2);
+}
+
+.form-group {
+    width: 100%;
+    margin-bottom: 10px;
+}
+
+.form-control {
+    background-color: rgba(255, 255, 255, 0.5);
+    border: none;
+    border-bottom: 1px solid #0066FF;
+    border-radius: 0;
+    width: auto;
+    display: inline-block;
+}
+
+.form-control:focus {
+    background-color: rgba(255, 255, 255, 0.8);
+    box-shadow: none;
+    border-color: #0066FF;
+}
+
+.form-label {
+    font-weight: bold;
+    display: inline-block;
+    width: 150px;
+}
+
+.display-field {
+    font-weight: normal;
+}
+
+.editable {
+    display: inline-block;
+}
+
+.button-container {
+    display: flex;
+    justify-content: flex-end;
+    width: 100%;
+    margin-top: 20px;
+}
+
+.button-container button {
+    margin-left: 10px;
+}
+
+.hidden {
+    display: none;
+}

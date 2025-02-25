@@ -347,7 +347,19 @@
             });
         });
     });
-    
+    document.addEventListener('DOMContentLoaded', function() {
+        const startDateInput = document.getElementById('fromDate');
+        const endDateInput = document.getElementById('toDate');
+
+        function updateEndDateConstraints() {
+            endDateInput.setAttribute('min', startDateInput.value);
+            if (endDateInput.value < startDateInput.value) {
+                endDateInput.value = ''; 
+            }
+        }
+
+        startDateInput.addEventListener('change', updateEndDateConstraints);
+    });   
     
     
     

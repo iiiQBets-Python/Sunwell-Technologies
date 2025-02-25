@@ -366,5 +366,20 @@
             // Initial check to set the correct state of the User List field
             toggleUserListField();
         });
+
+
+        document.addEventListener('DOMContentLoaded', function() {
+        const startDateInput = document.getElementById('from-date');
+        const endDateInput = document.getElementById('to-date');
+
+        function updateEndDateConstraints() {
+            endDateInput.setAttribute('min', startDateInput.value);
+            if (endDateInput.value < startDateInput.value) {
+                endDateInput.value = ''; 
+            }
+        }
+
+        startDateInput.addEventListener('change', updateEndDateConstraints);
+    });
     </script>
 {% endblock content %}

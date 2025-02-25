@@ -228,7 +228,7 @@
                         </div>
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Close</button>
+                        <a href="{% url 'comm_group' %}" class="btn btn-danger">Close</a>
                         <button type="submit" class="btn btn-outline-success" id="saveButton" disabled>Save</button>
                     </div>
                 </form>
@@ -269,7 +269,8 @@
                         </div>
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-danger" data-bs-dismiss="modal" onclick="refreshPage()">Close</button>
+
                         <button type="submit" class="btn btn-outline-success">Save</button>
                     </div>
                 </form>
@@ -319,6 +320,9 @@ function checkUsernameAvailability() {
        usernameErrorDiv.textContent = '';
        saveButton.disabled = false; 
    }
+}
+function refreshPage() {
+    window.location.reload(); // This will reload the page.
 }
 
 

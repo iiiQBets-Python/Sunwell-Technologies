@@ -396,5 +396,32 @@
             });
         });
         
+
+
+        
     </script>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const startDateInput = document.getElementById('from-date');
+        const endDateInput = document.getElementById('to-date');
+
+        function updateEndDateConstraints() {
+            const startDate = startDateInput.value;
+            endDateInput.min = startDate; 
+            if (endDateInput.value && endDateInput.value < startDate) {
+                endDateInput.value = startDate;
+            }
+        }
+
+        if (startDateInput && endDateInput) {
+            startDateInput.addEventListener('change', updateEndDateConstraints);
+           
+            updateEndDateConstraints();
+        } else {
+            console.error("Start or end date inputs not found!"); 
+        }
+    });
+</script>
+
 {% endblock content %}

@@ -88,6 +88,36 @@ def base(request):
     return render(request, 'Base/base.html', )
 
 
+from django.shortcuts import render
+
+error_messages = {
+    400: ("Bad Request", "The request could not be understood by the server."),
+    403: ("Forbidden", "You don't have permission to access this resource."),
+    404: ("Page Not Found", "The page you are looking for does not exist."),
+    500: ("Server Error", "Something went wrong on our end. Please try again later."),
+}
+
+def custom_error_view(request, exception=None, error_code=500):
+    error_title, error_message = error_messages.get(error_code, ("Unknown Error", "An unexpected error occurred."))
+    return render(request, "errors/custom_error.html", {
+        "error_code": error_code,
+        "error_title": error_title,
+        "error_message": error_message
+    })
+
+def error_400_view(request, exception):
+    return custom_error_view(request, exception, 400)
+
+def error_403_view(request, exception):
+    return custom_error_view(request, exception, 403)
+
+def error_404_view(request, exception):
+    return custom_error_view(request, exception, 404)
+
+def error_500_view(request):
+    return custom_error_view(request, error_code=500)
+
+
 def user_login(request):
     if request.method == 'POST':
         username = request.POST.get('username')
@@ -215,6 +245,10 @@ def change_pass(request):
             if check_password(username_1, user.login_name):
                 data = user
                 break
+
+        if data is None:
+            error_msg = 'Invalid username. Please enter correct login name.'
+            return render(request, 'Base/login.html', {'error_msg': error_msg})
 
         # Check if the provided username and old password are correct
         if check_password(username_1, data.login_name) and check_password(
@@ -1456,7 +1490,7 @@ def role_permission(request):
         return redirect('role_permission')
 
     return render(request, 'Management/role_permission.html',
-                  {'organization': organization, 'data': data, 'acc_db': acc_db, 'role_data': role_data})
+                  {'organization': organization, 'data': data, 'acc_db': acc_db, 'acc_dept':acc_dept, 'role_data': role_data})
 
 
 def edit_role(request, id):

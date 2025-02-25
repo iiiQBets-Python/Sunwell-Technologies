@@ -438,7 +438,8 @@
             </div>
           </div>
           <div class="modal-footer">
-            <button type="button" class="btn btn-outline-danger" data-bs-dismiss="modal">Close</button>
+            <a href="{% url 'users' %}" class="btn btn-danger">Close</a>
+
             <button type="submit" class="btn btn-outline-success">Save</button>
           </div>
           </div>
@@ -714,7 +715,7 @@ document.addEventListener("DOMContentLoaded", function () {
         if (modal) {
           let modalInstance = bootstrap.Modal.getInstance(modal);
           if (modalInstance) {
-            modalInstance.hide();
+            window.location.reload();
           }
   
           // **Clear form fields**

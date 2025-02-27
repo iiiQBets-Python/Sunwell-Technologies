@@ -1027,9 +1027,16 @@
 
     // Map of department IDs to CommGroup names
     const departmentCommGroupMap = {
-        {% for department in data.accessible_departments.all %}
-            "{{ department.id }}": "{{ department.commGroup.CommGroup_name }}",
-        {% endfor %}
+        {% if data.role == "Super Admin" %}
+            
+            {% for department in acc_dept.all %}
+                "{{ department.id }}": "{{ department.commGroup.CommGroup_name }}",
+            {% endfor %}
+        {% else %}
+            {% for department in data.accessible_departments.all %}
+                "{{ department.id }}": "{{ department.commGroup.CommGroup_name }}",
+            {% endfor %}
+        {% endif %}
     };
 
     function selectDepartment(departmentId) {

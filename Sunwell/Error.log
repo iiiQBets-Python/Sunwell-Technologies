@@ -4,3 +4,8 @@
 2025-02-22 09:18:18,526 - Darshan is getting DoesNotExist on accessing equipment_setting: emailalert matching query does not exist.
 2025-02-24 10:50:30,365 - Darshan is getting TypeError on accessing save-alert-settings: attribute name must be string, not 'dict'
 2025-02-24 10:52:15,178 - Darshan is getting TypeError on accessing save-alert-settings: attribute name must be string, not 'dict'
+2025-02-27 11:05:30,722 - Darshan is getting UnboundLocalError on accessing role_permission: cannot access local variable 'acc_dept' where it is not associated with a value
+2025-02-27 11:05:38,431 - Darshan is getting UnboundLocalError on accessing role_permission: cannot access local variable 'acc_dept' where it is not associated with a value
+2025-02-27 11:05:47,746 - Darshan is getting UnboundLocalError on accessing role_permission: cannot access local variable 'acc_dept' where it is not associated with a value
+2025-02-27 11:05:48,486 - Darshan is getting UnboundLocalError on accessing role_permission: cannot access local variable 'acc_dept' where it is not associated with a value
+2025-02-27 11:06:15,081 - Darshan is getting UnboundLocalError on accessing role_permission: cannot access local variable 'acc_dept' where it is not associated with a value

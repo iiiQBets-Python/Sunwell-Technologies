@@ -1427,6 +1427,7 @@ def edit_user(request, user_id):
 def role_permission(request):
 
     emp_user = request.session.get('username', None)
+    acc_dept= None
     try:
         data = User.objects.get(username=emp_user)
     except:

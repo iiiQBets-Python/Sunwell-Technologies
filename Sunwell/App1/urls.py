@@ -7,6 +7,7 @@ urlpatterns = [
     path('base/', base, name='base'),
     path('', user_login, name='login'),
     path('logout/', user_logout, name='logout'),
+    path('register', superadmin, name="register"),
 
 
     # Dashboard URL's

@@ -9,3 +9,7 @@
 2025-02-27 11:05:47,746 - Darshan is getting UnboundLocalError on accessing role_permission: cannot access local variable 'acc_dept' where it is not associated with a value
 2025-02-27 11:05:48,486 - Darshan is getting UnboundLocalError on accessing role_permission: cannot access local variable 'acc_dept' where it is not associated with a value
 2025-02-27 11:06:15,081 - Darshan is getting UnboundLocalError on accessing role_permission: cannot access local variable 'acc_dept' where it is not associated with a value
+2025-03-03 11:23:10,399 - Anonymous is getting ValueError on accessing register: Cannot query "SuperAdmin object (2)": Must be "User" instance.
+2025-03-03 11:24:30,273 - Anonymous is getting IntegrityError on accessing register: UNIQUE constraint failed: App1_superadmin.username
+2025-03-03 11:24:59,975 - Anonymous is getting UnboundLocalError on accessing register: cannot access local variable 'password' where it is not associated with a value
+2025-03-03 11:25:58,015 - Anonymous is getting UnboundLocalError on accessing register: cannot access local variable 'password' where it is not associated with a value

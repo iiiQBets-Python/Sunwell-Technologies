@@ -77,7 +77,6 @@ from django.utils.timezone import now
 from datetime import datetime, time as datetime_time
 from reportlab.lib.styles import ParagraphStyle
 from reportlab.lib import colors
-
 from datetime import datetime, timedelta
 from apscheduler.schedulers.background import BackgroundScheduler
 from apscheduler.triggers.cron import CronTrigger
@@ -87,6 +86,141 @@ from django.views.decorators.csrf import csrf_exempt
 def base(request):
     return render(request, 'Base/base.html', )
 
+def superadmin(request):
+    if request.method=="POST":
+        username=request.POST.get('username')
+        email=request.POST.get('email')
+        Password=request.POST.get('password')
+        superadmin=SuperAdmin(
+            username=username,
+            email_id=email,
+            role="Super Admin",
+            password=Password
+        )
+
+        superadmin.save()
+
+        password_history = PasswordHistory.objects.filter(
+                superuser=superadmin).order_by('created_at')
+        if password_history.count() >= 3:
+            # Replace the oldest entry if there are already 3 entries
+            oldest_entry = password_history.first()
+            oldest_entry.password = Password
+            oldest_entry.created_at = timezone.now()
+            oldest_entry.save()
+        else:
+            # Create a new entry if fewer than 3 entries
+            PasswordHistory.objects.create(superuser=superadmin, password=Password)
+        # SuperAdmin.objects.create(
+        #     username=username,
+        #     email_id=email,
+        #     role="Super Admin",
+        #     password=Password
+        # )
+        alarm_data = {
+                "Temp 1 Low Alarm": 1001,
+                "Temp 2 Low Alarm": 1002,
+                "Temp 3 Low Alarm": 1003,
+                "Temp 4 Low Alarm": 1004,
+                "Temp 5 Low Alarm": 1005,
+                "Temp 6 Low Alarm": 1006,
+                "Temp 7 Low Alarm": 1007,
+                "Temp 8 Low Alarm": 1008,
+                "Temp 9 Low Alarm": 1009,
+                "Temp 10 Low Alarm": 1010,
+                "Temp 1 High Alarm": 1011,
+                "Temp 2 High Alarm": 1012,
+                "Temp 3 High Alarm": 1013,
+                "Temp 4 High Alarm": 1014,
+                "Temp 5 High Alarm": 1015,
+                "Temp 6 High Alarm": 1016,
+                "Temp 7 High Alarm": 1017,
+                "Temp 8 High Alarm": 1018,
+                "Temp 9 High Alarm": 1019,
+                "Temp 10 High Alarm": 1020,
+                "Temp 1 within Limit": 1021,
+                "Temp 2 within Limit": 1022,
+                "Temp 3 within Limit": 1023,
+                "Temp 4 within Limit": 1024,
+                "Temp 5 within Limit": 1025,
+                "Temp 6 within Limit": 1026,
+                "Temp 7 within Limit": 1027,
+                "Temp 8 within Limit": 1028,
+                "Temp 9 within Limit": 1029,
+                "Temp 10 within Limit": 1030,
+                "CS 1 Ckt Fail": 1031,
+                "CS 2 Ckt Fail": 1032,
+                "Dry Heater Ckt Fail": 1033,
+                "Mains Power Fail": 1034,
+                "Mains Power Resume": 1035,
+                "LT Thermostat Trip": 1036,
+                "HT Thermostat Trip": 1037,
+                "Door Open": 1038,
+                "Door Closed": 1039,
+                "Water Level Low": 1040,
+                "Water Level Ok": 1041,
+                "RH 1 Low Alarm": 1042,
+                "RH 2 Low Alarm": 1043,
+                "RH 3 Low Alarm": 1044,
+                "RH 4 Low Alarm": 1045,
+                "RH 5 Low Alarm": 1046,
+                "RH 6 Low Alarm": 1047,
+                "RH 7 Low Alarm": 1048,
+                "RH 8 Low Alarm": 1049,
+                "RH 9 Low Alarm": 1050,
+                "RH 10 Low Alarm": 1051,
+                "RH 1 High Alarm": 1053,
+                "RH 2 High Alarm": 1054,
+                "RH 3 High Alarm": 1055,
+                "RH 4 High Alarm": 1056,
+                "RH 5 High Alarm": 1057,
+                "RH 6 High Alarm": 1058,
+                "RH 7 High Alarm": 1059,
+                "RH 8 High Alarm": 1060,
+                "RH 9 High Alarm": 1061,
+                "RH 10 High Alarm": 1062,
+                "RH 1 within Limit": 1063,
+                "RH 2 within Limit": 1064,
+                "RH 3 within Limit": 1065,
+                "RH 4 within Limit": 1066,
+                "RH 5 within Limit": 1067,
+                "RH 6 within Limit": 1068,
+                "RH 7 within Limit": 1069,
+                "RH 8 within Limit": 1070,
+                "RH 9 within Limit": 1071,
+                "RH 10 within Limit": 1072,
+                "User 1": 2001,
+                "User 2": 2002,
+                "User 3": 2003,
+                "User 4": 2004,
+                "User 5": 2005,
+                "User 6": 2006,
+                "User 7": 2007,
+                "User 8": 2008,
+                "User 9": 2009,
+                "User 10": 2010,
+                "User 11": 2011,
+                "User 12": 2012,
+                "User 13": 2013,
+                "User 14": 2014,
+                "User 15": 2015,
+                "User 16": 2016,
+                "User 17": 2017,
+                "User 18": 2018,
+                "User 19": 2019,
+                "User 20": 2020,
+            }
+        for alarm_log, code in alarm_data.items():
+            if not Alarm_codes.objects.filter(code=code).exists(): 
+                Alarm_codes.objects.create(
+                    alarm_log=alarm_log,
+                    code=code,    
+                )
+
+        return redirect('login')
+    password="SvReddy@0958$"
+    context={"superadmin_password":password}
+    return render(request, 'Base/registration.html', context)
 
 from django.shortcuts import render
 

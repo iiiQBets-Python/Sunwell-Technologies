@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Forgot Password Page</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+  <style>
+    body {
+      min-height: 100vh;
+      margin: 0;
+      font-family: 'Poppins', sans-serif;
+      background: url('/static/images/Base/register.jpg') no-repeat center center/cover;
+      display: none;
+    }
+
+    .login-card {
+      background: rgba(255, 255, 255, 0.65);
+      border-radius: 15px;
+      padding: 40px;
+      width: 100%;
+      max-width: 400px;
+      box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2);
+      backdrop-filter: blur(25px);
+    }
+
+    .container-right {
+      display: flex;
+      justify-content: flex-end;
+      align-items: center;
+      height: 100vh;
+      padding-right: 150px;
+    }
+
+    .login-card h1 {
+      font-size: 28px;
+      font-weight: bold;
+      color: #053a60;
+      margin-bottom: 30px;
+      text-align: center;
+    }
+
+    .form-control {
+      border-radius: 8px;
+      padding: 10px 12px;
+      font-size: 16px;
+    }
+
+    .form-check-label {
+      font-size: 14px;
+      color: #053a60;
+    }
+
+    .btn-primary {
+      width: 100%;
+      font-size: 16px;
+      font-weight: bold;
+      border-radius: 8px;
+      padding: 10px;
+      background: #053a60;
+      border: none !important;
+      outline: none !important;
+    }
+
+    .google-btn {
+      width: 100%;
+      font-size: 14px;
+      font-weight: bold;
+      border-radius: 8px;
+      padding: 10px;
+      background: #ffffff;
+      color: rgb(73, 62, 62);
+      margin-top: 15px;
+      border: none;
+      box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2);
+    }
+
+    .google-btn:hover {
+      background: #ffffff;
+    }
+
+    .toggle-password {
+      position: absolute;
+      right: 15px;
+      top: 50%;
+      transform: translateY(-50%);
+      cursor: pointer;
+      color: #053a60;
+    }
+
+    @media (max-width: 1200px) {
+  .container-right {
+    padding-right: 50px;
+  }
+}
+
+@media (max-width: 992px) {
+  .container-right {
+    justify-content: center;
+    padding-right: 0;
+  }
+
+  .login-card {
+    max-width: 450px;
+    padding: 30px;
+  }
+  body {
+      margin: 0;
+      background-image: none !important;
+      background-color: #e1f1fc !important;
+      }
+}
+
+@media (max-width: 768px) {
+  body {
+      margin: 0;
+      background-image: none !important;
+      background-color: #e1f1fc !important;
+      }
+
+  .container-right {
+    align-items: flex-start;
+    padding-top: 20px;
+    height: auto;
+    padding-right: 0;
+    justify-content: center;
+  }
+
+  .login-card {
+    max-width: 380px;
+    padding: 25px;
+    box-shadow: none;
+  }
+
+  .login-card h1 {
+    font-size: 24px;
+    margin-bottom: 20px;
+  }
+
+  .form-control {
+    font-size: 14px;
+    padding: 8px 10px;
+  }
+
+  .btn-primary {
+    font-size: 14px;
+    padding: 8px;
+  }
+
+  .google-btn {
+    font-size: 12px;
+    padding: 8px;
+  }
+
+  .toggle-password {
+    right: 10px;
+  }
+}
+
+@media (max-width: 576px) {
+  body {
+    background: url('abcd.jpg') no-repeat center center/cover;
+  }
+
+  .container-right {
+    align-items: center;
+    justify-content: center;
+    height: auto;
+    padding-top: 40px;
+    padding-right: 0;
+  }
+
+  .login-card {
+    max-width: 320px;
+    padding: 20px;
+    border-radius: 10px;
+  }
+
+  .login-card h1 {
+    font-size: 22px;
+  }
+
+  .form-label {
+    font-size: 14px;
+  }
+
+  .form-control {
+    font-size: 13px;
+    padding: 6px 8px;
+  }
+
+  .btn-primary {
+    font-size: 13px;
+    padding: 8px;
+  }
+
+  .google-btn {
+    font-size: 12px;
+    padding: 8px;
+  }
+
+  .toggle-password {
+    right: 8px;
+  }
+}
+
+@media (max-width: 400px) {
+  .login-card {
+    max-width: 90%;
+    padding: 15px;
+  }
+
+  .login-card h1 {
+    font-size: 20px;
+  }
+
+  .form-label {
+    font-size: 13px;
+  }
+
+  .form-control {
+    font-size: 12px;
+    padding: 6px;
+  }
+
+  .btn-primary {
+    font-size: 12px;
+    padding: 7px;
+  }
+
+  .google-btn {
+    font-size: 11px;
+    padding: 7px;
+  }
+
+  .toggle-password {
+    right: 5px;
+  }
+}
+
+  </style>
+</head>
+<body data-superadmin-password="{{ superadmin_password }}">
+  <div class="container-fluid">
+    <div class="container-right">
+      <div class="login-card">
+        <h1>Welcome </h1>
+        <form method="POST" action="{% url 'register' %}">
+          {% csrf_token %}
+          <div class="mb-3">
+            <label for="username" class="form-label" style="color: #053a60;">Username</label>
+            <input type="text" class="form-control" name="username" id="username" placeholder="Enter your Username Here" required>
+          </div>
+          <div class="mb-3">
+            <label for="mailID" class="form-label" style="color: #053a60;">E-mail ID</label>
+            <input type="text" class="form-control" name="email" id="email" placeholder="Enter your Email ID" required>
+          </div>
+          <div class="mb-3">
+            <label for="password" class="form-label" style="color: #053a60;">Password</label>
+            <div class="position-relative">
+              <input type="password" class="form-control" name="password" id="password" placeholder="Enter your password" required>
+              <i class="bi bi-eye-fill toggle-password position-absolute top-50 end-0 translate-middle-y me-3" 
+                 onclick="togglePasswordVisibility()" style="cursor: pointer;"></i>
+            </div>
+            <label for="password" class="form-label" style="color: #053a60;">Re-enter Password</label>
+            <div class="position-relative">
+              <input type="password" class="form-control" id="password" placeholder="Enter your password" required>
+              <i class="bi bi-eye-fill toggle-password position-absolute top-50 end-0 translate-middle-y me-3" 
+                 onclick="togglePasswordVisibility()" style="cursor: pointer;"></i>
+            </div>
+            <!-- <a href="#" class="btn btn-link p-0"  style="color: #053a60;">Forgot Password?</a> -->
+          </div>
+          <button type="submit" class="btn btn-primary">Register Here</button>          
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js"></script>
+  <script>
+    function togglePasswordVisibility() {
+  const passwordField = document.getElementById("password");
+  const icon = document.querySelector(".toggle-password");
+  if (passwordField.type === "password") {
+    passwordField.type = "text";
+    icon.classList.remove("bi-eye-fill");
+    icon.classList.add("bi-eye-slash-fill");
+  } else {
+    passwordField.type = "password";
+    icon.classList.remove("bi-eye-slash-fill");
+    icon.classList.add("bi-eye-fill");
+  }
+}
+
+window.onload = function() {
+      var correctPassword = document.body.getAttribute('data-superadmin-password');
+      var enteredPassword = prompt("Please enter your password:");
+      if (enteredPassword === correctPassword) {
+        alert("Access granted");
+        document.body.style.display = "block"; // Show the content if the password is correct
+      } else {
+        alert("Incorrect password!"); // Alert if the password is incorrect
+        window.location.href = '/register';
+        document.body.innerHTML = ""; // Optionally clear the body content or redirect
+      }
+    };
+
+  </script>
+</body>
+</html>

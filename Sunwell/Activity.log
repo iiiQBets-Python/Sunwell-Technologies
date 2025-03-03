@@ -13045,3 +13045,186 @@
 2025-02-27 13:05:51,056 - Darshan is accessing /get-equipment-data/.
 2025-02-27 13:06:51,067 - Darshan is accessing /get-equipment-data/.
 2025-02-27 13:07:51,066 - Darshan is accessing /get-equipment-data/.
+2025-03-03 11:14:39,974 - Anonymous is accessing /django_admin/App1/users/.
+2025-03-03 11:14:40,245 - Anonymous is accessing /favicon.ico.
+2025-03-03 11:14:51,485 - Anonymous is accessing /.
+2025-03-03 11:15:11,132 - Anonymous is accessing /admin/.
+2025-03-03 11:15:11,302 - Anonymous is accessing /admin/login/.
+2025-03-03 11:15:16,914 - Anonymous is accessing /admin/login/.
+2025-03-03 11:15:17,730 - Anonymous is created record in django_session.
+2025-03-03 11:15:17,960 - Anonymous is updated record in auth_user.
+2025-03-03 11:15:17,966 - Anonymous is updated record in django_session.
+2025-03-03 11:15:18,087 - Anonymous is accessing /admin/.
+2025-03-03 11:15:22,414 - Anonymous is accessing /admin/App1/alarm_codes/.
+2025-03-03 11:15:22,722 - Anonymous is accessing /admin/jsi18n/.
+2025-03-03 11:15:23,387 - Anonymous is accessing /admin/jsi18n/.
+2025-03-03 11:15:24,343 - Anonymous is accessing /admin/.
+2025-03-03 11:15:26,658 - Anonymous is accessing /admin/App1/superadmin/.
+2025-03-03 11:15:26,814 - Anonymous is accessing /admin/jsi18n/.
+2025-03-03 11:15:26,854 - Anonymous is accessing /admin/jsi18n/.
+2025-03-03 11:15:28,169 - Anonymous is accessing /admin/.
+2025-03-03 11:15:33,069 - Anonymous is accessing /register.
+2025-03-03 11:16:10,108 - Anonymous is accessing /register.
+2025-03-03 11:16:12,289 - Anonymous is created record in App1_superadmin.
+2025-03-03 11:16:12,358 - Anonymous is created record in App1_alarm_codes.
+2025-03-03 11:16:12,410 - Anonymous is created record in App1_alarm_codes.
+2025-03-03 11:16:12,479 - Anonymous is created record in App1_alarm_codes.
+2025-03-03 11:16:12,531 - Anonymous is created record in App1_alarm_codes.
+2025-03-03 11:16:12,601 - Anonymous is created record in App1_alarm_codes.
+2025-03-03 11:16:12,666 - Anonymous is created record in App1_alarm_codes.
+2025-03-03 11:16:12,732 - Anonymous is created record in App1_alarm_codes.
+2025-03-03 11:16:12,798 - Anonymous is created record in App1_alarm_codes.
+2025-03-03 11:16:12,875 - Anonymous is created record in App1_alarm_codes.
+2025-03-03 11:16:12,943 - Anonymous is created record in App1_alarm_codes.
+2025-03-03 11:16:13,007 - Anonymous is created record in App1_alarm_codes.
+2025-03-03 11:16:13,073 - Anonymous is created record in App1_alarm_codes.
+2025-03-03 11:16:13,140 - Anonymous is created record in App1_alarm_codes.
+2025-03-03 11:16:13,285 - Anonymous is created record in App1_alarm_codes.
+2025-03-03 11:16:13,382 - Anonymous is created record in App1_alarm_codes.
+2025-03-03 11:16:13,481 - Anonymous is created record in App1_alarm_codes.
+2025-03-03 11:16:13,579 - Anonymous is created record in App1_alarm_codes.
+2025-03-03 11:16:13,671 - Anonymous is created record in App1_alarm_codes.
+2025-03-03 11:16:13,767 - Anonymous is created record in App1_alarm_codes.
+2025-03-03 11:16:13,867 - Anonymous is created record in App1_alarm_codes.
+2025-03-03 11:16:13,977 - Anonymous is created record in App1_alarm_codes.
+2025-03-03 11:16:14,086 - Anonymous is created record in App1_alarm_codes.
+2025-03-03 11:16:14,188 - Anonymous is created record in App1_alarm_codes.
+2025-03-03 11:16:14,283 - Anonymous is created record in App1_alarm_codes.
+2025-03-03 11:16:14,383 - Anonymous is created record in App1_alarm_codes.
+2025-03-03 11:16:14,482 - Anonymous is created record in App1_alarm_codes.
+2025-03-03 11:16:14,602 - Anonymous is created record in App1_alarm_codes.
+2025-03-03 11:16:14,690 - Anonymous is created record in App1_alarm_codes.
+2025-03-03 11:16:14,778 - Anonymous is created record in App1_alarm_codes.
+2025-03-03 11:16:14,866 - Anonymous is created record in App1_alarm_codes.
+2025-03-03 11:16:14,954 - Anonymous is created record in App1_alarm_codes.
+2025-03-03 11:16:15,052 - Anonymous is created record in App1_alarm_codes.
+2025-03-03 11:16:15,140 - Anonymous is created record in App1_alarm_codes.
+2025-03-03 11:16:15,228 - Anonymous is created record in App1_alarm_codes.
+2025-03-03 11:16:15,316 - Anonymous is created record in App1_alarm_codes.
+2025-03-03 11:16:15,459 - Anonymous is created record in App1_alarm_codes.
+2025-03-03 11:16:15,558 - Anonymous is created record in App1_alarm_codes.
+2025-03-03 11:16:15,668 - Anonymous is created record in App1_alarm_codes.
+2025-03-03 11:16:15,745 - Anonymous is created record in App1_alarm_codes.
+2025-03-03 11:16:15,833 - Anonymous is created record in App1_alarm_codes.
+2025-03-03 11:16:15,954 - Anonymous is created record in App1_alarm_codes.
+2025-03-03 11:16:16,042 - Anonymous is created record in App1_alarm_codes.
+2025-03-03 11:16:16,119 - Anonymous is created record in App1_alarm_codes.
+2025-03-03 11:16:16,218 - Anonymous is created record in App1_alarm_codes.
+2025-03-03 11:16:16,307 - Anonymous is created record in App1_alarm_codes.
+2025-03-03 11:16:16,404 - Anonymous is created record in App1_alarm_codes.
+2025-03-03 11:16:16,481 - Anonymous is created record in App1_alarm_codes.
+2025-03-03 11:16:16,559 - Anonymous is created record in App1_alarm_codes.
+2025-03-03 11:16:16,648 - Anonymous is created record in App1_alarm_codes.
+2025-03-03 11:16:16,712 - Anonymous is created record in App1_alarm_codes.
+2025-03-03 11:16:16,767 - Anonymous is created record in App1_alarm_codes.
+2025-03-03 11:16:16,834 - Anonymous is created record in App1_alarm_codes.
+2025-03-03 11:16:16,899 - Anonymous is created record in App1_alarm_codes.
+2025-03-03 11:16:16,965 - Anonymous is created record in App1_alarm_codes.
+2025-03-03 11:16:17,034 - Anonymous is created record in App1_alarm_codes.
+2025-03-03 11:16:17,121 - Anonymous is created record in App1_alarm_codes.
+2025-03-03 11:16:17,185 - Anonymous is created record in App1_alarm_codes.
+2025-03-03 11:16:17,263 - Anonymous is created record in App1_alarm_codes.
+2025-03-03 11:16:17,339 - Anonymous is created record in App1_alarm_codes.
+2025-03-03 11:16:17,417 - Anonymous is created record in App1_alarm_codes.
+2025-03-03 11:16:17,504 - Anonymous is created record in App1_alarm_codes.
+2025-03-03 11:16:17,583 - Anonymous is created record in App1_alarm_codes.
+2025-03-03 11:16:17,659 - Anonymous is created record in App1_alarm_codes.
+2025-03-03 11:16:17,736 - Anonymous is created record in App1_alarm_codes.
+2025-03-03 11:16:17,813 - Anonymous is created record in App1_alarm_codes.
+2025-03-03 11:16:17,901 - Anonymous is created record in App1_alarm_codes.
+2025-03-03 11:16:17,988 - Anonymous is created record in App1_alarm_codes.
+2025-03-03 11:16:18,077 - Anonymous is created record in App1_alarm_codes.
+2025-03-03 11:16:18,168 - Anonymous is created record in App1_alarm_codes.
+2025-03-03 11:16:18,263 - Anonymous is created record in App1_alarm_codes.
+2025-03-03 11:16:18,372 - Anonymous is created record in App1_alarm_codes.
+2025-03-03 11:16:18,461 - Anonymous is created record in App1_alarm_codes.
+2025-03-03 11:16:18,560 - Anonymous is created record in App1_alarm_codes.
+2025-03-03 11:16:18,669 - Anonymous is created record in App1_alarm_codes.
+2025-03-03 11:16:18,782 - Anonymous is created record in App1_alarm_codes.
+2025-03-03 11:16:18,879 - Anonymous is created record in App1_alarm_codes.
+2025-03-03 11:16:18,988 - Anonymous is created record in App1_alarm_codes.
+2025-03-03 11:16:19,066 - Anonymous is created record in App1_alarm_codes.
+2025-03-03 11:16:19,165 - Anonymous is created record in App1_alarm_codes.
+2025-03-03 11:16:19,264 - Anonymous is created record in App1_alarm_codes.
+2025-03-03 11:16:19,362 - Anonymous is created record in App1_alarm_codes.
+2025-03-03 11:16:19,472 - Anonymous is created record in App1_alarm_codes.
+2025-03-03 11:16:19,560 - Anonymous is created record in App1_alarm_codes.
+2025-03-03 11:16:19,648 - Anonymous is created record in App1_alarm_codes.
+2025-03-03 11:16:19,725 - Anonymous is created record in App1_alarm_codes.
+2025-03-03 11:16:19,803 - Anonymous is created record in App1_alarm_codes.
+2025-03-03 11:16:19,890 - Anonymous is created record in App1_alarm_codes.
+2025-03-03 11:16:19,976 - Anonymous is created record in App1_alarm_codes.
+2025-03-03 11:16:20,077 - Anonymous is created record in App1_alarm_codes.
+2025-03-03 11:16:20,154 - Anonymous is created record in App1_alarm_codes.
+2025-03-03 11:16:20,252 - Anonymous is created record in App1_alarm_codes.
+2025-03-03 11:16:20,262 - Anonymous is accessing /.
+2025-03-03 11:16:26,182 - Anonymous is accessing /admin/App1/superadmin/.
+2025-03-03 11:16:26,306 - Anonymous is accessing /admin/jsi18n/.
+2025-03-03 11:16:26,329 - Anonymous is accessing /admin/jsi18n/.
+2025-03-03 11:16:28,747 - Anonymous is accessing /admin/App1/alarm_codes/.
+2025-03-03 11:16:28,839 - Anonymous is accessing /admin/jsi18n/.
+2025-03-03 11:16:28,872 - Anonymous is accessing /admin/jsi18n/.
+2025-03-03 11:16:36,660 - Anonymous is accessing /.
+2025-03-03 11:16:39,205 - Anonymous is updated record in django_session.
+2025-03-03 11:22:28,483 - Anonymous is accessing /admin/App1/superadmin/.
+2025-03-03 11:22:32,449 - Anonymous is accessing /admin/App1/superadmin/.
+2025-03-03 11:22:33,602 - Anonymous is accessing /admin/App1/superadmin/.
+2025-03-03 11:22:33,780 - Anonymous is created record in django_admin_log.
+2025-03-03 11:22:33,787 - Anonymous is deleting record in App1_superadmin.
+2025-03-03 11:22:33,886 - Anonymous is accessing /admin/App1/superadmin/.
+2025-03-03 11:22:34,009 - Anonymous is accessing /admin/jsi18n/.
+2025-03-03 11:22:34,101 - Anonymous is accessing /admin/jsi18n/.
+2025-03-03 11:22:42,088 - Anonymous is accessing /register.
+2025-03-03 11:23:08,815 - Anonymous is accessing /register.
+2025-03-03 11:23:10,398 - Anonymous is created record in App1_superadmin.
+2025-03-03 11:24:28,330 - Anonymous is accessing /register.
+2025-03-03 11:24:42,519 - Anonymous is accessing /admin/App1/superadmin/.
+2025-03-03 11:24:43,004 - Anonymous is accessing /admin/jsi18n/.
+2025-03-03 11:24:43,050 - Anonymous is accessing /admin/jsi18n/.
+2025-03-03 11:24:46,289 - Anonymous is accessing /admin/App1/superadmin/.
+2025-03-03 11:24:47,247 - Anonymous is accessing /admin/App1/superadmin/.
+2025-03-03 11:24:47,492 - Anonymous is created record in django_admin_log.
+2025-03-03 11:24:47,501 - Anonymous is deleting record in App1_superadmin.
+2025-03-03 11:24:47,585 - Anonymous is accessing /admin/App1/superadmin/.
+2025-03-03 11:24:47,831 - Anonymous is accessing /admin/jsi18n/.
+2025-03-03 11:24:51,551 - Anonymous is accessing /admin/App1/passwordhistory/.
+2025-03-03 11:24:51,726 - Anonymous is accessing /admin/jsi18n/.
+2025-03-03 11:24:58,030 - Anonymous is accessing /register.
+2025-03-03 11:24:59,970 - Anonymous is created record in App1_superadmin.
+2025-03-03 11:25:37,996 - Anonymous is accessing /admin/App1/passwordhistory/.
+2025-03-03 11:25:38,846 - Anonymous is accessing /admin/jsi18n/.
+2025-03-03 11:25:41,185 - Anonymous is accessing /admin/App1/passwordhistory/.
+2025-03-03 11:25:41,523 - Anonymous is accessing /admin/jsi18n/.
+2025-03-03 11:25:44,538 - Anonymous is accessing /admin/App1/superadmin/.
+2025-03-03 11:25:44,722 - Anonymous is accessing /admin/jsi18n/.
+2025-03-03 11:25:47,734 - Anonymous is accessing /admin/App1/superadmin/.
+2025-03-03 11:25:48,473 - Anonymous is accessing /admin/App1/superadmin/.
+2025-03-03 11:25:48,679 - Anonymous is created record in django_admin_log.
+2025-03-03 11:25:48,686 - Anonymous is deleting record in App1_superadmin.
+2025-03-03 11:25:48,786 - Anonymous is accessing /admin/App1/superadmin/.
+2025-03-03 11:25:48,955 - Anonymous is accessing /admin/jsi18n/.
+2025-03-03 11:25:55,552 - Anonymous is accessing /register.
+2025-03-03 11:25:58,012 - Anonymous is created record in App1_superadmin.
+2025-03-03 11:27:27,756 - Anonymous is accessing /.
+2025-03-03 11:27:30,483 - Anonymous is accessing /admin/App1/superadmin/.
+2025-03-03 11:27:31,060 - Anonymous is accessing /admin/jsi18n/.
+2025-03-03 11:27:34,183 - Anonymous is accessing /admin/App1/superadmin/.
+2025-03-03 11:27:35,047 - Anonymous is accessing /admin/App1/superadmin/.
+2025-03-03 11:27:35,208 - Anonymous is created record in django_admin_log.
+2025-03-03 11:27:35,226 - Anonymous is deleting record in App1_superadmin.
+2025-03-03 11:27:35,337 - Anonymous is accessing /admin/App1/superadmin/.
+2025-03-03 11:27:35,527 - Anonymous is accessing /admin/jsi18n/.
+2025-03-03 11:27:40,296 - Anonymous is accessing /register.
+2025-03-03 11:28:04,132 - Anonymous is accessing /register.
+2025-03-03 11:28:06,176 - Anonymous is created record in App1_superadmin.
+2025-03-03 11:28:08,312 - Anonymous is created record in App1_passwordhistory.
+2025-03-03 11:28:08,505 - Anonymous is accessing /.
+2025-03-03 11:28:11,620 - Anonymous is accessing /admin/App1/superadmin/.
+2025-03-03 11:28:11,753 - Anonymous is accessing /admin/jsi18n/.
+2025-03-03 11:28:16,577 - Anonymous is accessing /admin/App1/superadmin/.
+2025-03-03 11:28:16,684 - Anonymous is accessing /admin/jsi18n/.
+2025-03-03 11:28:19,449 - Anonymous is accessing /admin/App1/passwordhistory/.
+2025-03-03 11:28:19,518 - Anonymous is accessing /admin/jsi18n/.
+2025-03-03 11:28:20,501 - Anonymous is accessing /admin/App1/passwordhistory/1/change/.
+2025-03-03 11:28:21,025 - Anonymous is accessing /admin/jsi18n/.
+2025-03-03 11:28:26,346 - Anonymous is accessing /admin/App1/passwordhistory/.

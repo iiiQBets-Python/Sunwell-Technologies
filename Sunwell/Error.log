@@ -13,3 +13,6 @@
 2025-03-03 11:24:30,273 - Anonymous is getting IntegrityError on accessing register: UNIQUE constraint failed: App1_superadmin.username
 2025-03-03 11:24:59,975 - Anonymous is getting UnboundLocalError on accessing register: cannot access local variable 'password' where it is not associated with a value
 2025-03-03 11:25:58,015 - Anonymous is getting UnboundLocalError on accessing register: cannot access local variable 'password' where it is not associated with a value
+2025-04-02 16:42:45,279 - Anonymous is getting OperationalError on accessing login: no such column: App1_user.failed_attempts
+2025-04-02 16:43:48,442 - Anonymous is getting OperationalError on accessing login: no such column: App1_user.failed_attempts
+2025-04-03 13:03:49,824 - Sunwell is getting OperationalError on accessing admin:App1_temperaturehumidityrecord_add: database is locked

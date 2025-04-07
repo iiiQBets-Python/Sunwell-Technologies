@@ -8,21 +8,23 @@ from datetime import datetime
 sms_queue = queue.Queue()
 sms_lock = threading.Lock()
 
-# Background worker for processing SMS
 
 
 def sms_worker():
     """Processes SMS messages in a FIFO order."""
     while True:
-        sms_details = sms_queue.get()  # Get the next SMS from the queue
-        if sms_details is None:  # Exit signal
-            break
+        try:
+            sms_details = sms_queue.get()  
+            if sms_details is None: 
+                break
 
-        send_sms_from_queue(sms_details)  # Process and send the SMS
-        sms_queue.task_done()  # Mark the task as complete
+            send_sms_from_queue(sms_details) 
+            sms_queue.task_done()  
+        except Exception as e:
+            print(f"Error in SMS worker: {e}")
+            continue 
 
 
-# Start the worker thread
 sms_thread = threading.Thread(target=sms_worker, daemon=True)
 sms_thread.start()
 
@@ -39,69 +41,57 @@ def add_to_sms_queue(number, message, equipment, alarm_id, sys_sms):
 
 
 def send_sms_from_queue(sms_details):
-
-    number = sms_details["number"]
+    numbers = sms_details["number"]
     message = sms_details["message"]
     equipment = sms_details["equipment"]
-    alarm_id = sms_details["alarm_id"]
     sys_sms = sms_details["sys_sms"]
-    Eqp = ""
-    if equipment is not None:
-        Eqp = Equipment.objects.get(id=equipment)
-    else:
-        Eqp = None
-    try:
+    Eqp = Equipment.objects.get(id=equipment) if equipment is not None else None
+
+    settings = AppSettings.objects.first()
+
+    for name, num in numbers.items():
         with sms_lock:
-            settings = AppSettings.objects.first()
-            start_time = time.time()
-            with serial.Serial(
-                port=settings.comm_port,
-                baudrate=settings.baud_rate,
-                bytesize=serial.EIGHTBITS,
-                parity=serial.PARITY_NONE,
-                stopbits=serial.STOPBITS_ONE,
-                timeout=2
-            ) as ser:
-                ser.write(b'AT\r')
-                # ser.flush()
-                time.sleep(1)
-                response = ser.read_all().decode(errors="ignore").strip()
+            try:
+                # Attempt to open the serial port for communication with the modem
+                with serial.Serial(
+                    port=settings.comm_port,
+                    baudrate=settings.baud_rate,
+                    bytesize=serial.EIGHTBITS,
+                    parity=serial.PARITY_NONE,
+                    stopbits=serial.STOPBITS_ONE,
+                    timeout=2
+                ) as ser:
+                    # Initialize modem and send message
+                    ser.write(b'AT\r')
+                    time.sleep(1)
+                    response = ser.read_all().decode(errors="ignore").strip()
 
-                if "OK" not in response:
-                    pass
+                    if "OK" not in response:
+                        raise Exception("Initial AT command failed")
+                    
+                    ser.write(b'AT+CMGF=1\r')
+                    time.sleep(1)
+                    response = ser.read_all().decode(errors="ignore").strip()
 
-                # Set SMS mode to text
-                ser.write(b'AT+CMGF=1\r')  # Set text mode
-                # ser.flush()
-                time.sleep(1)
-                response = ser.read_all().decode(errors="ignore").strip()
+                    if "OK" not in response:
+                        raise Exception("Could not set text mode")
 
-                if "OK" not in response:
-                    pass
-                    # return
-
-                for name, num in number.items():
-
-                    # int(num)
                     ser.write(f'AT+CMGS="{num}"\r'.encode())
-                    # ser.flush()
                     time.sleep(3)
                     response = ser.read_all().decode(errors="ignore").strip()
 
                     if ">" not in response:
-                        pass
-                        # return
+                        raise Exception("Modem did not return prompt character")
 
                     # Send the message and terminate with Ctrl+Z
                     ser.write((message + '\x1A').encode())  # Ctrl+Z
                     ser.flush()
-
-                    # Wait for the final response
                     time.sleep(8)
                     response = ser.read_all().decode(errors="ignore").strip()
 
                     status = "Sent" if "+CMGS" in response else "Failed"
 
+                    # Log SMS sending status
                     Sms_logs.objects.create(
                         time=datetime.now().time(),
                         date=datetime.now().date(),
@@ -112,17 +102,37 @@ def send_sms_from_queue(sms_details):
                         status=status,
                         equipment=Eqp,
                     )
-            ser.close()
 
-    except Exception as e:
-        # ser.close()
-        Sms_logs.objects.create(
-            time=datetime.now().time(),
-            date=datetime.now().date(),
-            sys_sms=sys_sms,
-            to_num=sms_details['number'],
-            msg_body=message,
-            status="Failed",
-            equipment=Eqp,
-        )
-    end_time = time.time()
+                    print(f"SMS to {name} ({num}): {status}")
+
+            except FileNotFoundError as e:
+                # Handle specific case when the serial port is not found
+                print(f"Error sending SMS to {name} ({num}): could not open port '{settings.comm_port}': {str(e)}")
+                Sms_logs.objects.create(
+                    time=datetime.now().time(),
+                    date=datetime.now().date(),
+                    sys_sms=sys_sms,
+                    to_num=num,
+                    user_name=name,
+                    msg_body=message,
+                    status="Failed",
+                    equipment=Eqp,
+                )
+                continue 
+
+            except Exception as e:
+                # Handle other general exceptions
+                print(f"Error sending SMS to {name} ({num}): {str(e)}")
+                Sms_logs.objects.create(
+                    time=datetime.now().time(),
+                    date=datetime.now().date(),
+                    sys_sms=sys_sms,
+                    to_num=num,
+                    user_name=name,
+                    msg_body=message,
+                    status="Failed",
+                    equipment=Eqp,
+                )
+                continue 
+
+

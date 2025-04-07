@@ -2778,6 +2778,18 @@ def plc_connect(request):
                     DB_NUMBER_LIMITS, OFFSETS_LIMITS["EQUIPMENT"], 2)
                 data = read_plc_data(plc, 4, 4, 4)
                 pv = snap7.util.get_real(data, 0)
+                data = read_plc_data(plc, 19, 8, 4)
+                High_Temp = snap7.util.get_real(data, 0)
+                data1 = read_plc_data(plc, 19, 4, 4)
+                low_Temp = snap7.util.get_real(data1, 0)
+                data2 = read_plc_data(plc, 19, 0, 4)
+                sv = snap7.util.get_real(data2, 0)
+                data3 = read_plc_data(plc, 19, 64, 3)
+                cooling = snap7.util.get_bool(data3, 0, 0)
+                data = read_plc_data(plc, 19, 776, 4)
+                low = snap7.util.get_real(data, 0)
+                data1 = read_plc_data(plc, 19, 780, 4)
+                high = snap7.util.get_real(data1, 0)
 
                 equipment_mapping = {
                     11: "Temperature only - No of Sensor 1",
@@ -2909,6 +2921,7 @@ def background_task_for_all_equipment(interval):
             # Fetch all active equipment
             active_equipments = Equipment.objects.filter(status='active')
             for equipment in active_equipments:
+              
                 try:
 
                     # Call the function to download logs for each equipment
@@ -3003,6 +3016,7 @@ download_lock = threading.Lock()
 
 
 def process_data_logs(file_path, equipment_id):
+    
     with download_lock:
         try:
             with open(file_path, "r") as csv_file:
@@ -3077,7 +3091,7 @@ def process_data_logs(file_path, equipment_id):
         except Exception:
             return f"Error processing Data Logs"
 
-
+import serial
 def process_alarm_logs(file_path, equipment_id):
     with download_lock:
         equipment = Equipment.objects.get(id=equipment_id)
@@ -3138,12 +3152,13 @@ def process_alarm_logs(file_path, equipment_id):
                                 int(dept.sms_delay)
                                 sd = dept.sms_delay
                             if getattr(sms_alert, f'code_{code}'):
+
                                 thread_sms = threading.Thread(
-                                    target=send_alert_messages, args=(
-                                        user_data, alarm_log.id, sd))
+                                            target=send_alert_messages, args=(
+                                                user_data, alarm_log.id, sd))
                                 thread_sms.start()
                                 thread_sms.join()
-                                # send_alert_messages(user_data, alarm_log.id)
+                                send_alert_messages(user_data, alarm_log.id)
 
                     except IntegrityError:
                         pass
@@ -3157,6 +3172,7 @@ def process_alarm_logs(file_path, equipment_id):
 
 
 def send_alert_messages(numbers_list, alarm_code, delay):
+   
     time.sleep(delay * 60)
     alarm = Alarm_logs.objects.get(id=alarm_code)
     equipment = alarm.equipment.id
@@ -3169,6 +3185,8 @@ def send_alert_messages(numbers_list, alarm_code, delay):
     time_field = alarm.time
     combined_datetime = datetime.combine(date_field, time_field)
     formatted_datetime = combined_datetime.strftime('%Y-%m-%d %H:%M:%S')
+    eqp=Equipment.objects.get(id=equipment)
+
     sms_settings = AppSettings.objects.first()
     try:
         threads = []
@@ -3267,7 +3285,30 @@ Date and Time: {formatted_datetime}
 Alarm Description: {alarm_description}
 Date and Time: {formatted_datetime}"""
 
-        add_to_sms_queue(numbers_list, message, equipment, alarm_id, False)
+        try:
+
+            with serial.Serial(
+                port=sms_settings.comm_port,
+                baudrate=sms_settings.baud_rate,
+                bytesize=serial.EIGHTBITS,
+                parity=serial.PARITY_NONE,
+                stopbits=serial.STOPBITS_ONE,
+                timeout=2
+            ) as ser:
+                add_to_sms_queue(numbers_list, message, equipment, alarm_id, False)
+        except Exception as e:
+            for i, j in numbers_list.items():
+              
+                Sms_logs.objects.create(
+                time=datetime.now().time(),
+                date=datetime.now().date(),
+                sys_sms=False,
+                to_num=j,
+                user_name=i,
+                msg_body=message,
+                status="Failed",
+                equipment=eqp,
+            )
 
     except Exception as e:
         pass
@@ -3588,6 +3629,18 @@ def equipment_configure_view(request):
                 equipment.high_alarm = High_Temp
                 equipment.cooling = cooling
                 equipment.save()
+                if "Humidity" in equipment_type:
+
+                    data2 = read_plc_data(plc, 19, 772, 4)
+                    sv = snap7.util.get_real(data2, 0)
+                    data = read_plc_data(plc, 19, 776, 4)
+                    low = snap7.util.get_real(data, 0)
+                    data1 = read_plc_data(plc, 19, 780, 4)
+                    high = snap7.util.get_real(data1, 0)
+                    equipment.high_alarm_hum=high
+                    equipment.low_alarm_hum=low
+                    equipment.set_value_hum=sv
+                    equipment.save()
 
                 # This should call the function now
                 write_interval_to_plc(plc, interval)
@@ -4193,35 +4246,93 @@ def generate_log_pdf(request, records, from_date, to_date, from_time,
     def add_alarm_tables():
         equipment = TemperatureHumidityRecord.objects.filter(
             equip_name__equip_name=selected_equipment).first()
+        
+        eqp = Equipment.objects.filter(
+            equip_name=selected_equipment).first()
 
+        # Collect distinct values for alarm and alert thresholds from the records
+        t_low_alarm_values = set(record.t_low_alarm for record in records if record.t_low_alarm is not None)
+        t_high_alarm_values = set(record.t_high_alarm for record in records if record.t_high_alarm is not None)
+        t_low_alert_values = set(record.t_low_alert for record in records if record.t_low_alert is not None)
+        t_high_alert_values = set(record.t_high_alert for record in records if record.t_high_alert is not None)
+        
+        rh_low_alarm_values = set(record.rh_low_alarm for record in records if record.rh_low_alarm is not None)
+        rh_high_alarm_values = set(record.rh_high_alarm for record in records if record.rh_high_alarm is not None)
+        rh_low_alert_values = set(record.rh_low_alert for record in records if record.rh_low_alert is not None)
+        rh_high_alert_values = set(record.rh_high_alert for record in records if record.rh_high_alert is not None)
+
+
+        # Decide whether to use values from the records or the equipment's live data
+        if len(t_low_alarm_values) > 1:
+            t_low_alarm = eqp.low_alarm
+        else:
+            t_low_alarm = next(iter(t_low_alarm_values), None)  
+
+        if len(t_high_alarm_values) > 1:
+            t_high_alarm = eqp.high_alarm
+        else:
+            t_high_alarm = next(iter(t_high_alarm_values), None)
+
+        if len(t_low_alert_values) > 1:
+            t_low_alert = eqp.low_alert
+        else:
+            t_low_alert = next(iter(t_low_alert_values), None)
+
+        if len(t_high_alert_values) > 1:
+            t_high_alert = eqp.high_alert
+            
+        else:
+            t_high_alert = next(iter(t_high_alert_values), None)
+
+        if len(rh_low_alarm_values) > 1:
+            rh_low_alarm = eqp.low_alarm_hum
+        else:
+            rh_low_alarm = next(iter(rh_low_alarm_values), None)
+
+        if len(rh_high_alarm_values) > 1:
+            rh_high_alarm = eqp.high_alarm_hum
+        else:
+            rh_high_alarm = next(iter(rh_high_alarm_values), None)
+
+        if len(rh_low_alert_values) > 1:
+            rh_low_alert = eqp.low_alert_hum
+        else:
+            rh_low_alert = next(iter(rh_low_alert_values), None)
+
+        if len(rh_high_alert_values) > 1:
+            rh_high_alert = eqp.high_alert_hum
+        else:
+            rh_high_alert = next(iter(rh_high_alert_values), None)
+        
+        
         # Data for Temperature and Humidity Alarms
         alarm_data = []
 
         # Check if alert data exists for temperature
         if equipment and (
-                equipment.t_low_alarm is not None or equipment.t_high_alarm is not None or equipment.t_low_alert is not None or equipment.t_high_alert is not None):
+                t_low_alarm is not None or t_high_alarm is not None or t_low_alert is not None or t_high_alert is not None):
             # Add the header row conditionally based on alerts
-            if equipment.t_low_alert is not None or equipment.t_high_alert is not None:
+            if t_low_alert is not None or t_high_alert is not None:
                 alarm_data.append(
                     ['Parameter', 'Low Alarm', 'Low Alert', 'High Alarm', 'High Alert'])
                 temperature_row = [
                     'Temperature (°C)',
-                    f"{equipment.t_low_alarm:.1f}" if equipment.t_low_alarm is not None else '',
-                    f"{equipment.t_low_alert:.1f}" if equipment.t_low_alert is not None else '',
-                    f"{equipment.t_high_alarm:.1f}" if equipment.t_high_alarm is not None else '',
-                    f"{equipment.t_high_alert:.1f}" if equipment.t_high_alert is not None else ''
+                    f"{t_low_alarm:.1f}" if t_low_alarm is not None else '',
+                    f"{t_low_alert:.1f}" if t_low_alert is not None else '',
+                    f"{t_high_alarm:.1f}" if t_high_alarm is not None else '',
+                    f"{t_high_alert:.1f}" if t_high_alert is not None else ''
                 ]
             else:
                 alarm_data.append(['Parameter', 'Low Alarm', 'High Alarm'])
                 temperature_row = [
                     'Temperature (°C)',
-                    f"{equipment.t_low_alarm:.1f}" if equipment.t_low_alarm is not None else '',
-                    f"{equipment.t_high_alarm:.1f}" if equipment.t_high_alarm is not None else '',
+                    f"{t_low_alarm:.1f}" if t_low_alarm is not None else '',
+                    f"{t_high_alarm:.1f}" if t_high_alarm is not None else '',
                 ]
 
             # Remove alert columns if not available (only remove alerts, not
             # high alarm)
-            if equipment.t_low_alert is None or equipment.t_high_alert is None:
+            if t_low_alert is None or t_high_alert is None:
                 # Remove alert columns but keep high alarm
                 temperature_row = temperature_row[:3]
 
@@ -4229,27 +4340,27 @@ def generate_log_pdf(request, records, from_date, to_date, from_time,
 
         # Check if alert data exists for humidity
         if equipment and (
-                equipment.rh_low_alarm is not None or equipment.rh_high_alarm is not None or equipment.rh_low_alert is not None or equipment.rh_high_alert is not None):
+                rh_low_alarm is not None or rh_high_alarm is not None or rh_low_alert is not None or rh_high_alert is not None):
             # Add humidity alarm data
-            if equipment.rh_low_alert is not None or equipment.rh_high_alert is not None:
+            if rh_low_alert is not None or rh_high_alert is not None:
                 humidity_row = [
                     'Humidity (% RH)',
-                    f"{equipment.rh_low_alarm:.1f}" if equipment.rh_low_alarm is not None else '',
-                    f"{equipment.rh_low_alert:.1f}" if equipment.rh_low_alert is not None else '',
-                    f"{equipment.rh_high_alarm:.1f}" if equipment.rh_high_alarm is not None else '',
-                    f"{equipment.rh_high_alert:.1f}" if equipment.rh_high_alert is not None else ''
+                    f"{rh_low_alarm:.1f}" if rh_low_alarm is not None else '',
+                    f"{rh_low_alert:.1f}" if rh_low_alert is not None else '',
+                    f"{rh_high_alarm:.1f}" if rh_high_alarm is not None else '',
+                    f"{rh_high_alert:.1f}" if rh_high_alert is not None else ''
                 ]
             else:
                 humidity_row = [
                     'Humidity (% RH)',
-                    f"{equipment.rh_low_alarm:.1f}" if equipment.rh_low_alarm is not None else '',
-                    f"{equipment.rh_high_alarm:.1f}" if equipment.rh_high_alarm is not None else '',
+                    f"{rh_low_alarm:.1f}" if rh_low_alarm is not None else '',
+                    f"{rh_high_alarm:.1f}" if rh_high_alarm is not None else '',
 
                 ]
 
             # Remove alert columns if not available (only remove alerts, not
             # high alarm)
-            if equipment.rh_low_alert is None or equipment.rh_high_alert is None:
+            if rh_low_alert is None or rh_high_alert is None:
                 # Remove alert columns but keep high alarm
                 humidity_row = humidity_row[:3]
 
@@ -4284,6 +4395,7 @@ def generate_log_pdf(request, records, from_date, to_date, from_time,
 
         return alarm_table
 
+    
     def add_temperature_table(selected_equipment):
         # Initialize lists for temperature and humidity data
         selected_equipment = Equipment.objects.get(
@@ -4350,7 +4462,7 @@ def generate_log_pdf(request, records, from_date, to_date, from_time,
         ])
 
         # Define column widths
-        col_widths = [130, 80, 120]  # Adjust column widths as needed
+        col_widths = [150, 100, 100, 100]  # Adjust column widths as needed
 
         # Create the temperature table
         temp_table = Table(temp_data, colWidths=col_widths)
@@ -4412,15 +4524,6 @@ def generate_log_pdf(request, records, from_date, to_date, from_time,
 
         active_temperature_channels = temperature_channels[:total_temp_sensors]
         active_humidity_channels = humidity_channels[:total_humidity_sensors]
-
-        # if total_humidity_sensors== 0 or total_temp_sensors==0:
-        #     temperature_header = ['T' + str(i+1) for i in range(10)] if active_temperature_channels else ['T' + str(i+1) for i in range(10)]
-        # else:
-        #     temperature_header = ['T' + str(i+1) for i in range(5)] if active_temperature_channels else []
-        # if total_humidity_sensors > 0:
-        #     humidity_header = ['RH' + str(i+1) for i in range(5)] if active_humidity_channels else []
-        # else:
-        #     humidity_header = []
 
         if total_temp_sensors == 0 and total_humidity_sensors == 0:  # No sensors at all
             temperature_header = [''] * 10
@@ -4713,60 +4816,117 @@ def generate_log_pdf_landscape(request, records, from_date, to_date, from_time,
     def add_alarm_tables():
         equipment = TemperatureHumidityRecord.objects.filter(
             equip_name__equip_name=selected_equipment).first()
+        
+        eqp = Equipment.objects.filter(
+            equip_name=selected_equipment).first()
+
+        # Collect distinct values for alarm and alert thresholds from the records
+        t_low_alarm_values = set(record.t_low_alarm for record in records if record.t_low_alarm is not None)
+        t_high_alarm_values = set(record.t_high_alarm for record in records if record.t_high_alarm is not None)
+        t_low_alert_values = set(record.t_low_alert for record in records if record.t_low_alert is not None)
+        t_high_alert_values = set(record.t_high_alert for record in records if record.t_high_alert is not None)
+        
+        rh_low_alarm_values = set(record.rh_low_alarm for record in records if record.rh_low_alarm is not None)
+        rh_high_alarm_values = set(record.rh_high_alarm for record in records if record.rh_high_alarm is not None)
+        rh_low_alert_values = set(record.rh_low_alert for record in records if record.rh_low_alert is not None)
+        rh_high_alert_values = set(record.rh_high_alert for record in records if record.rh_high_alert is not None)
+
+
+        # Decide whether to use values from the records or the equipment's live data
+        if len(t_low_alarm_values) > 1:
+            t_low_alarm = eqp.low_alarm
+        else:
+            t_low_alarm = next(iter(t_low_alarm_values), None)  
+
+        if len(t_high_alarm_values) > 1:
+            t_high_alarm = eqp.high_alarm
+        else:
+            t_high_alarm = next(iter(t_high_alarm_values), None)
+
+        if len(t_low_alert_values) > 1:
+            t_low_alert = eqp.low_alert
+        else:
+            t_low_alert = next(iter(t_low_alert_values), None)
+
+        if len(t_high_alert_values) > 1:
+            t_high_alert = eqp.high_alert
+            
+        else:
+            t_high_alert = next(iter(t_high_alert_values), None)
+
+        if len(rh_low_alarm_values) > 1:
+            rh_low_alarm = eqp.low_alarm_hum
+        else:
+            rh_low_alarm = next(iter(rh_low_alarm_values), None)
+
+        if len(rh_high_alarm_values) > 1:
+            rh_high_alarm = eqp.high_alarm_hum
+        else:
+            rh_high_alarm = next(iter(rh_high_alarm_values), None)
+
+        if len(rh_low_alert_values) > 1:
+            rh_low_alert = eqp.low_alert_hum
+        else:
+            rh_low_alert = next(iter(rh_low_alert_values), None)
+
+        if len(rh_high_alert_values) > 1:
+            rh_high_alert = eqp.high_alert_hum
+        else:
+            rh_high_alert = next(iter(rh_high_alert_values), None)
 
         # Data for Temperature and Humidity Alarms
         alarm_data = []
 
         # Check if alert data exists for temperature
         if equipment and (
-                equipment.t_low_alarm is not None or equipment.t_high_alarm is not None or equipment.t_low_alert is not None or equipment.t_high_alert is not None):
+                t_low_alarm is not None or t_high_alarm is not None or t_low_alert is not None or t_high_alert is not None):
             # Add the header row conditionally based on alerts
-            if equipment.t_low_alert is not None or equipment.t_high_alert is not None:
+            if t_low_alert is not None or t_high_alert is not None:
                 alarm_data.append(
                     ['Parameter', 'Low Alarm', 'Low Alert', 'High Alarm', 'High Alert'])
                 temperature_row = [
                     'Temperature (°C)',
-                    f"{equipment.t_low_alarm:.1f}" if equipment.t_low_alarm is not None else '',
-                    f"{equipment.t_low_alert:.1f}" if equipment.t_low_alert is not None else '',
-                    f"{equipment.t_high_alarm:.1f}" if equipment.t_high_alarm is not None else '',
-                    f"{equipment.t_high_alert:.1f}" if equipment.t_high_alert is not None else ''
+                    f"{t_low_alarm:.1f}" if t_low_alarm is not None else '',
+                    f"{t_low_alert:.1f}" if t_low_alert is not None else '',
+                    f"{t_high_alarm:.1f}" if t_high_alarm is not None else '',
+                    f"{t_high_alert:.1f}" if t_high_alert is not None else ''
                 ]
             else:
                 alarm_data.append(['Parameter', 'Low Alarm', 'High Alarm'])
                 temperature_row = [
                     'Temperature (°C)',
-                    f"{equipment.t_low_alarm:.1f}" if equipment.t_low_alarm is not None else '',
-                    f"{equipment.t_high_alarm:.1f}" if equipment.t_high_alarm is not None else '',
+                    f"{t_low_alarm:.1f}" if t_low_alarm is not None else '',
+                    f"{t_high_alarm:.1f}" if t_high_alarm is not None else '',
                 ]
 
-            if equipment.t_low_alert is None or equipment.t_high_alert is None:
+            if t_low_alert is None or t_high_alert is None:
                 temperature_row = temperature_row[:3]  # Remove alert columns
 
             alarm_data.append(temperature_row)
 
         # Check if alert data exists for humidity
         if equipment and (
-                equipment.rh_low_alarm is not None or equipment.rh_high_alarm is not None or equipment.rh_low_alert is not None or equipment.rh_high_alert is not None):
+                rh_low_alarm is not None or rh_high_alarm is not None or rh_low_alert is not None or rh_high_alert is not None):
             # Add the header row conditionally based on alerts
-            if equipment.rh_low_alert is not None or equipment.rh_high_alert is not None:
+            if rh_low_alert is not None or rh_high_alert is not None:
                 humidity_row = [
                     'Humidity (% RH)',
-                    f"{equipment.rh_low_alarm:.1f}" if equipment.rh_low_alarm is not None else '',
-                    f"{equipment.rh_low_alert:.1f}" if equipment.rh_low_alert is not None else '',
-                    f"{equipment.rh_high_alarm:.1f}" if equipment.rh_high_alarm is not None else '',
-                    f"{equipment.rh_high_alert:.1f}" if equipment.rh_high_alert is not None else ''
+                    f"{rh_low_alarm:.1f}" if rh_low_alarm is not None else '',
+                    f"{rh_low_alert:.1f}" if rh_low_alert is not None else '',
+                    f"{rh_high_alarm:.1f}" if rh_high_alarm is not None else '',
+                    f"{rh_high_alert:.1f}" if rh_high_alert is not None else ''
                 ]
             else:
                 humidity_row = [
                     'Humidity (% RH)',
-                    f"{equipment.rh_low_alarm:.1f}" if equipment.rh_low_alarm is not None else '',
-                    f"{equipment.rh_high_alarm:.1f}" if equipment.rh_high_alarm is not None else '',
+                    f"{rh_low_alarm:.1f}" if rh_low_alarm is not None else '',
+                    f"{rh_high_alarm:.1f}" if rh_high_alarm is not None else '',
                 ]
 
             # Add humidity alarm data
 
             # Remove alert columns if not available
-            if equipment.rh_low_alert is None or equipment.rh_high_alert is None:
+            if rh_low_alert is None or rh_high_alert is None:
                 humidity_row = humidity_row[:3]  # Remove alert columns
 
             alarm_data.append(humidity_row)
@@ -5099,7 +5259,10 @@ def save_alarm_logs(request):
             try:
                 user = User.objects.get(username=username)
             except User.DoesNotExist:
-                return JsonResponse({"message": "User not found."}, status=404)
+                try:
+                    user = SuperAdmin.objects.get(username=username)
+                except SuperAdmin.DoesNotExist:
+                    return JsonResponse({"message": "User or SuperAdmin not found."}, status=404)
 
             # Check password
             if not check_password(password, user.password):
@@ -7191,10 +7354,12 @@ def save_equipment_settings(request):
     password = data.get('password')
     ackn = data.get('acknowledge')
     try:
-
         user = User.objects.get(username=username)
     except User.DoesNotExist:
-        return JsonResponse({"message": "User not found."}, status=404)
+        try:
+            user = SuperAdmin.objects.get(username=username)
+        except SuperAdmin.DoesNotExist:
+            return JsonResponse({"message": "User or SuperAdmin not found."}, status=404)
 
     if not check_password(password, user.password):
         return JsonResponse(
@@ -7220,6 +7385,7 @@ def save_equipment_settings(request):
             data.get('humidity_high_alert'))
         humidity_low_alert = eqp_stngs_safe_float(
             data.get('humidity_low_alert'))
+        
 
         plc = connect_to_plc1(ip)
         if plc == False:
@@ -7285,7 +7451,7 @@ def save_equipment_settings(request):
 
                     data = bytearray(4)
                     set_real(data, 0, humidity_set_value)
-                    plc.db_write(19, 766, data)
+                    plc.db_write(19, 772, data)
                     Equipmentwrite.objects.create(
                         equipment=ip_address,
                         label="Humidity Set Value Updated",
@@ -7303,7 +7469,7 @@ def save_equipment_settings(request):
 
                     data = bytearray(4)
                     set_real(data, 0, humidity_low_alarm)
-                    plc.db_write(19, 770, data)
+                    plc.db_write(19, 776, data)
                     Equipmentwrite.objects.create(
                         equipment=ip_address,
                         label="Humidity Low Alarm Value Updated",
@@ -7321,7 +7487,7 @@ def save_equipment_settings(request):
 
                     data = bytearray(4)
                     set_real(data, 0, humidity_high_alarm)
-                    plc.db_write(19, 774, data)
+                    plc.db_write(19, 780, data)
                     Equipmentwrite.objects.create(
                         equipment=ip_address,
                         label="Humidity High Alarm Value Updated",

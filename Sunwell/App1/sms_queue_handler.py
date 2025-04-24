@@ -21,7 +21,6 @@ def sms_worker():
             send_sms_from_queue(sms_details) 
             sms_queue.task_done()  
         except Exception as e:
-            print(f"Error in SMS worker: {e}")
             continue 
 
 
@@ -103,11 +102,9 @@ def send_sms_from_queue(sms_details):
                         equipment=Eqp,
                     )
 
-                    print(f"SMS to {name} ({num}): {status}")
 
             except FileNotFoundError as e:
                 # Handle specific case when the serial port is not found
-                print(f"Error sending SMS to {name} ({num}): could not open port '{settings.comm_port}': {str(e)}")
                 Sms_logs.objects.create(
                     time=datetime.now().time(),
                     date=datetime.now().date(),
@@ -122,7 +119,6 @@ def send_sms_from_queue(sms_details):
 
             except Exception as e:
                 # Handle other general exceptions
-                print(f"Error sending SMS to {name} ({num}): {str(e)}")
                 Sms_logs.objects.create(
                     time=datetime.now().time(),
                     date=datetime.now().date(),

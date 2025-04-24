@@ -1,0 +1,38 @@
+@echo off
+:: Check if the script is running with administrator privileges
+net session >nul 2>&1
+if %errorlevel% NEQ 0 (
+    echo This script requires administrator privileges.
+    pause
+    exit /b
+)
+
+set SERVICE_NAME=ESTDAS_V1
+set EXE_NAME=ESTDAS_V1.exe
+
+:: Get current directory
+set CURRENT_DIR=%~dp0
+
+:: Full paths
+set EXE_PATH=%CURRENT_DIR%%EXE_NAME%
+set NSSM_PATH=%CURRENT_DIR%nssm.exe
+
+:: Install service
+echo Installing service "%SERVICE_NAME%"...
+%NSSM_PATH% install %SERVICE_NAME% "%EXE_PATH%"
+
+:: Set the service to start automatically with a delayed auto-start
+echo Setting service to start with a delayed auto-start...
+%NSSM_PATH% set %SERVICE_NAME% Start SERVICE_DELAYED_AUTO_START
+
+:: Add a delay of 30 seconds to allow system resources to initialize
+echo Adding delay before starting the service...
+timeout /t 10
+
+:: Start service
+echo Starting service "%SERVICE_NAME%"...
+%NSSM_PATH% start %SERVICE_NAME%
+
+echo.
+echo ✅ Service "%SERVICE_NAME%" has been installed and started successfully.
+pause

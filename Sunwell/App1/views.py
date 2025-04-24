@@ -81,6 +81,8 @@ from datetime import datetime, timedelta
 from apscheduler.schedulers.background import BackgroundScheduler
 from apscheduler.triggers.cron import CronTrigger
 from django.views.decorators.csrf import csrf_exempt
+from concurrent.futures import ThreadPoolExecutor
+
 
 
 def base(request):
@@ -994,7 +996,7 @@ def department(request):
                 'report_datetime_stamp') == 'True'
 
             email_sys = request.POST.get('email_status')
-            email_delay = request.POST.get('email_delay')
+            delay_minutes = request.POST.get('email_delay')
             email_time = request.POST.get('email_time') or None
 
             email_address_1 = request.POST.get('email_address_1')
@@ -1066,7 +1068,7 @@ def department(request):
                 report_datetime_stamp=report_datetime_stamp,
 
                 email_sys=email_sys,
-                email_delay=email_delay,
+                email_delay=delay_minutes,
                 email_time=email_time,
                 alert_email_address_1=email_address_1,
                 alert_email_address_2=email_address_2,
@@ -1159,7 +1161,7 @@ def edit_department(request, department_id):
                 'edit_report_datetime_stamp') == 'True'
 
             email_sys = request.POST.get('edit_email_status')
-            email_delay = request.POST.get('edit_email_delay')
+            delay_minutes = request.POST.get('edit_email_delay')
             email_time = request.POST.get('edit_email_time') or None
 
             email_address_1 = request.POST.get('edit_email_address_1')
@@ -1226,7 +1228,7 @@ def edit_department(request, department_id):
             departments.report_datetime_stamp = report_datetime_stamp
 
             departments.email_sys = email_sys
-            departments.email_delay = email_delay
+            departments.email_delay = delay_minutes
             departments.email_time = email_time
             departments.alert_email_address_1 = email_address_1
             departments.alert_email_address_2 = email_address_2
@@ -2280,7 +2282,7 @@ def send_test_sms(request):
                     return redirect('app_sms_settings')
             else:
                 # Send SMS immediately by adding to the queue
-                number = {"name": test_sms_number}
+                number = {"N/A": test_sms_number}
                 add_to_sms_queue(
                     number,
                     message,
@@ -2912,26 +2914,24 @@ stop_event = threading.Event()  # Shared stop event for the background task
 
 
 def background_task_for_all_equipment(interval):
-    """
-    Periodically checks all active equipment and downloads their data logs.
-    """
+   
     while not stop_event.is_set():  # If stop_event is not set, keep running
         try:
 
-            # Fetch all active equipment
+          
             active_equipments = Equipment.objects.filter(status='active')
             for equipment in active_equipments:
               
                 try:
 
-                    # Call the function to download logs for each equipment
+                    
                     download_process_logs(equipment.ip_address, equipment.id)
 
                 except Exception as e:
                     pass
 
-            # Sleep for the interval duration
-            time.sleep(interval * 60)  # Convert minutes to seconds
+         
+            time.sleep(interval * 60) 
 
         except Exception as e:
 
@@ -2967,11 +2967,8 @@ def download_process_logs(ip_address, equipment_id):
 
                     results[log_type] = f"Equipment with IP {ip_address} not found."
                     continue
-
-                # Generate a unique file name to avoid overwriting existing
-                # files
-                timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")  # Example: 20241128_123456
-                # Get first 8 characters of a UUID to ensure uniqueness
+                timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")  
+               
                 unique_suffix = str(uuid.uuid4())[:8]
                 folder_name = f"{log_type}_logs"
                 file_name = f"{
@@ -2987,18 +2984,16 @@ def download_process_logs(ip_address, equipment_id):
 
                 results[log_type] = f"{
                     log_type.capitalize()} logs downloaded successfully: {file_name}"
-
-                # Process the downloaded log files
                 if log_type == "alarm":
+                    clear_csv_logs(
+                    ip_address, log_type)
                     results["data_processing"] = process_alarm_logs(
                         file_path, equipment_id)
                 elif log_type == "data":
+                    clear_csv_logs(
+                    ip_address, log_type)
                     results["data_processing"] = process_data_logs(
                         file_path, equipment_id)
-
-                results[f"{log_type}_clear"] = clear_csv_logs(
-                    ip_address, log_type)
-
             else:
 
                 results[log_type] = f"Failed to download {log_type} logs. Status code: {
@@ -3012,7 +3007,7 @@ def download_process_logs(ip_address, equipment_id):
 
 
 download_lock = threading.Lock()
-download_lock = threading.Lock()
+
 
 
 def process_data_logs(file_path, equipment_id):
@@ -3035,7 +3030,7 @@ def process_data_logs(file_path, equipment_id):
                         elif len(time_raw) > 8 and '.' in time_raw:
                             time_raw = time_raw[:8]
 
-                        # This validates time format
+                       
                         datetime.strptime(time_raw, "%H:%M:%S")
 
                         def safe_float(value):
@@ -3092,109 +3087,326 @@ def process_data_logs(file_path, equipment_id):
             return f"Error processing Data Logs"
 
 import serial
-def process_alarm_logs(file_path, equipment_id):
-    with download_lock:
-        equipment = Equipment.objects.get(id=equipment_id)
-        try:
-            with open(file_path, "r") as csv_file:
-                csv_reader = csv.DictReader(csv_file)
-                saved_records = 0
-                for row in csv_reader:
-                    try:
-                        date = datetime.strptime(
-                            row["DATE"].strip(), "%Y-%m-%d").date()
-                        time = datetime.strptime(
-                            row[" TIME"].strip(), "%H:%M:%S.%f").time()
-                        alarm_code = Alarm_codes.objects.get(
-                            code=row["ALARM_CODE"].strip())
-                        alarm_log, created = Alarm_logs.objects.update_or_create(
-                            equipment=equipment,
-                            alarm_code=alarm_code,
-                            date=date,
-                            time=time,
-                        )
-                        if created:
-                            saved_records += 1
-                            dept = Department.objects.get(
-                                id=equipment.department.id)
-                            email_fields = [
-                                dept.alert_email_address_1, dept.alert_email_address_2,
-                                dept.alert_email_address_3, dept.alert_email_address_4,
-                                dept.alert_email_address_5, dept.alert_email_address_6,
-                                dept.alert_email_address_7, dept.alert_email_address_8,
-                                dept.alert_email_address_9, dept.alert_email_address_10,
-                            ]
-                            email_list = [
-                                email for email in email_fields if email]
-                            user_data = {}
-                            for i in range(1, 11):
-                                username = getattr(dept, f'user{i}', None)
-                                usernum = getattr(dept, f'user{i}_num', None)
-                                if username is not None and usernum is not None:
-                                    user_data[username] = usernum
-                            code = alarm_code.code
-                            email_alert = emailalert.objects.get(
-                                equipment_name=equipment_id)
-                            sms_alert = smsalert.objects.get(
-                                equipment_name=equipment_id)
-                            ed = 0
-                            if dept.email_delay:
-                                int(dept.email_delay)
-                                ed = dept.email_delay
-                            if getattr(email_alert, f'code_{code}'):
-                                thread_email = threading.Thread(
-                                    target=send_alert_email, args=(
-                                        alarm_log.id, email_list, ed))
-                                thread_email.start()
-                                thread_email.join()
-                            sd = 0
-                            if dept.sms_delay:
-                                int(dept.sms_delay)
-                                sd = dept.sms_delay
-                            if getattr(sms_alert, f'code_{code}'):
+# def process_alarm_logs(file_path, equipment_id):
+#     print("alarm logs")
+#     with download_lock:
+#         equipment = Equipment.objects.get(id=equipment_id)
+#         try:
+#             with open(file_path, "r") as csv_file:
+#                 csv_reader = csv.DictReader(csv_file)
+#                 saved_records = 0
+#                 for row in csv_reader:
+#                     try:
+#                         date = datetime.strptime(
+#                             row["DATE"].strip(), "%Y-%m-%d").date()
+#                         time = datetime.strptime(
+#                             row[" TIME"].strip(), "%H:%M:%S.%f").time()
+#                         alarm_code = Alarm_codes.objects.get(
+#                             code=row["ALARM_CODE"].strip())
+#                         alarm_log, created = Alarm_logs.objects.update_or_create(
+#                             equipment=equipment,
+#                             alarm_code=alarm_code,
+#                             date=date,
+#                             time=time,
+#                         )
+#                         if created:
+#                             saved_records += 1
+#                             dept = Department.objects.get(
+#                                 id=equipment.department.id)
+#                             email_fields = [
+#                                 dept.alert_email_address_1, dept.alert_email_address_2,
+#                                 dept.alert_email_address_3, dept.alert_email_address_4,
+#                                 dept.alert_email_address_5, dept.alert_email_address_6,
+#                                 dept.alert_email_address_7, dept.alert_email_address_8,
+#                                 dept.alert_email_address_9, dept.alert_email_address_10,
+#                             ]
+#                             email_list = [
+#                                 email for email in email_fields if email]
+#                             user_data = {}
+#                             for i in range(1, 11):
+#                                 username = getattr(dept, f'user{i}', None)
+#                                 usernum = getattr(dept, f'user{i}_num', None)
+#                                 if username is not None and usernum is not None:
+#                                     user_data[username] = usernum
+#                             code = alarm_code.code
+#                             email_alert = emailalert.objects.get(
+#                                 equipment_name=equipment_id)
+#                             sms_alert = smsalert.objects.get(
+#                                 equipment_name=equipment_id)
+#                             ed = 0
+#                             if dept.email_delay:
+#                                 int(dept.email_delay)
+#                                 ed = dept.email_delay
+#                             if getattr(email_alert, f'code_{code}'):
+#                                 thread_email = threading.Thread(
+#                                     target=send_alert_email, args=(
+#                                         alarm_log.id, email_list, ed))
+#                                 thread_email.start()
+#                                 thread_email.join()
+#                             sd = 0
+#                             if dept.sms_delay:
+#                                 int(dept.sms_delay)
+#                                 sd = dept.sms_delay
+#                             if getattr(sms_alert, f'code_{code}'):
 
-                                thread_sms = threading.Thread(
-                                            target=send_alert_messages, args=(
-                                                user_data, alarm_log.id, sd))
-                                thread_sms.start()
-                                thread_sms.join()
-                                send_alert_messages(user_data, alarm_log.id)
+#                                 thread_sms = threading.Thread(
+#                                             target=send_alert_messages, args=(
+#                                                 user_data, alarm_log.id, sd))
+#                                 thread_sms.start()
+#                                 thread_sms.join()
+                                
+#                     except IntegrityError:
+#                         pass
+#                     except Exception:
+#                         pass
+#             return f"Alarm logs processed successfully. Total records saved: {saved_records}"
 
-                    except IntegrityError:
-                        pass
-                    except Exception:
-                        pass
-
-            return f"Alarm logs processed successfully. Total records saved: {saved_records}"
-
-        except Exception:
-            return f"Error processing Alarm Logs"
+#         except Exception:
+#             return f"Error processing Alarm Logs"
 
 
-def send_alert_messages(numbers_list, alarm_code, delay):
+# def send_alert_messages(numbers_list, alarm_code, delay):
    
-    time.sleep(delay * 60)
-    alarm = Alarm_logs.objects.get(id=alarm_code)
-    equipment = alarm.equipment.id
-    alarm_id = alarm.id
-    app = AppSettings.objects.first()
-    equipment_id = alarm.equipment.equip_name
-    alarm_code = alarm.alarm_code.code
-    alarm_description = alarm.alarm_code.alarm_log
-    date_field = alarm.date
-    time_field = alarm.time
-    combined_datetime = datetime.combine(date_field, time_field)
-    formatted_datetime = combined_datetime.strftime('%Y-%m-%d %H:%M:%S')
-    eqp=Equipment.objects.get(id=equipment)
+#     time.sleep(delay * 60)
+#     alarm = Alarm_logs.objects.get(id=alarm_code)
+#     equipment = alarm.equipment.id
+#     alarm_id = alarm.id
+#     app = AppSettings.objects.first()
+#     equipment_id = alarm.equipment.equip_name
+#     alarm_code = alarm.alarm_code.code
+#     alarm_description = alarm.alarm_code.alarm_log
+#     date_field = alarm.date
+#     time_field = alarm.time
+#     combined_datetime = datetime.combine(date_field, time_field)
+#     formatted_datetime = combined_datetime.strftime('%Y-%m-%d %H:%M:%S')
+#     eqp=Equipment.objects.get(id=equipment)
 
-    sms_settings = AppSettings.objects.first()
+#     sms_settings = AppSettings.objects.first()
+#     try:
+#         threads = []
+#         lock = threading.Lock()
+#         combined_datetime = datetime.combine(alarm.date, alarm.time)
+#         alarm_codes = [code for code in range(1001, 1031)]
+#         message = ""
+#         if alarm_code in alarm_codes:
+#             ip_address = alarm.equipment.ip_address
+#             plc = connect_to_plc(ip_address)
+#             if plc.get_connected():
+#                 data = read_plc_data(plc, 19, 8, 4)
+#                 High_Temp = snap7.util.get_real(data, 0)
+#                 data = read_plc_data(plc, 19, 4, 4)
+#                 low_Temp = snap7.util.get_real(data, 0)
+#                 data = read_plc_data(plc, 19, 0, 4)
+#                 sv = snap7.util.get_real(data, 0)
+#                 if alarm_code in [1001, 1021, 1011]:
+#                     data = read_plc_data(plc, 4, 4, 4)
+#                     pv = snap7.util.get_real(data, 0)
+#                     message = f"""PV: {pv:.1f}
+# SV:{sv}
+# LL:{low_Temp}
+# HL:{High_Temp}
+# Equipment ID: {equipment_id}
+# Alarm Description: {alarm_description}
+# Date and Time: {formatted_datetime}"""
+#                 elif alarm_code in [1002, 1012, 1022]:
+#                     data = read_plc_data(plc, 4, 8, 4)
+#                     pv = snap7.util.get_real(data, 0)
+#                     message = f"""PV: {pv:.1f}
+# SV:{sv}
+# LL:{low_Temp}
+# HL:{High_Temp}
+# Equipment ID: {equipment_id}
+# Alarm Description: {alarm_description}
+# Date and Time: {formatted_datetime}
+# """
+#                 elif alarm_code in [1003, 1013, 1023]:
+#                     data = read_plc_data(plc, 4, 12, 4)
+#                     pv = snap7.util.get_real(data, 0)
+#                     message = f"""PV: {pv:.1f}
+# SV:{sv}
+# LL:{low_Temp}
+# HL:{High_Temp}
+# Equipment ID: {equipment_id}
+# Alarm Description: {alarm_description}
+# Date and Time: {formatted_datetime}
+# """
+#                 elif alarm_code in [1004, 1014, 1024]:
+#                     data = read_plc_data(plc, 4, 16, 4)
+#                     pv = snap7.util.get_real(data, 0)
+#                     message = f"""PV: {pv:.1f}
+# SV:{sv}
+# LL:{low_Temp}
+# HL:{High_Temp}
+# Equipment ID: {equipment_id}
+# Alarm Description: {alarm_description}
+# Date and Time: {formatted_datetime}
+# """
+#                 elif alarm_code in [1005, 1015, 1025]:
+#                     data = read_plc_data(plc, 4, 20, 4)
+#                     pv = snap7.util.get_real(data, 0)
+#                     message = f"""PV: {pv:.1f}
+# Sv:{sv}
+# LL:{low_Temp}
+# HL:{High_Temp}
+# Equipment ID: {equipment_id}
+# Alarm Description: {alarm_description}
+# Date and Time: {formatted_datetime}
+# """
+#                 elif alarm_code in [1006, 1016, 1026]:
+#                     data = read_plc_data(plc, 4, 24, 4)
+#                     pv = snap7.util.get_real(data, 0)
+#                     message = f"""
+#                     PV: {pv:.1f}
+# Sv:{sv}
+# LL:{low_Temp}
+# HL:{High_Temp}
+# Equipment ID: {equipment_id}
+# Alarm Description: {alarm_description}
+# Date and Time: {formatted_datetime}
+# """
+
+#         elif alarm_code in [2001, 2002, 2003, 2004, 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015]:
+#             try:
+#                 plc = PLCUser.objects.get(code=alarm_code)
+#                 message = f"""Equipment ID: {equipment_id}
+#                 Alarm Description: Door Accessed by User {plc.username}
+#                 Date and Time: {formatted_datetime}"""
+#             except PLCUser.DoesNotExist:
+#                 message = f"Equipment ID: {equipment_id}\nAlarm Description: Unknown User\nDate and Time: {formatted_datetime}"
+
+#         else:
+#             message = f"""Equipment ID: {equipment_id}
+# Alarm Description: {alarm_description}
+# Date and Time: {formatted_datetime}"""
+
+#         try:
+#             print("trying to connect to modem")
+#             with serial.Serial(
+#                 port=sms_settings.comm_port,
+#                 baudrate=sms_settings.baud_rate,
+
+#                 bytesize=serial.EIGHTBITS,
+#                 parity=serial.PARITY_NONE,
+#                 stopbits=serial.STOPBITS_ONE,
+#                 timeout=2
+#             ) as ser:
+#                 add_to_sms_queue(numbers_list, message, equipment, alarm_id, False)
+#         except Exception as e:
+#             print(str(e))
+#             for i, j in numbers_list.items():
+              
+#                 Sms_logs.objects.create(
+#                 time=datetime.now().time(),
+#                 date=datetime.now().date(),
+#                 sys_sms=False,
+#                 to_num=j,
+#                 user_name=i,
+#                 msg_body=message,
+#                 status="Failed",
+#                 equipment=eqp,
+#             )
+
+#     except Exception as e:
+#         pass
+
+def process_alarm_logs(file_path, equipment_id):
+    
+    equipment = Equipment.objects.get(id=equipment_id)
+    saved_records = 0
+
     try:
-        threads = []
-        lock = threading.Lock()
-        combined_datetime = datetime.combine(alarm.date, alarm.time)
+        with open(file_path, "r") as csv_file:
+            csv_reader = csv.DictReader(csv_file)
+           
+            with ThreadPoolExecutor(max_workers=100) as executor:
+                futures = [] 
+                for row in csv_reader:
+                    futures.append(executor.submit(process_row, row, equipment))
+                for future in futures:
+                    future.result()  
+        
+        return f"Alarm logs processed successfully. Total records saved: {saved_records}"
+
+    except Exception as e:
+        return f"Error processing Alarm Logs: {str(e)}"
+
+
+
+def process_row(row, equipment):
+    try:
+        
+        date = datetime.strptime(row["DATE"].strip(), "%Y-%m-%d").date()
+        time = datetime.strptime(row[" TIME"].strip(), "%H:%M:%S.%f").time()
+        alarm_code = Alarm_codes.objects.get(code=row["ALARM_CODE"].strip())
+
+        dept=Department.objects.get(id=equipment.department.id)
+        alarm_log, created = Alarm_logs.objects.update_or_create(
+            equipment=equipment,
+            alarm_code=alarm_code,
+            date=date,
+            time=time,
+        )
+        if created:
+            alarm_log.save() 
+            
+            code=alarm_log.alarm_code.code
+            email_fields = [
+                dept.alert_email_address_1, dept.alert_email_address_2,
+                dept.alert_email_address_3, dept.alert_email_address_4,
+                dept.alert_email_address_5, dept.alert_email_address_6,
+                dept.alert_email_address_7, dept.alert_email_address_8,
+                dept.alert_email_address_9, dept.alert_email_address_10,
+            ]
+            email_list = [
+            email for email in email_fields if email]
+            email_alert = emailalert.objects.get(
+                equipment_name=equipment.id)
+            sms_alert = smsalert.objects.get(
+                equipment_name=equipment.id)
+            ed = 0
+            if dept.email_delay:
+                int(dept.email_delay)
+                ed = dept.email_delay
+            if getattr(email_alert, f'code_{code}'):
+                thread_email = threading.Thread(
+                    target=send_alert_email, args=(
+                        alarm_log.id, email_list, ed))
+                thread_email.start()
+                thread_email.join()
+            send_alert_messages(alarm_log)
+
+    except Exception as e:
+        pass
+
+
+
+def send_alert_messages(alarm_log):
+    code = alarm_log.alarm_code.code
+    dept = Department.objects.get(id=alarm_log.equipment.department.id)
+    sms_alert = smsalert.objects.get(equipment_name=alarm_log.equipment.id)
+
+    
+    if getattr(sms_alert, f'code_{code}'):
+
+       
+        user_data = {}
+        for i in range(1, 11):
+            username = getattr(dept, f'user{i}', None)
+            usernum = getattr(dept, f'user{i}_num', None)
+            if username is not None and usernum is not None:
+                user_data[username] = usernum
+
         alarm_codes = [code for code in range(1001, 1031)]
         message = ""
-        if alarm_code in alarm_codes:
+        equipment_id = alarm_log.equipment.equip_name
+        alarm_description = alarm_log.alarm_code.alarm_log
+        date_field = alarm_log.date
+        time_field = alarm_log.time
+        combined_datetime = datetime.combine(date_field, time_field)
+        formatted_datetime = combined_datetime.strftime('%Y-%m-%d %H:%M:%S')
+        
+
+        if code in alarm_codes:
             ip_address = alarm.equipment.ip_address
             plc = connect_to_plc(ip_address)
             if plc.get_connected():
@@ -3204,7 +3416,7 @@ def send_alert_messages(numbers_list, alarm_code, delay):
                 low_Temp = snap7.util.get_real(data, 0)
                 data = read_plc_data(plc, 19, 0, 4)
                 sv = snap7.util.get_real(data, 0)
-                if alarm_code in [1001, 1021, 1011]:
+                if code in [1001, 1021, 1011]:
                     data = read_plc_data(plc, 4, 4, 4)
                     pv = snap7.util.get_real(data, 0)
                     message = f"""PV: {pv:.1f}
@@ -3214,7 +3426,7 @@ HL:{High_Temp}
 Equipment ID: {equipment_id}
 Alarm Description: {alarm_description}
 Date and Time: {formatted_datetime}"""
-                elif alarm_code in [1002, 1012, 1022]:
+                elif code in [1002, 1012, 1022]:
                     data = read_plc_data(plc, 4, 8, 4)
                     pv = snap7.util.get_real(data, 0)
                     message = f"""PV: {pv:.1f}
@@ -3225,7 +3437,7 @@ Equipment ID: {equipment_id}
 Alarm Description: {alarm_description}
 Date and Time: {formatted_datetime}
 """
-                elif alarm_code in [1003, 1013, 1023]:
+                elif code in [1003, 1013, 1023]:
                     data = read_plc_data(plc, 4, 12, 4)
                     pv = snap7.util.get_real(data, 0)
                     message = f"""PV: {pv:.1f}
@@ -3236,7 +3448,7 @@ Equipment ID: {equipment_id}
 Alarm Description: {alarm_description}
 Date and Time: {formatted_datetime}
 """
-                elif alarm_code in [1004, 1014, 1024]:
+                elif code in [1004, 1014, 1024]:
                     data = read_plc_data(plc, 4, 16, 4)
                     pv = snap7.util.get_real(data, 0)
                     message = f"""PV: {pv:.1f}
@@ -3247,7 +3459,7 @@ Equipment ID: {equipment_id}
 Alarm Description: {alarm_description}
 Date and Time: {formatted_datetime}
 """
-                elif alarm_code in [1005, 1015, 1025]:
+                elif code in [1005, 1015, 1025]:
                     data = read_plc_data(plc, 4, 20, 4)
                     pv = snap7.util.get_real(data, 0)
                     message = f"""PV: {pv:.1f}
@@ -3271,7 +3483,7 @@ Alarm Description: {alarm_description}
 Date and Time: {formatted_datetime}
 """
 
-        elif alarm_code in [2001, 2002, 2003, 2004, 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015]:
+        elif code in [2001, 2002, 2003, 2004, 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015]:
             try:
                 plc = PLCUser.objects.get(code=alarm_code)
                 message = f"""Equipment ID: {equipment_id}
@@ -3285,43 +3497,47 @@ Date and Time: {formatted_datetime}
 Alarm Description: {alarm_description}
 Date and Time: {formatted_datetime}"""
 
+        eqp=alarm_log.equipment.id
+        delay = dept.sms_delay or 0
+        time.sleep(delay * 60)  
+
+       
         try:
+           
+            add_to_sms_queue(user_data, message, alarm_log.equipment.id, alarm_log.id, False)
 
-            with serial.Serial(
-                port=sms_settings.comm_port,
-                baudrate=sms_settings.baud_rate,
-                bytesize=serial.EIGHTBITS,
-                parity=serial.PARITY_NONE,
-                stopbits=serial.STOPBITS_ONE,
-                timeout=2
-            ) as ser:
-                add_to_sms_queue(numbers_list, message, equipment, alarm_id, False)
         except Exception as e:
-            for i, j in numbers_list.items():
-              
-                Sms_logs.objects.create(
-                time=datetime.now().time(),
-                date=datetime.now().date(),
-                sys_sms=False,
-                to_num=j,
-                user_name=i,
-                msg_body=message,
-                status="Failed",
-                equipment=eqp,
-            )
-
-    except Exception as e:
-        pass
+            log_sms_failure(user_data, message, alarm_log.equipment, alarm_log.id)
+        
 
 
-def send_alert_email(alarm_id, email_list, email_delay):
-    time.sleep(email_delay * 60)
+
+
+
+
+def log_sms_failure(user_data, message, equipment, alarm_id):
+    for username, user_number in user_data.items():
+        Sms_logs.objects.create(
+            time=datetime.now().time(),
+            date=datetime.now().date(),
+            sys_sms=False,
+            to_num=user_number,
+            msg_body=message,
+            status="Failed",
+            equipment=equipment,
+        )
+
+
+
+
+def send_alert_email(alarm_id, email_list, delay_minutes):
+    em_dly = delay_minutes
+
+    
     try:
-
-        if email_delay and email_delay.isdigit():
-            delay_minutes = int(email_delay)
-            time.sleep(delay_minutes * 60)
-
+            
+        delay=int(delay_minutes)
+        time.sleep(delay * 60)
         alarm = Alarm_logs.objects.get(id=alarm_id)
         email_settings = get_email_settings(request)
         subject = 'Sun Well Alarm Alerts'
@@ -3428,7 +3644,7 @@ Alarm Description: {alarm_description}
 Date and Time: {formatted_datetime}"""
 
         try:
-            start_time = time.time()
+            
             send_mail(
                 subject=subject,
                 message=message,
@@ -3436,8 +3652,7 @@ Date and Time: {formatted_datetime}"""
                 recipient_list=email_list,
                 fail_silently=False,
             )
-            end_time = time.time()
-            duration = end_time - start_time
+            
             for recipient in email_list:
                 Email_logs.objects.create(
                     equipment=alarm.equipment,
@@ -3459,7 +3674,7 @@ Date and Time: {formatted_datetime}"""
                     time=datetime.now().time(),
                     email_sub=subject,
                     email_body=message,
-                    status="Success"
+                    status="Failed"
                 )
 
     except Exception as e:
@@ -3474,6 +3689,7 @@ atexit.register(stop_background_thread)
 
 
 def clear_csv_logs(ip_address, log_type):
+    
 
     try:
 
@@ -4563,22 +4779,36 @@ def generate_log_pdf(request, records, from_date, to_date, from_time,
                 ['Rec No', 'DD-MM-YYYY', 'HH:MM', 'TEMP'] + temperature_header
             ]
 
-        equipment = records.filter(
-            equip_name__equip_name=selected_equipment).first()
-        if equipment:
-            t_low_alarm = equipment.t_low_alarm
-            t_high_alarm = equipment.t_high_alarm
-            t_low_alert = equipment.t_low_alert
-            t_high_alert = equipment.t_high_alert
-            rh_low_alarm = equipment.rh_low_alarm
-            rh_high_alarm = equipment.rh_high_alarm
-            rh_low_alert = equipment.rh_low_alert
-            rh_high_alert = equipment.rh_high_alert
-        else:
-            t_low_alarm = t_high_alarm = rh_low_alarm = rh_high_alarm = None
-            t_low_alert = t_high_alert = rh_low_alert = rh_high_alert = None
+        # equipment = records.filter(
+        #     equip_name__equip_name=selected_equipment)
+        # if equipment:
+        #     t_low_alarm = equipment.t_low_alarm
+        #     t_high_alarm = equipment.t_high_alarm
+        #     t_low_alert = equipment.t_low_alert
+        #     t_high_alert = equipment.t_high_alert
+        #     rh_low_alarm = equipment.rh_low_alarm
+        #     rh_high_alarm = equipment.rh_high_alarm
+        #     rh_low_alert = equipment.rh_low_alert
+        #     rh_high_alert = equipment.rh_high_alert
+        # else:
+        #     t_low_alarm = t_high_alarm = rh_low_alarm = rh_high_alarm = None
+        #     t_low_alert = t_high_alert = rh_low_alert = rh_high_alert = None
 
         for idx, record in enumerate(records, start=1):
+
+            if record:
+                t_low_alarm = record.t_low_alarm
+                t_high_alarm = record.t_high_alarm
+                t_low_alert = record.t_low_alert
+                t_high_alert = record.t_high_alert
+                rh_low_alarm = record.rh_low_alarm
+                rh_high_alarm = record.rh_high_alarm
+                rh_low_alert = record.rh_low_alert
+                rh_high_alert = record.rh_high_alert
+            else:
+                t_low_alarm = t_high_alarm = rh_low_alarm = rh_high_alarm = None
+                t_low_alert = t_high_alert = rh_low_alert = rh_high_alert = None
+
             temp_values = []
             for channel in active_temperature_channels:
                 value = getattr(record, channel, None)
@@ -4693,6 +4923,13 @@ def generate_log_pdf(request, records, from_date, to_date, from_time,
         onLaterPages=create_page,
         canvasmaker=NumberedCanvas)
     return response
+
+
+
+
+
+
+
 
 
 def generate_log_pdf_landscape(request, records, from_date, to_date, from_time,
@@ -5094,20 +5331,20 @@ def generate_log_pdf_landscape(request, records, from_date, to_date, from_time,
         humidity_header = ['RH' + str(i + 1) for i in range(total_humidity_sensors)] + [
             ''] * (10 - total_humidity_sensors)
 
-        equipment = records.filter(
-            equip_name__equip_name=selected_equipment).first()
-        if equipment:
-            t_low_alarm = equipment.t_low_alarm
-            t_high_alarm = equipment.t_high_alarm
-            t_low_alert = equipment.t_low_alert
-            t_high_alert = equipment.t_high_alert
-            rh_low_alarm = equipment.rh_low_alarm
-            rh_high_alarm = equipment.rh_high_alarm
-            rh_low_alert = equipment.rh_low_alert
-            rh_high_alert = equipment.rh_high_alert
-        else:
-            t_low_alarm = t_high_alarm = rh_low_alarm = rh_high_alarm = None
-            t_low_alert = t_high_alert = rh_low_alert = rh_high_alert = None
+        # equipment = records.filter(
+        #     equip_name__equip_name=selected_equipment).first()
+        # if equipment:
+        #     t_low_alarm = equipment.t_low_alarm
+        #     t_high_alarm = equipment.t_high_alarm
+        #     t_low_alert = equipment.t_low_alert
+        #     t_high_alert = equipment.t_high_alert
+        #     rh_low_alarm = equipment.rh_low_alarm
+        #     rh_high_alarm = equipment.rh_high_alarm
+        #     rh_low_alert = equipment.rh_low_alert
+        #     rh_high_alert = equipment.rh_high_alert
+        # else:
+        #     t_low_alarm = t_high_alarm = rh_low_alarm = rh_high_alarm = None
+        #     t_low_alert = t_high_alert = rh_low_alert = rh_high_alert = None
 
         # Prepare the main table headers
         data = [
@@ -5119,6 +5356,19 @@ def generate_log_pdf_landscape(request, records, from_date, to_date, from_time,
 
         # Populate the table with filtered records
         for idx, record in enumerate(records, start=1):
+            if record:
+                t_low_alarm = record.t_low_alarm
+                t_high_alarm = record.t_high_alarm
+                t_low_alert = record.t_low_alert
+                t_high_alert = record.t_high_alert
+                rh_low_alarm = record.rh_low_alarm
+                rh_high_alarm = record.rh_high_alarm
+                rh_low_alert = record.rh_low_alert
+                rh_high_alert = record.rh_high_alert
+            else:
+                t_low_alarm = t_high_alarm = rh_low_alarm = rh_high_alarm = None
+                t_low_alert = t_high_alert = rh_low_alert = rh_high_alert = None
+
             temp_values = []
             for channel in temperature_channels:
                 value = getattr(record, channel, None)

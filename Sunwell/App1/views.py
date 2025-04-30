@@ -3008,10 +3008,7 @@ def download_process_logs(ip_address, equipment_id):
 
 download_lock = threading.Lock()
 
-
-
 def process_data_logs(file_path, equipment_id):
-    
     with download_lock:
         try:
             with open(file_path, "r") as csv_file:
@@ -3020,23 +3017,27 @@ def process_data_logs(file_path, equipment_id):
 
                 for row in csv_reader:
                     try:
-                        date = datetime.strptime(
-                            row["DATE"].strip(), "%Y-%m-%d").date()
-                        time_raw = row[" TIME"].strip()
+                        if not row.get("DATE") or not row.get(" TIME"):
+                            continue
+
+                        date = datetime.strptime(row["DATE"].strip() if row["DATE"] else "", "%Y-%m-%d").date()
+                        time_raw = row[" TIME"].strip() if row[" TIME"] else ""
+
                         if not time_raw:
                             continue
-                        if len(time_raw) == 5:
-                            time_raw = f"{time_raw}:00"
-                        elif len(time_raw) > 8 and '.' in time_raw:
-                            time_raw = time_raw[:8]
 
-                       
+                        time_parts = time_raw.split(":")
+                        if len(time_parts[0]) == 1:
+                            time_raw = "0" + time_raw
+
+                        if '.' in time_raw:
+                            time_raw = time_raw.split(".")[0]
+
                         datetime.strptime(time_raw, "%H:%M:%S")
 
                         def safe_float(value):
                             try:
-                                return float(
-                                    value.strip()) if value and value.strip() else None
+                                return float(value.strip()) if value and value.strip() else None
                             except ValueError:
                                 return None
 
@@ -3078,13 +3079,15 @@ def process_data_logs(file_path, equipment_id):
 
                     except IntegrityError:
                         pass
-                    except Exception:
+                    except Exception as e:
                         pass
 
             return f"Data logs processed successfully. Total records saved: {saved_records}"
 
-        except Exception:
-            return f"Error processing Data Logs"
+        except Exception as e:
+            return f"Error processing Data Logs: {e}"
+
+
 
 import serial
 # def process_alarm_logs(file_path, equipment_id):
@@ -3338,7 +3341,7 @@ def process_row(row, equipment):
         date = datetime.strptime(row["DATE"].strip(), "%Y-%m-%d").date()
         time = datetime.strptime(row[" TIME"].strip(), "%H:%M:%S.%f").time()
         alarm_code = Alarm_codes.objects.get(code=row["ALARM_CODE"].strip())
-
+        
         dept=Department.objects.get(id=equipment.department.id)
         alarm_log, created = Alarm_logs.objects.update_or_create(
             equipment=equipment,
@@ -3407,7 +3410,7 @@ def send_alert_messages(alarm_log):
         
 
         if code in alarm_codes:
-            ip_address = alarm.equipment.ip_address
+            ip_address = alarm_log.equipment.ip_address
             plc = connect_to_plc(ip_address)
             if plc.get_connected():
                 data = read_plc_data(plc, 19, 8, 4)
@@ -3516,16 +3519,19 @@ Date and Time: {formatted_datetime}"""
 
 
 def log_sms_failure(user_data, message, equipment, alarm_id):
-    for username, user_number in user_data.items():
-        Sms_logs.objects.create(
-            time=datetime.now().time(),
-            date=datetime.now().date(),
-            sys_sms=False,
-            to_num=user_number,
-            msg_body=message,
-            status="Failed",
-            equipment=equipment,
-        )
+    try:
+        for username, user_number in user_data.items():
+            Sms_logs.objects.create(
+                time=datetime.now().time(),
+                date=datetime.now().date(),
+                sys_sms=False,
+                to_num=user_number,
+                msg_body=message,
+                status="Failed",
+                equipment=equipment,
+            )
+    except Exception as e:
+        pass
 
 
 
@@ -7823,7 +7829,7 @@ def save_alert_settings(request):
             if hasattr(email, alert_id):
                 setattr(email, alert_id, alert_checked)
             else:
-                print(f"Attribute {alert_id} not found on EmailAlert")
+                pass
         email.save()
         sms = smsalert.objects.get(equipment_name=equipment.id)
         for i in sms_alerts:
